@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미호 모달 리디자인 아이디어</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f12;
+    color: #fff;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #A892D7, #7A4AE2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .idea-card {
+    background: #1a1a22;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #2a2a35;
+  }
+  .idea-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a2a35;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .idea-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #7A4AE2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .idea-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .idea-desc {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+  }
+  .idea-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(122, 74, 226, 0.15);
+    color: #A892D7;
+  }
+  .tag.red { background: rgba(255, 70, 70, 0.15); color: #ff7070; }
+  .tag.green { background: rgba(55, 218, 26, 0.15); color: #6de84d; }
+  .tag.blue { background: rgba(56, 113, 255, 0.15); color: #6b9fff; }
+
+  /* Phone mock */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 24px 20px;
+    min-height: 520px;
+    align-items: flex-end;
+  }
+  .phone {
+    width: 320px;
+    height: 460px;
+    background: #000;
+    border-radius: 32px;
+    border: 3px solid #333;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 29px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-notch {
+    width: 100px;
+    height: 22px;
+    background: #000;
+    border-radius: 0 0 14px 14px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  /* Fake chat background */
+  .chat-bg {
+    width: 100%;
+    height: 100%;
+    padding: 36px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chat-msg {
+    max-width: 65%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .chat-msg.other {
+    background: rgba(255,255,255,0.12);
+    color: #ddd;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg.me {
+    background: #7A4AE2;
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  /* Overlay */
+  .modal-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  /* === CURRENT DESIGN === */
+  .current .modal-overlay {
+    background: rgba(0,0,0,0.6);
+    padding-bottom: 60px;
+  }
+  .current .modal-content {
+    position: relative;
+    width: 85%;
+  }
+  .speech-bubble-current {
+    background: #F7F3FF;
+    border-radius: 16px;
+    padding: 16px;
+    margin-right: 60px;
+    position: relative;
+    animation: currentBounce 1.5s ease-in-out infinite;
+  }
+  .speech-bubble-current .tail {
+    position: absolute;
+    right: -8px;
+    bottom: 18px;
+    width: 0; height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #F7F3FF;
+  }
+  .miho-char {
+    width: 60px;
+    height: 80px;
+    background: linear-gradient(135deg, #E2D5FF, #7A4AE2);
+    border-radius: 50% 50% 40% 40%;
+    position: absolute;
+    right: -10px;
+    bottom: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(122, 74, 226, 0.3);
+  }
+  .speech-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #A892D7;
+    margin-bottom: 6px;
+  }
+  .speech-text {
+    font-size: 11px;
+    color: #333;
+    line-height: 1.5;
+  }
+  .close-btn {
+    background: #fff;
+    border-radius: 10px;
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+
+  @keyframes currentBounce {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.08); }
+    50% { transform: scale(0.96); }
+    75% { transform: scale(1.04); }
+  }
+
+  /* Confetti */
+  .confetti-wrap {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 30;
+    overflow: hidden;
+  }
+  .confetti-item {
+    position: absolute;
+    top: -20px;
+    font-size: 16px;
+    animation: confettiFall 2.5s ease-in-out forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+  }
+
+  /* Glow pulse */
+  .glow-ring {
+    position: absolute;
+    top: -6px; left: -6px; right: 66px; bottom: -6px;
+    border-radius: 20px;
+    background: rgba(168, 146, 215, 0.25);
+    animation: glowPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.06); opacity: 0.5; }
+  }
+
+  /* === IDEA A: Gentle Fade + Slide === */
+  .ideaA .modal-overlay {
+    background: rgba(0,0,0,0.45);
+    padding-bottom: 60px;
+  }
+  .ideaA .modal-content {
+    position: relative;
+    width: 85%;
+    animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .speech-bubble-a {
+    background: #F7F3FF;
+    border-radius: 16px;
+    padding: 16px;
+    margin-right: 60px;
+    position: relative;
+  }
+  .speech-bubble-a .tail {
+    position: absolute;
+    right: -8px;
+    bottom: 18px;
+    width: 0; height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #F7F3FF;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === IDEA B: Inline Notification Bar === */
+  .ideaB .modal-overlay {
+    background: transparent;
+    align-items: flex-end;
+    padding-bottom: 52px;
+  }
+  .noti-bar {
+    width: 92%;
+    background: #F7F3FF;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    animation: slideUpBar 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .noti-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #E2D5FF, #7A4AE2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .noti-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .noti-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #7A4AE2;
+    margin-bottom: 2px;
+  }
+  .noti-text {
+    font-size: 10.5px;
+    color: #333;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .noti-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #999;
+    flex-shrink: 0;
+  }
+  @keyframes slideUpBar {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Rarity indicator - subtle dot */
+  .rarity-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  /* === IDEA C: Card Toast (Bottom) === */
+  .ideaC .modal-overlay {
+    background: rgba(0,0,0,0.35);
+    padding-bottom: 80px;
+  }
+  .toast-card {
+    width: 88%;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    animation: cardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .toast-top {
+    background: linear-gradient(135deg, #7A4AE2, #9747FF);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toast-avatar-c {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .toast-header-text {
+    flex: 1;
+  }
+  .toast-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .toast-title-c {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2px;
+  }
+  .toast-body {
+    padding: 14px 16px;
+  }
+  .toast-text-c {
+    font-size: 12px;
+    color: #333;
+    line-height: 1.5;
+  }
+  .toast-action {
+    display: flex;
+    justify-content: center;
+    padding: 0 16px 14px;
+  }
+  .toast-btn {
+    font-size: 12px;
+    color: #7A4AE2;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 8px;
+    background: #F7F3FF;
+  }
+  @keyframes cardPop {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* === IDEA D: Floating Chip === */
+  .ideaD .modal-overlay {
+    background: transparent;
+    align-items: flex-end;
+    padding-bottom: 54px;
+  }
+  .floating-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(122, 74, 226, 0.95);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 8px 16px 8px 8px;
+    box-shadow: 0 4px 16px rgba(122, 74, 226, 0.35);
+    animation: chipSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    max-width: 88%;
+  }
+  .chip-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .chip-text {
+    flex: 1;
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .chip-text strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 1px;
+    color: rgba(255,255,255,0.8);
+  }
+  .chip-arrow {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+  }
+  @keyframes chipSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Auto dismiss indicator */
+  .chip-progress {
+    position: absolute;
+    bottom: 0;
+    left: 8px;
+    right: 8px;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .chip-progress-bar {
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    border-radius: 1px;
+    animation: progressShrink 3s linear forwards;
+  }
+  @keyframes progressShrink {
+    from { width: 100%; }
+    to { width: 0%; }
+  }
+
+  /* === IDEA E: Subtle Speech + Static Miho === */
+  .ideaE .modal-overlay {
+    background: rgba(0,0,0,0.5);
+    padding-bottom: 55px;
+  }
+  .ideaE .modal-content {
+    position: relative;
+    width: 85%;
+    animation: gentleFade 0.3s ease-out forwards;
+  }
+  .speech-bubble-e {
+    background: #F7F3FF;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-right: 56px;
+    position: relative;
+    border: 1px solid rgba(122, 74, 226, 0.1);
+  }
+  .speech-bubble-e .tail {
+    position: absolute;
+    right: -8px;
+    bottom: 16px;
+    width: 0; height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid #F7F3FF;
+  }
+  .miho-char-e {
+    width: 50px;
+    height: 68px;
+    background: linear-gradient(135deg, #E2D5FF, #7A4AE2);
+    border-radius: 50% 50% 40% 40%;
+    position: absolute;
+    right: -6px;
+    bottom: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 2px 8px rgba(122, 74, 226, 0.2);
+  }
+  .rarity-stripe {
+    height: 3px;
+    border-radius: 1.5px;
+    margin-bottom: 10px;
+    width: 40px;
+  }
+  .speech-title-e {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7A4AE2;
+    margin-bottom: 4px;
+  }
+  .speech-text-e {
+    font-size: 11px;
+    color: #333;
+    line-height: 1.5;
+  }
+  .close-hint {
+    text-align: center;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 10px;
+  }
+  @keyframes gentleFade {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === Comparison section === */
+  .comparison {
+    max-width: 1600px;
+    margin: 40px auto 0;
+    background: #1a1a22;
+    border-radius: 20px;
+    border: 1px solid #2a2a35;
+    overflow: hidden;
+  }
+  .comp-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a2a35;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .comp-table th {
+    padding: 10px 12px;
+    text-align: left;
+    color: #888;
+    font-weight: 600;
+    border-bottom: 1px solid #2a2a35;
+    white-space: nowrap;
+  }
+  .comp-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1f1f2a;
+    color: #ccc;
+    vertical-align: top;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .score {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .score-bar {
+    width: 60px;
+    height: 4px;
+    background: #2a2a35;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .rec-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(55, 218, 26, 0.15);
+    color: #6de84d;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>미호 모달 리디자인 아이디어</h1>
+<p class="subtitle">현재 → 5가지 대안 비교 | 목표: compact + 단정한 등장 애니메이션</p>
+
+<div class="grid">
+
+  <!-- CURRENT -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number" style="background:#ff4646">!</div>
+      <div>
+        <div class="idea-title">현재 (Before)</div>
+        <div class="idea-desc">scale 0→1 bounce + glow pulse + confetti</div>
+        <div class="idea-tags">
+          <span class="tag red">과한 bounce</span>
+          <span class="tag red">반복 pulse</span>
+          <span class="tag red">confetti 산만</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+          </div>
+          <div class="modal-overlay current" style="background:rgba(0,0,0,0.6); padding-bottom:40px;">
+            <div class="confetti-wrap">
+              <span class="confetti-item" style="left:10%; animation-delay:0.1s">🎉</span>
+              <span class="confetti-item" style="left:25%; animation-delay:0.3s">✨</span>
+              <span class="confetti-item" style="left:45%; animation-delay:0.2s">💫</span>
+              <span class="confetti-item" style="left:65%; animation-delay:0.5s">💜</span>
+              <span class="confetti-item" style="left:80%; animation-delay:0.4s">🌟</span>
+              <span class="confetti-item" style="left:55%; animation-delay:0.6s">👑</span>
+            </div>
+            <div class="modal-content">
+              <div class="glow-ring"></div>
+              <div class="speech-bubble-current">
+                <div class="speech-title">미호가 추천해요</div>
+                <div class="speech-text">음.. 뭔가 통할 것 같은<br>느낌이 들어요 ✨</div>
+                <div class="close-btn">탭하여 닫기</div>
+                <div class="tail"></div>
+              </div>
+              <div class="miho-char">🦊</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA A: Gentle Fade + Slide -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number">A</div>
+      <div>
+        <div class="idea-title">Gentle Fade + Slide</div>
+        <div class="idea-desc">현재 레이아웃 유지, 애니메이션만 교체</div>
+        <div class="idea-tags">
+          <span class="tag green">최소 변경</span>
+          <span class="tag">fade + translateY</span>
+          <span class="tag blue">scale 제거</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+          </div>
+          <div class="modal-overlay ideaA" style="background:rgba(0,0,0,0.45); padding-bottom:40px;">
+            <div class="modal-content" style="animation:fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards">
+              <div class="speech-bubble-a">
+                <div class="speech-title">미호가 추천해요</div>
+                <div class="speech-text">음.. 뭔가 통할 것 같은<br>느낌이 들어요 ✨</div>
+                <div class="close-btn">탭하여 닫기</div>
+                <div class="tail"></div>
+              </div>
+              <div class="miho-char" style="animation:none;">🦊</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA B: Inline Notification Bar -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number">B</div>
+      <div>
+        <div class="idea-title">Inline Notification Bar</div>
+        <div class="idea-desc">채팅 입력창 위 슬라이드업, overlay 없음</div>
+        <div class="idea-tags">
+          <span class="tag green">비침습적</span>
+          <span class="tag">채팅 방해 최소</span>
+          <span class="tag blue">swipe dismiss</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+            <div class="chat-msg me">저는 고려대예요!</div>
+          </div>
+          <div class="modal-overlay ideaB">
+            <div class="noti-bar" style="position:relative;">
+              <div class="noti-avatar">🦊</div>
+              <div class="noti-body">
+                <div class="noti-title">미호가 추천해요</div>
+                <div class="noti-text">음.. 뭔가 통할 것 같은 느낌이 들어요 ✨</div>
+              </div>
+              <div class="noti-close">✕</div>
+              <div style="position:absolute; top:6px; right:6px; width:6px; height:6px; border-radius:3px; background:#F59E0B;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA C: Card Toast -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number">C</div>
+      <div>
+        <div class="idea-title">Card Toast (헤더 포인트)</div>
+        <div class="idea-desc">상단 컬러 바 + 하단 메시지, 카드형</div>
+        <div class="idea-tags">
+          <span class="tag">rarity 표현 용이</span>
+          <span class="tag blue">구조적</span>
+          <span class="tag green">정돈된 느낌</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+          </div>
+          <div class="modal-overlay ideaC" style="background:rgba(0,0,0,0.35); padding-bottom:50px;">
+            <div class="toast-card">
+              <div class="toast-top">
+                <div class="toast-avatar-c">🦊</div>
+                <div class="toast-header-text">
+                  <div class="toast-label">MIHO</div>
+                  <div class="toast-title-c">미호가 추천해요</div>
+                </div>
+              </div>
+              <div class="toast-body">
+                <div class="toast-text-c">음.. 뭔가 통할 것 같은<br>느낌이 들어요 ✨</div>
+              </div>
+              <div class="toast-action">
+                <div class="toast-btn">확인했어요</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA D: Floating Chip -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number">D</div>
+      <div>
+        <div class="idea-title">Floating Chip (Auto-dismiss)</div>
+        <div class="idea-desc">채팅 위 떠다니는 칩, 3초 후 자동 사라짐</div>
+        <div class="idea-tags">
+          <span class="tag green">가장 미니멀</span>
+          <span class="tag">자동 dismiss</span>
+          <span class="tag blue">터치 불필요</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+            <div class="chat-msg me">저는 고려대예요!</div>
+            <div class="chat-msg other">오 저도!!</div>
+          </div>
+          <div class="modal-overlay ideaD">
+            <div class="floating-chip" style="position:relative;">
+              <div class="chip-avatar">🦊</div>
+              <div class="chip-text">
+                <strong>미호가 추천해요</strong>
+                뭔가 통할 것 같은 느낌이 들어요 ✨
+              </div>
+              <div class="chip-arrow">›</div>
+              <div class="chip-progress">
+                <div class="chip-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA E: Subtle Speech + Static Miho -->
+  <div class="idea-card">
+    <div class="idea-header">
+      <div class="idea-number">E</div>
+      <div>
+        <div class="idea-title">Subtle Speech (현재 구조 개선)</div>
+        <div class="idea-desc">말풍선+미호 유지, 모든 반복 애니 제거, rarity는 stripe로</div>
+        <div class="idea-tags">
+          <span class="tag green">현재와 가장 유사</span>
+          <span class="tag">정적 미호</span>
+          <span class="tag blue">rarity stripe</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-bg">
+            <div class="chat-msg other">안녕하세요!</div>
+            <div class="chat-msg me">반갑습니다 :)</div>
+            <div class="chat-msg other">학교 어디세요?</div>
+          </div>
+          <div class="modal-overlay ideaE">
+            <div class="modal-content">
+              <div class="speech-bubble-e">
+                <div class="rarity-stripe" style="background: linear-gradient(90deg, #F59E0B, #FF8C42);"></div>
+                <div class="speech-title-e">미호가 추천해요</div>
+                <div class="speech-text-e">음.. 뭔가 통할 것 같은<br>느낌이 들어요 ✨</div>
+                <div class="tail"></div>
+              </div>
+              <div class="miho-char-e">🦊</div>
+              <div class="close-hint">탭하여 닫기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Comparison Table -->
+<div class="comparison">
+  <div class="comp-header">비교 매트릭스</div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>기준</th>
+        <th>현재</th>
+        <th>A. Gentle Fade</th>
+        <th>B. Noti Bar</th>
+        <th>C. Card Toast</th>
+        <th>D. Float Chip</th>
+        <th>E. Subtle Speech</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>단정함</td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:20%; background:#ff4646;"></span></span> 2</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:80%; background:#6de84d;"></span></span> 8</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:90%; background:#6de84d;"></span></span> 9</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:80%; background:#6de84d;"></span></span> 8</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:100%; background:#6de84d;"></span></span> 10</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:85%; background:#6de84d;"></span></span> 8.5</span><span class="rec-badge">PICK</span></td>
+      </tr>
+      <tr>
+        <td>Rarity 표현력</td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:90%; background:#F59E0B;"></span></span> 9</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:50%; background:#F59E0B;"></span></span> 5</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:30%; background:#F59E0B;"></span></span> 3</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:70%; background:#F59E0B;"></span></span> 7</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:20%; background:#F59E0B;"></span></span> 2</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:70%; background:#F59E0B;"></span></span> 7</span><span class="rec-badge">PICK</span></td>
+      </tr>
+      <tr>
+        <td>코드 변경량</td>
+        <td>-</td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:90%; background:#6b9fff;"></span></span> 최소</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:30%; background:#6b9fff;"></span></span> 많음</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:40%; background:#6b9fff;"></span></span> 보통</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:25%; background:#6b9fff;"></span></span> 많음</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:85%; background:#6b9fff;"></span></span> 최소</span><span class="rec-badge">PICK</span></td>
+      </tr>
+      <tr>
+        <td>Compact</td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:40%; background:#A892D7;"></span></span> 4</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:60%; background:#A892D7;"></span></span> 6</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:90%; background:#A892D7;"></span></span> 9</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:70%; background:#A892D7;"></span></span> 7</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:100%; background:#A892D7;"></span></span> 10</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:65%; background:#A892D7;"></span></span> 6.5</span></td>
+      </tr>
+      <tr>
+        <td>미호 캐릭터성</td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:80%; background:#E056A0;"></span></span> 8</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:80%; background:#E056A0;"></span></span> 8</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:50%; background:#E056A0;"></span></span> 5</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:60%; background:#E056A0;"></span></span> 6</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:40%; background:#E056A0;"></span></span> 4</span></td>
+        <td><span class="score"><span class="score-bar"><span class="score-fill" style="width:80%; background:#E056A0;"></span></span> 8</span><span class="rec-badge">PICK</span></td>
+      </tr>
+      <tr>
+        <td style="font-weight:700; color:#fff;">종합 추천</td>
+        <td style="color:#ff4646;">변경 필요</td>
+        <td style="color:#6de84d;">좋음</td>
+        <td>비침습 원하면</td>
+        <td>격식 원하면</td>
+        <td>최소 원하면</td>
+        <td style="color:#6de84d; font-weight:700;">최적 밸런스<span class="rec-badge">PICK</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="max-width:1600px; margin:24px auto; padding:16px 20px; background:#1a1a22; border-radius:16px; border:1px solid #2a2a35;">
+  <div style="font-size:14px; font-weight:700; margin-bottom:12px;">E안 (Subtle Speech) 구현 시 변경 포인트</div>
+  <div style="font-size:12px; color:#aaa; line-height:1.8;">
+    <div><span style="color:#7A4AE2;">1.</span> <code>mihoScale</code>: spring 0→1 제거 → <code>withTiming(1, {duration:250})</code> fade만</div>
+    <div><span style="color:#7A4AE2;">2.</span> <code>speechBubbleScale</code>: bounce/shake/heartbeat 제거 → <code>withTiming</code> + <code>translateY(12→0)</code></div>
+    <div><span style="color:#7A4AE2;">3.</span> <code>glowScale</code> 반복 pulse 완전 제거 → 정적 glow만 유지</div>
+    <div><span style="color:#7A4AE2;">4.</span> <code>sparkleOpacity</code> 반복 깜빡임 제거 → 등장 시 1회 fade-in만</div>
+    <div><span style="color:#7A4AE2;">5. Confetti 컴포넌트 완전 제거</span> (Legendary도 stripe + 정적 sparkle로 대체)</div>
+    <div><span style="color:#7A4AE2;">6.</span> Rarity → 말풍선 상단 <code>color stripe bar</code>로 표현 (3px 높이 그라데이션)</div>
+    <div><span style="color:#7A4AE2;">7.</span> 미호 이미지 크기 100→80px, 위치 미세 조정</div>
+  </div>
+</div>
+
+</body>
+</html>

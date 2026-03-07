@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nudge Banner - 배치 아이디어</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #7A4AE2;
+    --primary-light: #E2D5FF;
+    --primary-bg: rgba(122, 74, 226, 0.08);
+    --deep: #49386E;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: #f0f0f0;
+    padding: 20px;
+  }
+
+  h1 { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 8px; }
+  .problem {
+    text-align: center; font-size: 13px; color: #c00;
+    background: #fff0f0; border-radius: 10px; padding: 10px 16px;
+    max-width: 600px; margin: 0 auto 32px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .concept { background: #e8e8e8; border-radius: 20px; overflow: hidden; }
+  .concept-header { padding: 16px 20px; }
+  .concept-header h2 { font-size: 16px; font-weight: 700; }
+  .concept-header p { font-size: 12px; color: #666; margin-top: 4px; }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px; margin-top: 6px; color: #fff;
+  }
+  .tag-best { background: var(--primary); }
+  .tag-good { background: #333; }
+  .tag-creative { background: #FF6B9D; }
+
+  /* Shared phone frame */
+  .phone-frame {
+    width: 375px; margin: 0 auto; padding: 0 16px 20px;
+  }
+
+  /* Video card mockup */
+  .video-card {
+    width: 100%; aspect-ratio: 1;
+    border-radius: 20px; overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #1a0533 0%, #2d1b4e 30%, #1a2744 60%, #0d1f3c 100%);
+  }
+
+  .video-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(122, 74, 226, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 60%, rgba(100, 60, 200, 0.1) 0%, transparent 50%);
+  }
+
+  .card-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 24px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  }
+
+  .flag-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .flag {
+    width: 28px; height: 28px; border-radius: 14px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .headline {
+    font-size: 24px; font-weight: 700; color: #fff;
+    line-height: 1.3; margin-bottom: 4px;
+  }
+
+  .sub-text { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 2px; }
+
+  .typing-row {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .typing-white { font-size: 16px; font-weight: 700; color: #fff; }
+  .typing-purple { font-size: 16px; font-weight: 700; color: var(--primary-light); }
+
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .kw-chip {
+    padding: 4px 12px; border-radius: 14px;
+    background: rgba(255,255,255,0.15);
+    font-size: 12px; color: #fff;
+  }
+  .kw-chip.active { background: var(--primary); }
+
+  /* GlowButton mockup */
+  .glow-btn {
+    margin-top: 16px;
+    width: 100%; padding: 16px;
+    border-radius: 16px; border: 3px solid #6B3FD4;
+    background: linear-gradient(135deg, #9B6DFF, #7A4AE2, #6B3FD4);
+    color: #fff; font-size: 18px; font-weight: 700;
+    text-align: center;
+  }
+
+  /* ========================
+     A. 카드 외부 배치
+     ======================== */
+  .nudge-outside {
+    margin-top: 12px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .nudge-outside .icon-circle {
+    width: 40px; height: 40px; border-radius: 20px;
+    background: var(--primary-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .nudge-outside .info { flex: 1; }
+  .nudge-outside .info-title { font-size: 13px; font-weight: 700; color: #1A1A1A; }
+  .nudge-outside .info-desc { font-size: 11px; color: #888; margin-top: 2px; }
+
+  .nudge-outside .arrow {
+    font-size: 16px; color: var(--primary); font-weight: 700;
+  }
+
+  /* ========================
+     B. 글래스모피즘 (카드 내부)
+     ======================== */
+  .nudge-glass {
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .nudge-glass .glass-icon {
+    font-size: 20px;
+  }
+
+  .nudge-glass .glass-info { flex: 1; }
+  .nudge-glass .glass-title { font-size: 12px; font-weight: 700; color: #fff; }
+  .nudge-glass .glass-desc { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+
+  .nudge-glass .glass-btn {
+    padding: 6px 14px; border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    font-size: 12px; font-weight: 700; color: #fff;
+    white-space: nowrap;
+  }
+
+  /* ========================
+     C. 플로팅 미니 칩 (카드 상단)
+     ======================== */
+  .floating-chip {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    z-index: 2;
+  }
+
+  .floating-chip .fc-dot {
+    width: 8px; height: 8px; border-radius: 4px;
+    background: var(--primary);
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  .floating-chip .fc-text {
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+
+  /* ========================
+     D. 버튼 영역에 통합
+     ======================== */
+  .integrated-nav {
+    margin-top: 12px;
+  }
+
+  .nav-hint {
+    display: flex; align-items: center; gap: 6px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .nav-hint .hint-icon {
+    font-size: 14px;
+  }
+
+  .nav-hint .hint-text {
+    font-size: 12px; color: #888;
+  }
+
+  .nav-hint .hint-badge {
+    font-size: 10px; font-weight: 700;
+    background: var(--primary);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+
+  /* ========================
+     E. 하단 스트립 오버레이
+     ======================== */
+  .bottom-strip {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 70%, rgba(255,255,255,0) 100%);
+    padding: 32px 20px 16px;
+    border-radius: 0 0 20px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .bottom-strip .strip-info { flex: 1; }
+  .bottom-strip .strip-label {
+    font-size: 12px; font-weight: 700; color: var(--primary);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .bottom-strip .strip-desc { font-size: 11px; color: #666; margin-top: 2px; }
+
+  .bottom-strip .strip-btn {
+    padding: 8px 16px; border-radius: 10px;
+    background: var(--primary);
+    font-size: 12px; font-weight: 700; color: #fff;
+    white-space: nowrap;
+  }
+
+  /* ========================
+     F. 카드 외부 + 프로그레스
+     ======================== */
+  .nudge-card-outside {
+    margin-top: 12px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .nco-top {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .nco-emoji { font-size: 28px; }
+
+  .nco-info { flex: 1; }
+  .nco-title {
+    font-size: 14px; font-weight: 700; color: #1A1A1A;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .nco-badge {
+    font-size: 10px; font-weight: 700;
+    background: var(--primary); color: #fff;
+    padding: 2px 6px; border-radius: 6px;
+  }
+
+  .nco-desc { font-size: 12px; color: #888; margin-top: 3px; }
+
+  .nco-progress-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .nco-bar {
+    flex: 1; height: 6px;
+    background: #F0F0F0; border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .nco-fill {
+    height: 100%; width: 35%;
+    background: var(--primary); border-radius: 3px;
+  }
+
+  .nco-pct { font-size: 12px; font-weight: 700; color: var(--primary); }
+
+  .nco-btn {
+    width: 100%; padding: 12px;
+    background: var(--primary); color: #fff;
+    border-radius: 12px;
+    font-size: 14px; font-weight: 700;
+    text-align: center;
+  }
+
+  /* Comparison */
+  .comparison {
+    max-width: 1200px; margin: 48px auto 0;
+    background: #fff; border-radius: 20px; padding: 24px;
+  }
+  .comparison h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  .comparison table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .comparison th {
+    text-align: left; padding: 10px 8px;
+    background: #F8F9FA; font-weight: 600;
+    border-bottom: 1px solid #eee;
+  }
+  .comparison td {
+    padding: 10px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top;
+  }
+  .check { color: var(--primary); font-weight: 700; }
+  .star { color: #FFB02E; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<h1>Nudge Banner - 배치 아이디어</h1>
+<p class="subtitle">영상 카드 가림 문제 해결을 위한 6가지 접근</p>
+<p class="problem">문제: 흰 배경 배너가 영상 카드 내부에 위치하여 영상을 가림</p>
+
+<div class="grid">
+
+  <!-- ================================
+       A. 카드 외부 배치 (컴팩트)
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>A. 카드 외부 - 컴팩트 행</h2>
+      <p>배너를 카드 바깥, 버튼 위에 배치. 영상 0% 가림</p>
+      <span class="tag tag-best">추천</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <div class="card-content">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+        </div>
+      </div>
+      <!-- 카드 바깥에 배치 -->
+      <div class="nudge-outside">
+        <div class="icon-circle">🎯</div>
+        <div class="info">
+          <div class="info-title">매칭 품질 UP</div>
+          <div class="info-desc">선호도를 설정하면 더 잘 맞는 상대를 찾아드려요</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+      <div class="glow-btn">선호도 설정하고 시작하기</div>
+    </div>
+  </div>
+
+  <!-- ================================
+       B. 글래스모피즘 (카드 내부)
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>B. 글래스모피즘</h2>
+      <p>반투명 블러 배경으로 영상 비침. 분위기 유지</p>
+      <span class="tag tag-good">분위기 유지</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <div class="card-content">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+          <!-- 글래스 배너 -->
+          <div class="nudge-glass">
+            <span class="glass-icon">🎯</span>
+            <div class="glass-info">
+              <div class="glass-title">매칭 품질 UP</div>
+              <div class="glass-desc">선호도 설정으로 품질 향상</div>
+            </div>
+            <div class="glass-btn">설정</div>
+          </div>
+        </div>
+      </div>
+      <div class="glow-btn">선호도 설정하고 시작하기</div>
+    </div>
+  </div>
+
+  <!-- ================================
+       C. 플로팅 미니 칩
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>C. 플로팅 미니 칩</h2>
+      <p>카드 우상단 작은 알림 칩. 최소 가림 + 펄스 애니메이션</p>
+      <span class="tag tag-creative">미니멀</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <!-- 플로팅 칩 -->
+        <div class="floating-chip">
+          <div class="fc-dot"></div>
+          <span class="fc-text">선호도 설정</span>
+        </div>
+        <div class="card-content">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+        </div>
+      </div>
+      <div class="glow-btn">선호도 설정하고 시작하기</div>
+    </div>
+  </div>
+
+  <!-- ================================
+       D. 버튼 영역에 힌트 텍스트 통합
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>D. 버튼 힌트 통합</h2>
+      <p>배너 제거, 버튼 위에 한 줄 힌트만. 영상 100% 노출</p>
+      <span class="tag tag-good">가장 심플</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <div class="card-content">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+        </div>
+      </div>
+      <!-- 배너 없음, 힌트 텍스트만 -->
+      <div class="integrated-nav">
+        <div class="nav-hint">
+          <span class="hint-icon">🎯</span>
+          <span class="hint-text">선호도를 설정하면 매칭 품질이 올라가요</span>
+          <span class="hint-badge">UP</span>
+        </div>
+        <div class="glow-btn" style="margin-top: 0">선호도 설정하고 시작하기</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       E. 하단 그라데이션 스트립
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>E. 하단 페이드 스트립</h2>
+      <p>카드 하단에 흰→투명 그라데이션 오버레이. 자연스러운 전환</p>
+      <span class="tag tag-creative">자연스러움</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <div class="card-content" style="padding-bottom: 0;">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+        </div>
+        <!-- 하단 스트립 -->
+        <div class="bottom-strip">
+          <div class="strip-info">
+            <div class="strip-label">🎯 매칭 품질 <span style="color: var(--primary); font-weight:700;">UP</span></div>
+            <div class="strip-desc">선호도 설정으로 더 정확한 매칭</div>
+          </div>
+          <div class="strip-btn">설정하기</div>
+        </div>
+      </div>
+      <div class="glow-btn">선호도 설정하고 시작하기</div>
+    </div>
+  </div>
+
+  <!-- ================================
+       F. 카드 외부 + 프로그레스 (풀)
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>F. 카드 외부 - 풀 카드</h2>
+      <p>프로그레스 바 포함 풀 카드. A의 확장형. 정보량 최대</p>
+      <span class="tag tag-best">정보 풍부</span>
+    </div>
+    <div class="phone-frame">
+      <div class="video-card">
+        <div class="card-content">
+          <div class="flag-row"><div class="flag">🇰🇷</div><div class="flag">🇯🇵</div></div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-text">바다 건너</div>
+          <div class="typing-row">
+            <span class="typing-white">나와 맞는</span>
+            <span class="typing-purple">#여행</span>
+          </div>
+          <span class="typing-white">친구를 찾아보세요</span>
+          <div class="chip-row">
+            <div class="kw-chip active">#여행</div>
+            <div class="kw-chip">#음악</div>
+            <div class="kw-chip">#카페</div>
+          </div>
+        </div>
+      </div>
+      <!-- 외부 풀 카드 -->
+      <div class="nudge-card-outside">
+        <div class="nco-top">
+          <div class="nco-emoji">🎯</div>
+          <div class="nco-info">
+            <div class="nco-title">매칭 선호도 설정 <span class="nco-badge">UP</span></div>
+            <div class="nco-desc">선호도를 설정하면 더 잘 맞는 상대를 찾아드려요</div>
+          </div>
+        </div>
+        <div class="nco-progress-row">
+          <div class="nco-bar"><div class="nco-fill"></div></div>
+          <span class="nco-pct">35%</span>
+        </div>
+        <div class="nco-btn">선호도 설정하기</div>
+      </div>
+      <div class="glow-btn">선호도 설정하고 시작하기</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Comparison -->
+<div class="comparison">
+  <h2>비교 정리</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th>A. 외부 컴팩트</th>
+        <th>B. 글래스</th>
+        <th>C. 미니 칩</th>
+        <th>D. 힌트 통합</th>
+        <th>E. 페이드 스트립</th>
+        <th>F. 외부 풀</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>영상 가림</strong></td>
+        <td class="check">0%</td>
+        <td>15% (반투명)</td>
+        <td class="check">~2%</td>
+        <td class="check">0%</td>
+        <td>10% (페이드)</td>
+        <td class="check">0%</td>
+      </tr>
+      <tr>
+        <td><strong>정보 전달</strong></td>
+        <td>중간</td>
+        <td>중간</td>
+        <td>최소</td>
+        <td>한 줄</td>
+        <td>중간</td>
+        <td class="star">최대</td>
+      </tr>
+      <tr>
+        <td><strong>탭 유도력</strong></td>
+        <td class="star">높음</td>
+        <td>중간</td>
+        <td>낮음</td>
+        <td>버튼에 집중</td>
+        <td>중간</td>
+        <td class="star">높음</td>
+      </tr>
+      <tr>
+        <td><strong>구현 난이도</strong></td>
+        <td>쉬움</td>
+        <td>중간 (blur)</td>
+        <td>쉬움</td>
+        <td class="check">매우 쉬움</td>
+        <td>쉬움</td>
+        <td>쉬움</td>
+      </tr>
+      <tr>
+        <td><strong>추천 이유</strong></td>
+        <td class="check">균형 최적</td>
+        <td>분위기 유지</td>
+        <td>미니멀 추구 시</td>
+        <td>배너 불필요 시</td>
+        <td>영상 자연 전환</td>
+        <td>CTA 강조 시</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

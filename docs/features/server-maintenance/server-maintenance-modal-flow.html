@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Server Maintenance Modal - Feature Spec</title>
+<style>
+  :root {
+    --brand-primary: #7A4AE2;
+    --brand-cta: #3871FF;
+    --brand-on-primary: #FFFFFF;
+    --brand-accent: #A892D7;
+    --brand-secondary: #9747FF;
+    --brand-deep: #49386E;
+    --brand-light: #E2D5FF;
+    --brand-primary-light: #E2D5FF;
+    --surface-bg: #FFFFFF;
+    --surface-card: #FFFFFF;
+    --surface-surface: #F8F9FA;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --surface-other: #E1D9FF;
+    --surface-disabled: #E5E7EB;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --text-inverse: #FFFFFF;
+    --border-smooth: #e4e2e2;
+    --border-default: #AEAEAE;
+    --border-card: #E5E8EB;
+    --state-error: #FF0000;
+    --state-warning: #FFB02E;
+    --state-success: #22C55E;
+    --state-info: #0000FF;
+    --overlay-scrim: rgba(0, 0, 0, 0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Segoe UI', Roboto, sans-serif;
+    background: #F8F9FA;
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== Top Header ========== */
+  .top-header {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+    color: #fff;
+    padding: 48px 24px 24px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(122, 74, 226, 0.3);
+  }
+  .top-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .top-header p {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 6px;
+  }
+  .top-header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ========== Navigation ========== */
+  .nav-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background: #fff;
+    border-bottom: 1px solid var(--border-smooth);
+    position: sticky;
+    top: 100px;
+    z-index: 99;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-tab {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid var(--brand-light);
+    background: #fff;
+    color: var(--brand-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover, .nav-tab.active {
+    background: var(--brand-primary);
+    color: #fff;
+    border-color: var(--brand-primary);
+  }
+
+  /* ========== Section Layout ========== */
+  .section {
+    display: none;
+    padding: 24px 16px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--brand-primary);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--brand-deep);
+    display: inline;
+    vertical-align: middle;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* ========== Cards ========== */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-card);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-deep);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon {
+    font-size: 18px;
+  }
+
+  /* ========== Flow Diagram ========== */
+  .flow-container {
+    padding: 8px 0;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .flow-step:last-child { margin-bottom: 0; }
+
+  .flow-node-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .flow-node {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .flow-node.error { background: #FFF0F0; border: 2px solid var(--state-error); }
+  .flow-node.process { background: var(--surface-secondary); border: 2px solid var(--brand-primary); }
+  .flow-node.event { background: #FFF8E0; border: 2px solid var(--state-warning); }
+  .flow-node.component { background: #F0F7FF; border: 2px solid var(--brand-cta); }
+  .flow-node.logic { background: var(--surface-tertiary); border: 2px solid var(--brand-accent); }
+  .flow-node.ui { background: #F0FFF0; border: 2px solid var(--state-success); }
+  .flow-node.action { background: #FFF0F8; border: 2px solid #F70A8D; }
+
+  .flow-connector {
+    width: 2px;
+    height: 20px;
+    background: var(--border-default);
+    flex-shrink: 0;
+  }
+
+  .flow-content {
+    flex: 1;
+    padding-top: 8px;
+  }
+  .flow-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+  }
+  .flow-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.5;
+  }
+  .flow-code {
+    display: inline-block;
+    background: var(--surface-surface);
+    border: 1px solid var(--border-card);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--brand-primary);
+  }
+  .flow-branch {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--surface-surface);
+    border-radius: 8px;
+    font-size: 12px;
+    border-left: 3px solid var(--brand-accent);
+  }
+  .flow-branch strong {
+    color: var(--brand-deep);
+  }
+
+  /* ========== Phone Mockup ========== */
+  .mockup-center {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .phone {
+    width: 300px;
+    min-height: 580px;
+    border: 3px solid #1a1a1a;
+    border-radius: 40px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255,255,255,0.1);
+  }
+  .phone-notch {
+    width: 120px;
+    height: 28px;
+    background: #1a1a1a;
+    border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 5;
+  }
+  .phone-screen {
+    min-height: calc(100% - 28px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 20px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .status-bar .time { font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 4px; font-size: 10px; }
+
+  /* App content behind modal */
+  .app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-smooth);
+  }
+  .app-header .back { font-size: 18px; color: var(--text-primary); }
+  .app-body {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .placeholder-line {
+    height: 12px;
+    background: var(--surface-surface);
+    border-radius: 6px;
+  }
+  .placeholder-line.short { width: 60%; }
+  .placeholder-line.medium { width: 80%; }
+  .placeholder-card {
+    height: 80px;
+    background: var(--surface-surface);
+    border-radius: 12px;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--overlay-scrim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal-card {
+    width: 260px;
+    background: var(--surface-bg);
+    border-radius: 16px;
+    padding: 28px 20px 20px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  .modal-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    line-height: 1;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+  .modal-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    white-space: pre-line;
+  }
+  .modal-btn {
+    width: 100%;
+    padding: 13px 0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.2px;
+  }
+  .modal-btn.primary {
+    background: var(--brand-primary);
+    color: var(--text-inverse);
+  }
+  .modal-btn.primary:hover {
+    background: #6B3CD0;
+  }
+  .modal-btn.secondary {
+    background: var(--surface-surface);
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .modal-btn.secondary:hover {
+    background: #EDEFF2;
+  }
+  .modal-info-text {
+    font-size: 11px;
+    color: var(--text-disabled);
+    margin-top: 14px;
+  }
+  .modal-lock-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 10px;
+    background: var(--surface-surface);
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--text-disabled);
+    font-weight: 600;
+  }
+
+  /* ========== Logic Diagrams (Section 4) ========== */
+  .logic-group {
+    margin-bottom: 24px;
+  }
+  .logic-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand-deep);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logic-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--brand-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--border-card);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: var(--surface-surface);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 14px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--brand-light);
+  }
+  .timeline-item.blocked::before {
+    background: var(--state-error);
+    box-shadow: 0 0 0 2px #FFD4D4;
+  }
+  .timeline-item.success::before {
+    background: var(--state-success);
+    box-shadow: 0 0 0 2px #D4FFD4;
+  }
+  .timeline-item .tl-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .timeline-item .tl-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Debounce visualization */
+  .debounce-viz {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .debounce-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .debounce-bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--surface-surface);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-card);
+  }
+  .debounce-bar {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .debounce-bar.window {
+    background: var(--brand-primary);
+    opacity: 0.8;
+  }
+  .debounce-bar.blocked {
+    background: var(--state-error);
+    opacity: 0.5;
+  }
+  .debounce-bar.pass {
+    background: var(--state-success);
+    opacity: 0.8;
+  }
+  .debounce-label {
+    width: 50px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .debounce-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .debounce-legend span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .debounce-legend .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* State machine */
+  .state-machine {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 16px 0;
+  }
+  .state-box {
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 100px;
+    position: relative;
+  }
+  .state-box.idle {
+    background: var(--surface-surface);
+    border: 2px solid var(--border-card);
+    color: var(--text-secondary);
+  }
+  .state-box.showing {
+    background: var(--surface-secondary);
+    border: 2px solid var(--brand-primary);
+    color: var(--brand-primary);
+  }
+  .state-box.retrying {
+    background: #FFF8E0;
+    border: 2px solid var(--state-warning);
+    color: #B57A00;
+  }
+  .state-box.persistent {
+    background: #FFF0F0;
+    border: 2px solid var(--state-error);
+    color: var(--state-error);
+  }
+  .state-box .state-label {
+    font-size: 10px;
+    color: var(--text-disabled);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .state-arrow {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    color: var(--text-disabled);
+  }
+
+  /* ========== Checklist (Section 5) ========== */
+  .checklist-file {
+    padding: 14px 16px;
+    background: var(--surface-surface);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--brand-primary);
+  }
+  .checklist-file.new {
+    border-left-color: var(--state-success);
+  }
+  .checklist-file.modify {
+    border-left-color: var(--state-warning);
+  }
+  .checklist-file .file-path {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    color: var(--brand-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .checklist-file .file-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+  }
+  .checklist-file .file-badge.new-badge {
+    background: #E8F5E9;
+    color: #2E7D32;
+  }
+  .checklist-file .file-badge.mod-badge {
+    background: #FFF3E0;
+    color: #E65100;
+  }
+  .checklist-file .file-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Code block */
+  .code-block {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid #313244;
+  }
+  .code-block .comment { color: #6c7086; }
+  .code-block .keyword { color: #cba6f7; }
+  .code-block .string { color: #a6e3a1; }
+  .code-block .func { color: #89b4fa; }
+  .code-block .num { color: #fab387; }
+  .code-block .type { color: #f9e2af; }
+  .code-block .punct { color: #9399b2; }
+  .code-block .var { color: #f38ba8; }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 480px) {
+    .top-header { padding: 40px 16px 16px; }
+    .top-header h1 { font-size: 18px; }
+    .section { padding: 16px 12px 40px; }
+    .phone { width: 280px; min-height: 540px; }
+    .modal-card { width: 240px; padding: 24px 16px 16px; }
+    .flow-step { gap: 12px; }
+  }
+
+  /* ========== Utility ========== */
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .text-center { text-align: center; }
+  .text-sm { font-size: 12px; }
+  .text-muted { color: var(--text-muted); }
+  .text-brand { color: var(--brand-primary); }
+  .fw-600 { font-weight: 600; }
+
+  .info-box {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .info-box.purple {
+    background: var(--surface-secondary);
+    border-left: 3px solid var(--brand-primary);
+    color: var(--text-secondary);
+  }
+  .info-box.yellow {
+    background: #FFFBEB;
+    border-left: 3px solid var(--state-warning);
+    color: var(--text-secondary);
+  }
+  .info-box.red {
+    background: #FFF5F5;
+    border-left: 3px solid var(--state-error);
+    color: var(--text-secondary);
+  }
+  .info-box strong { color: var(--brand-deep); }
+
+  .divider {
+    height: 1px;
+    background: var(--border-card);
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Top Header ===== -->
+<div class="top-header">
+  <h1>Server Maintenance Modal</h1>
+  <p>502/503 Error Handling - Feature Specification</p>
+  <div class="badge">Sometimes App - 2026.02</div>
+</div>
+
+<!-- ===== Navigation ===== -->
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab active" onclick="showSection(0)">1. Flow Diagram</div>
+  <div class="nav-tab" onclick="showSection(1)">2. 502 Modal</div>
+  <div class="nav-tab" onclick="showSection(2)">3. 503 Modal</div>
+  <div class="nav-tab" onclick="showSection(3)">4. Retry & Debounce</div>
+  <div class="nav-tab" onclick="showSection(4)">5. Implementation</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SECTION 1: Flow Diagram                                               -->
+<!-- ===================================================================== -->
+<div class="section active" id="section-0">
+  <div class="section-header">
+    <span class="section-number">1</span>
+    <h2 class="section-title">Technical Flow Diagram</h2>
+    <p class="section-desc">HTTP 502/503 응답부터 사용자 모달 표시까지의 전체 데이터 흐름</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#9881;</span> Event-Driven Architecture</div>
+
+    <div class="info-box purple mb-16">
+      <strong>기존 패턴 재사용:</strong> <code class="flow-code">auth:loginRequired</code> 이벤트와 동일한 아키텍처.
+      Axios interceptor &rarr; eventBus &rarr; Listener component &rarr; useModal() 패턴을 그대로 따른다.
+    </div>
+
+    <div class="flow-container">
+      <!-- Step 1 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node error">&#9889;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">HTTP 502/503 Response</div>
+          <div class="flow-detail">서버가 Bad Gateway(502) 또는 Service Unavailable(503) 응답을 반환</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node process">&#8595;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">Axios Response Interceptor</div>
+          <div class="flow-detail">
+            <span class="flow-code">axiosClient.interceptors.response</span> 에서 status 감지<br>
+            기존 5xx 에러 리포트(<span class="flow-code">reportClientError</span>)는 유지
+          </div>
+          <div class="flow-branch">
+            <strong>분기:</strong> status === 502 &rarr; type: <span class="flow-code">'temporary'</span><br>
+            <strong>분기:</strong> status === 503 &rarr; type: <span class="flow-code">'maintenance'</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node event">&#9889;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">eventBus.emit('server:maintenance')</div>
+          <div class="flow-detail">
+            Payload: <span class="flow-code">{ type: 'temporary' | 'maintenance', config: AxiosRequestConfig }</span><br>
+            실패한 요청의 config 객체를 함께 전달하여 재시도에 사용
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node component">&#9634;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">ServerMaintenanceListener Component</div>
+          <div class="flow-detail">
+            <span class="flow-code">app/_layout.tsx</span>에 등록된 리스너 컴포넌트<br>
+            <span class="flow-code">useServerMaintenanceModal()</span> 훅을 호출
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node logic">&#8987;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">Debounce Check (3s Window)</div>
+          <div class="flow-detail">
+            <span class="flow-code">lastShownRef</span>로 3초 이내 중복 모달 표시 방지<br>
+            여러 API가 동시에 502를 반환해도 모달은 1회만 표시
+          </div>
+          <div class="flow-branch">
+            <strong>3초 이내 재발생:</strong> 무시 (이미 모달 표시 중)<br>
+            <strong>3초 경과 후:</strong> 새 모달 표시 허용
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node ui">&#9744;</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">showModal() - Modal Display</div>
+          <div class="flow-detail">
+            <span class="flow-code">useModal().showModal()</span> 호출<br>
+            type에 따라 502(일시적 오류) 또는 503(서버 점검) 모달 분기<br>
+            <span class="flow-code">dismissable: false</span> - 백드롭 탭으로 닫기 불가
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="flow-step">
+        <div class="flow-node-col">
+          <div class="flow-node action">&#8635;</div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label">User Action: "다시 시도" / "확인"</div>
+          <div class="flow-detail">
+            <strong>502 (다시 시도):</strong> <span class="flow-code">hideModal()</span> + 저장된 config로 요청 재시도<br>
+            <strong>502 (닫기):</strong> <span class="flow-code">hideModal()</span>만 수행<br>
+            <strong>503 (확인):</strong> <span class="flow-code">hideModal()</span>만 수행 (재시도 불필요)
+          </div>
+          <div class="flow-branch">
+            <strong>재시도 성공:</strong> 모달 닫힘, 정상 플로우 복귀<br>
+            <strong>재시도 실패:</strong> 모달 유지 + 메시지 변경 "계속 오류가 발생하고 있어요"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture comparison -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128269;</span> 기존 패턴 대비 비교</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <thead>
+        <tr style="background:var(--surface-surface);">
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep);">구성요소</th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--text-muted);">auth:loginRequired (기존)</th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-primary);">server:maintenance (신규)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Trigger</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">401 + refresh 실패</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">502 / 503 응답</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Event</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);"><code class="flow-code">auth:loginRequired</code></td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);"><code class="flow-code">server:maintenance</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Listener</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">LoginRequiredModalListener</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">ServerMaintenanceListener</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Hook</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">useLoginRequiredModal</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">useServerMaintenanceModal</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Debounce</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">1000ms</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">3000ms (동시 다발 502 대응)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">Dismissable</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">true (기본)</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">false</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600;">Retry</td>
+          <td style="padding:8px 12px;">없음 (로그인 페이지 이동)</td>
+          <td style="padding:8px 12px;">있음 (502만, 저장된 config 재시도)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SECTION 2: 502 Modal UI                                               -->
+<!-- ===================================================================== -->
+<div class="section" id="section-1">
+  <div class="section-header">
+    <span class="section-number">2</span>
+    <h2 class="section-title">502 Modal - 일시적 오류</h2>
+    <p class="section-desc">Bad Gateway 응답 시 표시되는 일시적 오류 모달 UI</p>
+  </div>
+
+  <div class="info-box purple mb-16">
+    <strong>표시 조건:</strong> HTTP 502 응답 수신 시. 서버가 일시적으로 불안정한 상태로, 사용자에게 재시도 옵션을 제공한다.<br>
+    <strong>dismissable:</strong> false - 반드시 버튼을 통해서만 닫을 수 있다.
+  </div>
+
+  <div class="mockup-center">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">&#9679; &#9679; &#9679;</span>
+        </div>
+
+        <!-- Blurred app content behind modal -->
+        <div class="app-content" style="filter: blur(1px); opacity: 0.4;">
+          <div class="app-header">
+            <span class="back">&larr;</span>
+            <span>Sometimes</span>
+          </div>
+          <div class="app-body">
+            <div class="placeholder-card"></div>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line medium"></div>
+            <div class="placeholder-line short"></div>
+            <div class="placeholder-card"></div>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line medium"></div>
+          </div>
+        </div>
+
+        <!-- Modal overlay -->
+        <div class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-lock-badge">&#128274; 닫기 불가</div>
+            <!-- Icon: wrench / cloud error -->
+            <div class="modal-icon">
+              <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto; display:block;">
+                <!-- Cloud body -->
+                <ellipse cx="26" cy="28" rx="18" ry="12" fill="#F7F3FF" stroke="#7A4AE2" stroke-width="2"/>
+                <ellipse cx="18" cy="24" rx="10" ry="10" fill="#F7F3FF" stroke="#7A4AE2" stroke-width="2"/>
+                <ellipse cx="32" cy="22" rx="8" ry="8" fill="#F7F3FF" stroke="#7A4AE2" stroke-width="2"/>
+                <!-- Fill gap -->
+                <rect x="14" y="22" width="24" height="12" fill="#F7F3FF"/>
+                <!-- Exclamation -->
+                <rect x="24.5" y="24" width="3" height="8" rx="1.5" fill="#7A4AE2"/>
+                <circle cx="26" cy="36" r="1.8" fill="#7A4AE2"/>
+              </svg>
+            </div>
+            <div class="modal-title">일시적인 오류가 발생했어요</div>
+            <div class="modal-body">서버가 잠시 불안정해요.
+잠시 후 다시 시도해주세요.</div>
+            <button class="modal-btn primary">다시 시도</button>
+            <button class="modal-btn secondary">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spec details -->
+  <div class="card mt-24">
+    <div class="card-title"><span class="icon">&#128196;</span> UI Specifications</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; width:35%; color:var(--brand-deep);">Overlay</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);"><code class="flow-code">rgba(0, 0, 0, 0.5)</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Modal Card</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">width: 300px, borderRadius: 16, padding: 28px 20px 20px, background: #FFFFFF</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Icon</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">Cloud + Exclamation SVG (52x52), color: #7A4AE2, fill: #F7F3FF</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Title</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">17px, weight: 700, color: #000000</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Body</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">14px, color: #7C7C7C, lineHeight: 1.6</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Primary Button</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">"다시 시도" - background: #7A4AE2, color: #FFFFFF, borderRadius: 8</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Secondary Button</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">"닫기" - background: #F8F9FA, color: #7C7C7C, borderRadius: 8</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600; color:var(--brand-deep);">Dismissable</td>
+          <td style="padding:8px 12px;"><code class="flow-code">false</code> - 백드롭 탭 닫기 비활성화</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#127917;</span> Interaction Flow</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-label">"다시 시도" 버튼 클릭</div>
+        <div class="tl-detail">hideModal() 호출 후, 저장된 AxiosRequestConfig로 요청 재시도</div>
+      </div>
+      <div class="timeline-item success">
+        <div class="tl-label">재시도 성공 (2xx)</div>
+        <div class="tl-detail">정상 플로우 복귀. 원래 Promise의 resolve 콜백에 결과 전달</div>
+      </div>
+      <div class="timeline-item blocked">
+        <div class="tl-label">재시도 실패 (502/503 재발)</div>
+        <div class="tl-detail">모달 재표시, 본문 메시지를 "계속 오류가 발생하고 있어요" 로 변경</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-label">"닫기" 버튼 클릭</div>
+        <div class="tl-detail">hideModal()만 호출. 재시도 없이 사용자가 앱을 계속 사용</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SECTION 3: 503 Modal UI                                               -->
+<!-- ===================================================================== -->
+<div class="section" id="section-2">
+  <div class="section-header">
+    <span class="section-number">3</span>
+    <h2 class="section-title">503 Modal - 서버 점검</h2>
+    <p class="section-desc">Service Unavailable 응답 시 표시되는 서버 점검 안내 모달 UI</p>
+  </div>
+
+  <div class="info-box yellow mb-16">
+    <strong>표시 조건:</strong> HTTP 503 응답 수신 시. 서버가 의도적으로 점검 중인 상태.<br>
+    <strong>차이점:</strong> 502와 달리 "다시 시도" 버튼 없이 "확인" 버튼만 제공. 하단에 문의 이메일 표시.
+  </div>
+
+  <div class="mockup-center">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">&#9679; &#9679; &#9679;</span>
+        </div>
+
+        <!-- Blurred app content behind modal -->
+        <div class="app-content" style="filter: blur(1px); opacity: 0.4;">
+          <div class="app-header">
+            <span class="back">&larr;</span>
+            <span>Sometimes</span>
+          </div>
+          <div class="app-body">
+            <div class="placeholder-card"></div>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line medium"></div>
+            <div class="placeholder-line short"></div>
+            <div class="placeholder-card"></div>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line medium"></div>
+          </div>
+        </div>
+
+        <!-- Modal overlay -->
+        <div class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-lock-badge">&#128274; 닫기 불가</div>
+            <!-- Icon: Construction / Maintenance -->
+            <div class="modal-icon">
+              <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto; display:block;">
+                <!-- Hard hat -->
+                <path d="M12 32 C12 32 14 20 26 18 C38 20 40 32 40 32 Z" fill="#F7F3FF" stroke="#7A4AE2" stroke-width="2" stroke-linejoin="round"/>
+                <rect x="10" y="31" width="32" height="5" rx="2.5" fill="#7A4AE2"/>
+                <!-- Wrench -->
+                <path d="M20 38 L24 42" stroke="#A892D7" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M32 38 L28 42" stroke="#A892D7" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Top knob -->
+                <circle cx="26" cy="16" r="3" fill="#7A4AE2"/>
+                <rect x="25" y="13" width="2" height="6" fill="#7A4AE2"/>
+              </svg>
+            </div>
+            <div class="modal-title">서버 점검 중이에요</div>
+            <div class="modal-body">더 나은 서비스를 위해 점검 중이에요.
+곧 정상화될 예정이니 잠시만 기다려주세요.</div>
+            <button class="modal-btn primary">확인</button>
+            <div class="modal-info-text">문의: support@some-in-univ.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spec details -->
+  <div class="card mt-24">
+    <div class="card-title"><span class="icon">&#128196;</span> UI Specifications</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; width:35%; color:var(--brand-deep);">Overlay</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);"><code class="flow-code">rgba(0, 0, 0, 0.5)</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Modal Card</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">width: 300px, borderRadius: 16, padding: 28px 20px 20px, background: #FFFFFF</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Icon</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">Hard hat + Wrench SVG (52x52), color: #7A4AE2, fill: #F7F3FF</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Title</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">17px, weight: 700, color: #000000</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Body</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">14px, color: #7C7C7C, lineHeight: 1.6</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Primary Button</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">"확인" - background: #7A4AE2, color: #FFFFFF, borderRadius: 8</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Secondary Button</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">없음</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600; color:var(--brand-deep);">Info Text</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">"문의: support@some-in-univ.com" - 11px, color: #AEAEAE</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600; color:var(--brand-deep);">Dismissable</td>
+          <td style="padding:8px 12px;"><code class="flow-code">false</code> - 백드롭 탭 닫기 비활성화</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 502 vs 503 comparison -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128260;</span> 502 vs 503 비교</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <thead>
+        <tr style="background:var(--surface-surface);">
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep);"></th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--state-warning);">502 Bad Gateway</th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--state-error);">503 Service Unavailable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">성격</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">일시적 장애 (예상 외)</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">의도적 점검 (계획됨)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">아이콘</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">Cloud + Exclamation</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">Hard hat + Wrench</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">제목</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">일시적인 오류가 발생했어요</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">서버 점검 중이에요</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">재시도 버튼</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">있음 ("다시 시도")</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">없음</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">닫기 버튼</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">있음 (Secondary)</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">없음</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600;">문의 안내</td>
+          <td style="padding:8px 12px;">없음</td>
+          <td style="padding:8px 12px;">있음 (support@some-in-univ.com)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SECTION 4: Retry & Debounce Logic                                     -->
+<!-- ===================================================================== -->
+<div class="section" id="section-3">
+  <div class="section-header">
+    <span class="section-number">4</span>
+    <h2 class="section-title">Retry & Debounce Logic</h2>
+    <p class="section-desc">중복 모달 방지, 재시도 메커니즘, 자동 닫힘의 상세 동작</p>
+  </div>
+
+  <!-- Debounce -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#9202;</span> Debounce: 3초 내 중복 요청 방지</div>
+
+    <div class="info-box purple mb-16">
+      <strong>문제 상황:</strong> 화면 로드 시 여러 API가 동시에 호출되고, 서버 장애 시 모두 502를 반환.
+      debounce 없이는 N개의 모달이 연달아 표시될 수 있다.
+    </div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">1</span> 3초 윈도우 시각화
+      </div>
+
+      <div class="debounce-viz">
+        <div class="debounce-row">
+          <span class="debounce-label">0.0s</span>
+          <div class="debounce-bar-track">
+            <div class="debounce-bar window" style="left:0; width:100%;">
+              GET /users &rarr; 502 &rarr; emit &rarr; showModal()
+            </div>
+          </div>
+        </div>
+        <div class="debounce-row">
+          <span class="debounce-label">0.1s</span>
+          <div class="debounce-bar-track">
+            <div class="debounce-bar blocked" style="left:0; width:70%;">
+              GET /matches &rarr; 502 &rarr; emit &rarr; BLOCKED (3s window)
+            </div>
+          </div>
+        </div>
+        <div class="debounce-row">
+          <span class="debounce-label">0.3s</span>
+          <div class="debounce-bar-track">
+            <div class="debounce-bar blocked" style="left:0; width:70%;">
+              GET /chat &rarr; 502 &rarr; emit &rarr; BLOCKED (3s window)
+            </div>
+          </div>
+        </div>
+        <div class="debounce-row">
+          <span class="debounce-label">0.5s</span>
+          <div class="debounce-bar-track">
+            <div class="debounce-bar blocked" style="left:0; width:70%;">
+              GET /profile &rarr; 502 &rarr; emit &rarr; BLOCKED (3s window)
+            </div>
+          </div>
+        </div>
+        <div class="debounce-row">
+          <span class="debounce-label" style="color:var(--state-success);">3.1s</span>
+          <div class="debounce-bar-track">
+            <div class="debounce-bar pass" style="left:0; width:100%;">
+              (윈도우 만료) 새 502 수신 시 &rarr; showModal() 허용
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="debounce-legend mt-8">
+        <span><span class="dot" style="background:var(--brand-primary);"></span> 모달 표시됨</span>
+        <span><span class="dot" style="background:var(--state-error);"></span> 차단됨 (3s 이내)</span>
+        <span><span class="dot" style="background:var(--state-success);"></span> 윈도우 만료 후 허용</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">2</span> 구현 코드 패턴
+      </div>
+
+      <div class="code-block">
+<span class="keyword">const</span> DEBOUNCE_MS = <span class="num">3000</span>;<br>
+<span class="keyword">const</span> lastShownRef = <span class="func">useRef</span>&lt;<span class="type">number</span>&gt;(<span class="num">0</span>);<br>
+<br>
+<span class="comment">// eventBus 리스너 내부</span><br>
+<span class="keyword">const</span> now = <span class="type">Date</span>.<span class="func">now</span>();<br>
+<span class="keyword">if</span> (now - lastShownRef.<span class="var">current</span> &lt; DEBOUNCE_MS) {<br>
+&nbsp;&nbsp;<span class="keyword">return</span>; <span class="comment">// 3초 이내 중복 → 무시</span><br>
+}<br>
+lastShownRef.<span class="var">current</span> = now;
+      </div>
+    </div>
+  </div>
+
+  <!-- Retry Logic -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#8635;</span> Retry Logic: 재시도 메커니즘</div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">1</span> "다시 시도" 클릭 시 동작 (502만 해당)
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="tl-label">1. 실패한 요청 config 저장</div>
+          <div class="tl-detail">eventBus emit 시 전달받은 <code class="flow-code">AxiosRequestConfig</code>를 ref에 저장</div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-label">2. "다시 시도" 클릭</div>
+          <div class="tl-detail"><code class="flow-code">hideModal()</code> 호출 후, 저장된 config로 <code class="flow-code">axiosClient(config)</code> 재실행</div>
+        </div>
+        <div class="timeline-item success">
+          <div class="tl-label">3-A. 재시도 성공 (2xx)</div>
+          <div class="tl-detail">모달 닫힘 유지. 앱 정상 플로우 복귀. 저장된 config 초기화</div>
+        </div>
+        <div class="timeline-item blocked">
+          <div class="tl-label">3-B. 재시도 실패 (502/503 재발)</div>
+          <div class="tl-detail">모달 재표시 + 메시지 변경: "계속 오류가 발생하고 있어요"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">2</span> State Machine 다이어그램
+      </div>
+
+      <div class="state-machine">
+        <div class="state-box idle">
+          <div class="state-label">Initial</div>
+          Idle
+        </div>
+        <div class="state-arrow">&rarr;</div>
+        <div class="state-box showing">
+          <div class="state-label">502/503 수신</div>
+          Modal Shown
+        </div>
+        <div class="state-arrow">&rarr;</div>
+        <div class="state-box retrying">
+          <div class="state-label">다시 시도</div>
+          Retrying
+        </div>
+      </div>
+
+      <div class="state-machine" style="margin-top: 4px;">
+        <div class="state-box" style="background:#F0FFF0; border:2px solid var(--state-success); color:#2E7D32;">
+          <div class="state-label">재시도 성공</div>
+          Idle (복귀)
+        </div>
+        <div class="state-arrow">&larr;</div>
+        <div class="state-box retrying">
+          <div class="state-label">재시도 중</div>
+          Retrying
+        </div>
+        <div class="state-arrow">&rarr;</div>
+        <div class="state-box persistent">
+          <div class="state-label">재시도 실패</div>
+          Persistent Error
+        </div>
+      </div>
+
+      <div class="info-box red mt-16">
+        <strong>Persistent Error 상태:</strong> 재시도도 실패했을 때. 모달을 다시 표시하되,
+        본문 메시지를 <em>"계속 오류가 발생하고 있어요.\n잠시 후 다시 시도해주세요."</em>로 변경하여
+        사용자에게 지속적 장애임을 인지시킨다.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">3</span> Auto-dismiss: 성공 시 모달 자동 닫힘
+      </div>
+
+      <div class="info-box purple">
+        <strong>동작:</strong> "다시 시도" 버튼 클릭 &rarr; <code class="flow-code">hideModal()</code> 즉시 호출 &rarr; 요청 재시도 시작.<br>
+        성공하면 모달은 이미 닫혀 있으므로 추가 동작 불필요.<br>
+        실패하면 <code class="flow-code">eventBus.emit('server:maintenance')</code>가 다시 발생하여 모달 재표시.
+      </div>
+
+      <div class="code-block mt-12">
+<span class="comment">// "다시 시도" 버튼 핸들러</span><br>
+<span class="keyword">const</span> <span class="func">handleRetry</span> = <span class="keyword">async</span> () =&gt; {<br>
+&nbsp;&nbsp;<span class="func">hideModal</span>();<br>
+&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">await</span> <span class="func">axiosClient</span>(lastFailedConfigRef.<span class="var">current</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 성공 → 모달 이미 닫힘, 정상 복귀</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;lastFailedConfigRef.<span class="var">current</span> = <span class="keyword">null</span>;<br>
+&nbsp;&nbsp;} <span class="keyword">catch</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 실패 → interceptor가 다시 emit → 모달 재표시</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// debounce window를 리셋하여 즉시 표시 허용</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;lastShownRef.<span class="var">current</span> = <span class="num">0</span>;<br>
+&nbsp;&nbsp;}<br>
+};
+      </div>
+    </div>
+  </div>
+
+  <!-- Edge Cases -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#9888;</span> Edge Cases</div>
+
+    <div class="logic-group">
+      <div class="logic-title">
+        <span class="num">A</span> 502 &rarr; 503 전환
+      </div>
+      <div class="info-box yellow">
+        502로 모달을 표시했는데 재시도 시 503이 반환되면, 모달을 503 variant(서버 점검)로 교체한다.
+        eventBus payload의 <code class="flow-code">type</code> 필드로 구분.
+      </div>
+    </div>
+
+    <div class="logic-group mt-16">
+      <div class="logic-title">
+        <span class="num">B</span> 모달 표시 중 다른 API 성공
+      </div>
+      <div class="info-box yellow">
+        502 모달 표시 중 다른 API 호출이 성공하더라도 모달은 유지된다.
+        모달은 사용자의 명시적 액션(버튼 클릭)으로만 닫힌다.
+      </div>
+    </div>
+
+    <div class="logic-group mt-16">
+      <div class="logic-title">
+        <span class="num">C</span> 오프라인 상태와의 구분
+      </div>
+      <div class="info-box yellow">
+        네트워크 연결 끊김(no response)과 502/503(서버 응답 있음)은 다른 상태.
+        <code class="flow-code">error.response</code>가 존재해야 502/503 처리로 진입.
+        <code class="flow-code">error.response</code>가 없으면 기존 네트워크 에러 핸들링 유지.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SECTION 5: Implementation Checklist                                   -->
+<!-- ===================================================================== -->
+<div class="section" id="section-4">
+  <div class="section-header">
+    <span class="section-number">5</span>
+    <h2 class="section-title">Implementation Checklist</h2>
+    <p class="section-desc">생성/수정해야 할 파일 목록과 각 파일의 구현 내용</p>
+  </div>
+
+  <!-- File 1 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128193;</span> 파일 변경 목록</div>
+
+    <div class="checklist-file modify">
+      <div class="file-path">
+        <span class="file-badge mod-badge">MODIFY</span>
+        src/shared/libs/axios.ts
+      </div>
+      <div class="file-desc">
+        응답 인터셉터에 502/503 감지 로직 추가.<br>
+        기존 5xx 에러 리포트(<code class="flow-code">reportClientError</code>) 이후,<br>
+        status가 502 또는 503이면 <code class="flow-code">eventBus.emit('server:maintenance', payload)</code> 호출.
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="comment">// src/shared/libs/axios.ts - 응답 인터셉터 내부</span><br>
+<span class="comment">// 기존 5xx 리포트 블록 아래에 추가</span><br>
+<br>
+<span class="keyword">if</span> (status === <span class="num">502</span> || status === <span class="num">503</span>) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> maintenanceType = status === <span class="num">502</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;? <span class="string">'temporary'</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="string">'maintenance'</span>;<br>
+<br>
+&nbsp;&nbsp;eventBus.<span class="func">emit</span>(<span class="string">'server:maintenance'</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type: maintenanceType,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;config: error.config,<br>
+&nbsp;&nbsp;});<br>
+<br>
+&nbsp;&nbsp;<span class="keyword">return</span> <span class="type">Promise</span>.<span class="func">reject</span>(payload);<br>
+}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="checklist-file new">
+      <div class="file-path">
+        <span class="file-badge new-badge">NEW</span>
+        src/shared/hooks/use-server-maintenance-modal.tsx
+      </div>
+      <div class="file-desc">
+        <code class="flow-code">useLoginRequiredModal</code> 패턴을 따르는 신규 훅.<br>
+        eventBus <code class="flow-code">'server:maintenance'</code> 이벤트를 구독하고, debounce 후 showModal() 호출.
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="keyword">import</span> { useEffect, useRef } <span class="keyword">from</span> <span class="string">'react'</span>;<br>
+<span class="keyword">import</span> { useTranslation } <span class="keyword">from</span> <span class="string">'react-i18next'</span>;<br>
+<span class="keyword">import</span> { eventBus } <span class="keyword">from</span> <span class="string">'../libs/event-bus'</span>;<br>
+<span class="keyword">import</span> { useModal } <span class="keyword">from</span> <span class="string">'./use-modal'</span>;<br>
+<span class="keyword">import</span> axiosClient <span class="keyword">from</span> <span class="string">'../libs/axios'</span>;<br>
+<span class="keyword">import</span> <span class="keyword">type</span> { <span class="type">AxiosRequestConfig</span> } <span class="keyword">from</span> <span class="string">'axios'</span>;<br>
+<br>
+<span class="keyword">const</span> DEBOUNCE_MS = <span class="num">3000</span>;<br>
+<br>
+<span class="keyword">type</span> <span class="type">MaintenancePayload</span> = {<br>
+&nbsp;&nbsp;type: <span class="string">'temporary'</span> | <span class="string">'maintenance'</span>;<br>
+&nbsp;&nbsp;config: <span class="type">AxiosRequestConfig</span>;<br>
+};<br>
+<br>
+<span class="keyword">export function</span> <span class="func">useServerMaintenanceModal</span>() {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> { t } = <span class="func">useTranslation</span>();<br>
+&nbsp;&nbsp;<span class="keyword">const</span> { showModal, hideModal } = <span class="func">useModal</span>();<br>
+&nbsp;&nbsp;<span class="keyword">const</span> lastShownRef = <span class="func">useRef</span>(<span class="num">0</span>);<br>
+&nbsp;&nbsp;<span class="keyword">const</span> lastConfigRef = <span class="func">useRef</span>&lt;<span class="type">AxiosRequestConfig</span> | <span class="keyword">null</span>&gt;(<span class="keyword">null</span>);<br>
+<br>
+&nbsp;&nbsp;<span class="func">useEffect</span>(() =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> unsub = eventBus.<span class="func">on</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'server:maintenance'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(payload: <span class="type">MaintenancePayload</span>) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> now = <span class="type">Date</span>.<span class="func">now</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (now - lastShownRef.current &lt; DEBOUNCE_MS) <span class="keyword">return</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastShownRef.current = now;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastConfigRef.current = payload.config;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (payload.type === <span class="string">'maintenance'</span>) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="func">showMaintenanceModal</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="func">showTemporaryErrorModal</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> unsub;<br>
+&nbsp;&nbsp;}, [showModal, hideModal, t]);<br>
+}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="checklist-file new">
+      <div class="file-path">
+        <span class="file-badge new-badge">NEW</span>
+        src/shared/components/server-maintenance-listener.tsx
+      </div>
+      <div class="file-desc">
+        Listener 컴포넌트. <code class="flow-code">LoginRequiredModalListener</code>와 동일한 패턴.
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="keyword">import</span> { <span class="func">useServerMaintenanceModal</span> } <span class="keyword">from</span><br>
+&nbsp;&nbsp;<span class="string">'../hooks/use-server-maintenance-modal'</span>;<br>
+<br>
+<span class="keyword">export function</span> <span class="func">ServerMaintenanceListener</span>() {<br>
+&nbsp;&nbsp;<span class="func">useServerMaintenanceModal</span>();<br>
+&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">null</span>;<br>
+}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="checklist-file modify">
+      <div class="file-path">
+        <span class="file-badge mod-badge">MODIFY</span>
+        app/_layout.tsx
+      </div>
+      <div class="file-desc">
+        <code class="flow-code">ServerMaintenanceListener</code> 컴포넌트를 ModalProvider 내부에 등록.
+        기존 <code class="flow-code">LoginRequiredModalListener</code> 옆에 배치.
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="comment">{/* app/_layout.tsx - ModalProvider 내부 */}</span><br>
+&lt;<span class="type">ModalProvider</span>&gt;<br>
+&nbsp;&nbsp;&lt;<span class="type">LoginRequiredModalListener</span> /&gt;<br>
+&nbsp;&nbsp;&lt;<span class="type">ServerMaintenanceListener</span> /&gt;  <span class="comment">{/* 추가 */}</span><br>
+&nbsp;&nbsp;{children}<br>
+&lt;/<span class="type">ModalProvider</span>&gt;
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="checklist-file modify">
+      <div class="file-path">
+        <span class="file-badge mod-badge">MODIFY</span>
+        src/shared/libs/i18n (ko.json / ja.json)
+      </div>
+      <div class="file-desc">
+        서버 점검 모달 관련 i18n 키 추가.
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="comment">// ko.json</span><br>
+<span class="string">"server_maintenance"</span>: {<br>
+&nbsp;&nbsp;<span class="string">"temporary_title"</span>: <span class="string">"일시적인 오류가 발생했어요"</span>,<br>
+&nbsp;&nbsp;<span class="string">"temporary_body"</span>: <span class="string">"서버가 잠시 불안정해요.\n잠시 후 다시 시도해주세요."</span>,<br>
+&nbsp;&nbsp;<span class="string">"temporary_body_persistent"</span>: <span class="string">"계속 오류가 발생하고 있어요.\n잠시 후 다시 시도해주세요."</span>,<br>
+&nbsp;&nbsp;<span class="string">"maintenance_title"</span>: <span class="string">"서버 점검 중이에요"</span>,<br>
+&nbsp;&nbsp;<span class="string">"maintenance_body"</span>: <span class="string">"더 나은 서비스를 위해 점검 중이에요.\n곧 정상화될 예정이니 잠시만 기다려주세요."</span>,<br>
+&nbsp;&nbsp;<span class="string">"retry_button"</span>: <span class="string">"다시 시도"</span>,<br>
+&nbsp;&nbsp;<span class="string">"close_button"</span>: <span class="string">"닫기"</span>,<br>
+&nbsp;&nbsp;<span class="string">"confirm_button"</span>: <span class="string">"확인"</span>,<br>
+&nbsp;&nbsp;<span class="string">"contact"</span>: <span class="string">"문의: support@some-in-univ.com"</span><br>
+}
+    </div>
+  </div>
+
+  <!-- Summary checklist -->
+  <div class="card">
+    <div class="card-title"><span class="icon">&#9745;</span> Implementation Summary</div>
+
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <thead>
+        <tr style="background:var(--surface-surface);">
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep); width:5%;">#</th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep); width:35%;">File</th>
+          <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep); width:10%;">Type</th>
+          <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border-card); font-weight:700; color:var(--brand-deep); width:50%;">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">1</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-family:monospace; font-size:11px; color:var(--brand-primary);">src/shared/libs/axios.ts</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); text-align:center;"><span class="file-badge mod-badge">MODIFY</span></td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">502/503 감지 + eventBus emit 추가</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">2</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-family:monospace; font-size:11px; color:var(--brand-primary);">src/shared/hooks/use-server-maintenance-modal.tsx</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); text-align:center;"><span class="file-badge new-badge">NEW</span></td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">이벤트 리스너 + debounce + showModal 로직</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">3</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-family:monospace; font-size:11px; color:var(--brand-primary);">src/shared/components/server-maintenance-listener.tsx</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); text-align:center;"><span class="file-badge new-badge">NEW</span></td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">리스너 컴포넌트 (null render)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-weight:600;">4</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); font-family:monospace; font-size:11px; color:var(--brand-primary);">app/_layout.tsx</td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card); text-align:center;"><span class="file-badge mod-badge">MODIFY</span></td>
+          <td style="padding:8px 12px; border-bottom:1px solid var(--border-card);">ServerMaintenanceListener 등록</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600;">5</td>
+          <td style="padding:8px 12px; font-family:monospace; font-size:11px; color:var(--brand-primary);">src/shared/libs/i18n/*.json</td>
+          <td style="padding:8px 12px; text-align:center;"><span class="file-badge mod-badge">MODIFY</span></td>
+          <td style="padding:8px 12px;">server_maintenance 관련 i18n 키 추가</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="info-box purple">
+      <strong>예상 작업량:</strong> 약 1~2시간.<br>
+      <strong>테스트 방법:</strong> 개발 서버에서 특정 API를 502/503 mock 응답으로 설정하여 확인.<br>
+      <strong>의존성:</strong> 기존 eventBus, ModalProvider, useModal 인프라에 전적으로 의존. 신규 라이브러리 불필요.
+    </div>
+  </div>
+</div>
+
+<!-- ===== JavaScript ===== -->
+<script>
+  function showSection(index) {
+    // Update sections
+    document.querySelectorAll('.section').forEach((s, i) => {
+      s.classList.toggle('active', i === index);
+    });
+    // Update tabs
+    document.querySelectorAll('.nav-tab').forEach((t, i) => {
+      t.classList.toggle('active', i === index);
+    });
+    // Scroll to top of content
+    window.scrollTo({ top: 160, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

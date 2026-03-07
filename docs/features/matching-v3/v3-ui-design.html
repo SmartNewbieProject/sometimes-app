@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V3.1 Matching UI Design — All Scenarios</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --purple: #7A4AE2;
+    --purple-light: #F5F1FF;
+    --purple-pale: #E8DFFF;
+    --purple-deep: #5B2FC9;
+    --purple-glow: rgba(122, 74, 226, 0.25);
+    --orange: #FF8A65;
+    --orange-deep: #EA580C;
+    --orange-light: #FFF3E0;
+    --green: #4CAF50;
+    --green-light: #E8F5E9;
+    --blue: #42A5F5;
+    --blue-light: #E3F2FD;
+    --pink: #FF6B9D;
+    --red: #EF4444;
+    --bg: #F8F6FF;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text-secondary: #6B6B80;
+    --text-muted: #9CA3AF;
+    --border: #E8E4F0;
+    --shadow: rgba(122, 74, 226, 0.08);
+    --shadow-strong: rgba(122, 74, 226, 0.15);
+    --radius: 20px;
+    --phone-w: 320px;
+    --phone-h: 640px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    background: linear-gradient(135deg, #7A4AE2 0%, #5B2FC9 40%, #4A1FB8 100%);
+    padding: 60px 40px 48px;
+    color: white;
+  }
+  .page-header h1 { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; }
+  .page-header .subtitle { font-size: 16px; opacity: 0.8; margin-top: 8px; }
+  .badge-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .hdr-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  }
+
+  /* ── Design Principles ── */
+  .principles {
+    max-width: 1200px; margin: 0 auto; padding: 48px 40px 0;
+  }
+  .principles h2 {
+    font-size: 22px; font-weight: 800; color: var(--purple); margin-bottom: 20px;
+  }
+  .principle-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .principle-card {
+    background: white; border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 20px; text-align: center;
+  }
+  .principle-card .icon { font-size: 32px; margin-bottom: 10px; }
+  .principle-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .principle-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ── Scenario Section ── */
+  .scenarios-container {
+    max-width: 1200px; margin: 0 auto; padding: 48px 40px;
+    display: flex; flex-direction: column; gap: 80px;
+  }
+
+  .scenario-section {
+    display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: start;
+  }
+  .scenario-section:nth-child(even) {
+    grid-template-columns: 360px 1fr;
+  }
+  .scenario-section:nth-child(even) .scenario-info { order: 2; }
+  .scenario-section:nth-child(even) .phone-wrap { order: 1; }
+
+  .scenario-info { padding-top: 16px; }
+  .scenario-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 8px;
+    font-size: 12px; font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .scenario-label.normal { background: var(--green-light); color: #2E7D32; }
+  .scenario-label.rematch { background: var(--orange-light); color: var(--orange-deep); }
+  .scenario-label.transition { background: var(--blue-light); color: #1565C0; }
+  .scenario-label.waiting { background: var(--purple-light); color: var(--purple); }
+  .scenario-label.pending { background: #FFF5F5; color: #C62828; }
+
+  .scenario-info h2 {
+    font-size: 24px; font-weight: 800; letter-spacing: -0.5px;
+    margin-bottom: 10px; line-height: 1.3;
+  }
+  .scenario-info .desc {
+    font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7;
+  }
+  .api-response {
+    background: #1E1E2E; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    overflow-x: auto;
+  }
+  .api-response pre {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 11px; color: #E0DEF0; line-height: 1.5;
+    white-space: pre; tab-size: 2;
+  }
+  .api-response .key { color: #80BFFF; }
+  .api-response .str { color: #98C379; }
+  .api-response .null-val { color: #6B6B80; }
+  .api-response .comment { color: #6A737D; font-style: italic; }
+
+  .design-decisions {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .decision {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.5;
+  }
+  .decision.do { background: #F0FFF0; color: #2E7D32; }
+  .decision.dont { background: #FFF5F5; color: #C62828; }
+  .decision .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  .data-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+  }
+  .data-chip {
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 100px;
+  }
+  .data-chip.primary { background: var(--purple-light); color: var(--purple); }
+  .data-chip.secondary { background: var(--orange-light); color: var(--orange-deep); }
+  .data-chip.none { background: #F3F4F6; color: var(--text-muted); }
+
+  /* ── Phone Mockup ── */
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone {
+    width: var(--phone-w); height: var(--phone-h);
+    background: var(--card); border-radius: 36px;
+    border: 3px solid #E0DBE8; overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px var(--shadow-strong), 0 4px 12px var(--shadow);
+  }
+  .status-bar {
+    height: 44px; background: white;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 24px 6px; font-size: 13px; font-weight: 600;
+  }
+  .status-bar .time { font-weight: 700; }
+  .app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px; background: white;
+  }
+  .app-logo { font-size: 18px; font-weight: 800; color: var(--purple); letter-spacing: -0.5px; }
+  .header-icons { display: flex; gap: 8px; }
+  .h-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--purple-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .phone-content {
+    padding: 10px 14px;
+    background: #FAFAFA;
+    height: calc(var(--phone-h) - 44px - 44px - 60px);
+    overflow-y: auto; position: relative;
+  }
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 60px; background: white;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 0 8px;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px; font-size: 10px; color: var(--text-muted);
+  }
+  .nav-item.active { color: var(--purple); }
+  .nav-dot {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .nav-item.active .nav-dot { background: var(--purple-light); }
+
+  /* ── Match Card (Primary) ── */
+  .match-card {
+    border-radius: 16px; overflow: hidden; position: relative;
+  }
+  .match-card-bg {
+    width: 100%; position: relative;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+  }
+  .match-card-bg.rematch {
+    background: linear-gradient(135deg, #FB923C, #F97316, #EA580C);
+  }
+  .match-card-bg.global {
+    background: linear-gradient(135deg, #42A5F5, #1E88E5, #1565C0);
+  }
+  .match-gradient {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  }
+  .match-info-overlay {
+    position: absolute; bottom: 12px; left: 12px;
+    color: white; z-index: 2;
+  }
+  .match-info-overlay .name { font-size: 16px; font-weight: 700; }
+  .match-info-overlay .tags { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+
+  .timer-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    color: white; padding: 4px 10px; border-radius: 8px;
+    font-size: 12px; font-weight: 700; z-index: 2;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* Category Badge */
+  .category-badge {
+    position: absolute; top: 10px; right: 10px;
+    padding: 4px 12px; border-radius: 100px;
+    font-size: 10px; font-weight: 700;
+    color: white; z-index: 2;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .category-badge.scheduled { background: var(--purple); }
+  .category-badge.rematch { background: var(--orange-deep); }
+  .category-badge.global { background: #1565C0; }
+
+  /* Silhouette */
+  .silhouette {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.15; font-size: 64px;
+  }
+
+  /* Action Buttons */
+  .action-bar {
+    display: flex; gap: 8px; padding: 8px 0;
+  }
+  .act-btn {
+    flex: 1; padding: 10px; border-radius: 12px;
+    text-align: center; font-size: 12px; font-weight: 700; border: none;
+  }
+  .act-btn.like { background: var(--purple); color: white; }
+  .act-btn.pass {
+    background: var(--purple-light); color: var(--purple);
+    border: 2px solid var(--border);
+  }
+  .act-btn.rematch {
+    background: white; color: var(--purple);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+
+  /* ── Secondary Strip (핵심 신규 컴포넌트) ── */
+  .secondary-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 14px;
+    margin-bottom: 10px; cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: white;
+    transition: all 0.2s;
+  }
+  .secondary-strip:hover {
+    border-color: var(--purple-pale);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .secondary-strip.scheduled {
+    border-left: 3px solid var(--purple);
+  }
+  .secondary-strip.rematch {
+    border-left: 3px solid var(--orange-deep);
+  }
+  .secondary-strip.global {
+    border-left: 3px solid #1565C0;
+  }
+  .strip-avatar {
+    width: 40px; height: 40px; border-radius: 10px;
+    flex-shrink: 0; display: flex;
+    align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: 700;
+  }
+  .strip-avatar.scheduled { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+  .strip-avatar.rematch { background: linear-gradient(135deg, #FB923C, #EA580C); }
+  .strip-avatar.global { background: linear-gradient(135deg, #42A5F5, #1565C0); }
+  .strip-avatar.waiting {
+    background: var(--purple-light);
+    color: var(--purple); font-size: 16px;
+  }
+  .strip-text { flex: 1; min-width: 0; }
+  .strip-title {
+    font-size: 12px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .strip-title .cat-tag {
+    font-size: 9px; font-weight: 700; padding: 1px 6px;
+    border-radius: 4px; color: white;
+  }
+  .cat-tag.scheduled { background: var(--purple); }
+  .cat-tag.rematch { background: var(--orange-deep); }
+  .cat-tag.global { background: #1565C0; }
+  .strip-sub {
+    font-size: 10px; color: var(--text-muted); margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .strip-right {
+    text-align: right; flex-shrink: 0;
+  }
+  .strip-timer {
+    font-size: 14px; font-weight: 800; color: var(--purple);
+    letter-spacing: 0.5px;
+  }
+  .strip-timer.rematch { color: var(--orange-deep); }
+  .strip-action-label {
+    font-size: 9px; color: var(--text-muted); margin-top: 1px;
+  }
+  .strip-arrow {
+    font-size: 14px; color: var(--text-muted); flex-shrink: 0;
+  }
+
+  /* ── Waiting State ── */
+  .waiting-card {
+    border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    padding: 40px 20px; text-align: center; color: white;
+    position: relative;
+  }
+  .waiting-card .countdown-label {
+    font-size: 13px; font-weight: 500; opacity: 0.8;
+    margin-bottom: 6px;
+  }
+  .waiting-card .countdown-timer {
+    font-size: 36px; font-weight: 900; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .waiting-card .countdown-date {
+    font-size: 12px; opacity: 0.6;
+  }
+  .waiting-miho {
+    margin-top: 20px;
+    font-size: 48px;
+    opacity: 0.3;
+  }
+
+  /* ── Pending Approval ── */
+  .pending-card {
+    border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    padding: 30px 20px; text-align: center; color: white;
+  }
+  .pending-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px; font-size: 28px;
+  }
+  .pending-card h3 {
+    font-size: 16px; font-weight: 700; margin-bottom: 6px;
+  }
+  .pending-card p {
+    font-size: 12px; opacity: 0.7; line-height: 1.6;
+  }
+  .pending-progress {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 100px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .pending-progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: white;
+    width: 40%;
+    animation: progress-pulse 2s ease-in-out infinite;
+  }
+  @keyframes progress-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Summary ── */
+  .summary-section {
+    max-width: 1200px; margin: 0 auto; padding: 0 40px 60px;
+  }
+  .summary-card {
+    background: white; border-radius: 16px; padding: 32px;
+    border: 1px solid var(--border);
+  }
+  .summary-card h2 {
+    font-size: 20px; font-weight: 800; margin-bottom: 24px;
+  }
+
+  /* Component Spec */
+  .component-spec {
+    max-width: 1200px; margin: 0 auto; padding: 0 40px 48px;
+  }
+  .component-spec h2 {
+    font-size: 20px; font-weight: 800; color: var(--purple); margin-bottom: 20px;
+  }
+  .spec-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  .spec-card {
+    background: white; border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px;
+  }
+  .spec-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--purple);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .spec-card h3 .tag {
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 100px; font-weight: 600;
+    background: var(--purple-light); color: var(--purple);
+  }
+  .spec-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .spec-table th {
+    text-align: left; padding: 6px 8px; font-weight: 600;
+    border-bottom: 1px solid var(--border); color: var(--text-secondary);
+  }
+  .spec-table td {
+    padding: 6px 8px; border-bottom: 1px solid #F5F3FA;
+    color: var(--text-secondary);
+  }
+  .spec-table td:first-child { font-weight: 600; color: var(--text); }
+
+  /* State Matrix */
+  .state-matrix {
+    width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px;
+  }
+  .state-matrix th {
+    text-align: left; padding: 10px 8px; font-weight: 700;
+    border-bottom: 2px solid var(--border);
+    background: #FAFAFA;
+  }
+  .state-matrix td {
+    padding: 10px 8px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .state-matrix .scenario-name { font-weight: 700; }
+  .ui-element {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 10px; font-weight: 600;
+    margin: 1px;
+  }
+  .ui-element.card { background: var(--purple-light); color: var(--purple); }
+  .ui-element.strip { background: var(--orange-light); color: var(--orange-deep); }
+  .ui-element.badge { background: var(--blue-light); color: #1565C0; }
+  .ui-element.timer { background: var(--green-light); color: #2E7D32; }
+  .ui-element.hidden { background: #F3F4F6; color: var(--text-muted); }
+
+  /* Recommendation */
+  .recommendation {
+    margin-top: 24px; padding: 20px;
+    background: var(--purple-light); border-radius: 14px;
+  }
+  .recommendation h3 {
+    font-size: 15px; font-weight: 700; color: var(--purple);
+    margin-bottom: 8px;
+  }
+  .recommendation p {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.7;
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .scenario-section,
+    .scenario-section:nth-child(even) {
+      grid-template-columns: 1fr;
+    }
+    .scenario-section:nth-child(even) .scenario-info { order: 1; }
+    .scenario-section:nth-child(even) .phone-wrap { order: 2; }
+    .principle-grid { grid-template-columns: repeat(2, 1fr); }
+    .spec-grid { grid-template-columns: 1fr; }
+    .page-header { padding: 40px 20px 32px; }
+    .scenarios-container { padding: 24px 16px; }
+    .principles { padding: 32px 16px 0; }
+    .component-spec, .summary-section { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ━━━ Header ━━━ -->
+<div class="page-header">
+  <h1>V3.1 Matching UI/UX Design</h1>
+  <div class="subtitle">6개 시나리오 완전 커버 + 학습 비용 제로 + 최소 UI 변경</div>
+  <div class="badge-row">
+    <span class="hdr-badge">6 Scenarios</span>
+    <span class="hdr-badge">Primary + Secondary</span>
+    <span class="hdr-badge">Category Badges</span>
+    <span class="hdr-badge">Secondary Strip</span>
+    <span class="hdr-badge">Zero Learning Curve</span>
+  </div>
+</div>
+
+<!-- ━━━ Design Principles ━━━ -->
+<div class="principles">
+  <h2>Design Principles</h2>
+  <div class="principle-grid">
+    <div class="principle-card">
+      <div class="icon">1</div>
+      <h3>Primary = Main View</h3>
+      <p>primary는 항상 기존 IdleMatchTimer 카드 위치에 렌더. 사용자가 볼 메인 콘텐츠는 항상 같은 자리.</p>
+    </div>
+    <div class="principle-card">
+      <div class="icon">2</div>
+      <h3>Secondary = Info Strip</h3>
+      <p>secondary가 있으면 카드 위에 compact strip 표시. 탭하면 해당 매칭으로 전환. 없으면 strip 자체가 사라짐.</p>
+    </div>
+    <div class="principle-card">
+      <div class="icon">3</div>
+      <h3>Category = Color Badge</h3>
+      <p>category를 색상 배지로 시각화. 보라=정기, 주황=리매칭, 파랑=글로벌. 텍스트 대신 색으로 직감적 구분.</p>
+    </div>
+    <div class="principle-card">
+      <div class="icon">4</div>
+      <h3>Seamless Transition</h3>
+      <p>21시 전후 primary 전환 시 카드만 교체. 레이아웃은 동일하므로 사용자가 "변경"을 인지하지 않음.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ Component Spec ━━━ -->
+<div class="component-spec" style="margin-top: 48px;">
+  <h2>New Component Specs</h2>
+  <div class="spec-grid">
+    <div class="spec-card">
+      <h3>SecondaryStrip <span class="tag">NEW</span></h3>
+      <table class="spec-table">
+        <tr><td>Position</td><td>Primary card 바로 위</td></tr>
+        <tr><td>Height</td><td>56px (compact)</td></tr>
+        <tr><td>Layout</td><td>[Avatar 40x40] [Text 2-line] [Timer/Arrow]</td></tr>
+        <tr><td>Border</td><td>좌측 3px color accent + 1.5px border</td></tr>
+        <tr><td>Variants</td><td>partner 있음 (탭→프로필) / waiting (D-? 표시)</td></tr>
+        <tr><td>Visibility</td><td>response.secondary 존재 시만 렌더</td></tr>
+        <tr><td>Animation</td><td>slideDown + fadeIn (300ms ease-out)</td></tr>
+        <tr><td>Base</td><td>기존 앱 컴포넌트 없음 → 신규</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>CategoryBadge <span class="tag">NEW</span></h3>
+      <table class="spec-table">
+        <tr><td>Position</td><td>Primary card 우상단 (absolute)</td></tr>
+        <tr><td>Size</td><td>auto width, 22px height</td></tr>
+        <tr><td>Colors</td><td>scheduled=#7A4AE2, rematch=#EA580C, global=#1565C0</td></tr>
+        <tr><td>Text</td><td>"정기매칭" / "리매칭" / "글로벌"</td></tr>
+        <tr><td>Visibility</td><td>secondary가 존재할 때만 (단독 시 불필요)</td></tr>
+        <tr><td>Base</td><td>Badge variant='main' 확장</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>Primary Card (기존 수정)</h3>
+      <table class="spec-table">
+        <tr><td>Component</td><td>IdleMatchTimer > Partner</td></tr>
+        <tr><td>변경점</td><td>category prop 추가 → CategoryBadge 조건 렌더</td></tr>
+        <tr><td>match.type</td><td>'rematching' 제거 → 'open'으로 통일</td></tr>
+        <tr><td>Background</td><td>category=rematch → orange gradient, global → blue</td></tr>
+        <tr><td>하위 호환</td><td>category 없으면 기존 동작 (scheduled 기본값)</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>Rendering Logic</h3>
+      <table class="spec-table">
+        <tr><td>Step 1</td><td>secondary 존재? → SecondaryStrip 렌더</td></tr>
+        <tr><td>Step 2</td><td>primary 렌더 (기존 switch 로직 유지)</td></tr>
+        <tr><td>Step 3</td><td>secondary 존재? → CategoryBadge on primary</td></tr>
+        <tr><td>Step 4</td><td>InteractionNavigation 렌더 (primary 기준)</td></tr>
+        <tr><td>데이터</td><td>GET /v3/matching → { primary, secondary? }</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="scenarios-container">
+
+<!-- ──────── Scenario 1: Normal (정기매칭 성공) ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label normal">Scenario 1 — normal</div>
+    <h2>정기매칭 성공</h2>
+    <div class="desc">
+      21시 이후, 정기매칭 파트너가 배정되고 리매칭이 없는 기본 상태.
+      <strong>기존 UI와 100% 동일합니다.</strong> secondary가 없으므로 SecondaryStrip도 CategoryBadge도 렌더하지 않습니다.
+      사용자는 아무런 변화도 느끼지 못합니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: open, scheduled</span>
+      <span class="data-chip none">secondary: 없음</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"scheduled"</span>,
+    <span class="key">"partner"</span>: { <span class="str">"name"</span>: <span class="str">"..."</span>, <span class="str">"age"</span>: 24, ... }
+  }
+  <span class="comment">// secondary 없음</span>
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>기존 Partner 카드 그대로 렌더. 변경 없음.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>CategoryBadge 미표시 (단독 매칭이므로 출처 구분 불필요).</span>
+      </div>
+      <div class="decision dont">
+        <span class="icon">X</span>
+        <span>"정기매칭" 라벨 강제 표시 금지 — 정보 과부하.</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:15</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- 기존 IdleMatchTimer 그대로 -->
+        <div class="match-card" style="border-radius: 16px; overflow: hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/1;">
+            <div class="timer-badge">H-46:45</div>
+            <!-- CategoryBadge 없음 (secondary 없으니까) -->
+            <span class="silhouette" style="font-size: 72px;">P</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">24 #ENFJ</div>
+              <div class="tags">#S대 #요가 #여행</div>
+              <div style="margin-top:6px;">
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:10px; font-size:10px;">최근 접속 1시간 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn rematch">
+            <span style="font-size:14px;">G</span> 리매칭
+          </div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── Scenario 2: Pre-21 Rematch ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label rematch">Scenario 2 — pre21_rematch</div>
+    <h2>21시 전 리매칭</h2>
+    <div class="desc">
+      매칭일 0~21시 사이에 리매칭을 수행한 상태. 리매칭이 primary, 정기매칭 대기가 secondary.
+      <strong>핵심 UX:</strong> 리매칭 카드를 보면서도 "정기매칭이 21시에 올 거야"라는 정보를 놓치지 않아야 합니다.
+      SecondaryStrip에 D-? 카운트다운을 표시하고, primary 카드에는 "리매칭" CategoryBadge를 붙입니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: open, rematch</span>
+      <span class="data-chip secondary">secondary: waiting, scheduled</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"rematch"</span>,
+    <span class="key">"partner"</span>: { ... },
+    <span class="key">"pendingCount"</span>: 1
+  },
+  <span class="key">"secondary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"waiting"</span>,
+    <span class="key">"category"</span>: <span class="str">"scheduled"</span>,
+    <span class="key">"untilNext"</span>: <span class="str">"2026-02-25 21:00:00"</span>
+  }
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>SecondaryStrip: "정기매칭 D-0 5:30" + 시계 아이콘 + 날짜.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>Primary에 "리매칭" 주황 배지 → 출처 즉시 인지.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>Primary 카드 배경을 주황 그라데이션으로 → 색감으로 "리매칭"임을 한 번 더 전달.</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">15:30</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- Secondary Strip: 정기매칭 대기 -->
+        <div class="secondary-strip scheduled">
+          <div class="strip-avatar waiting">D</div>
+          <div class="strip-text">
+            <div class="strip-title">
+              다음 정기매칭
+              <span class="cat-tag scheduled">정기</span>
+            </div>
+            <div class="strip-sub">오늘 목요일 21:00에 공개됩니다</div>
+          </div>
+          <div class="strip-right">
+            <div class="strip-timer">D-0 5:30</div>
+            <div class="strip-action-label">카운트다운</div>
+          </div>
+        </div>
+
+        <!-- Primary: 리매칭 파트너 -->
+        <div class="match-card" style="border-radius: 16px; overflow: hidden;">
+          <div class="match-card-bg rematch" style="aspect-ratio: 1/0.9;">
+            <div class="timer-badge" style="background: rgba(234,88,12,0.7);">H-18:30</div>
+            <div class="category-badge rematch">리매칭</div>
+            <span class="silhouette" style="font-size: 72px;">R</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">23 #ENFP</div>
+              <div class="tags">#K대 #음악 #운동</div>
+              <div style="margin-top:6px;">
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:10px; font-size:10px;">최근 접속 30분 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn rematch">
+            <span style="font-size:14px;">G</span> 리매칭
+          </div>
+          <div class="act-btn like" style="background: var(--orange-deep);">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── Scenario 3: Post-21 Swap ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label transition">Scenario 3 — post21_swap</div>
+    <h2>21시 전환 (정기매칭 승격)</h2>
+    <div class="desc">
+      21시에 정기매칭이 publish되고, 기존 리매칭(15시)보다 최신이므로 정기매칭이 primary로 올라옴.
+      리매칭은 secondary로 내려감.
+      <strong>핵심 UX:</strong> 사용자가 앱을 열었을 때 "정기매칭 파트너가 왔어!" + "아까 리매칭한 사람도 여기 있어"를 동시에 전달해야 합니다.
+      SecondaryStrip에 리매칭 파트너 미니 프로필을 보여주고 탭하면 전체 프로필로 이동합니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: open, scheduled</span>
+      <span class="data-chip secondary">secondary: open, rematch</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"scheduled"</span>,
+    <span class="key">"partner"</span>: { <span class="str">"age"</span>: 25, ... }
+  },
+  <span class="key">"secondary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"rematch"</span>,
+    <span class="key">"partner"</span>: { <span class="str">"age"</span>: 23, ... },
+    <span class="key">"pendingCount"</span>: 1
+  }
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>SecondaryStrip: 리매칭 파트너 미니 프로필 + H-12:30 타이머 + 탭→상세.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>Primary에 "정기매칭" 보라 배지 → 두 매칭이 공존함을 명시.</span>
+      </div>
+      <div class="decision dont">
+        <span class="icon">X</span>
+        <span>Split/Dual 카드 금지 — 각 파트너 사진이 작아져 판단력 저하.</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:05</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- Secondary Strip: 리매칭 파트너 -->
+        <div class="secondary-strip rematch">
+          <div class="strip-avatar rematch">R</div>
+          <div class="strip-text">
+            <div class="strip-title">
+              리매칭 파트너
+              <span class="cat-tag rematch">리매칭</span>
+            </div>
+            <div class="strip-sub">23세 #ENFP #K대 #음악</div>
+          </div>
+          <div class="strip-right">
+            <div class="strip-timer rematch">H-12:30</div>
+            <div class="strip-action-label">프로필 보기 ></div>
+          </div>
+        </div>
+
+        <!-- Primary: 정기매칭 파트너 -->
+        <div class="match-card" style="border-radius: 16px; overflow: hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/0.9;">
+            <div class="timer-badge">H-46:55</div>
+            <div class="category-badge scheduled">정기매칭</div>
+            <span class="silhouette" style="font-size: 72px;">A</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">25 #INTJ</div>
+              <div class="tags">#Y대 #독서 #카페</div>
+              <div style="margin-top:6px;">
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:10px; font-size:10px;">최근 접속 10분 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn rematch">
+            <span style="font-size:14px;">G</span> 리매칭
+          </div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── Scenario 4: Post-21 Rematch ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label rematch">Scenario 4 — post21_rematch</div>
+    <h2>21시 후 새 리매칭</h2>
+    <div class="desc">
+      21시 이후에 새로운 리매칭을 수행. createdAt=22:00 > publishedAt=21:00 이므로 리매칭이 다시 primary.
+      정기매칭은 secondary로 내려감.
+      <strong>핵심 UX:</strong> Scenario 3과 레이아웃이 동일하지만 primary/secondary가 뒤집힘.
+      "주황 카드 = 리매칭 메인" + "보라 strip = 정기매칭 아직 있어요"로 직감적 구분됩니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: open, rematch</span>
+      <span class="data-chip secondary">secondary: open, scheduled</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"rematch"</span>,
+    <span class="key">"partner"</span>: { ... },
+    <span class="key">"pendingCount"</span>: 2
+  },
+  <span class="key">"secondary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"open"</span>,
+    <span class="key">"category"</span>: <span class="str">"scheduled"</span>,
+    <span class="key">"partner"</span>: { ... }
+  }
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>SecondaryStrip: 정기매칭 파트너 미니 프로필 + H-44:00 타이머.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>Primary 주황 그라데이션 + "리매칭" 배지 → Scenario 2와 동일한 패턴.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>사용자 시점: 항상 "큰 카드 = 지금 볼 사람, 작은 strip = 다른 사람".</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">22:00</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- Secondary Strip: 정기매칭 파트너 -->
+        <div class="secondary-strip scheduled">
+          <div class="strip-avatar scheduled">A</div>
+          <div class="strip-text">
+            <div class="strip-title">
+              정기매칭 파트너
+              <span class="cat-tag scheduled">정기</span>
+            </div>
+            <div class="strip-sub">25세 #INTJ #Y대 #독서</div>
+          </div>
+          <div class="strip-right">
+            <div class="strip-timer">H-44:00</div>
+            <div class="strip-action-label">프로필 보기 ></div>
+          </div>
+        </div>
+
+        <!-- Primary: 리매칭 파트너 (신규) -->
+        <div class="match-card" style="border-radius: 16px; overflow: hidden;">
+          <div class="match-card-bg rematch" style="aspect-ratio: 1/0.9;">
+            <div class="timer-badge" style="background: rgba(234,88,12,0.7);">H-23:58</div>
+            <div class="category-badge rematch">리매칭</div>
+            <span class="silhouette" style="font-size: 72px;">N</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">22 #ISFP</div>
+              <div class="tags">#E대 #그림 #영화</div>
+              <div style="margin-top:6px;">
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:10px; font-size:10px;">최근 접속 5분 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn rematch">
+            <span style="font-size:14px;">G</span> 리매칭
+          </div>
+          <div class="act-btn like" style="background: var(--orange-deep);">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── Scenario 5: Waiting ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label waiting">Scenario 5 — waiting</div>
+    <h2>매칭 대기</h2>
+    <div class="desc">
+      비매칭일(월~수, 금~토)에 앱을 열거나, 매칭일이지만 아직 21시 전이고 리매칭도 없는 상태.
+      <strong>기존 Waiting 카드와 100% 동일합니다.</strong>
+      secondary가 없으므로 strip도 badge도 없습니다.
+      D-? 카운트다운만 표시합니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: waiting, scheduled</span>
+      <span class="data-chip none">secondary: 없음</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"waiting"</span>,
+    <span class="key">"category"</span>: <span class="str">"scheduled"</span>,
+    <span class="key">"untilNext"</span>: <span class="str">"2026-02-27 21:00:00"</span>
+  }
+  <span class="comment">// secondary 없음</span>
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>기존 Waiting 컴포넌트 그대로. untilNext로 카운트다운.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>"리매칭" 버튼을 CTA로 강조 → 구슬 소비 유도.</span>
+      </div>
+      <div class="decision dont">
+        <span class="icon">X</span>
+        <span>빈 strip이나 "리매칭 없음" 표시 금지 — 불필요한 노이즈.</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">14:00</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- Waiting Card (기존 UI) -->
+        <div class="waiting-card">
+          <div class="countdown-label">다음 매칭까지</div>
+          <div class="countdown-timer">D-2 07:00</div>
+          <div class="countdown-date">목요일 21:00</div>
+          <div class="waiting-miho">M</div>
+          <div style="margin-top: 16px;">
+            <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px; text-align: center;">
+              <div style="font-size: 12px; opacity: 0.8;">기다리기 어려우신가요?</div>
+              <div style="font-size: 11px; opacity: 0.6; margin-top: 2px;">구슬을 사용해 지금 바로 매칭해 보세요</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn like" style="background: linear-gradient(135deg, #9B6DFF, #7A4AE2, #6B3FD4); position: relative; overflow: hidden;">
+            <span style="font-size:14px; margin-right: 4px;">G</span> 리매칭 하기
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── Scenario 6: Pending ──────── -->
+<div class="scenario-section">
+  <div class="scenario-info">
+    <div class="scenario-label pending">Scenario 6 — pending</div>
+    <h2>프로필 심사 중</h2>
+    <div class="desc">
+      사용자의 프로필이 아직 승인되지 않은 상태.
+      <strong>기존 PendingApproval 컴포넌트와 동일합니다.</strong>
+      secondary가 없고 category도 없습니다. 심사 진행 상태만 보여줍니다.
+    </div>
+    <div class="data-chips">
+      <span class="data-chip primary">primary: pending-approval</span>
+      <span class="data-chip none">secondary: 없음</span>
+    </div>
+    <div class="api-response">
+<pre>{
+  <span class="key">"primary"</span>: {
+    <span class="key">"type"</span>: <span class="str">"pending-approval"</span>,
+    <span class="key">"approvalStatus"</span>: <span class="str">"pending"</span>
+  }
+  <span class="comment">// secondary 없음</span>
+}</pre>
+    </div>
+    <div class="design-decisions">
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>기존 PendingApproval 카드 그대로. 진행 표시기 추가.</span>
+      </div>
+      <div class="decision do">
+        <span class="icon">O</span>
+        <span>심사 평균 소요 시간 안내로 불안감 해소.</span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">10:30</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- Pending Card (기존 UI) -->
+        <div class="pending-card">
+          <div class="pending-icon">!</div>
+          <h3>프로필 심사가 진행 중이에요</h3>
+          <p>
+            승인 완료 후 매칭이 시작됩니다.<br>
+            보통 1~2시간 내에 완료돼요.
+          </p>
+          <div class="pending-progress">
+            <div class="pending-progress-fill"></div>
+          </div>
+          <div style="margin-top: 12px; font-size: 11px; opacity: 0.5;">심사 진행 중...</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /scenarios-container -->
+
+<!-- ━━━ State Matrix ━━━ -->
+<div class="summary-section">
+  <div class="summary-card">
+    <h2>Scenario-to-UI Mapping Matrix</h2>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+      각 시나리오에서 어떤 UI 요소가 보이는지 한눈에 파악.
+    </p>
+    <div style="overflow-x: auto;">
+      <table class="state-matrix">
+        <thead>
+          <tr>
+            <th style="width:15%;">Scenario</th>
+            <th style="width:15%;">SecondaryStrip</th>
+            <th style="width:15%;">CategoryBadge</th>
+            <th style="width:15%;">Card Background</th>
+            <th style="width:15%;">Timer Badge</th>
+            <th style="width:25%;">Action Buttons</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="scenario-name" style="color:#2E7D32;">1. normal</td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element card">purple gradient</span></td>
+            <td><span class="ui-element timer">H-46:45</span></td>
+            <td><span class="ui-element card">리매칭</span> <span class="ui-element card">좋아요</span></td>
+          </tr>
+          <tr>
+            <td class="scenario-name" style="color:#E65100;">2. pre21_rematch</td>
+            <td>
+              <span class="ui-element card">scheduled</span><br>
+              <span class="ui-element timer">D-0 카운트다운</span>
+            </td>
+            <td><span class="ui-element strip">리매칭 (orange)</span></td>
+            <td><span class="ui-element strip">orange gradient</span></td>
+            <td><span class="ui-element timer">H-18:30</span></td>
+            <td><span class="ui-element card">리매칭</span> <span class="ui-element strip">좋아요</span></td>
+          </tr>
+          <tr>
+            <td class="scenario-name" style="color:#1565C0;">3. post21_swap</td>
+            <td>
+              <span class="ui-element strip">rematch partner</span><br>
+              <span class="ui-element timer">H-12:30</span>
+            </td>
+            <td><span class="ui-element card">정기매칭 (purple)</span></td>
+            <td><span class="ui-element card">purple gradient</span></td>
+            <td><span class="ui-element timer">H-46:55</span></td>
+            <td><span class="ui-element card">리매칭</span> <span class="ui-element card">좋아요</span></td>
+          </tr>
+          <tr>
+            <td class="scenario-name" style="color:#E65100;">4. post21_rematch</td>
+            <td>
+              <span class="ui-element card">scheduled partner</span><br>
+              <span class="ui-element timer">H-44:00</span>
+            </td>
+            <td><span class="ui-element strip">리매칭 (orange)</span></td>
+            <td><span class="ui-element strip">orange gradient</span></td>
+            <td><span class="ui-element timer">H-23:58</span></td>
+            <td><span class="ui-element card">리매칭</span> <span class="ui-element strip">좋아요</span></td>
+          </tr>
+          <tr>
+            <td class="scenario-name" style="color:#7A4AE2;">5. waiting</td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element card">purple gradient</span></td>
+            <td><span class="ui-element timer">D-2 07:00</span></td>
+            <td><span class="ui-element card">리매칭 하기 (CTA)</span></td>
+          </tr>
+          <tr>
+            <td class="scenario-name" style="color:#C62828;">6. pending</td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element card">purple gradient</span></td>
+            <td><span class="ui-element hidden">hidden</span></td>
+            <td><span class="ui-element hidden">없음</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="recommendation">
+      <h3>UI 결정 근거</h3>
+      <p>
+        <strong>Secondary Strip (기존 10안 중 Idea 1+7 혼합):</strong>
+        D-Timer Strip의 정보 전달력 + Bottom Sheet Peek의 접근성을 결합.
+        단, Bottom Sheet 대신 inline strip으로 구현하여 overlay 문제를 회피하고,
+        카드 위에 배치하여 시선 흐름(위→아래)을 자연스럽게 유도.<br><br>
+        <strong>Category Badge (신규):</strong>
+        primary가 정기/리매칭/글로벌 어디서 온 건지 0.5초 내에 인지 가능해야 함.
+        아이콘 대신 단순 텍스트 배지를 선택하여 해석 비용 최소화.
+        secondary가 없을 때는 숨겨서 "단독 매칭에 불필요한 라벨" 노이즈 차단.<br><br>
+        <strong>Card Background Color:</strong>
+        보라=정기/기본, 주황=리매칭, 파랑=글로벌.
+        색상 시스템이 category와 1:1 매핑되어 badge를 읽지 않아도
+        무의식적으로 출처를 구분. Container 컴포넌트의 gradient 분기만 추가하면 구현 완료.<br><br>
+        <strong>기존 UI 변경 최소화:</strong>
+        6개 시나리오 중 3개(normal, waiting, pending)는 기존 UI 100% 그대로.
+        나머지 3개도 SecondaryStrip 1개 + CategoryBadge 1개 + gradient 색상 분기만 추가.
+        기존 IdleMatchTimer 컴포넌트 구조를 유지하면서 composite response만 처리.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ Implementation Guide ━━━ -->
+<div class="component-spec">
+  <h2>Implementation Checklist</h2>
+  <div class="spec-grid">
+    <div class="spec-card">
+      <h3>Phase 1 — API Migration <span class="tag">필수</span></h3>
+      <table class="spec-table">
+        <tr><td>1</td><td>useLatestMatching 쿼리를 GET /v3/matching으로 변경</td></tr>
+        <tr><td>2</td><td>응답 타입을 MatchDetailsV2Composite로 변경</td></tr>
+        <tr><td>3</td><td>types.ts에서 type 'rematching' 제거 → 'open' + category 'rematch'으로 대체</td></tr>
+        <tr><td>4</td><td>IdleMatchTimer에서 match → response.primary 로 바인딩</td></tr>
+        <tr><td>5</td><td>InteractionNavigation도 primary 기준으로 작동</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>Phase 2 — SecondaryStrip <span class="tag">신규</span></h3>
+      <table class="spec-table">
+        <tr><td>1</td><td>SecondaryStrip 컴포넌트 생성 (src/features/idle-match-timer/ui/)</td></tr>
+        <tr><td>2</td><td>Props: secondary: MatchDetailsV2 | undefined</td></tr>
+        <tr><td>3</td><td>secondary 없으면 null 리턴 (조건부 렌더)</td></tr>
+        <tr><td>4</td><td>secondary.type==='open' → 미니 프로필 + 타이머 + 탭 네비게이션</td></tr>
+        <tr><td>5</td><td>secondary.type==='waiting' → D-? 카운트다운 + 날짜 텍스트</td></tr>
+        <tr><td>6</td><td>IdleMatchTimerContent 상단에 SecondaryStrip 렌더 추가</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>Phase 3 — CategoryBadge <span class="tag">신규</span></h3>
+      <table class="spec-table">
+        <tr><td>1</td><td>CategoryBadge 컴포넌트 (absolute positioned)</td></tr>
+        <tr><td>2</td><td>Props: category + hasSecondary</td></tr>
+        <tr><td>3</td><td>hasSecondary가 false면 null 리턴</td></tr>
+        <tr><td>4</td><td>Partner 컴포넌트에 CategoryBadge 추가 (timer-badge 오른쪽)</td></tr>
+      </table>
+    </div>
+    <div class="spec-card">
+      <h3>Phase 4 — Card Gradient <span class="tag">수정</span></h3>
+      <table class="spec-table">
+        <tr><td>1</td><td>Container 컴포넌트에 category prop 추가</td></tr>
+        <tr><td>2</td><td>category='rematch' → orange gradient</td></tr>
+        <tr><td>3</td><td>category='global' → blue gradient</td></tr>
+        <tr><td>4</td><td>category='scheduled' 또는 undefined → 기존 purple (기본값)</td></tr>
+        <tr><td>5</td><td>좋아요 버튼도 category에 따라 accent 색 분기</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ Timeline Flow ━━━ -->
+<div class="summary-section">
+  <div class="summary-card">
+    <h2>User Timeline — 매칭일 하루</h2>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
+      사용자가 매칭일(목요일)에 앱을 사용할 때 경험하는 UI 전환 흐름.
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 0;">
+      <!-- 00:00 -->
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border);">
+        <div style="width: 60px; font-size: 14px; font-weight: 800; color: var(--purple); flex-shrink: 0;">00:00</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700;">앱 진입 — Scenario 5 (waiting)</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+            D-0 21:00 카운트다운 카드. "리매칭 하기" CTA 버튼.
+          </div>
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <span class="ui-element card">Waiting Card</span>
+            <span class="ui-element card">리매칭 CTA</span>
+          </div>
+        </div>
+      </div>
+      <!-- 15:00 -->
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border);">
+        <div style="width: 60px; font-size: 14px; font-weight: 800; color: var(--orange-deep); flex-shrink: 0;">15:00</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700;">리매칭 수행 — Scenario 2 (pre21_rematch)</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+            RematchLoading 4초 → 주황 카드 등장. 상단에 "다음 정기매칭 D-0 6:00" strip.
+          </div>
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <span class="ui-element timer">SecondaryStrip (D-0)</span>
+            <span class="ui-element strip">Orange Card</span>
+            <span class="ui-element strip">리매칭 badge</span>
+          </div>
+        </div>
+      </div>
+      <!-- 21:00 -->
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border);">
+        <div style="width: 60px; font-size: 14px; font-weight: 800; color: #1565C0; flex-shrink: 0;">21:00</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700;">정기매칭 publish — Scenario 3 (post21_swap)</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+            API refetch → primary가 정기매칭으로 전환. 카드가 보라색으로 바뀜. 리매칭 파트너가 strip으로 이동.
+            <br><em style="color: var(--purple);">사용자 경험: "새 사람이 왔네! 아까 리매칭한 사람은 위에 작게 보이고."</em>
+          </div>
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <span class="ui-element strip">SecondaryStrip (리매칭)</span>
+            <span class="ui-element card">Purple Card</span>
+            <span class="ui-element card">정기매칭 badge</span>
+          </div>
+        </div>
+      </div>
+      <!-- 22:00 -->
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border);">
+        <div style="width: 60px; font-size: 14px; font-weight: 800; color: var(--orange-deep); flex-shrink: 0;">22:00</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700;">새 리매칭 수행 — Scenario 4 (post21_rematch)</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+            다시 주황 카드가 메인. 정기매칭 파트너가 strip으로 이동.
+            <br><em style="color: var(--orange-deep);">패턴 반복: "큰 카드 = 방금 만난 사람, 작은 strip = 아까 사람"</em>
+          </div>
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <span class="ui-element card">SecondaryStrip (정기)</span>
+            <span class="ui-element strip">Orange Card</span>
+            <span class="ui-element strip">리매칭 badge</span>
+          </div>
+        </div>
+      </div>
+      <!-- Next day -->
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0;">
+        <div style="width: 60px; font-size: 14px; font-weight: 800; color: var(--text-muted); flex-shrink: 0;">+1일</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700;">리매칭 만료 — Scenario 1 (normal)</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+            리매칭 만료 → secondary 사라짐 → 기존 UI로 복귀. Strip, badge 모두 사라짐.
+          </div>
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <span class="ui-element card">Purple Card only</span>
+            <span class="ui-element hidden">strip hidden</span>
+            <span class="ui-element hidden">badge hidden</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ Final Note ━━━ -->
+<div class="summary-section" style="padding-bottom: 80px;">
+  <div class="summary-card" style="background: linear-gradient(135deg, #F5F1FF, #EDE7FF); border-color: var(--purple-pale);">
+    <h2 style="color: var(--purple);">왜 이 설계인가?</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;">
+      <div>
+        <div style="font-size: 28px; font-weight: 900; color: var(--purple);">0</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 4px;">학습 비용</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+          기존 사용자: 6개 시나리오 중 3개(normal/waiting/pending)는 변경 없음.
+          나머지 3개도 "위에 작은 카드 하나 더 생김" 수준.
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 28px; font-weight: 900; color: var(--purple);">2</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 4px;">신규 컴포넌트</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+          SecondaryStrip + CategoryBadge 단 2개.
+          기존 IdleMatchTimer 구조를 그대로 유지하면서 composite 응답만 처리.
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 28px; font-weight: 900; color: var(--purple);">100%</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 4px;">시나리오 커버리지</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+          6개 시나리오 모두 명시적 UI 매핑 완료.
+          21시 전후 전환도 카드 색상+strip 위치만 바뀌어 자연스럽게 흡수.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

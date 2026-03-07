@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>채팅 버그 분석 리포트 — Sometimes App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Wanted Sans', 'Wanted Sans Variable', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      background: #FFFFFF;
+      color: #344054;
+      padding: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+      border-radius: 0 0 24px 24px;
+      padding: 3.5rem 3rem 3rem;
+      margin: 0 -0.01px 2.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .hero .subtitle {
+      color: #98A2B3;
+      font-size: 1.05rem;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    .content { padding: 0 2.5rem 3rem; }
+
+    .stats { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.35rem 1.75rem; text-align: center; min-width: 148px; flex: 1; max-width: 220px;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .stat-card .num { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; color: #101828; }
+    .stat-card .label { font-size: 0.9rem; color: #667085; margin-top: 0.3rem; font-weight: 500; }
+    .stat-card.blue   .num { color: #2E90FA; }
+    .stat-card.green  .num { color: #12B76A; }
+    .stat-card.purple .num { color: #7F56D9; }
+    .stat-card.orange .num { color: #F79009; }
+    .stat-card.red    .num { color: #F04438; }
+    .stat-card.cyan   .num { color: #0BA5EC; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-size: 1.35rem; font-weight: 700; margin-bottom: 1.15rem; color: #101828;
+      padding-bottom: 0.65rem; border-bottom: 2px solid #F2F4F7; letter-spacing: -0.01em;
+    }
+    .section h2 .accent {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: #7F56D9; margin-right: 0.6rem; vertical-align: middle;
+    }
+    .section h2.green  .accent { background: #12B76A; }
+    .section h2.blue   .accent { background: #2E90FA; }
+    .section h2.purple .accent { background: #7F56D9; }
+    .section h2.orange .accent { background: #F79009; }
+    .section h2.red    .accent { background: #F04438; }
+    .section h2.cyan   .accent { background: #0BA5EC; }
+
+    .flow {
+      display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
+      padding: 1.5rem; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 12px;
+    }
+    .flow-step {
+      background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 10px;
+      padding: 1rem 1.25rem; min-width: 140px; text-align: center;
+      transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+    }
+    .flow-step:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1), 0 2px 4px -2px rgba(16,24,40,0.06); transform: translateY(-1px); }
+    .flow-step .title { font-weight: 600; font-size: 0.95rem; color: #101828; }
+    .flow-step .desc  { font-size: 0.85rem; color: #667085; margin-top: 0.3rem; line-height: 1.4; }
+    .flow-arrow { color: #D0D5DD; font-size: 1.5rem; font-weight: bold; }
+    .flow-step.green  { border-color: #32D583; background: #ECFDF3; }
+    .flow-step.green  .title { color: #027A48; }
+    .flow-step.orange { border-color: #FDB022; background: #FFFAEB; }
+    .flow-step.orange .title { color: #B54708; }
+    .flow-step.red    { border-color: #FDA29B; background: #FEF3F2; }
+    .flow-step.red    .title { color: #B42318; }
+    .flow-step.purple { border-color: #B692F6; background: #F9F5FF; }
+    .flow-step.purple .title { color: #6941C6; }
+    .flow-step.blue   { border-color: #84CAFF; background: #EFF8FF; }
+    .flow-step.blue   .title { color: #175CD3; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .card h3 { font-size: 1.1rem; font-weight: 600; color: #101828; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .file-list { list-style: none; }
+    .file-list li {
+      padding: 0.55rem 0; font-size: 0.95rem; color: #344054;
+      border-bottom: 1px solid #F2F4F7; display: flex; justify-content: space-between; align-items: center;
+    }
+    .file-list li:last-child { border-bottom: none; }
+    .file-path { color: #6941C6; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace; font-size: 0.88rem; }
+    .badge { font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 9999px; font-weight: 600; }
+    .badge.new  { background: #ECFDF3; color: #027A48; }
+    .badge.mod  { background: #FFFAEB; color: #B54708; }
+    .badge.del  { background: #FEF3F2; color: #B42318; }
+    .badge.idea { background: #F9F5FF; color: #6941C6; }
+
+    .api-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .api-table th {
+      background: #F9FAFB; padding: 0.9rem 1.25rem; text-align: left;
+      font-size: 0.85rem; font-weight: 600; color: #667085;
+      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #E4E7EC;
+    }
+    .api-table td { padding: 0.85rem 1.25rem; font-size: 0.95rem; color: #344054; border-top: 1px solid #F2F4F7; }
+    .api-table tr:hover td { background: #F9FAFB; }
+    .api-table .group-row { background: #F9F5FF; }
+    .api-table .group-row td { color: #6941C6; font-weight: 700; font-size: 0.9rem; border-top-color: #E4E7EC; }
+    .method {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace; font-weight: 700; font-size: 0.78rem;
+      padding: 0.22rem 0.6rem; border-radius: 6px; display: inline-block; min-width: 62px; text-align: center;
+    }
+    .method.get    { background: #ECFDF3; color: #027A48; }
+    .method.post   { background: #EFF8FF; color: #175CD3; }
+    .method.put    { background: #FFFAEB; color: #B54708; }
+    .method.patch  { background: #FFFAEB; color: #B54708; }
+    .method.delete { background: #FEF3F2; color: #B42318; }
+
+    .review-item {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.25rem 1.4rem; margin-bottom: 0.85rem; border-left: 4px solid #E4E7EC;
+      box-shadow: 0 1px 2px rgba(16,24,40,0.05); transition: all 0.2s ease;
+    }
+    .review-item:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1), 0 2px 4px -2px rgba(16,24,40,0.06); }
+    .review-item.fixed    { border-left-color: #12B76A; }
+    .review-item.open     { border-left-color: #F79009; }
+    .review-item.critical { border-left-color: #F04438; }
+    .review-item .ri-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .review-item .ri-title { font-weight: 700; font-size: 1.05rem; color: #101828; }
+    .review-item .ri-tag { font-size: 0.8rem; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 600; }
+    .review-item .ri-tag.fixed    { background: #ECFDF3; color: #027A48; }
+    .review-item .ri-tag.open     { background: #FFFAEB; color: #B54708; }
+    .review-item .ri-tag.critical { background: #FEF3F2; color: #B42318; }
+    .review-item .ri-desc { font-size: 0.95rem; color: #667085; line-height: 1.6; margin-top: 0.2rem; }
+    .review-item code { background: #F2F4F7; padding: 0.15rem 0.5rem; border-radius: 5px; font-size: 0.88rem; color: #344054; font-family: 'JetBrains Mono', monospace; }
+
+    /* Summary table */
+    .summary-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .summary-table th {
+      background: #F9FAFB; padding: 0.9rem 1.25rem; text-align: left;
+      font-size: 0.85rem; font-weight: 600; color: #667085;
+      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #E4E7EC;
+    }
+    .summary-table td { padding: 0.85rem 1.25rem; font-size: 0.95rem; color: #344054; border-top: 1px solid #F2F4F7; }
+    .summary-table tr:hover td { background: #F9FAFB; }
+
+    .severity-badge { font-size: 0.8rem; padding: 0.22rem 0.75rem; border-radius: 999px; font-weight: 700; }
+    .severity-badge.high   { background: #FEF3F2; color: #B42318; }
+    .severity-badge.medium { background: #FFFAEB; color: #B54708; }
+
+    /* Code block */
+    .code-block {
+      background: #1D2939; border-radius: 10px; padding: 1.25rem 1.4rem;
+      margin-top: 0.75rem; overflow-x: auto;
+    }
+    .code-block pre {
+      font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      font-size: 0.88rem; color: #E4E7EC; line-height: 1.7; white-space: pre;
+    }
+    .code-block .cm  { color: #6B7E99; }
+    .code-block .kw  { color: #B692F6; }
+    .code-block .fn  { color: #84CAFF; }
+    .code-block .str { color: #6CE9A6; }
+    .code-block .jsx { color: #FDB022; }
+    .code-block .cmt { color: #475467; font-style: italic; }
+
+    /* Scenario chips */
+    .scenario-chips { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .chip {
+      font-size: 0.83rem; padding: 0.3rem 0.9rem; border-radius: 999px;
+      font-weight: 600; border: 1px solid transparent;
+    }
+    .chip.orange { background: #FFFAEB; color: #B54708; border-color: #FDB022; }
+    .chip.blue   { background: #EFF8FF; color: #175CD3; border-color: #84CAFF; }
+    .chip.purple { background: #F9F5FF; color: #6941C6; border-color: #B692F6; }
+    .chip.red    { background: #FEF3F2; color: #B42318; border-color: #FDA29B; }
+    .chip.green  { background: #ECFDF3; color: #027A48; border-color: #32D583; }
+
+    /* Fix suggestion box */
+    .fix-box {
+      background: #F9F5FF; border: 1px solid #D9D6FE; border-radius: 10px;
+      padding: 1.1rem 1.25rem; margin-top: 0.75rem;
+    }
+    .fix-box .fix-title {
+      font-size: 0.88rem; font-weight: 700; color: #6941C6;
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.55rem;
+    }
+    .fix-box ul { padding-left: 1.25rem; }
+    .fix-box ul li { font-size: 0.95rem; color: #344054; line-height: 1.7; }
+    .fix-box code { background: #EDE9FE; padding: 0.12rem 0.45rem; border-radius: 4px; font-size: 0.85rem; color: #5B21B6; font-family: 'JetBrains Mono', monospace; }
+
+    @media (max-width: 768px) {
+      body { font-size: 15px; }
+      .hero { padding: 2.5rem 1.5rem 2rem; border-radius: 0 0 16px 16px; }
+      .hero h1 { font-size: 1.75rem; }
+      .content { padding: 0 1rem 2rem; }
+      .stat-card { min-width: 120px; }
+      .stat-card .num { font-size: 2rem; }
+      .card-grid { grid-template-columns: 1fr; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>채팅 버그 분석 리포트</h1>
+    <p class="subtitle">2026-03-03 · Sometimes App · 프론트엔드 버그 분석</p>
+  </div>
+
+  <div class="content">
+
+    <!-- Stats Bar -->
+    <div class="stats">
+      <div class="stat-card red"><div class="num">2</div><div class="label">발견된 버그</div></div>
+      <div class="stat-card orange"><div class="num">1</div><div class="label">High 심각도</div></div>
+      <div class="stat-card blue"><div class="num">1</div><div class="label">Medium 심각도</div></div>
+      <div class="stat-card purple"><div class="num">8</div><div class="label">관련 파일</div></div>
+      <div class="stat-card cyan"><div class="num">3</div><div class="label">영향 레이어</div></div>
+    </div>
+
+    <!-- 요약 테이블 -->
+    <div class="section">
+      <h2 class="red"><span class="accent"></span>버그 요약</h2>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>문제</th>
+            <th>위치</th>
+            <th>근본 원인</th>
+            <th>심각도</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1</strong></td>
+            <td>알림 뱃지(8) 안 사라짐</td>
+            <td>프론트엔드</td>
+            <td>채팅 읽음 ↔ 알림 읽음 간 연동 부재</td>
+            <td><span class="severity-badge medium">MEDIUM</span></td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>내가 보낸 채팅에 삭제/수락 표시</td>
+            <td>백엔드 + 프론트엔드</td>
+            <td><code style="font-family:'JetBrains Mono',monospace;font-size:0.88rem;background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;">paymentConfirm</code> 반환값 문제 + 캐시 미갱신</td>
+            <td><span class="severity-badge high">HIGH</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bug 1: 알림 뱃지 -->
+    <div class="section">
+      <h2 class="orange"><span class="accent"></span>버그 1 — 알림 뱃지가 안 사라짐</h2>
+
+      <div class="scenario-chips">
+        <span class="chip orange">MEDIUM</span>
+        <span class="chip blue">프론트엔드</span>
+        <span class="chip purple">연동 부재</span>
+      </div>
+
+      <p style="margin-bottom:1.25rem;color:#475467;font-size:0.97rem;">
+        채팅방에 진입해서 메시지를 읽어도 상단 알림 아이콘의 뱃지 숫자가 줄어들지 않는 문제입니다. 알림(Notification) 시스템과 채팅 읽음 상태가 완전히 분리된 채로 구현되어 있어 발생합니다.
+      </p>
+
+      <!-- 흐름도 -->
+      <div class="flow" style="margin-bottom:1.25rem;">
+        <div class="flow-step blue">
+          <div class="title">새 메시지 도착</div>
+          <div class="desc">서버: chat_message<br>notification 생성</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step">
+          <div class="title">채팅방 진입</div>
+          <div class="desc">MESSAGES_READ_<br>REQUESTED 발생</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step green">
+          <div class="title">소켓 처리</div>
+          <div class="desc">readMessages 전송<br>채팅 읽음 처리</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step green">
+          <div class="title">캐시 갱신</div>
+          <div class="desc">markRoomAsReadInCache<br>unreadCount → 0</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step red">
+          <div class="title">알림 처리</div>
+          <div class="desc">아무것도 안 함<br>(연동 없음)</div>
+        </div>
+      </div>
+
+      <!-- 관련 파일 -->
+      <div class="card-grid">
+        <div class="card">
+          <h3>관련 파일 — Notification</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">features/notification/queries/use-unread-count.tsx</span>
+              <span class="badge mod">미처리</span>
+            </li>
+            <li>
+              <span class="file-path">features/notification/ui/notification-icon.tsx</span>
+              <span class="badge mod">뱃지 표시</span>
+            </li>
+            <li>
+              <span class="file-path">features/notification/apis/notification.ts</span>
+              <span class="badge idea">미사용 API</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>관련 파일 — Chat</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">features/chat/services/query-cache-manager.tsx</span>
+              <span class="badge mod">알림 미처리</span>
+            </li>
+            <li>
+              <span class="file-path">features/chat/services/socket-event-manager.ts</span>
+              <span class="badge mod">readMessages</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 원인 분석 -->
+      <div class="review-item open" style="margin-bottom:0.85rem;">
+        <div class="ri-header">
+          <span class="ri-title">연동 부재: 알림 읽음 처리 미호출</span>
+          <span class="ri-tag open">OPEN</span>
+        </div>
+        <div class="ri-desc">
+          <code>NotificationIcon</code>은 <code>useUnreadCount()</code>를 통해 <code>GET /notifications/unread-count</code> API를 폴링합니다.
+          채팅 읽음 이벤트(<code>MESSAGES_READ_REQUESTED</code>) 발생 시 <code>PATCH /notifications/{id}/read</code>를 호출하거나
+          <code>GET /notifications/unread-count</code> 쿼리를 invalidate하는 로직이 존재하지 않습니다.
+          결과적으로 채팅 메시지를 읽어도 알림 카운트는 서버가 별도 이벤트를 보내기 전까지 갱신되지 않습니다.
+        </div>
+      </div>
+
+      <!-- 해결 방향 -->
+      <div class="fix-box">
+        <div class="fix-title">해결 방향</div>
+        <ul>
+          <li>채팅방 진입 시(<code>MESSAGES_READ_REQUESTED</code>) 해당 방의 <code>chat_message</code> 타입 알림을 batch 읽음 처리</li>
+          <li><code>query-cache-manager.tsx</code>의 <code>markRoomAsReadInCache</code> 내부 또는 이벤트 핸들러에서 <code>['notification-unread-count']</code> 쿼리 invalidate 추가</li>
+          <li>또는 <code>PATCH /notifications/read-by-reference</code> 같은 batch API가 없다면, <code>GET /notifications/unread-count</code> refetch 트리거만으로도 단기 해결 가능</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bug 2: 삭제/수락 버튼 -->
+    <div class="section">
+      <h2 class="red"><span class="accent"></span>버그 2 — 내가 보낸 채팅에 삭제/수락 표시</h2>
+
+      <div class="scenario-chips">
+        <span class="chip red">HIGH</span>
+        <span class="chip orange">백엔드</span>
+        <span class="chip blue">프론트엔드</span>
+        <span class="chip purple">캐시 문제</span>
+      </div>
+
+      <p style="margin-bottom:1.25rem;color:#475467;font-size:0.97rem;">
+        내가 먼저 채팅을 시작했는데도 채팅방 목록에서 삭제/수락 버튼이 표시되는 문제입니다.
+        <code style="font-family:'JetBrains Mono',monospace;font-size:0.88rem;background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;">paymentConfirm</code>
+        필드가 <code style="font-family:'JetBrains Mono',monospace;font-size:0.88rem;background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;">false</code>일 때 발신자/수신자 구분 없이 Lock 상태로 렌더링되기 때문입니다.
+      </p>
+
+      <!-- 분기 코드 -->
+      <div class="code-block" style="margin-bottom:1.25rem;">
+        <pre><span class="cmt">// src/features/chat/ui/room-list/chat-room-card.tsx</span>
+<span class="kw">function</span> <span class="fn">ChatRoomCard</span>({ item }) {
+  <span class="kw">if</span> (item.paymentConfirm) {
+    <span class="kw">return</span> <span class="jsx">&lt;OpenVariant item={item} /&gt;</span>;  <span class="cmt">// 열린 채팅</span>
+  }
+  <span class="kw">return</span> <span class="jsx">&lt;LockVariant item={item} /&gt;</span>;     <span class="cmt">// 잠긴 채팅 (삭제|수락) ← 발신자도 여기 빠짐</span>
+}</pre>
+      </div>
+
+      <!-- 시나리오 3가지 -->
+      <div class="review-item critical" style="margin-bottom:0.85rem;">
+        <div class="ri-header">
+          <span class="ri-title">시나리오 A — 백엔드 응답 오류</span>
+          <span class="ri-tag critical">CRITICAL</span>
+        </div>
+        <div class="ri-desc">
+          <code>GET /chat/rooms/cursor</code> 응답에서 발신자(채팅 시작자)임에도 <code>paymentConfirm: false</code>가 반환되는 경우.
+          서버의 채팅방 목록 쿼리가 발신자 여부를 고려하지 않고 단순 <code>paymentConfirm</code> 컬럼 값만 반환할 때 발생할 수 있습니다.
+          우선적으로 서버 로그 및 응답 raw 데이터를 확인해야 합니다.
+        </div>
+      </div>
+
+      <div class="review-item open" style="margin-bottom:0.85rem;">
+        <div class="ri-header">
+          <span class="ri-title">시나리오 B — 캐시 미갱신 (캐시 동기화 이슈)</span>
+          <span class="ri-tag open">OPEN</span>
+        </div>
+        <div class="ri-desc">
+          <code>useChatLockQuery</code>의 잠금해제 뮤테이션(<code>POST /chat/rooms/{id}/enter</code>) <code>onSuccess</code>에서
+          <code>['chat-room']</code> 쿼리를 invalidate하지 않습니다. 채팅방 입장 후 뒤로 나오면 stale 캐시에 담긴
+          <code>paymentConfirm: false</code> 상태가 그대로 표시됩니다. 재현 조건: 채팅 잠금해제 → 채팅방 입장 → 뒤로가기 → 목록 확인.
+        </div>
+      </div>
+
+      <div class="review-item open" style="margin-bottom:1.25rem;">
+        <div class="ri-header">
+          <span class="ri-title">시나리오 C — 타입 구조 문제</span>
+          <span class="ri-tag open">OPEN</span>
+        </div>
+        <div class="ri-desc">
+          <code>ChatRoomList</code> 타입에 발신자/수신자를 구분하는 <code>isInitiator</code> 또는 <code>isSender</code> 필드가 없습니다.
+          <code>paymentConfirm</code> 단일 조건으로 UI를 분기하면 발신자가 항상 수신자로 취급될 위험이 있습니다.
+          UI 분기 로직을 <code>paymentConfirm || isInitiator</code> 형태로 개선하는 것이 안전합니다.
+        </div>
+      </div>
+
+      <!-- 관련 파일 -->
+      <div class="card-grid">
+        <div class="card">
+          <h3>관련 파일 — Chat Lock</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">features/chat/ui/room-list/chat-room-card.tsx</span>
+              <span class="badge mod">분기 로직</span>
+            </li>
+            <li>
+              <span class="file-path">features/chat/queries/use-chat-lock-query.tsx</span>
+              <span class="badge mod">invalidate 누락</span>
+            </li>
+            <li>
+              <span class="file-path">features/chat/hooks/use-chat-lock.tsx</span>
+              <span class="badge mod">모달 로직</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>관련 파일 — Types & API</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">features/chat/types/chat.ts</span>
+              <span class="badge idea">isInitiator 추가</span>
+            </li>
+            <li>
+              <span class="file-path">features/chat/apis/index.ts</span>
+              <span class="badge mod">POST /chat/rooms/{id}/enter</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 해결 방향 -->
+      <div class="fix-box">
+        <div class="fix-title">해결 방향 (우선순위 순)</div>
+        <ul>
+          <li><strong>1순위</strong> — 서버 <code>GET /chat/rooms/cursor</code> 응답에서 발신자의 <code>paymentConfirm</code> 값 확인 (응답 raw 로그)</li>
+          <li><strong>2순위</strong> — <code>use-chat-lock-query.tsx</code> <code>onSuccess</code>에 <code>queryClient.invalidateQueries(['chat-room'])</code> 추가</li>
+          <li><strong>3순위</strong> — <code>ChatRoomList</code> 타입에 <code>isInitiator: boolean</code> 필드 추가 후 <code>ChatRoomCard</code> 분기를 <code>paymentConfirm || isInitiator</code>로 수정</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- API 엔드포인트 -->
+    <div class="section">
+      <h2 class="blue"><span class="accent"></span>관련 API 엔드포인트</h2>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>설명</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="4">Notification</td></tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td>/notifications/unread-count</td>
+            <td>미읽음 알림 수 조회 (뱃지 숫자 소스)</td>
+            <td><span class="badge mod">갱신 안 됨</span></td>
+          </tr>
+          <tr>
+            <td><span class="method patch">PATCH</span></td>
+            <td>/notifications/{id}/read</td>
+            <td>개별 알림 읽음 처리</td>
+            <td><span class="badge del">미사용</span></td>
+          </tr>
+          <tr class="group-row"><td colspan="4">Chat</td></tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td>/chat/rooms/cursor</td>
+            <td>채팅방 목록 (paymentConfirm 포함)</td>
+            <td><span class="badge mod">확인 필요</span></td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td>/chat/rooms/{id}/enter</td>
+            <td>채팅방 잠금해제 (enterChatRoom)</td>
+            <td><span class="badge mod">캐시 미갱신</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 수정 체크리스트 -->
+    <div class="section">
+      <h2 class="green"><span class="accent"></span>수정 체크리스트</h2>
+
+      <div class="review-item open">
+        <div class="ri-header">
+          <span class="ri-title">[버그1] query-cache-manager에 알림 쿼리 invalidate 추가</span>
+          <span class="ri-tag open">TODO</span>
+        </div>
+        <div class="ri-desc">
+          <code>markRoomAsReadInCache</code> 호출 후 <code>queryClient.invalidateQueries(['notification-unread-count'])</code> 추가.
+          또는 <code>socket-event-manager.ts</code>의 <code>MESSAGES_READ</code> 소켓 이벤트 수신 핸들러에서 처리.
+        </div>
+      </div>
+
+      <div class="review-item open">
+        <div class="ri-header">
+          <span class="ri-title">[버그2] use-chat-lock-query onSuccess에 ['chat-room'] invalidate 추가</span>
+          <span class="ri-tag open">TODO</span>
+        </div>
+        <div class="ri-desc">
+          <code>enterChatRoom</code> 뮤테이션 <code>onSuccess</code>에서 <code>queryClient.invalidateQueries(['chat-room'])</code> 호출 추가.
+          잠금해제 후 채팅방 목록이 최신 <code>paymentConfirm: true</code> 상태를 반영하도록 보장.
+        </div>
+      </div>
+
+      <div class="review-item open">
+        <div class="ri-header">
+          <span class="ri-title">[버그2] 서버 GET /chat/rooms/cursor 응답 paymentConfirm 값 검증</span>
+          <span class="ri-tag open">TODO</span>
+        </div>
+        <div class="ri-desc">
+          채팅을 시작한 발신자 계정으로 직접 API 응답을 확인. 발신자임에도 <code>paymentConfirm: false</code>가 반환된다면 백엔드 쿼리 수정 필요.
+          발신자는 결제 없이도 채팅을 시작할 수 있으므로 <code>paymentConfirm</code> 대신 <code>isUnlocked</code> 같은 논리 필드로 설계 변경 검토.
+        </div>
+      </div>
+
+      <div class="review-item open">
+        <div class="ri-header">
+          <span class="ri-title">[버그2] ChatRoomList 타입에 isInitiator 필드 추가 (옵션)</span>
+          <span class="ri-tag open">TODO</span>
+        </div>
+        <div class="ri-desc">
+          <code>chat.ts</code>의 <code>ChatRoomList</code> 인터페이스에 <code>isInitiator?: boolean</code> 추가.
+          <code>ChatRoomCard</code> 분기를 <code>item.paymentConfirm || item.isInitiator</code>로 변경하여 발신자는 항상 OpenVariant 렌더링.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

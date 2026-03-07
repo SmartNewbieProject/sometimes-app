@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToggleTab 버그 시각화</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f4f4f8;
+      font-family: -apple-system, 'Pretendard', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── 공통 카드 ─── */
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 24px 32px;
+      width: 360px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    /* ─── 실제 렌더 영역 ─── */
+    .phone-frame {
+      background: #f8f5ff;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #7A4AE2;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      width: 100%;
+    }
+
+    /* ─── 토글 컨테이너 ─── */
+    .toggle-container {
+      width: 220px;
+      height: 50px;
+      border-radius: 20px;
+      background: #EDE9FB;  /* surface.secondary */
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .toggle-indicator {
+      height: 40px;
+      border-radius: 16px;
+      background: #7A4AE2;
+      position: absolute;
+      top: 5px;
+      transition: left 0.3s ease, width 0.3s ease;
+    }
+
+    .tab-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+    }
+
+    .tab {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      position: absolute;
+      top: 0;
+    }
+
+    /* ─── 치수 표시 오버레이 ─── */
+    .dimension-overlay {
+      position: relative;
+      width: 220px;
+    }
+
+    .dim-box {
+      width: 220px;
+      height: 50px;
+      border-radius: 20px;
+      background: #EDE9FB;
+      position: relative;
+      overflow: visible;
+    }
+
+    .dim-indicator {
+      height: 40px;
+      border-radius: 16px;
+      position: absolute;
+      top: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* 버그 케이스: 보라 */
+    .dim-indicator.bug {
+      background: #7A4AE2;
+    }
+    /* 픽스 케이스: 초록 */
+    .dim-indicator.fix {
+      background: #22c55e;
+    }
+
+    /* 화살표 치수선 */
+    .ruler {
+      display: flex;
+      align-items: center;
+      height: 20px;
+      position: absolute;
+    }
+    .ruler-line {
+      height: 2px;
+      background: currentColor;
+      flex: 1;
+    }
+    .ruler-cap {
+      width: 2px;
+      height: 10px;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .ruler-label {
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      padding: 0 3px;
+      background: #fff;
+      border-radius: 3px;
+    }
+
+    /* 빨간 갭 하이라이트 */
+    .gap-highlight {
+      position: absolute;
+      background: rgba(239,68,68,0.2);
+      border: 1.5px dashed #ef4444;
+      border-radius: 4px;
+    }
+    .gap-label {
+      position: absolute;
+      font-size: 10px;
+      font-weight: 700;
+      color: #ef4444;
+      white-space: nowrap;
+    }
+
+    /* ─── 코드 블록 ─── */
+    .code-block {
+      background: #1e1e2e;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Menlo', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #cdd6f4;
+      overflow-x: auto;
+      width: 100%;
+    }
+    .code-block .k { color: #cba6f7; }   /* keyword */
+    .code-block .n { color: #f38ba8; }   /* number - bug */
+    .code-block .g { color: #a6e3a1; }   /* number - fix */
+    .code-block .c { color: #6c7086; }   /* comment */
+    .code-block .p { color: #89dceb; }   /* property */
+
+    /* ─── 탭 컨트롤 버튼 ─── */
+    .tab-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 2px solid #7A4AE2;
+      background: transparent;
+      color: #7A4AE2;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #7A4AE2;
+      color: #fff;
+    }
+
+    /* ─── 비교 테이블 ─── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .compare-table th {
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #eee;
+    }
+    .compare-table td {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .tag-bug {
+      display: inline-block;
+      background: #fef2f2;
+      color: #ef4444;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tag-fix {
+      display: inline-block;
+      background: #f0fdf4;
+      color: #22c55e;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #eee;
+      margin: 12px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 8px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-red { background: #fef2f2; color: #ef4444; }
+    .badge-green { background: #f0fdf4; color: #22c55e; }
+  </style>
+</head>
+<body>
+
+<!-- ───────── CARD 1: 인터랙티브 데모 ───────── -->
+<div class="card">
+  <div class="card-title">🎛️ 인터랙티브 데모</div>
+  <div class="card-subtitle">탭을 눌러 버그를 직접 확인하세요</div>
+  <div class="phone-frame">
+    <div class="tab-btn-group">
+      <button class="tab-btn active" id="btn-profile" onclick="switchTab('profile')">나의 프로필</button>
+      <button class="tab-btn" id="btn-interest" onclick="switchTab('interest')">이상형</button>
+    </div>
+
+    <div class="section-label" id="demo-label">▶ 나의 프로필 선택됨 — 정상</div>
+
+    <!-- 버그 토글 -->
+    <div>
+      <div style="font-size:11px;color:#ef4444;font-weight:700;margin-bottom:4px;">🐛 현재 코드 (버그)</div>
+      <div class="toggle-container" id="bug-toggle">
+        <div class="toggle-indicator" id="bug-indicator"
+             style="left:5px;width:110px;"></div>
+        <div class="tab-wrapper">
+          <div class="tab" id="bug-t1"
+               style="left:5px;width:110px;color:#fff;">나의 프로필</div>
+          <div class="tab" id="bug-t2"
+               style="left:125px;width:75px;color:#7A4AE2;">이상형</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 픽스 토글 -->
+    <div>
+      <div style="font-size:11px;color:#22c55e;font-weight:700;margin-bottom:4px;">✅ 수정 후</div>
+      <div class="toggle-container" id="fix-toggle">
+        <div class="toggle-indicator" id="fix-indicator"
+             style="left:5px;width:105px;background:#22c55e;"></div>
+        <div class="tab-wrapper">
+          <div class="tab" id="fix-t1"
+               style="left:5px;width:105px;color:#fff;">나의 프로필</div>
+          <div class="tab" id="fix-t2"
+               style="left:110px;width:105px;color:#22c55e;">이상형</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── CARD 2: 치수 분석 ───────── -->
+<div class="card">
+  <div class="card-title">📐 치수 분석 — 버그 원인</div>
+  <div class="card-subtitle">컨테이너 width=220 기준, 각 값의 위치를 시각화</div>
+
+  <div class="phone-frame">
+
+    <!-- 나의 프로필 선택 시 -->
+    <div class="section-label">▼ 나의 프로필 선택 시 <span class="badge badge-green">정상</span></div>
+    <div style="position:relative;width:220px;">
+      <div class="dim-box">
+        <!-- indicator -->
+        <div class="dim-indicator bug" style="left:5px;width:110px;">110px</div>
+        <!-- 5px left gap 표시 -->
+        <div style="position:absolute;top:14px;left:0;width:5px;height:22px;background:rgba(239,68,68,0.15);border:1px dashed #ef4444;border-radius:3px;"></div>
+        <!-- 105px right gap -->
+        <div style="position:absolute;top:14px;left:115px;width:105px;height:22px;background:rgba(100,100,100,0.08);border-radius:3px;"></div>
+      </div>
+      <!-- 수치 표시 -->
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#888;">
+        <span style="color:#ef4444;">←5→</span>
+        <span style="color:#7A4AE2;font-weight:700;">indicator 110px</span>
+        <span>←105px 공간→</span>
+      </div>
+      <div style="margin-top:4px;font-size:11px;color:#555;text-align:center;">
+        left(5) + width(110) = 115 → 우측까지 <strong style="color:#22c55e;">시각적 여백 균형 ✓</strong>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 이상형 선택 시 -->
+    <div class="section-label">▼ 이상형 선택 시 <span class="badge badge-red">버그 !</span></div>
+    <div style="position:relative;width:220px;">
+      <div class="dim-box">
+        <!-- 왼쪽 공간 (profile 자리) -->
+        <div style="position:absolute;top:5px;left:0;width:125px;height:40px;background:rgba(100,100,100,0.06);border-radius:12px 0 0 12px;"></div>
+        <!-- indicator -->
+        <div class="dim-indicator bug" style="left:125px;width:75px;">75px</div>
+        <!-- 오른쪽 gap: 20px -->
+        <div class="gap-highlight" style="top:5px;left:200px;width:20px;height:40px;"></div>
+      </div>
+      <div class="gap-label" style="top:-4px;left:196px;">20px<br>gap!</div>
+      <!-- 수치 표시 -->
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#888;">
+        <span>←125px 공간→</span>
+        <span style="color:#7A4AE2;font-weight:700;">indicator 75px</span>
+        <span style="color:#ef4444;">←20→</span>
+      </div>
+      <div style="margin-top:4px;font-size:11px;color:#555;text-align:center;">
+        left(125) + width(75) = 200 → 우측 <strong style="color:#ef4444;">20px 빈 공간 남음 ✗</strong>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 수정 후 -->
+    <div class="section-label">▼ 수정 후 이상형 선택 시 <span class="badge badge-green">정상</span></div>
+    <div style="position:relative;width:220px;">
+      <div class="dim-box">
+        <div style="position:absolute;top:5px;left:0;width:110px;height:40px;background:rgba(100,100,100,0.06);border-radius:12px 0 0 12px;"></div>
+        <div class="dim-indicator fix" style="left:110px;width:105px;">105px</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#888;">
+        <span>←110px 공간→</span>
+        <span style="color:#22c55e;font-weight:700;">indicator 105px</span>
+        <span style="color:#22c55e;">←5→</span>
+      </div>
+      <div style="margin-top:4px;font-size:11px;color:#555;text-align:center;">
+        left(110) + width(105) = 215 → 우측 <strong style="color:#22c55e;">5px만 남음 ✓</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────── CARD 3: 수치 비교표 + 코드 ───────── -->
+<div class="card">
+  <div class="card-title">🔧 수치 비교 & 코드 수정</div>
+  <div class="card-subtitle">컨테이너 220px 기준 각 속성값 비교</div>
+
+  <table class="compare-table">
+    <tr>
+      <th>항목</th>
+      <th>현재 <span class="tag-bug">BUG</span></th>
+      <th>수정 <span class="tag-fix">FIX</span></th>
+    </tr>
+    <tr>
+      <td>container width</td>
+      <td>220px</td>
+      <td>220px</td>
+    </tr>
+    <tr>
+      <td>profile · left</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>profile · width</td>
+      <td>110</td>
+      <td><strong style="color:#22c55e;">105</strong></td>
+    </tr>
+    <tr>
+      <td>interest · left</td>
+      <td>125</td>
+      <td><strong style="color:#22c55e;">110</strong></td>
+    </tr>
+    <tr>
+      <td>interest · width</td>
+      <td style="color:#ef4444;">75 ⚠️</td>
+      <td><strong style="color:#22c55e;">105</strong></td>
+    </tr>
+    <tr>
+      <td>우측 여백</td>
+      <td style="color:#ef4444;">20px ✗</td>
+      <td style="color:#22c55e;">5px ✓</td>
+    </tr>
+    <tr>
+      <td>좌우 대칭</td>
+      <td style="color:#ef4444;">비대칭 ✗</td>
+      <td style="color:#22c55e;">대칭 ✓</td>
+    </tr>
+  </table>
+
+  <div class="divider"></div>
+  <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">ToggleTab.tsx — 수정할 라인들</div>
+
+  <div class="code-block">
+<span class="c">// ① useSharedValue 초기값</span>
+<span class="k">const</span> left = useSharedValue(
+  activeTab === <span class="k">"profile"</span> ? <span class="g">5</span> : <span class="n">125→</span><span class="g">110</span>
+);
+<span class="k">const</span> width = useSharedValue(
+  activeTab === <span class="k">"profile"</span> ? <span class="n">110→</span><span class="g">105</span> : <span class="n">75→</span><span class="g">105</span>
+);
+
+<span class="c">// ② useEffect 애니메이션 목표값</span>
+<span class="k">if</span> (activeTab === <span class="k">"profile"</span>) {
+  left.value = <span class="g">5</span>;
+  width.value = <span class="n">110→</span><span class="g">105</span>;
+} <span class="k">else</span> {
+  left.value = <span class="n">125→</span><span class="g">110</span>;
+  width.value = <span class="n">75→</span><span class="g">105</span>;
+}
+
+<span class="c">// ③ handleTabChange 에서도 동일하게</span>
+<span class="c">// ④ StyleSheet: interestTab</span>
+<span class="p">interestTab</span>: {
+  left: <span class="n">125→</span><span class="g">110</span>,
+  width: <span class="n">75→</span><span class="g">105</span>,  <span class="c">// ← 핵심 버그 위치</span>
+}
+  </div>
+
+  <div style="margin-top:16px;padding:12px 14px;background:#fef9ec;border-radius:10px;border-left:3px solid #f59e0b;">
+    <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:4px;">💡 근본 원인 요약</div>
+    <div style="font-size:12px;color:#78350f;line-height:1.6;">
+      interest 탭의 width가 <strong>75px</strong>로 하드코딩되어<br>
+      <code style="background:#fff3cd;padding:0 4px;border-radius:3px;">125 + 75 = 200</code>이 되어 컨테이너(220)에서<br>
+      우측에 <strong style="color:#ef4444;">20px 빈 공간</strong>이 남습니다.<br>
+      profile처럼 <strong>105px로 통일</strong>하면 해결됩니다.
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tab) {
+    const isProfile = tab === 'profile';
+
+    // 버튼 UI
+    document.getElementById('btn-profile').className = 'tab-btn' + (isProfile ? ' active' : '');
+    document.getElementById('btn-interest').className = 'tab-btn' + (!isProfile ? ' active' : '');
+
+    // 라벨
+    document.getElementById('demo-label').textContent = isProfile
+      ? '▶ 나의 프로필 선택됨 — 정상'
+      : '▶ 이상형 선택됨 — 🐛 우측 연보라 여백 확인!';
+    document.getElementById('demo-label').style.color = isProfile ? '#7A4AE2' : '#ef4444';
+
+    // BUG 토글
+    const bugInd = document.getElementById('bug-indicator');
+    const bugT1  = document.getElementById('bug-t1');
+    const bugT2  = document.getElementById('bug-t2');
+    if (isProfile) {
+      bugInd.style.left  = '5px';
+      bugInd.style.width = '110px';
+      bugT1.style.color  = '#fff';
+      bugT2.style.color  = '#7A4AE2';
+    } else {
+      bugInd.style.left  = '125px';
+      bugInd.style.width = '75px';
+      bugT1.style.color  = '#7A4AE2';
+      bugT2.style.color  = '#fff';
+    }
+
+    // FIX 토글
+    const fixInd = document.getElementById('fix-indicator');
+    const fixT1  = document.getElementById('fix-t1');
+    const fixT2  = document.getElementById('fix-t2');
+    if (isProfile) {
+      fixInd.style.left  = '5px';
+      fixInd.style.width = '105px';
+      fixT1.style.color  = '#fff';
+      fixT2.style.color  = '#22c55e';
+    } else {
+      fixInd.style.left  = '110px';
+      fixInd.style.width = '105px';
+      fixT1.style.color  = '#22c55e';
+      fixT2.style.color  = '#fff';
+    }
+  }
+</script>
+</body>
+</html>

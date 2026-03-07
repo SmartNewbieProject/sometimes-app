@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Chat UI/UX Improvement Ideas</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Pretendard', sans-serif; background: #F5F3FF; color: #191F28; }
+
+  /* Nav */
+  .nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid #E5E8EB; padding: 16px 24px; }
+  .nav h1 { font-size: 20px; font-weight: 700; color: #7A4AE2; margin-bottom: 8px; }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-links a { font-size: 13px; padding: 6px 14px; border-radius: 20px; background: #F2EDFF; color: #7A4AE2; text-decoration: none; font-weight: 500; transition: all .2s; }
+  .nav-links a:hover { background: #7A4AE2; color: #fff; }
+
+  /* Section */
+  .section { max-width: 1200px; margin: 32px auto; padding: 0 20px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .section-num { width: 36px; height: 36px; border-radius: 50%; background: #7A4AE2; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+  .section-title { font-size: 22px; font-weight: 700; }
+  .section-subtitle { font-size: 14px; color: #7C7C7C; margin-top: 2px; }
+  .current-label { display: inline-block; font-size: 11px; background: #FF6B6B; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 8px; }
+  .idea-label { display: inline-block; font-size: 11px; background: #4CAF50; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 8px; }
+
+  /* Grid */
+  .ideas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .idea-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .idea-card-header { padding: 16px 20px 12px; border-bottom: 1px solid #F2EDFF; }
+  .idea-card-header h3 { font-size: 16px; font-weight: 600; }
+  .idea-card-header p { font-size: 12px; color: #7C7C7C; margin-top: 4px; }
+  .idea-card-body { padding: 0; }
+
+  /* Phone Frame */
+  .phone { width: 100%; aspect-ratio: 9/16; max-height: 580px; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .phone.short { aspect-ratio: unset; }
+
+  /* ===== Element Styles ===== */
+
+  /* Status Bar */
+  .status-bar { height: 44px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+
+  /* Current Header */
+  .chat-header { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #e4e2e2; flex-shrink: 0; }
+  .chat-header .back-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .chat-header .center { text-align: center; }
+  .chat-header .center h2 { font-size: 18px; font-weight: 600; }
+  .chat-header .domain-badge { font-size: 11px; background: #F2EDFF; color: #7C7C7C; padding: 2px 8px; border-radius: 10px; margin-top: 2px; display: inline-block; }
+  .chat-header .close-btn { font-size: 13px; background: #F2EDFF; color: #7C7C7C; padding: 6px 10px; border-radius: 6px; }
+
+  /* Status Banner */
+  .status-banner { display: flex; align-items: center; justify-content: center; padding: 8px 16px; gap: 8px; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Messages */
+  .messages { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .msg { max-width: 80%; display: flex; flex-direction: column; gap: 2px; }
+  .msg.user { align-self: flex-end; }
+  .msg.bot, .msg.admin { align-self: flex-start; }
+  .msg-label { font-size: 12px; color: #7C7C7C; margin-left: 4px; margin-bottom: 2px; }
+  .msg-row { display: flex; align-items: flex-end; gap: 6px; }
+  .msg.user .msg-row { flex-direction: row-reverse; }
+  .bubble { padding: 10px 15px; border-radius: 18px; font-size: 14px; line-height: 1.5; }
+  .bubble.user { background: #7A4AE2; color: #fff; border-top-right-radius: 6px; }
+  .bubble.bot { background: #F0F4FF; color: #191F28; border-top-left-radius: 6px; }
+  .bubble.admin { background: #fff; color: #191F28; border-top-left-radius: 6px; border: 1px solid #E5E8EB; }
+  .msg-time { font-size: 11px; color: #AEAEAE; white-space: nowrap; }
+
+  /* Input Bar */
+  .input-bar { padding: 12px 16px; background: #fff; flex-shrink: 0; }
+  .input-container { display: flex; align-items: center; gap: 8px; background: #F8F9FA; border-radius: 24px; padding: 8px 8px 8px 16px; min-height: 47px; }
+  .input-container input, .input-container .input-placeholder { flex: 1; border: none; background: none; font-size: 16px; color: #333; outline: none; }
+  .input-placeholder { color: #AEAEAE; }
+  .send-btn { width: 32px; height: 32px; border-radius: 50%; background: #7A4AE2; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; flex-shrink: 0; }
+
+  /* Typing Indicator */
+  .typing-dots { display: flex; gap: 4px; padding: 12px 16px; }
+  .typing-dots span { width: 8px; height: 8px; border-radius: 50%; background: #AEAEAE; animation: bounce 1.4s infinite ease-in-out both; }
+  .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes bounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+  /* Avatar */
+  .avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .avatar.bot-av { background: linear-gradient(135deg, #7A4AE2, #A892D7); color: #fff; font-size: 14px; }
+  .avatar.admin-av { background: #E8F5E9; color: #2E7D32; font-size: 14px; }
+
+  /* Quick Replies */
+  .quick-replies { display: flex; gap: 8px; padding: 8px 16px; overflow-x: auto; flex-shrink: 0; }
+  .quick-chip { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; border: 1.5px solid #E2D5FF; color: #7A4AE2; background: #fff; cursor: pointer; }
+  .quick-chip:hover { background: #F2EDFF; }
+
+  /* Pros/Cons */
+  .pros-cons { padding: 12px 20px 16px; display: flex; gap: 12px; font-size: 12px; }
+  .pros, .cons { flex: 1; }
+  .pros h4 { color: #4CAF50; margin-bottom: 4px; }
+  .cons h4 { color: #FF6B6B; margin-bottom: 4px; }
+  .pros li, .cons li { margin-left: 14px; margin-bottom: 2px; color: #4E5968; line-height: 1.5; }
+
+  /* Score Badge */
+  .score { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #7A4AE2, #9747FF); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
+
+  /* Empty State */
+  .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; }
+  .empty-state .emoji { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; color: #7C7C7C; line-height: 1.5; }
+
+  /* Category Cards */
+  .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; margin-top: 20px; width: 100%; }
+  .cat-card { background: #F8F9FA; border-radius: 14px; padding: 16px; text-align: center; cursor: pointer; transition: all .15s; }
+  .cat-card:hover { background: #F2EDFF; transform: scale(1.02); }
+  .cat-card .cat-icon { font-size: 28px; margin-bottom: 6px; }
+  .cat-card .cat-title { font-size: 13px; font-weight: 600; color: #191F28; }
+
+  /* Pulse animation */
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .pulse { animation: pulse 2s infinite; }
+
+  /* Shimmer */
+  @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+
+  /* Rating Stars */
+  .stars { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+  .star { font-size: 32px; cursor: pointer; transition: transform .15s; }
+  .star:hover { transform: scale(1.2); }
+  .star.filled { color: #FFD700; }
+  .star.empty { color: #E5E8EB; }
+
+  /* Inline Rating */
+  .inline-rating { background: #F8F9FA; border-radius: 16px; padding: 16px; margin: 8px 16px; text-align: center; }
+  .inline-rating h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .mini-stars { display: flex; gap: 4px; justify-content: center; }
+  .mini-star { font-size: 24px; color: #E5E8EB; cursor: pointer; }
+  .mini-star.on { color: #FFD700; }
+
+  /* Emotion Rating */
+  .emotion-row { display: flex; gap: 12px; justify-content: center; margin: 12px 0; }
+  .emotion { font-size: 36px; cursor: pointer; transition: transform .15s; opacity: 0.5; }
+  .emotion.selected { opacity: 1; transform: scale(1.2); }
+
+  /* Header with avatar */
+  .header-v2 { height: 64px; display: flex; align-items: center; padding: 0 16px; gap: 12px; border-bottom: 1px solid #F2EDFF; flex-shrink: 0; background: #fff; }
+  .header-v2 .back { font-size: 20px; width: 36px; }
+  .header-v2 .agent-info { flex: 1; }
+  .header-v2 .agent-name { font-size: 16px; font-weight: 600; }
+  .header-v2 .agent-status { font-size: 12px; color: #4CAF50; display: flex; align-items: center; gap: 4px; }
+  .header-v2 .agent-status .dot { width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; }
+  .header-v2 .more-btn { font-size: 20px; width: 36px; text-align: center; }
+
+  /* Progress style status */
+  .status-progress { padding: 10px 16px; background: #FAFAFA; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F2EDFF; flex-shrink: 0; }
+  .progress-steps { display: flex; gap: 0; flex: 1; align-items: center; }
+  .progress-step { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+  .progress-step .step-dot { width: 20px; height: 20px; border-radius: 50%; background: #E5E8EB; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 700; z-index: 1; }
+  .progress-step .step-dot.active { background: #7A4AE2; }
+  .progress-step .step-dot.done { background: #4CAF50; }
+  .progress-step .step-label { font-size: 10px; color: #AEAEAE; margin-top: 4px; white-space: nowrap; }
+  .progress-step .step-label.active { color: #7A4AE2; font-weight: 600; }
+  .progress-line { height: 2px; flex: 1; background: #E5E8EB; margin: 0 -4px; margin-bottom: 18px; }
+  .progress-line.done { background: #4CAF50; }
+
+  /* Message with avatar */
+  .msg-with-avatar { display: flex; gap: 8px; align-items: flex-start; max-width: 85%; }
+  .msg-with-avatar.user { flex-direction: row-reverse; align-self: flex-end; }
+  .msg-with-avatar.bot, .msg-with-avatar.admin { align-self: flex-start; }
+  .msg-content { display: flex; flex-direction: column; gap: 2px; }
+  .msg-with-avatar .msg-label { font-size: 11px; color: #7C7C7C; }
+
+  /* Suggested actions in bubble */
+  .bubble-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(122,74,226,0.1); }
+  .bubble-action { font-size: 12px; padding: 6px 12px; border-radius: 14px; background: rgba(122,74,226,0.08); color: #7A4AE2; font-weight: 500; cursor: pointer; }
+
+  /* Image attach button */
+  .attach-btn { width: 36px; height: 36px; border-radius: 50%; background: #F2EDFF; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; cursor: pointer; }
+
+  /* Full-width banner */
+  .welcome-banner { background: linear-gradient(135deg, #7A4AE2 0%, #A892D7 100%); padding: 24px 20px; color: #fff; flex-shrink: 0; }
+  .welcome-banner h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .welcome-banner p { font-size: 13px; opacity: 0.85; line-height: 1.4; }
+
+  /* FAQ list */
+  .faq-list { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .faq-item { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: #F8F9FA; border-radius: 14px; cursor: pointer; transition: background .15s; }
+  .faq-item:hover { background: #F2EDFF; }
+  .faq-item .faq-icon { font-size: 20px; }
+  .faq-item .faq-text { font-size: 14px; font-weight: 500; flex: 1; }
+  .faq-item .faq-arrow { color: #AEAEAE; font-size: 16px; }
+
+  /* Satisfaction inline */
+  .satisfaction-inline { display: flex; gap: 8px; margin-top: 10px; }
+  .sat-btn { padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid; }
+  .sat-btn.helpful { border-color: #4CAF50; color: #4CAF50; background: rgba(76,175,80,0.05); }
+  .sat-btn.not-helpful { border-color: #FF6B6B; color: #FF6B6B; background: rgba(255,107,107,0.05); }
+
+  /* Resolved card */
+  .resolved-card { margin: 12px 16px; padding: 20px; background: linear-gradient(135deg, #F0F4FF, #F2EDFF); border-radius: 16px; text-align: center; }
+  .resolved-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .resolved-card p { font-size: 13px; color: #7C7C7C; margin-bottom: 16px; }
+  .resolved-actions { display: flex; gap: 8px; justify-content: center; }
+  .resolved-btn { padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .resolved-btn.primary { background: #7A4AE2; color: #fff; }
+  .resolved-btn.secondary { background: #F2EDFF; color: #7A4AE2; }
+
+  /* Connection indicator */
+  .connection-bar { height: 3px; flex-shrink: 0; }
+  .connection-bar.connected { background: #4CAF50; }
+  .connection-bar.reconnecting { background: #FFB02E; animation: pulse 1.5s infinite; }
+  .connection-bar.disconnected { background: #FF6B6B; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <h1>Support Chat UI/UX Improvement Ideas</h1>
+  <div class="nav-links">
+    <a href="#s1">1. Header</a>
+    <a href="#s2">2. Status Banner</a>
+    <a href="#s3">3. Message Bubble</a>
+    <a href="#s4">4. Input Bar</a>
+    <a href="#s5">5. Empty / Welcome</a>
+    <a href="#s6">6. Typing Indicator</a>
+    <a href="#s7">7. Rating / Feedback</a>
+    <a href="#s8">8. Session End</a>
+  </div>
+</nav>
+
+<!-- ======================== SECTION 1: HEADER ======================== -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-title">Header</div>
+      <div class="section-subtitle">현재: 뒤로가기 + 타이틀 + 도메인 배지 + 종료 버튼</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>기본적인 3-column 헤더. 기능은 갖추었으나 개성 없음</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:120px;">
+          <div class="status-bar"><span>9:41</span><span>···</span></div>
+          <div class="chat-header">
+            <div class="back-btn">‹</div>
+            <div class="center">
+              <h2>1:1 문의</h2>
+              <span class="domain-badge">💬 채팅 문의</span>
+            </div>
+            <div class="close-btn">종료</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="cons"><h4>Pain Points</h4><ul><li>상담사 정체 불명</li><li>연결 상태 모름</li><li>종료 버튼 눈에 안 띔</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea A: Agent Avatar Header -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Agent Avatar Header <span class="idea-label">IDEA</span></h3>
+        <p>상담사 아바타 + 이름 + 실시간 상태 (iMessage/LINE 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:120px;">
+          <div class="status-bar"><span>9:41</span><span>···</span></div>
+          <div class="header-v2">
+            <div class="back">‹</div>
+            <div class="avatar bot-av">S</div>
+            <div class="agent-info">
+              <div class="agent-name">썸타임 AI 상담사</div>
+              <div class="agent-status"><span class="dot"></span> 응답 중</div>
+            </div>
+            <div class="more-btn">⋯</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>상담사 정체성 명확</li><li>실시간 상태 직관적</li><li>1:1 대화 느낌 강화</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>종료 접근성 한 단계 깊어짐</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Contextual Header -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Contextual Compact Header <span class="idea-label">IDEA</span></h3>
+        <p>상태에 따라 헤더 색상/아이콘 변화 (WhatsApp 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:180px;">
+          <div class="status-bar"><span>9:41</span><span>···</span></div>
+          <!-- Bot handling -->
+          <div style="height:56px;display:flex;align-items:center;padding:0 16px;gap:12px;background:linear-gradient(90deg,#F0F4FF,#fff);border-bottom:1px solid #E2D5FF;">
+            <div class="back" style="font-size:20px;">‹</div>
+            <div class="avatar bot-av" style="width:28px;height:28px;font-size:12px;">AI</div>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:600;">AI 상담사</div>
+              <div style="font-size:11px;color:#5C6BC0;">답변 작성 중...</div>
+            </div>
+            <div style="font-size:11px;color:#7C7C7C;padding:5px 10px;background:#F2EDFF;border-radius:6px;">종료</div>
+          </div>
+          <!-- Admin handling -->
+          <div style="height:56px;display:flex;align-items:center;padding:0 16px;gap:12px;background:linear-gradient(90deg,#E8F5E9,#fff);border-bottom:1px solid #C8E6C9;">
+            <div class="back" style="font-size:20px;">‹</div>
+            <div class="avatar admin-av" style="width:28px;height:28px;font-size:12px;">CS</div>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:600;">상담원</div>
+              <div style="font-size:11px;color:#2E7D32;">온라인 · 응답 중</div>
+            </div>
+            <div style="font-size:11px;color:#7C7C7C;padding:5px 10px;background:#E8F5E9;border-radius:6px;">종료</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>현재 상태가 한눈에</li><li>AI↔상담원 전환 시 시각 피드백</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>색상 변화가 산만할 수 있음</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 2: STATUS BANNER ======================== -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-title">Status Banner</div>
+      <div class="section-subtitle">현재: 풀 너비 컬러 배너 + dot + 텍스트</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>단순 컬러 배경 배너. 공간 차지하고 반복적</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:160px;">
+          <div class="status-banner" style="background:#F0F4FF;color:#5C6BC0;">
+            <div class="status-dot" style="background:#7986CB;"></div>
+            AI 상담사가 답변 중이에요
+          </div>
+          <div class="status-banner" style="background:#FFF8E1;color:#F57C00;">
+            <div class="status-dot" style="background:#FFB74D;"></div>
+            상담원 연결을 기다리고 있어요
+          </div>
+          <div class="status-banner" style="background:#E8F5E9;color:#2E7D32;">
+            <div class="status-dot" style="background:#4CAF50;"></div>
+            상담원이 답변 중이에요
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Progress Steps -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Progress Step Indicator <span class="idea-label">IDEA</span></h3>
+        <p>상담 흐름을 단계별 프로그레스로 시각화 (Apple Support 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:80px;">
+          <div class="status-progress">
+            <div class="progress-steps">
+              <div class="progress-step">
+                <div class="step-dot done">✓</div>
+                <div class="step-label">접수</div>
+              </div>
+              <div class="progress-line done"></div>
+              <div class="progress-step">
+                <div class="step-dot active" style="animation: pulse 2s infinite;">2</div>
+                <div class="step-label active">AI 분석</div>
+              </div>
+              <div class="progress-line"></div>
+              <div class="progress-step">
+                <div class="step-dot">3</div>
+                <div class="step-label">상담원</div>
+              </div>
+              <div class="progress-line"></div>
+              <div class="progress-step">
+                <div class="step-dot">4</div>
+                <div class="step-label">해결</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>전체 프로세스 한눈에</li><li>예상 가능한 UX</li><li>전문적 인상</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>세로 공간 차지</li><li>단계 복잡하면 혼란</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Thin Connection Bar -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Thin Connection Bar <span class="idea-label">IDEA</span></h3>
+        <p>헤더 아래 3px 바로 연결 상태만 표시 (Telegram 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:140px;">
+          <div style="padding:8px 16px;font-size:12px;color:#7C7C7C;text-align:center;">연결됨 (Connected)</div>
+          <div class="connection-bar connected"></div>
+          <div style="padding:16px;font-size:12px;color:#7C7C7C;text-align:center;">💬 메시지 영역이 더 넓어짐</div>
+          <div style="padding:8px 16px;font-size:12px;color:#7C7C7C;text-align:center;">재연결 중... (Reconnecting)</div>
+          <div class="connection-bar reconnecting"></div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>메시지 공간 최대화</li><li>미니멀/네이티브 느낌</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>상세 상태 전달력 부족</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea C: Collapsible chip -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 C</span>
+      <div class="idea-card-header">
+        <h3>Floating Status Chip <span class="idea-label">IDEA</span></h3>
+        <p>메시지 위에 떠있는 작은 칩. 탭하면 확장 (iOS 다이나믹 아일랜드 영감)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:140px;position:relative;">
+          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#7A4AE2;color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(122,74,226,0.3);z-index:10;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#80FF80;"></div>
+            AI 답변 중
+          </div>
+          <div style="padding:48px 16px 16px;font-size:12px;color:#AEAEAE;text-align:center;">
+            ↑ 칩을 탭하면 상세 상태 확장<br><br>
+            메시지 영역을 가리지 않으면서<br>
+            상태를 항상 확인 가능
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>공간 효율 최고</li><li>모던한 인터랙션</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>구현 복잡도 높음</li><li>스크롤 시 겹침 이슈</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 3: MESSAGE BUBBLE ======================== -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-title">Message Bubble</div>
+      <div class="section-subtitle">현재: 유저(보라)/봇(파란배경)/상담원(흰배경) 버블</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>단순 버블. 봇/상담원 구분이 색상만으로 약함</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:220px;">
+          <div class="messages">
+            <div class="msg bot">
+              <div class="msg-label">AI 상담사</div>
+              <div class="msg-row">
+                <div class="bubble bot">안녕하세요! 무엇을 도와드릴까요?</div>
+                <span class="msg-time">오후 2:30</span>
+              </div>
+            </div>
+            <div class="msg user">
+              <div class="msg-row">
+                <span class="msg-time">오후 2:31</span>
+                <div class="bubble user">매칭이 안 돼요</div>
+              </div>
+            </div>
+            <div class="msg bot">
+              <div class="msg-row">
+                <div class="bubble bot">어떤 매칭 관련 문제인지 자세히 알려주시겠어요?</div>
+                <span class="msg-time">오후 2:31</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Avatar + Name -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Avatar + 이름 + 인라인 액션 <span class="idea-label">IDEA</span></h3>
+        <p>프로필 아바타 추가 + 봇 답변에 인라인 피드백 (KakaoTalk 플러스친구 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:300px;">
+          <div class="messages">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av">S</div>
+              <div class="msg-content">
+                <div class="msg-label">AI 상담사</div>
+                <div class="bubble bot">
+                  안녕하세요! 무엇을 도와드릴까요?
+                  <div class="bubble-actions">
+                    <div class="bubble-action">💳 결제</div>
+                    <div class="bubble-action">💕 매칭</div>
+                    <div class="bubble-action">💬 채팅</div>
+                    <div class="bubble-action">👤 계정</div>
+                  </div>
+                </div>
+                <span class="msg-time">오후 2:30</span>
+              </div>
+            </div>
+            <div class="msg-with-avatar user" style="align-self:flex-end;">
+              <div class="msg-content" style="align-items:flex-end;">
+                <div class="bubble user">매칭이 안 돼요 ㅠ</div>
+                <span class="msg-time">오후 2:31 · 읽음</span>
+              </div>
+            </div>
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av">S</div>
+              <div class="msg-content">
+                <div class="bubble bot">
+                  매칭 관련 문의시군요! 확인해보겠습니다.
+                  <div class="satisfaction-inline">
+                    <div class="sat-btn helpful">👍 도움됨</div>
+                    <div class="sat-btn not-helpful">👎 아니요</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>상담사 정체성 명확</li><li>카테고리 빠른 선택</li><li>실시간 피드백 수집</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>버블 내 요소 복잡</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Rich card messages -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Rich Card Message <span class="idea-label">IDEA</span></h3>
+        <p>봇 메시지를 카드 형태로 + 이미지/링크 포함 가능 (Apple Business Chat 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:300px;">
+          <div class="messages">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av">S</div>
+              <div class="msg-content" style="width:260px;">
+                <div class="msg-label">AI 상담사</div>
+                <div style="background:#fff;border:1px solid #E5E8EB;border-radius:16px;overflow:hidden;">
+                  <div style="padding:14px 16px;">
+                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">매칭 관련 안내</div>
+                    <div style="font-size:13px;color:#4E5968;line-height:1.5;">매칭이 되지 않는 경우, 아래 방법을 시도해보세요:</div>
+                  </div>
+                  <div style="border-top:1px solid #E5E8EB;">
+                    <div style="padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                      <span>📋</span>
+                      <span style="font-size:13px;color:#7A4AE2;font-weight:500;flex:1;">프로필 완성도 높이기</span>
+                      <span style="color:#AEAEAE;">›</span>
+                    </div>
+                    <div style="border-top:1px solid #F2EDFF;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                      <span>🔄</span>
+                      <span style="font-size:13px;color:#7A4AE2;font-weight:500;flex:1;">매칭 설정 확인하기</span>
+                      <span style="color:#AEAEAE;">›</span>
+                    </div>
+                    <div style="border-top:1px solid #F2EDFF;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                      <span>🙋</span>
+                      <span style="font-size:13px;color:#7A4AE2;font-weight:500;flex:1;">상담원에게 문의</span>
+                      <span style="color:#AEAEAE;">›</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>구조화된 정보 전달</li><li>셀프 서비스 유도</li><li>고급스러운 느낌</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>구현 복잡도 높음</li><li>일반 채팅 느낌 줄어듦</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 4: INPUT BAR ======================== -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-title">Input Bar</div>
+      <div class="section-subtitle">현재: 둥근 입력창 + 조건부 전송 버튼</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>최소 기능. 텍스트만 전송 가능</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:90px;">
+          <div class="input-bar">
+            <div class="input-container">
+              <span class="input-placeholder">메시지를 입력하세요...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: With attachment + quick replies -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Attachment + Quick Replies <span class="idea-label">IDEA</span></h3>
+        <p>첨부 버튼 + 스크롤 가능한 빠른 답변 칩 (KakaoTalk 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:140px;">
+          <div class="quick-replies">
+            <div class="quick-chip">💳 결제 문제</div>
+            <div class="quick-chip">💕 매칭 안 됨</div>
+            <div class="quick-chip">🔔 알림 안 옴</div>
+            <div class="quick-chip">👤 계정 삭제</div>
+          </div>
+          <div class="input-bar">
+            <div class="input-container">
+              <div class="attach-btn">📎</div>
+              <span class="input-placeholder" style="flex:1;margin-left:8px;">메시지를 입력하세요...</span>
+              <div class="send-btn">↑</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>첫 문의 허들 낮춤</li><li>스크린샷 첨부 가능</li><li>문의 카테고리 명확</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>칩이 많으면 산만</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Expandable input -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Expandable Rich Input <span class="idea-label">IDEA</span></h3>
+        <p>+ 버튼 탭 시 이미지/스크린샷 옵션 확장 (iMessage 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:200px;">
+          <!-- Expanded state -->
+          <div style="padding:12px 16px;background:#F8F9FA;display:flex;gap:16px;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="width:52px;height:52px;border-radius:14px;background:#7A4AE2;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 4px;">📷</div>
+              <div style="font-size:11px;color:#4E5968;">카메라</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:52px;height:52px;border-radius:14px;background:#3871FF;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 4px;">🖼️</div>
+              <div style="font-size:11px;color:#4E5968;">갤러리</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:52px;height:52px;border-radius:14px;background:#F57C00;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 4px;">📄</div>
+              <div style="font-size:11px;color:#4E5968;">파일</div>
+            </div>
+          </div>
+          <div class="input-bar">
+            <div class="input-container">
+              <div class="attach-btn" style="background:#E2D5FF;">+</div>
+              <span class="input-placeholder" style="flex:1;margin-left:8px;">메시지를 입력하세요...</span>
+              <div class="send-btn">↑</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>스크린샷으로 문제 설명 용이</li><li>기본은 깔끔, 필요 시 확장</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>서버 파일 업로드 구현 필요</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea C: Disabled state -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 C</span>
+      <div class="idea-card-header">
+        <h3>Smart Disabled State <span class="idea-label">IDEA</span></h3>
+        <p>세션 종료 시 입력 영역에 CTA 전환 (재문의/평가)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:160px;">
+          <!-- Normal disabled -->
+          <div style="padding:8px 16px;text-align:center;font-size:12px;color:#AEAEAE;">현재: disabled=true → 회색 입력창</div>
+          <div class="input-bar">
+            <div class="input-container" style="opacity:0.5;">
+              <span class="input-placeholder" style="flex:1;">상담이 종료되었습니다</span>
+            </div>
+          </div>
+          <!-- Better: CTA -->
+          <div style="padding:8px 16px;text-align:center;font-size:12px;color:#4CAF50;">개선: CTA 버튼으로 전환</div>
+          <div style="padding:8px 16px;display:flex;gap:8px;">
+            <div style="flex:1;padding:14px;background:#F2EDFF;border-radius:14px;text-align:center;font-size:14px;font-weight:600;color:#7A4AE2;">새 문의하기</div>
+            <div style="flex:1;padding:14px;background:#7A4AE2;border-radius:14px;text-align:center;font-size:14px;font-weight:600;color:#fff;">평가하기 ⭐</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>죽은 공간 활용</li><li>자연스러운 후속 액션 유도</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>상태 분기 로직 추가</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 5: EMPTY / WELCOME ======================== -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-title">Empty State / Welcome</div>
+      <div class="section-subtitle">현재: "무엇을 도와드릴까요?" 텍스트만</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>텍스트만 있는 빈 화면. 사용자 행동 유도 없음</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:200px;">
+          <div class="empty-state">
+            <h3>무엇을 도와드릴까요?</h3>
+            <p>궁금한 점이나 불편한 사항이 있으시면<br>언제든지 문의해주세요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Category Grid -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Category Grid Welcome <span class="idea-label">IDEA</span></h3>
+        <p>문의 카테고리를 그리드로 + 최근 공지 (Apple Support 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:380px;">
+          <div class="welcome-banner">
+            <h3>안녕하세요! 👋</h3>
+            <p>어떤 도움이 필요하신가요? 아래에서 문의 유형을 선택하시면 더 빠르게 도움드릴 수 있어요.</p>
+          </div>
+          <div class="category-grid">
+            <div class="cat-card">
+              <div class="cat-icon">💳</div>
+              <div class="cat-title">결제 문의</div>
+            </div>
+            <div class="cat-card">
+              <div class="cat-icon">💕</div>
+              <div class="cat-title">매칭 문의</div>
+            </div>
+            <div class="cat-card">
+              <div class="cat-icon">💬</div>
+              <div class="cat-title">채팅 문의</div>
+            </div>
+            <div class="cat-card">
+              <div class="cat-icon">👤</div>
+              <div class="cat-title">계정 문의</div>
+            </div>
+          </div>
+          <div style="padding:16px 20px;">
+            <div style="font-size:13px;color:#7C7C7C;margin-bottom:8px;">또는 바로 메시지를 입력해주세요 ↓</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>빠른 카테고리 선택</li><li>문의 허들 대폭 감소</li><li>봇 정확도 향상</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>자유 입력 대비 제한적</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: FAQ + Search -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>FAQ Quick Access <span class="idea-label">IDEA</span></h3>
+        <p>자주 묻는 질문 리스트로 셀프 서비스 유도 (Zendesk 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:360px;">
+          <div style="padding:20px;text-align:center;">
+            <div style="font-size:36px;margin-bottom:8px;">💬</div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">도움이 필요하신가요?</div>
+            <div style="font-size:13px;color:#7C7C7C;">자주 묻는 질문을 먼저 확인해보세요</div>
+          </div>
+          <div class="faq-list">
+            <div class="faq-item">
+              <span class="faq-icon">🔄</span>
+              <span class="faq-text">매칭이 되지 않아요</span>
+              <span class="faq-arrow">›</span>
+            </div>
+            <div class="faq-item">
+              <span class="faq-icon">💳</span>
+              <span class="faq-text">결제 취소/환불하고 싶어요</span>
+              <span class="faq-arrow">›</span>
+            </div>
+            <div class="faq-item">
+              <span class="faq-icon">🔔</span>
+              <span class="faq-text">알림이 안 와요</span>
+              <span class="faq-arrow">›</span>
+            </div>
+            <div class="faq-item">
+              <span class="faq-icon">🚫</span>
+              <span class="faq-text">신고/차단하고 싶어요</span>
+              <span class="faq-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>상담 없이 즉시 해결 가능</li><li>상담사 부하 감소</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>FAQ 관리 필요</li><li>"대화" 느낌 약해짐</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 6: TYPING INDICATOR ======================== -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-title">Typing Indicator</div>
+      <div class="section-subtitle">현재: 상태 배너에 "입력 중..." 텍스트만</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>배너에 텍스트만 표시. 메시지 영역과 분리됨</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:60px;">
+          <div class="status-banner" style="background:#E8F5E9;color:#2E7D32;">
+            <div class="status-dot" style="background:#4CAF50;"></div>
+            입력 중...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Bubble dots -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Bubble Dots Indicator <span class="idea-label">IDEA</span></h3>
+        <p>메시지 영역 내 버블 형태의 타이핑 인디케이터 (iMessage 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:130px;">
+          <div class="messages" style="gap:6px;">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av" style="width:28px;height:28px;font-size:11px;">S</div>
+              <div class="msg-content">
+                <div class="msg-label" style="font-size:11px;">AI 상담사</div>
+                <div class="bubble bot" style="padding:12px 18px;">
+                  <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>네이티브 채팅 경험</li><li>대화 맥락 내 위치</li><li>직관적이고 익숙함</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>봇 응답이 길면 긴 대기</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Inline with label -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Label + Progress Dots <span class="idea-label">IDEA</span></h3>
+        <p>아바타 옆에 "분석 중..." 텍스트 + 프로그레스 (ChatGPT 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:130px;">
+          <div class="messages" style="gap:6px;">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av" style="width:28px;height:28px;font-size:11px;">S</div>
+              <div class="msg-content">
+                <div class="msg-label" style="font-size:11px;">AI 상담사</div>
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+                  <div style="width:16px;height:16px;border:2px solid #E2D5FF;border-top-color:#7A4AE2;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+                  <span style="font-size:13px;color:#7A4AE2;font-weight:500;">답변을 준비하고 있어요...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>현재 상태 명확히 전달</li><li>AI 처리 느낌 강조</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>상담원일 때는 과함</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 7: RATING / FEEDBACK ======================== -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-title">Rating / Feedback</div>
+      <div class="section-subtitle">현재: 종료 시 모달 팝업으로 별점 5점</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>별도 모달 팝업. 강제적이고 플로우 끊김</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:260px;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+          <div style="background:#fff;border-radius:20px;padding:24px;width:85%;text-align:center;">
+            <div style="font-size:18px;font-weight:600;margin-bottom:8px;">상담은 어떠셨나요?</div>
+            <div style="font-size:14px;color:#7C7C7C;margin-bottom:16px;">더 나은 서비스를 위해 평가해주세요</div>
+            <div class="stars">
+              <span class="star filled">★</span>
+              <span class="star filled">★</span>
+              <span class="star filled">★</span>
+              <span class="star empty">☆</span>
+              <span class="star empty">☆</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <div style="flex:1;padding:12px;background:#F2EDFF;border-radius:12px;font-size:14px;color:#7C7C7C;font-weight:600;">건너뛰기</div>
+              <div style="flex:1;padding:12px;background:#7A4AE2;border-radius:12px;font-size:14px;color:#fff;font-weight:600;">평가 완료</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Inline chat rating -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Inline Chat Rating <span class="idea-label">IDEA</span></h3>
+        <p>채팅 내 마지막 메시지로 평가 카드 삽입 (Intercom 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:280px;">
+          <div class="messages">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av" style="width:28px;height:28px;font-size:11px;">S</div>
+              <div class="msg-content">
+                <div class="bubble bot">문제가 해결되셨나요? 도움이 되었으면 좋겠어요!</div>
+              </div>
+            </div>
+            <div style="align-self:center;width:100%;">
+              <div class="inline-rating">
+                <div style="font-size:28px;margin-bottom:8px;">🎉</div>
+                <h4>상담이 종료되었어요</h4>
+                <div style="font-size:12px;color:#7C7C7C;margin-bottom:12px;">이번 상담은 어땠나요?</div>
+                <div class="emotion-row">
+                  <span class="emotion">😡</span>
+                  <span class="emotion">😕</span>
+                  <span class="emotion selected">😊</span>
+                  <span class="emotion">😄</span>
+                  <span class="emotion">🥰</span>
+                </div>
+                <div style="margin-top:12px;font-size:12px;color:#7A4AE2;font-weight:500;cursor:pointer;">의견 남기기 (선택)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>대화 맥락에서 자연스러움</li><li>이모지로 직관적 선택</li><li>모달 없이 플로우 유지</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>스크롤해야 볼 수 있음</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Per-message feedback -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Per-Message Micro Feedback <span class="idea-label">IDEA</span></h3>
+        <p>각 봇 답변마다 👍👎 마이크로 피드백 (ChatGPT 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:200px;">
+          <div class="messages">
+            <div class="msg-with-avatar bot">
+              <div class="avatar bot-av" style="width:28px;height:28px;font-size:11px;">S</div>
+              <div class="msg-content" style="width:250px;">
+                <div class="bubble bot">
+                  매칭 설정에서 거리 범위를 넓혀보세요. 설정 > 매칭 > 거리에서 변경할 수 있어요.
+                </div>
+                <div style="display:flex;gap:4px;margin-top:4px;margin-left:4px;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#F8F9FA;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;">👍</div>
+                  <div style="width:28px;height:28px;border-radius:50%;background:#F8F9FA;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;">👎</div>
+                  <div style="width:28px;height:28px;border-radius:50%;background:#F8F9FA;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;">📋</div>
+                </div>
+                <span class="msg-time" style="margin-left:4px;">오후 2:31</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>세밀한 피드백 수집</li><li>AI 학습 데이터 확보</li><li>복사 기능 제공 가능</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>매번 보이면 피로감</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION 8: SESSION END ======================== -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div>
+      <div class="section-title">Session End / Resolved</div>
+      <div class="section-subtitle">현재: 단순히 입력 비활성화 + 배너 텍스트</div>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <!-- Current -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <h3>현재 디자인 <span class="current-label">CURRENT</span></h3>
+        <p>배너에 "종료" 텍스트만. 후속 액션 유도 없음</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:100px;">
+          <div class="status-banner" style="background:#ECEFF1;color:#607D8B;">
+            <div class="status-dot" style="background:#90A4AE;"></div>
+            상담이 종료되었어요
+          </div>
+          <div class="input-bar">
+            <div class="input-container" style="opacity:0.4;">
+              <span class="input-placeholder">상담이 종료되었습니다</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idea A: Resolution card -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 A</span>
+      <div class="idea-card-header">
+        <h3>Resolution Summary Card <span class="idea-label">IDEA</span></h3>
+        <p>상담 결과 요약 + 관련 도움말 + 후속 액션 (Apple Support 스타일)</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:320px;">
+          <div class="resolved-card">
+            <div style="font-size:36px;margin-bottom:8px;">✅</div>
+            <h3>상담이 완료되었어요</h3>
+            <p>매칭 설정 변경 방법을 안내해드렸어요</p>
+            <div style="background:#fff;border-radius:12px;padding:12px;margin:12px 0;text-align:left;">
+              <div style="font-size:12px;color:#7C7C7C;margin-bottom:6px;">상담 요약</div>
+              <div style="font-size:13px;line-height:1.5;">매칭 거리 설정을 30km로 변경하여 문제를 해결했습니다.</div>
+            </div>
+            <div class="resolved-actions">
+              <div class="resolved-btn secondary">새 문의</div>
+              <div class="resolved-btn primary">확인</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>상담 결과 한눈에</li><li>자연스러운 이탈 유도</li><li>전문적인 인상</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>요약 생성 로직 필요</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Idea B: Bottom action bar -->
+    <div class="idea-card" style="position:relative;">
+      <span class="score">추천 B</span>
+      <div class="idea-card-header">
+        <h3>Bottom CTA Bar <span class="idea-label">IDEA</span></h3>
+        <p>입력창 자리에 CTA 버튼 2개로 전환</p>
+      </div>
+      <div class="idea-card-body">
+        <div class="phone short" style="height:160px;">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;">
+            <div style="padding:8px 16px;text-align:center;">
+              <div style="font-size:13px;color:#7C7C7C;margin-bottom:8px;">상담이 종료되었어요. 추가 도움이 필요하신가요?</div>
+            </div>
+            <div style="padding:8px 16px 24px;display:flex;gap:10px;">
+              <div style="flex:1;padding:16px;background:#F2EDFF;border-radius:16px;text-align:center;">
+                <div style="font-size:20px;margin-bottom:4px;">💬</div>
+                <div style="font-size:14px;font-weight:600;color:#7A4AE2;">새 문의</div>
+              </div>
+              <div style="flex:1;padding:16px;background:#F8F9FA;border-radius:16px;text-align:center;">
+                <div style="font-size:20px;margin-bottom:4px;">📋</div>
+                <div style="font-size:14px;font-weight:600;color:#4E5968;">FAQ 보기</div>
+              </div>
+              <div style="flex:1;padding:16px;background:#F8F9FA;border-radius:16px;text-align:center;">
+                <div style="font-size:20px;margin-bottom:4px;">🏠</div>
+                <div style="font-size:14px;font-weight:600;color:#4E5968;">홈으로</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>명확한 후속 행동</li><li>공간 활용 효율적</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>3개 옵션이 과할 수 있음</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="section" style="margin-bottom:60px;">
+  <div style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px;color:#7A4AE2;">Summary: Top Picks per Element</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="border-bottom:2px solid #F2EDFF;">
+          <th style="text-align:left;padding:10px;color:#7C7C7C;font-weight:600;">Element</th>
+          <th style="text-align:left;padding:10px;color:#7C7C7C;font-weight:600;">Top Pick</th>
+          <th style="text-align:left;padding:10px;color:#7C7C7C;font-weight:600;">Reference</th>
+          <th style="text-align:left;padding:10px;color:#7C7C7C;font-weight:600;">Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Header</td>
+          <td style="padding:10px;">Agent Avatar Header</td>
+          <td style="padding:10px;color:#7C7C7C;">iMessage, LINE</td>
+          <td style="padding:10px;"><span style="color:#4CAF50;font-weight:600;">High</span> - 신뢰도 향상</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Status</td>
+          <td style="padding:10px;">Progress Step Indicator</td>
+          <td style="padding:10px;color:#7C7C7C;">Apple Support</td>
+          <td style="padding:10px;"><span style="color:#4CAF50;font-weight:600;">High</span> - 불안감 감소</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Message</td>
+          <td style="padding:10px;">Avatar + Inline Action</td>
+          <td style="padding:10px;color:#7C7C7C;">KakaoTalk Plus</td>
+          <td style="padding:10px;"><span style="color:#F57C00;font-weight:600;">Medium</span> - 상호작용 향상</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Input</td>
+          <td style="padding:10px;">Attachment + Quick Replies</td>
+          <td style="padding:10px;color:#7C7C7C;">KakaoTalk</td>
+          <td style="padding:10px;"><span style="color:#4CAF50;font-weight:600;">High</span> - 문의 허들 감소</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Welcome</td>
+          <td style="padding:10px;">Category Grid</td>
+          <td style="padding:10px;color:#7C7C7C;">Apple Support</td>
+          <td style="padding:10px;"><span style="color:#4CAF50;font-weight:600;">High</span> - 진입 효율</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Typing</td>
+          <td style="padding:10px;">Bubble Dots</td>
+          <td style="padding:10px;color:#7C7C7C;">iMessage</td>
+          <td style="padding:10px;"><span style="color:#F57C00;font-weight:600;">Medium</span> - 네이티브 경험</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F8F9FA;">
+          <td style="padding:10px;font-weight:600;">Rating</td>
+          <td style="padding:10px;">Inline Chat Rating</td>
+          <td style="padding:10px;color:#7C7C7C;">Intercom</td>
+          <td style="padding:10px;"><span style="color:#4CAF50;font-weight:600;">High</span> - 응답률 향상</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-weight:600;">Session End</td>
+          <td style="padding:10px;">Resolution Summary</td>
+          <td style="padding:10px;color:#7C7C7C;">Apple Support</td>
+          <td style="padding:10px;"><span style="color:#F57C00;font-weight:600;">Medium</span> - 완결감</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

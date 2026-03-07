@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>모먼트 온보딩 결과 — C안 성격 대시보드</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Noto Sans KR', sans-serif;
+  background: #EDE9F8;
+  color: #1A1A1A;
+  min-height: 100vh;
+}
+
+/* ─── Page Header ─── */
+.page-header {
+  text-align: center;
+  padding: 36px 24px 28px;
+  background: linear-gradient(135deg, #2D1B6E 0%, #5B35C0 60%, #7A4AE2 100%);
+}
+.page-header h1 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.page-header p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+}
+.page-header .badge-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.page-header .badge {
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.9);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ─── Three-column Layout ─── */
+.layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px 24px 48px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ─── Side Panels ─── */
+.side-panel {
+  width: 270px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+}
+.panel-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(122,74,226,0.08);
+  border: 1px solid rgba(122,74,226,0.1);
+}
+.panel-card h3 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7A4AE2;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F0EBF9;
+}
+.panel-row {
+  margin-bottom: 10px;
+}
+.panel-row .label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #7A4AE2;
+  margin-bottom: 2px;
+  display: block;
+}
+.panel-row .value {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.5;
+  font-family: 'SF Mono', 'JetBrains Mono', monospace;
+  background: #F8F5FF;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: block;
+}
+.panel-row .desc {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.55;
+}
+.section-tag {
+  display: inline-block;
+  background: #F8F5FF;
+  color: #7A4AE2;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.impl-note {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.6;
+  padding: 6px 0;
+  border-bottom: 1px dashed #EEE;
+}
+.impl-note:last-child { border-bottom: none; }
+.impl-note code {
+  background: #F3F0FB;
+  color: #5B35C0;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: 'SF Mono', monospace;
+}
+.impl-note .path {
+  display: block;
+  font-size: 10px;
+  color: #9B7FD4;
+  font-family: 'SF Mono', monospace;
+  margin-top: 1px;
+}
+
+/* ─── Mobile Frame ─── */
+.mobile-frame {
+  width: 390px;
+  flex-shrink: 0;
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 10px #1A1A1A,
+    0 0 0 12px #333,
+    0 40px 80px rgba(0,0,0,0.35);
+  position: relative;
+  background: #fff;
+}
+.mobile-notch {
+  background: #1A1A1A;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notch-pill {
+  width: 120px;
+  height: 24px;
+  background: #111;
+  border-radius: 999px;
+  border: 2px solid #2A2A2A;
+}
+.mobile-screen {
+  height: 768px;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F1FF 40%, #DECEFF 80%, #B095E0 100%);
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mobile-screen::-webkit-scrollbar { display: none; }
+.mobile-home-bar {
+  background: #1A1A1A;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.home-bar-pill {
+  width: 120px;
+  height: 5px;
+  background: #444;
+  border-radius: 999px;
+}
+
+/* ─── Screen Content ─── */
+.screen-content {
+  padding: 0 0 100px;
+}
+
+/* ─── 1. Header ─── */
+.s-header {
+  padding: 24px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.miho-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F8F5FF 0%, #E6DAFF 100%);
+  border: 2px solid #7A4AE2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 4px 16px rgba(122,74,226,0.25);
+}
+.header-copy {
+  font-size: 18px;
+  font-weight: 800;
+  color: #7A4AE2;
+  letter-spacing: -0.4px;
+  text-align: center;
+}
+.week-badge {
+  background: #F8F5FF;
+  color: #7A4AE2;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(122,74,226,0.2);
+}
+
+/* ─── 2. 칭호 카드 ─── */
+.s-title-card {
+  margin: 0 16px 20px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #7A4AE2 0%, #5B35C0 100%);
+  padding: 28px 24px 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(122,74,226,0.4);
+}
+.title-deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+.title-deco-circle.tl {
+  width: 140px; height: 140px;
+  top: -50px; left: -40px;
+}
+.title-deco-circle.br {
+  width: 180px; height: 180px;
+  bottom: -70px; right: -50px;
+}
+.title-deco-circle.sm {
+  width: 60px; height: 60px;
+  top: 20px; right: 30px;
+  background: rgba(255,255,255,0.04);
+}
+.title-ceremony {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.title-ceremony::before {
+  content: '⭐';
+  font-size: 14px;
+}
+.title-main {
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.title-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.title-shimmer-line {
+  width: 48px;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 999px;
+  margin-top: 16px;
+}
+
+/* ─── Section Label ─── */
+.s-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A1A1A;
+  padding: 0 20px;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.s-label::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(180deg, #7A4AE2 0%, #5B35C0 100%);
+  border-radius: 999px;
+}
+.s-section {
+  margin-bottom: 24px;
+}
+
+/* ─── 3. 성향 스탯 그리드 ─── */
+.stat-grid {
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat-grid .last-center {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px 14px;
+  box-shadow: 0 4px 16px rgba(122,74,226,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(122,74,226,0.06);
+}
+.stat-card.center-card {
+  width: 160px;
+}
+.stat-ring-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+}
+.stat-ring-wrap .ring-score {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1A1A1A;
+}
+.stat-icon {
+  font-size: 14px;
+  margin-top: 2px;
+}
+.stat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1A1A1A;
+  letter-spacing: -0.2px;
+}
+.stat-desc {
+  font-size: 10px;
+  color: #767676;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ─── 4. 방사형 그래프 ─── */
+.radar-card {
+  background: #fff;
+  border-radius: 20px;
+  margin: 0 16px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 16px rgba(122,74,226,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(122,74,226,0.06);
+}
+.radar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+  margin-top: 12px;
+}
+.legend-item {
+  font-size: 11px;
+  color: #767676;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7A4AE2;
+}
+
+/* ─── 5. 키 패턴 ─── */
+.pattern-wrap {
+  padding: 0 16px;
+}
+.pattern-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pattern-tag {
+  background: #F8F5FF;
+  color: #7A4AE2;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(122,74,226,0.15);
+  line-height: 1;
+}
+.insight-quote {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 14px 14px 18px;
+  border-left: 3px solid #7A4AE2;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.7;
+  font-style: italic;
+  box-shadow: 0 2px 8px rgba(122,74,226,0.07);
+}
+
+/* ─── 6. 스토리 섹션 (접기/펼치기) ─── */
+.story-list {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.story-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(122,74,226,0.08);
+  border: 1px solid rgba(122,74,226,0.06);
+}
+.story-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+}
+.story-q-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.story-q-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1A1A1A;
+  flex: 1;
+  line-height: 1.4;
+}
+.story-chevron {
+  font-size: 14px;
+  color: #7A4AE2;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+.story-chevron.open { transform: rotate(180deg); }
+.story-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid #F5F1FF;
+}
+.story-body.open { display: block; }
+.story-quote {
+  font-size: 13px;
+  color: #1A1A1A;
+  font-style: italic;
+  margin: 12px 0 10px;
+  padding-left: 14px;
+  border-left: 3px solid #7A4AE2;
+  line-height: 1.6;
+}
+.story-quote::before {
+  content: '"';
+  color: #7A4AE2;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 0;
+  vertical-align: -4px;
+  margin-right: 2px;
+}
+.emotion-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.emotion-chip {
+  background: #F8F5FF;
+  color: #7A4AE2;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(122,74,226,0.12);
+}
+.emotion-arrow {
+  font-size: 11px;
+  color: #B095E0;
+  font-weight: 700;
+}
+.story-what {
+  font-size: 12px;
+  color: #767676;
+  line-height: 1.65;
+  background: #FAFAFA;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* ─── 7. 성장 제안 ─── */
+.growth-list {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.growth-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgba(122,74,226,0.08);
+  border: 1px solid rgba(122,74,226,0.06);
+}
+.growth-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.growth-text {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.6;
+  flex: 1;
+}
+.growth-suggestion {
+  margin: 10px 16px 0;
+  padding: 12px 14px;
+  background: #F8F5FF;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #7A4AE2;
+  font-style: italic;
+  line-height: 1.65;
+  border: 1px solid rgba(122,74,226,0.12);
+}
+
+/* ─── 8. 페르소나 ─── */
+.persona-card {
+  background: #fff;
+  border-radius: 20px;
+  margin: 0 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(122,74,226,0.1);
+  border: 1px solid rgba(122,74,226,0.06);
+}
+.persona-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #F5F1FF;
+}
+.persona-char-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.persona-char-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+}
+.persona-check {
+  color: #7A4AE2;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── CTA ─── */
+.cta-wrap {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 16px 20px;
+  background: linear-gradient(to top, rgba(176,149,224,1) 0%, rgba(222,206,255,0.9) 60%, transparent 100%);
+}
+.cta-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #7A4AE2 0%, #5B35C0 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  letter-spacing: -0.2px;
+  box-shadow: 0 6px 20px rgba(122,74,226,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ─── Scroll hint ─── */
+.scroll-hint {
+  text-align: center;
+  padding: 32px 20px 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.scroll-arrow {
+  animation: bounce 1.5s ease-in-out infinite;
+  font-size: 16px;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ─── Page Header ─── -->
+<div class="page-header">
+  <h1>모먼트 온보딩 결과 — C안 성격 대시보드</h1>
+  <p>OnboardingReport API 데이터 기반 실제 화면 시각화</p>
+  <div class="badge-row">
+    <span class="badge">390px 모바일 목업</span>
+    <span class="badge">실데이터 매핑</span>
+    <span class="badge">접기/펼치기 인터랙션</span>
+    <span class="badge">SVG 방사형 그래프</span>
+  </div>
+</div>
+
+<!-- ─── Three-column Layout ─── -->
+<div class="layout">
+
+  <!-- ─── LEFT PANEL: 기획 설명 ─── -->
+  <div class="side-panel">
+
+    <div class="panel-card">
+      <h3>섹션 데이터 매핑</h3>
+
+      <div class="panel-row">
+        <span class="section-tag">헤더</span>
+        <span class="label">마스코트</span>
+        <span class="desc">미호 캐릭터 이미지 (70px 원형, 보라 2px border)</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">서브 배지</span>
+        <span class="value">year + weekOfYear → "2026년 10주차"</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">칭호 카드</span>
+        <span class="label">상단 텍스트</span>
+        <span class="value">storyFlow.titleAward.ceremonyText</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">메인 칭호</span>
+        <span class="value">titleInfo.title</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">서브 설명</span>
+        <span class="value">titleInfo.subTitle</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">성향 스탯</span>
+        <span class="label">5개 원형 프로그레스</span>
+        <span class="value">dimensionScores.{key}</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">배치</span>
+        <span class="desc">2열 그리드 + 마지막 1개 중앙</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">방사형 그래프</span>
+        <span class="label">5축 데이터</span>
+        <span class="value">dimensionScores (5개 값)</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">축 순서</span>
+        <span class="desc">외향성→개방성→성실성→친화성→감정예민도</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">키 패턴</span>
+        <span class="label">태그 5개</span>
+        <span class="value">storyFlow.integratedInsights.keyPatterns[]</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">인사이트 텍스트</span>
+        <span class="value">storyFlow.integratedInsights.content</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">나의 이야기</span>
+        <span class="label">스토리 3개</span>
+        <span class="value">storyFlow.storySections[0..2]</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">감정 흐름</span>
+        <span class="value">.emotionalJourney (→ 파싱)</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">성장 제안</span>
+        <span class="label">3개 카드</span>
+        <span class="value">storyFlow.growthJourney.nextSteps[]</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">제안 메모</span>
+        <span class="value">storyFlow.growthJourney.suggestion</span>
+      </div>
+
+      <div class="panel-row" style="margin-top:12px">
+        <span class="section-tag">페르소나</span>
+        <span class="label">설명문</span>
+        <span class="value">storyFlow.personaNarrative.description</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">특성 5개</span>
+        <span class="value">storyFlow.personaNarrative.characteristics[]</span>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h3>실제 데이터 값</h3>
+      <div class="panel-row">
+        <span class="label">칭호</span>
+        <span class="value">🌉 신뢰의 설계자</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">dimensionScores</span>
+        <span class="value">openness: 65
+neuroticism: 70
+extraversion: 45
+agreeableness: 78
+conscientiousness: 55</span>
+      </div>
+      <div class="panel-row">
+        <span class="label">weekOfYear</span>
+        <span class="value">10 (2026년)</span>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h3>UX 설계 의도</h3>
+      <div class="panel-row">
+        <span class="desc">• 칭호 카드가 가장 먼저 감정적 임팩트 전달 (Hero 역할)</span>
+      </div>
+      <div class="panel-row">
+        <span class="desc">• 성향 스탯 + 방사형 그래프로 숫자를 두 가지 방식으로 시각화</span>
+      </div>
+      <div class="panel-row">
+        <span class="desc">• 스토리 섹션은 접기/펼치기로 정보 밀도 조절</span>
+      </div>
+      <div class="panel-row">
+        <span class="desc">• CTA "인연 만나러 가기"가 sticky 하단 고정으로 항상 노출</span>
+      </div>
+      <div class="panel-row">
+        <span class="desc">• 페이지 배경이 위→아래로 white→보라 그라데이션으로 몰입감 형성</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CENTER: Mobile Frame ─── -->
+  <div>
+    <div class="mobile-frame">
+      <!-- Notch -->
+      <div class="mobile-notch"><div class="notch-pill"></div></div>
+
+      <!-- Screen -->
+      <div class="mobile-screen" id="mobileScreen">
+        <div class="screen-content">
+
+          <!-- 1. 헤더 -->
+          <div class="s-header">
+            <div class="miho-avatar">🌸</div>
+            <div class="header-copy">당신의 매력, 찾았어요</div>
+            <div class="week-badge">2026년 10주차 모먼트 온보딩</div>
+          </div>
+
+          <!-- 2. 칭호 카드 -->
+          <div class="s-title-card">
+            <div class="title-deco-circle tl"></div>
+            <div class="title-deco-circle br"></div>
+            <div class="title-deco-circle sm"></div>
+            <div class="title-ceremony">칭호를 수여합니다!</div>
+            <div class="title-main">🌉 신뢰의 설계자</div>
+            <div class="title-sub">견고한 관계의 기반을 만드는 사람</div>
+            <div class="title-shimmer-line"></div>
+          </div>
+
+          <!-- 3. 성향 스탯 -->
+          <div class="s-section">
+            <div class="s-label">나의 연애 성향</div>
+            <div class="stat-grid">
+
+              <!-- 개방성 65 -->
+              <div class="stat-card">
+                <div class="stat-ring-wrap">
+                  <svg viewBox="0 0 68 68" width="68" height="68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="#E5E5E5" stroke-width="6"/>
+                    <circle cx="34" cy="34" r="28" fill="none"
+                      stroke="#7A4AE2" stroke-width="6"
+                      stroke-dasharray="114.3 175.9"
+                      stroke-dashoffset="0"
+                      stroke-linecap="round"
+                      transform="rotate(-90 34 34)"/>
+                  </svg>
+                  <div class="ring-score">65</div>
+                </div>
+                <div class="stat-icon">🌱</div>
+                <div class="stat-name">개방성</div>
+                <div class="stat-desc">새로운 경험 수용</div>
+              </div>
+
+              <!-- 감정예민도 70 -->
+              <div class="stat-card">
+                <div class="stat-ring-wrap">
+                  <svg viewBox="0 0 68 68" width="68" height="68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="#E5E5E5" stroke-width="6"/>
+                    <circle cx="34" cy="34" r="28" fill="none"
+                      stroke="#B095E0" stroke-width="6"
+                      stroke-dasharray="123.1 175.9"
+                      stroke-dashoffset="0"
+                      stroke-linecap="round"
+                      transform="rotate(-90 34 34)"/>
+                  </svg>
+                  <div class="ring-score">70</div>
+                </div>
+                <div class="stat-icon">💧</div>
+                <div class="stat-name">감정 예민도</div>
+                <div class="stat-desc">감정 민감성</div>
+              </div>
+
+              <!-- 외향성 45 -->
+              <div class="stat-card">
+                <div class="stat-ring-wrap">
+                  <svg viewBox="0 0 68 68" width="68" height="68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="#E5E5E5" stroke-width="6"/>
+                    <circle cx="34" cy="34" r="28" fill="none"
+                      stroke="#9B7FD4" stroke-width="6"
+                      stroke-dasharray="79.2 175.9"
+                      stroke-dashoffset="0"
+                      stroke-linecap="round"
+                      transform="rotate(-90 34 34)"/>
+                  </svg>
+                  <div class="ring-score">45</div>
+                </div>
+                <div class="stat-icon">✨</div>
+                <div class="stat-name">외향성</div>
+                <div class="stat-desc">사회적 에너지</div>
+              </div>
+
+              <!-- 친화성 78 -->
+              <div class="stat-card">
+                <div class="stat-ring-wrap">
+                  <svg viewBox="0 0 68 68" width="68" height="68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="#E5E5E5" stroke-width="6"/>
+                    <circle cx="34" cy="34" r="28" fill="none"
+                      stroke="#7A4AE2" stroke-width="6"
+                      stroke-dasharray="137.2 175.9"
+                      stroke-dashoffset="0"
+                      stroke-linecap="round"
+                      transform="rotate(-90 34 34)"/>
+                  </svg>
+                  <div class="ring-score">78</div>
+                </div>
+                <div class="stat-icon">💜</div>
+                <div class="stat-name">친화성</div>
+                <div class="stat-desc">공감과 배려</div>
+              </div>
+
+              <!-- 성실성 55 — 마지막 중앙 -->
+              <div class="last-center">
+                <div class="stat-card center-card">
+                  <div class="stat-ring-wrap">
+                    <svg viewBox="0 0 68 68" width="68" height="68">
+                      <circle cx="34" cy="34" r="28" fill="none" stroke="#E5E5E5" stroke-width="6"/>
+                      <circle cx="34" cy="34" r="28" fill="none"
+                        stroke="#5B35C0" stroke-width="6"
+                        stroke-dasharray="96.7 175.9"
+                        stroke-dashoffset="0"
+                        stroke-linecap="round"
+                        transform="rotate(-90 34 34)"/>
+                    </svg>
+                    <div class="ring-score">55</div>
+                  </div>
+                  <div class="stat-icon">🎯</div>
+                  <div class="stat-name">성실성</div>
+                  <div class="stat-desc">계획과 책임감</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 4. 방사형 그래프 -->
+          <div class="s-section">
+            <div class="s-label">성향 전체 지도</div>
+            <div class="radar-card">
+              <!--
+                size=260, center=130, maxRadius=85
+                각도(deg→rad): -90°=-π/2, -18°, 54°, 126°, 198°
+                데이터(0~100→0~maxRadius 비율): [45,65,55,78,70]
+                x = cx + r*(score/100)*cos(angle)
+                y = cy + r*(score/100)*sin(angle)
+
+                외향성(45) angle=-90°: x=130+85*0.45*cos(-90°)=130+0=130,      y=130+85*0.45*sin(-90°)=130-38.25=91.75
+                개방성(65) angle=-18°: x=130+85*0.65*cos(-18°)=130+52.56=182.56, y=130+85*0.65*sin(-18°)=130-17.07=112.93
+                성실성(55) angle=54°:  x=130+85*0.55*cos(54°)=130+27.49=157.49, y=130+85*0.55*sin(54°)=130+37.79=167.79
+                친화성(78) angle=126°: x=130+85*0.78*cos(126°)=130-38.95=91.05, y=130+85*0.78*sin(126°)=130+53.63=183.63
+                감정예민도(70) angle=198°: x=130+85*0.70*cos(198°)=130-56.69=73.31, y=130+85*0.70*sin(198°)=130-18.40=111.60
+
+                grid polygons (20%=r17, 40%=r34, 60%=r51, 80%=r68, 100%=r85)
+              -->
+              <svg viewBox="0 0 260 260" width="260" height="260">
+                <defs>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Grid polygons -->
+                <!-- 20% r=17 -->
+                <polygon points="130,113 116.17,125.25 121.18,142.40 138.82,142.40 143.83,125.25" fill="none" stroke="#E8E0F7" stroke-width="1"/>
+                <!-- 40% r=34 -->
+                <polygon points="130,96 102.34,120.50 112.36,154.80 147.64,154.80 157.66,120.50" fill="none" stroke="#E0D5F5" stroke-width="1"/>
+                <!-- 60% r=51 -->
+                <polygon points="130,79 88.51,115.75 103.54,167.20 156.46,167.20 171.49,115.75" fill="none" stroke="#D5C8F2" stroke-width="1"/>
+                <!-- 80% r=68 -->
+                <polygon points="130,62 74.68,111.00 94.72,179.60 165.28,179.60 185.32,111.00" fill="none" stroke="#C8B8EE" stroke-width="1"/>
+                <!-- 100% r=85 -->
+                <polygon points="130,45 60.85,106.25 85.90,192.00 174.10,192.00 199.15,106.25" fill="none" stroke="#BBA8E8" stroke-width="1.5"/>
+
+                <!-- Axis lines -->
+                <line x1="130" y1="130" x2="130" y2="45" stroke="#DDD" stroke-width="1"/>
+                <line x1="130" y1="130" x2="199.15" y2="106.25" stroke="#DDD" stroke-width="1"/>
+                <line x1="130" y1="130" x2="174.10" y2="192.00" stroke="#DDD" stroke-width="1"/>
+                <line x1="130" y1="130" x2="85.90" y2="192.00" stroke="#DDD" stroke-width="1"/>
+                <line x1="130" y1="130" x2="60.85" y2="106.25" stroke="#DDD" stroke-width="1"/>
+
+                <!-- Data polygon -->
+                <polygon
+                  points="130,91.75 182.56,112.93 157.49,167.79 91.05,183.63 73.31,111.60"
+                  fill="rgba(122,74,226,0.18)"
+                  stroke="#7A4AE2"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                  filter="url(#glow)"
+                />
+
+                <!-- Data points -->
+                <circle cx="130" cy="91.75" r="5" fill="#7A4AE2" stroke="#fff" stroke-width="2"/>
+                <circle cx="182.56" cy="112.93" r="5" fill="#7A4AE2" stroke="#fff" stroke-width="2"/>
+                <circle cx="157.49" cy="167.79" r="5" fill="#7A4AE2" stroke="#fff" stroke-width="2"/>
+                <circle cx="91.05" cy="183.63" r="5" fill="#7A4AE2" stroke="#fff" stroke-width="2"/>
+                <circle cx="73.31" cy="111.60" r="5" fill="#7A4AE2" stroke="#fff" stroke-width="2"/>
+
+                <!-- Labels -->
+                <text x="130" y="36" text-anchor="middle" font-size="11" fill="#767676" font-weight="600">외향성</text>
+                <text x="130" y="46" text-anchor="middle" font-size="10" fill="#9B7FD4">45</text>
+
+                <text x="211" y="108" text-anchor="start" font-size="11" fill="#767676" font-weight="600">개방성</text>
+                <text x="211" y="119" text-anchor="start" font-size="10" fill="#9B7FD4">65</text>
+
+                <text x="188" y="203" text-anchor="middle" font-size="11" fill="#767676" font-weight="600">성실성</text>
+                <text x="188" y="214" text-anchor="middle" font-size="10" fill="#9B7FD4">55</text>
+
+                <text x="72" y="203" text-anchor="middle" font-size="11" fill="#767676" font-weight="600">친화성</text>
+                <text x="72" y="214" text-anchor="middle" font-size="10" fill="#9B7FD4">78</text>
+
+                <text x="42" y="108" text-anchor="end" font-size="11" fill="#767676" font-weight="600">감정예민도</text>
+                <text x="54" y="119" text-anchor="middle" font-size="10" fill="#9B7FD4">70</text>
+
+                <!-- Center dot -->
+                <circle cx="130" cy="130" r="3" fill="#C8B8EE"/>
+              </svg>
+
+              <div class="radar-legend">
+                <div class="legend-item"><div class="legend-dot"></div> 나의 성향 폴리곤</div>
+                <div class="legend-item" style="color:#BBA8E8">— 그리드 (20~100%)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 키 패턴 -->
+          <div class="s-section">
+            <div class="s-label">내가 가진 연애 패턴</div>
+            <div class="pattern-wrap">
+              <div class="pattern-tags">
+                <div class="pattern-tag">대화를 통한 정서적 조절 선호</div>
+                <div class="pattern-tag">처음엔 관찰하고 신중히 접근함</div>
+                <div class="pattern-tag">직관에 따라 빠르게 결정함</div>
+                <div class="pattern-tag">높은 공감 능력과 경청 태도</div>
+                <div class="pattern-tag">사적 정보의 즉시 공개를 피함</div>
+              </div>
+              <div class="insight-quote">
+                직관적 결정을 내리면서도, 대인관계에서는 신중하고 관찰적인 모습을 보입니다. 스트레스는 친구와의 대화를 통해 주로 해소하며, 타인의 고민에 대해선 공감하고 끝까지 경청하는 태도를 보입니다.
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. 나의 이야기 -->
+          <div class="s-section">
+            <div class="s-label">답변으로 보는 나</div>
+            <div class="story-list">
+
+              <!-- 스토리 1 (기본 펼침) -->
+              <div class="story-card">
+                <div class="story-header" onclick="toggleStory(this)">
+                  <div class="story-q-num">1</div>
+                  <div class="story-q-text">최근에 가장 기억에 남는 순간</div>
+                  <div class="story-chevron open">▾</div>
+                </div>
+                <div class="story-body open">
+                  <div class="story-quote">ㅋㅋ</div>
+                  <div class="emotion-flow">
+                    <div class="emotion-chip">회상</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">망설임/간결함</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">사적 보유</div>
+                  </div>
+                  <div class="story-what">짧고 간결한 표현으로 회상하거나, 그 순간을 말로 풀어내는 것을 주저하는 경향이 있습니다.</div>
+                </div>
+              </div>
+
+              <!-- 스토리 2 -->
+              <div class="story-card">
+                <div class="story-header" onclick="toggleStory(this)">
+                  <div class="story-q-num">2</div>
+                  <div class="story-q-text">스트레스 해소 방식</div>
+                  <div class="story-chevron">▾</div>
+                </div>
+                <div class="story-body">
+                  <div class="story-quote">친구와 이야기한다</div>
+                  <div class="emotion-flow">
+                    <div class="emotion-chip">스트레스 발생</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">친구와 대화로 분출</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">안도감/해소</div>
+                  </div>
+                  <div class="story-what">사회적 연결을 통해 정서적 안정을 찾는 사람입니다.</div>
+                </div>
+              </div>
+
+              <!-- 스토리 3 -->
+              <div class="story-card">
+                <div class="story-header" onclick="toggleStory(this)">
+                  <div class="story-q-num">3</div>
+                  <div class="story-q-text">새로운 사람을 만날 때의 태도</div>
+                  <div class="story-chevron">▾</div>
+                </div>
+                <div class="story-body">
+                  <div class="story-quote">처음엔 조용히 관찰하는 편이다</div>
+                  <div class="emotion-flow">
+                    <div class="emotion-chip">초조/호기심</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">관찰과 평가</div>
+                    <div class="emotion-arrow">→</div>
+                    <div class="emotion-chip">점차 편안함/참여</div>
+                  </div>
+                  <div class="story-what">환경과 사람을 먼저 관찰해 상황을 파악하는 신중한 접근법을 취합니다.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 7. 성장 제안 -->
+          <div class="s-section">
+            <div class="s-label">앞으로의 성장 힌트</div>
+            <div class="growth-list">
+              <div class="growth-card">
+                <div class="growth-num">1</div>
+                <div class="growth-text">하루 한 줄 회고: 기억에 남는 순간을 간단히 한 문장으로 적어보세요. (예: 오늘 가장 기억에 남는 순간 → 문장으로 확장)</div>
+              </div>
+              <div class="growth-card">
+                <div class="growth-num">2</div>
+                <div class="growth-text">친구와의 대화에서 본인의 감정에 대한 한 문장 설명을 더해보세요.</div>
+              </div>
+              <div class="growth-card">
+                <div class="growth-num">3</div>
+                <div class="growth-text">새로운 사람과 만날 때 사용할 짧은 자기소개 문장 2개를 준비해보세요.</div>
+              </div>
+            </div>
+            <div class="growth-suggestion">
+              지금 가진 강점(공감, 경청, 친구를 통한 정서적 해소, 직관적 결정)을 활용하되, 스스로를 더 잘 알리고 표현하는 연습을 조금씩 확장해 보세요.
+            </div>
+          </div>
+
+          <!-- 8. 페르소나 -->
+          <div class="s-section">
+            <div class="s-label">나는 이런 사람이에요</div>
+            <div class="persona-card">
+              <div class="persona-desc">
+                당신은 친근하고 공감 능력이 큰 사람입니다. 스트레스가 쌓이면 "친구와 이야기한다"고 말하듯, 관계 속 대화에서 안정을 얻습니다. 새로운 사람 앞에서는 "처음엔 조용히 관찰하는 편이다"라고 하듯 조심스럽게 상황을 읽고, 중요한 결정 앞에서는 직감에 따라 빠르게 움직입니다.
+              </div>
+              <div class="persona-char-list">
+                <div class="persona-char-item">
+                  <div class="persona-check">✓</div>
+                  <div>대화를 통해 감정 정리 — 친구와의 소통을 중요시함</div>
+                </div>
+                <div class="persona-char-item">
+                  <div class="persona-check">✓</div>
+                  <div>관찰형 접근 — 처음엔 조용히 상황을 파악함</div>
+                </div>
+                <div class="persona-char-item">
+                  <div class="persona-check">✓</div>
+                  <div>직관적이고 빠른 의사결정</div>
+                </div>
+                <div class="persona-char-item">
+                  <div class="persona-check">✓</div>
+                  <div>높은 공감능력 — 끝까지 경청하는 태도</div>
+                </div>
+                <div class="persona-char-item">
+                  <div class="persona-check">✓</div>
+                  <div>사적인 부분은 간결하거나 모호하게 표현하기도 함</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 하단 여백 (CTA sticky 공간) -->
+          <div style="height: 20px;"></div>
+
+        </div><!-- /.screen-content -->
+
+        <!-- CTA sticky -->
+        <div class="cta-wrap">
+          <button class="cta-btn">인연 만나러 가기 →</button>
+        </div>
+
+      </div><!-- /.mobile-screen -->
+
+      <!-- Home bar -->
+      <div class="mobile-home-bar"><div class="home-bar-pill"></div></div>
+    </div><!-- /.mobile-frame -->
+
+    <!-- Scroll hint below device -->
+    <div class="scroll-hint">
+      <div class="scroll-arrow">↕</div>
+      <div>화면을 스크롤해보세요</div>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT PANEL: 개발 구현 노트 ─── -->
+  <div class="side-panel">
+
+    <div class="panel-card">
+      <h3>컴포넌트 매핑</h3>
+
+      <div class="impl-note">
+        <strong>헤더 마스코트</strong>
+        <span class="path">src/shared/ui/MihoAvatar.tsx</span>
+        <code>titleInfo.imageUrl</code> → Image source
+      </div>
+
+      <div class="impl-note">
+        <strong>칭호 카드</strong>
+        <span class="path">src/features/moment/ui/onboarding/TitleAwardCard.tsx</span>
+        Props: <code>titleInfo</code>, <code>titleAward</code>
+      </div>
+
+      <div class="impl-note">
+        <strong>원형 프로그레스 링</strong>
+        <span class="path">src/shared/ui/CircularProgress.tsx</span>
+        SVG: r=28, 둘레=175.9, dasharray=(score/100)*175.9
+      </div>
+
+      <div class="impl-note">
+        <strong>성향 스탯 그리드</strong>
+        <span class="path">src/features/moment/ui/onboarding/DimensionGrid.tsx</span>
+        <code>dimensionScores</code> 객체를 배열로 변환 후 map()
+      </div>
+
+      <div class="impl-note">
+        <strong>방사형 그래프</strong>
+        <span class="path">src/features/moment/ui/onboarding/RadarChart.tsx</span>
+        react-native-svg 사용, 순수 SVG Polygon 계산
+      </div>
+
+      <div class="impl-note">
+        <strong>키 패턴 태그</strong>
+        <span class="path">src/shared/ui/TagChip.tsx</span>
+        <code>integratedInsights.keyPatterns.map()</code>
+      </div>
+
+      <div class="impl-note">
+        <strong>스토리 아코디언</strong>
+        <span class="path">src/features/moment/ui/onboarding/StoryAccordion.tsx</span>
+        <code>LayoutAnimation.configureNext()</code> 사용 권장
+      </div>
+
+      <div class="impl-note">
+        <strong>감정 흐름 칩</strong>
+        <span class="path">src/shared/ui/EmotionFlow.tsx</span>
+        <code>emotionalJourney.split(' → ')</code>로 파싱 후 ChipSelector
+      </div>
+
+      <div class="impl-note">
+        <strong>성장 카드</strong>
+        <span class="path">src/features/moment/ui/onboarding/GrowthCard.tsx</span>
+        <code>nextSteps.map((step, i) => ...)</code>
+      </div>
+
+      <div class="impl-note">
+        <strong>CTA 버튼 (sticky)</strong>
+        <span class="path">src/features/moment/ui/onboarding/OnboardingCTA.tsx</span>
+        <code>position: 'absolute', bottom: insets.bottom</code> 사용
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h3>데이터 경로 레퍼런스</h3>
+      <div class="impl-note">
+        <code>report.titleInfo.title</code>
+        <span class="path">→ 칭호 메인 텍스트</span>
+      </div>
+      <div class="impl-note">
+        <code>report.titleInfo.subTitle</code>
+        <span class="path">→ 칭호 서브 텍스트</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.titleAward.ceremonyText</code>
+        <span class="path">→ 칭호 카드 상단 문구</span>
+      </div>
+      <div class="impl-note">
+        <code>report.dimensionScores.openness</code>
+        <span class="path">→ 개방성 링 (65)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.dimensionScores.neuroticism</code>
+        <span class="path">→ 감정예민도 링 (70)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.dimensionScores.extraversion</code>
+        <span class="path">→ 외향성 링 (45)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.dimensionScores.agreeableness</code>
+        <span class="path">→ 친화성 링 (78)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.dimensionScores.conscientiousness</code>
+        <span class="path">→ 성실성 링 (55)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.integratedInsights.keyPatterns</code>
+        <span class="path">→ 패턴 태그 배열 (5개)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.integratedInsights.content</code>
+        <span class="path">→ 인사이트 인용 텍스트</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.storySections[n].emotionalJourney</code>
+        <span class="path">→ "→" 로 split하여 칩 렌더</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.growthJourney.nextSteps[n]</code>
+        <span class="path">→ 성장 카드 (인덱스 n+1 표시)</span>
+      </div>
+      <div class="impl-note">
+        <code>report.storyFlow.personaNarrative.characteristics</code>
+        <span class="path">→ ✓ 체크리스트 5개</span>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h3>방사형 그래프 계산</h3>
+      <div class="impl-note">
+        size=260, center=(130,130), maxR=85<br>
+        각도 순서: -90°, -18°, 54°, 126°, 198°<br>
+        <span class="path">x = 130 + maxR*(score/100)*cos(rad)</span>
+        <span class="path">y = 130 + maxR*(score/100)*sin(rad)</span>
+      </div>
+      <div class="impl-note">
+        <strong>외향성 45</strong>: (130, 91.75)
+        <strong>개방성 65</strong>: (182.56, 112.93)
+        <strong>성실성 55</strong>: (157.49, 167.79)
+        <strong>친화성 78</strong>: (91.05, 183.63)
+        <strong>감정예민도 70</strong>: (73.31, 111.60)
+      </div>
+      <div class="impl-note">
+        원형 링 둘레: 2×π×28 ≈ 175.9<br>
+        dasharray = (score/100) × 175.9<br>
+        transform="rotate(-90 34 34)" — 12시 방향 시작
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h3>구현 주의사항</h3>
+      <div class="impl-note">
+        CTA 고정: <code>useSafeAreaInsets()</code> 필수 — <code>paddingBottom: insets.bottom + 12</code>
+      </div>
+      <div class="impl-note">
+        아코디언 토글: RN에서는 <code>useState + LayoutAnimation</code> 또는 <code>Animated.Value</code> 권장
+      </div>
+      <div class="impl-note">
+        방사형 그래프: <code>react-native-svg</code> Polygon 태그 사용. 점수 변경 시 포인트 재계산 필요
+      </div>
+      <div class="impl-note">
+        페이지 배경: <code>LinearGradient</code> (expo-linear-gradient) — colors=['#FFF','#F5F1FF','#DECEFF','#B095E0'], locations=[0,0.4,0.8,1.0]
+      </div>
+      <div class="impl-note">
+        성향 스탯 2-2-1 배치: FlatList numColumns=2 + 마지막 아이템 special case 처리
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /.layout -->
+
+<script>
+function toggleStory(header) {
+  const chevron = header.querySelector('.story-chevron');
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+
+  if (isOpen) {
+    body.classList.remove('open');
+    chevron.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    chevron.classList.add('open');
+  }
+}
+</script>
+
+</body>
+</html>

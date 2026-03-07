@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대학 카드 컴팩트 시안 5종</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, 'Pretendard', 'Noto Sans KR', sans-serif; }
+
+  :root {
+    --brand: #7A4AE2;
+    --brand-light: #EDE5FF;
+    --brand-mid: #C4ACFF;
+    --selected-bg: #E6DBFF;
+    --border: #E5DEF5;
+    --text-primary: #1A1A1A;
+    --text-secondary: #666;
+    --text-disabled: #9B94AB;
+    --surface: #fff;
+    --bg: #F5F1FF;
+  }
+
+  body {
+    background: var(--bg);
+    padding: 40px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+  }
+
+  /* ── 헤더 ── */
+  .page-header { text-align: center; }
+  .page-header h1 { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .current-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 12px;
+    background: #FFE8E8;
+    color: #D63031;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 100px;
+  }
+
+  /* ── 섹션 레이아웃 ── */
+  .variants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+    width: 100%;
+    max-width: 1160px;
+  }
+
+  .variant-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(122,74,226,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .variant-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .variant-meta { flex: 1; }
+  .variant-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .variant-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .variant-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  .spec-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .spec-chip {
+    padding: 3px 8px;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 100px;
+  }
+  .spec-chip.del {
+    background: #FFE8E8;
+    color: #D63031;
+    text-decoration: line-through;
+  }
+  .spec-chip.add {
+    background: #E5F7EE;
+    color: #00875A;
+  }
+
+  /* ── 폰 프리뷰 ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: 200px;
+    background: #fff;
+    border-radius: 28px;
+    border: 3px solid #222;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 50px; height: 14px;
+    background: #222;
+    border-radius: 0 0 8px 8px;
+    z-index: 5;
+  }
+  .phone-inner {
+    padding: 22px 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 380px;
+    background: #FAFAFA;
+  }
+
+  /* 검색창 */
+  .mock-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0 10px;
+    margin-bottom: 4px;
+  }
+  .mock-search svg { opacity: 0.35; flex-shrink: 0; }
+  .mock-search span { font-size: 9px; color: var(--text-disabled); }
+
+  /* ── 현재 카드 (BEFORE) ── */
+  .card-before {
+    width: 100%;
+    padding: 11px 12px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .card-before .logo { width: 44px; height: 44px; border-radius: 8px; background: #EDE5FF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--brand); flex-shrink: 0; }
+  .card-before .info { flex: 1; }
+  .card-before .name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+  .card-before .badge { display: inline-block; padding: 2px 8px; background: var(--brand); color: #fff; font-size: 9px; border-radius: 10px; }
+
+  /* ── 시안 1: Compact Row ── */
+  .v1-card {
+    width: 100%;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    transition: all 0.15s;
+  }
+  .v1-card.selected { background: var(--selected-bg); border-color: var(--brand); }
+  .v1-logo { width: 36px; height: 36px; border-radius: 6px; background: #EDE5FF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--brand); flex-shrink: 0; }
+  .v1-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .v1-badge { padding: 2px 7px; background: var(--brand); color: #fff; font-size: 9px; border-radius: 10px; flex-shrink: 0; }
+  .v1-check { width: 16px; height: 16px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .v1-check::after { content: ''; display: block; width: 6px; height: 4px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+
+  /* ── 시안 2: 2열 그리드 ── */
+  .v2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .v2-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+  }
+  .v2-card.selected { background: var(--selected-bg); border-color: var(--brand); }
+  .v2-logo { width: 36px; height: 36px; border-radius: 8px; background: #EDE5FF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--brand); }
+  .v2-name { font-size: 10px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+  .v2-badge { padding: 2px 6px; background: var(--brand); color: #fff; font-size: 8px; border-radius: 8px; }
+
+  /* ── 시안 3: Inline Minimal ── */
+  .v3-card {
+    width: 100%;
+    padding: 9px 10px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .v3-card.selected { background: var(--selected-bg); border-color: var(--brand); }
+  .v3-initial { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-light); color: var(--brand); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .v3-name { flex: 1; font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .v3-area { font-size: 10px; color: var(--text-disabled); flex-shrink: 0; }
+  .v3-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0; display: none; }
+  .v3-card.selected .v3-dot { display: block; }
+
+  /* ── 시안 4: Left-accent ── */
+  .v4-card {
+    width: 100%;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .v4-card.selected { border-left-color: var(--brand); background: #FDFBFF; }
+  .v4-logo { width: 30px; height: 30px; border-radius: 6px; background: #EDE5FF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--brand); flex-shrink: 0; }
+  .v4-info { flex: 1; }
+  .v4-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+  .v4-sub { font-size: 9px; color: var(--text-disabled); margin-top: 1px; }
+  .v4-badge { padding: 2px 6px; background: var(--brand-light); color: var(--brand); font-size: 9px; border-radius: 8px; font-weight: 600; flex-shrink: 0; }
+
+  /* ── 시안 5: Pill Chip ── */
+  .v5-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .v5-card {
+    width: 100%;
+    padding: 7px 12px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .v5-card.selected { background: var(--brand); border-color: var(--brand); }
+  .v5-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand-light); flex-shrink: 0; }
+  .v5-card.selected .v5-dot { background: rgba(255,255,255,0.5); }
+  .v5-name { flex: 1; font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .v5-card.selected .v5-name { color: #fff; }
+  .v5-badge { padding: 2px 8px; background: var(--brand-light); color: var(--brand); font-size: 9px; border-radius: 100px; font-weight: 600; flex-shrink: 0; }
+  .v5-card.selected .v5-badge { background: rgba(255,255,255,0.2); color: #fff; }
+
+  /* ── 비교 바 ── */
+  .compare-bar {
+    width: 100%;
+    max-width: 1160px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 20px rgba(122,74,226,0.08);
+  }
+  .compare-bar h2 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .compare-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .compare-table th:first-child { border-radius: 8px 0 0 8px; }
+  .compare-table th:last-child { border-radius: 0 8px 8px 0; }
+  .compare-table td { padding: 9px 12px; color: var(--text-secondary); border-bottom: 1px solid #F0EBFF; vertical-align: middle; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child { font-weight: 600; color: var(--text-primary); }
+  .dot-good { color: #00B37E; font-weight: 700; }
+  .dot-mid { color: #F59E0B; font-weight: 700; }
+  .dot-bad { color: #D63031; font-weight: 700; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; background: var(--brand-light); color: var(--brand); }
+  .tag.green { background: #E5F7EE; color: #00875A; }
+  .tag.orange { background: #FFF4E5; color: #B45309; }
+
+  /* ── 헤더 레이블 ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: -8px;
+  }
+  .section-label .line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── 현재 vs 개선 헤더 ── */
+  .before-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #D63031;
+    background: #FFE8E8;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+  .after-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #00875A;
+    background: #E5F7EE;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .height-indicator {
+    position: absolute;
+    right: -28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 9px;
+    color: #D63031;
+    font-weight: 700;
+  }
+  .height-line {
+    width: 1px;
+    background: #D63031;
+    height: 20px;
+  }
+
+  /* ── 추천 배지 ── */
+  .recommend-badge {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(122,74,226,0.35);
+  }
+
+  /* 카드 높이 비교 시각화 */
+  .height-compare {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 16px 0 0;
+    border-top: 1px solid #F0EBFF;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .height-bar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .height-bar {
+    width: 32px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 4px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .height-bar-label { font-size: 10px; color: var(--text-secondary); font-weight: 600; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ── 헤더 ── -->
+<div class="page-header">
+  <h1>대학 카드 컴팩트 시안 5종</h1>
+  <p>현재 카드 대비 더 많은 항목을 한눈에 볼 수 있도록 개선된 디자인 방향 제안</p>
+  <span class="current-tag">현재: logo 65px · fontSize 20 · gap 36 → 카드 높이 큼</span>
+</div>
+
+<!-- ── 현재 상태 ── -->
+<div style="width:100%;max-width:1160px;">
+  <div class="section-label"><div class="line"></div>현재 (Before)<div class="line"></div></div>
+</div>
+<div style="display:flex;justify-content:center;">
+  <div style="position:relative;background:#fff;border-radius:20px;padding:20px 24px;box-shadow:0 4px 24px rgba(122,74,226,0.08);max-width:360px;width:100%;">
+    <div class="before-label">현재 카드</div>
+    <div style="font-size:11px;color:#999;margin-bottom:12px;">paddingV:11 · logo:65px · fontSize:20 · gap:36</div>
+    <div style="position:relative;">
+      <div class="card-before">
+        <div class="logo">서울</div>
+        <div class="info">
+          <div class="name">서울대학교</div>
+          <div style="margin-top:6px;"><span class="badge">서울</span></div>
+        </div>
+      </div>
+      <div class="card-before">
+        <div class="logo">연세</div>
+        <div class="info">
+          <div class="name">연세대학교</div>
+          <div style="margin-top:6px;"><span class="badge">서울</span></div>
+        </div>
+      </div>
+      <div class="card-before">
+        <div class="logo">고려</div>
+        <div class="info">
+          <div class="name">고려대학교</div>
+          <div style="margin-top:6px;"><span class="badge">서울</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#D63031;margin-top:4px;">→ 3개만 표시해도 스크롤 필요</div>
+  </div>
+</div>
+
+<!-- ── 5가지 시안 ── -->
+<div style="width:100%;max-width:1160px;">
+  <div class="section-label"><div class="line"></div>5가지 개선 시안<div class="line"></div></div>
+</div>
+
+<div class="variants-grid">
+
+  <!-- ────── 시안 1: Compact Row ────── -->
+  <div class="variant-card" style="position:relative;">
+    <div class="variant-header">
+      <div class="variant-meta">
+        <div class="variant-title">시안 1 — Compact Row</div>
+        <div class="variant-desc">현재 구조를 유지하면서 로고·텍스트 크기만 줄임. 지역 배지를 오른쪽 인라인으로 이동해 줄 수를 절약.</div>
+      </div>
+      <div class="variant-num">1</div>
+    </div>
+    <div class="spec-row">
+      <span class="spec-chip del">logo 65px</span>
+      <span class="spec-chip add">logo 36px</span>
+      <span class="spec-chip del">fontSize 20</span>
+      <span class="spec-chip add">fontSize 13</span>
+      <span class="spec-chip del">gap 36</span>
+      <span class="spec-chip add">gap 10</span>
+      <span class="spec-chip add">배지 인라인</span>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="mock-search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+            <span>대학교 이름 검색</span>
+          </div>
+          <div class="v1-card">
+            <div class="v1-logo">서울</div>
+            <div class="v1-name">서울대학교</div>
+            <div class="v1-badge">서울</div>
+          </div>
+          <div class="v1-card">
+            <div class="v1-logo">연세</div>
+            <div class="v1-name">연세대학교</div>
+            <div class="v1-badge">서울</div>
+          </div>
+          <div class="v1-card selected">
+            <div class="v1-logo">고려</div>
+            <div class="v1-name">고려대학교</div>
+            <div class="v1-badge">서울</div>
+            <div class="v1-check"></div>
+          </div>
+          <div class="v1-card">
+            <div class="v1-logo">성균</div>
+            <div class="v1-name">성균관대학교</div>
+            <div class="v1-badge">서울</div>
+          </div>
+          <div class="v1-card">
+            <div class="v1-logo">한양</div>
+            <div class="v1-name">한양대학교</div>
+            <div class="v1-badge">서울</div>
+          </div>
+          <div class="v1-card">
+            <div class="v1-logo">중앙</div>
+            <div class="v1-name">중앙대학교</div>
+            <div class="v1-badge">서울</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#00875A;font-weight:600;">✓ 한 화면에 6개 표시 (현재 3개)</div>
+  </div>
+
+  <!-- ────── 시안 2: 2열 그리드 ────── -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-meta">
+        <div class="variant-title">시안 2 — 2열 그리드</div>
+        <div class="variant-desc">카드를 2열로 배치. 로고를 중앙에 두고 이름을 하단에. 한 화면에 많은 항목 노출, 로고 중심 탐색에 유리.</div>
+      </div>
+      <div class="variant-num">2</div>
+    </div>
+    <div class="spec-row">
+      <span class="spec-chip add">2열 배치</span>
+      <span class="spec-chip del">logo 65px</span>
+      <span class="spec-chip add">logo 36px</span>
+      <span class="spec-chip del">fontSize 20</span>
+      <span class="spec-chip add">fontSize 10</span>
+      <span class="spec-chip add">정보 밀도 ↑↑</span>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="mock-search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+            <span>대학교 이름 검색</span>
+          </div>
+          <div class="v2-grid">
+            <div class="v2-card"><div class="v2-logo">서울</div><div class="v2-name">서울대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">연세</div><div class="v2-name">연세대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card selected"><div class="v2-logo">고려</div><div class="v2-name">고려대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">성균</div><div class="v2-name">성균관대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">한양</div><div class="v2-name">한양대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">중앙</div><div class="v2-name">중앙대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">이화</div><div class="v2-name">이화여자대학교</div><div class="v2-badge">서울</div></div>
+            <div class="v2-card"><div class="v2-logo">경희</div><div class="v2-name">경희대학교</div><div class="v2-badge">서울</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#00875A;font-weight:600;">✓ 한 화면에 8개 표시 (현재 3개)</div>
+  </div>
+
+  <!-- ────── 시안 3: Inline Minimal ────── -->
+  <div class="variant-card" style="position:relative;">
+    <div class="recommend-badge">추천</div>
+    <div class="variant-header">
+      <div class="variant-meta">
+        <div class="variant-title">시안 3 — Inline Minimal</div>
+        <div class="variant-desc">이니셜 원형 아이콘 + 학교명 + 지역을 한 줄에. 선택 시 보라 점으로 표시. 가장 단순하고 빠른 스캔에 유리.</div>
+      </div>
+      <div class="variant-num" style="background:#00875A;">3</div>
+    </div>
+    <div class="spec-row">
+      <span class="spec-chip del">logo 이미지</span>
+      <span class="spec-chip add">이니셜 28px</span>
+      <span class="spec-chip add">1줄 압축</span>
+      <span class="spec-chip add">fontSize 12</span>
+      <span class="spec-chip add">지역 텍스트</span>
+      <span class="spec-chip add">배지 삭제</span>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone" style="border-color:#7A4AE2;box-shadow:0 12px 40px rgba(122,74,226,0.2);">
+        <div class="phone-notch" style="background:#7A4AE2;"></div>
+        <div class="phone-inner">
+          <div class="mock-search" style="border-color:#7A4AE2;">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#7A4AE2" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+            <span>대학교 이름 검색</span>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">서</div>
+            <div class="v3-name">서울대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">연</div>
+            <div class="v3-name">연세대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card selected">
+            <div class="v3-initial">고</div>
+            <div class="v3-name">고려대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">성</div>
+            <div class="v3-name">성균관대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">한</div>
+            <div class="v3-name">한양대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">중</div>
+            <div class="v3-name">중앙대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">이</div>
+            <div class="v3-name">이화여자대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+          <div class="v3-card">
+            <div class="v3-initial">경</div>
+            <div class="v3-name">경희대학교</div>
+            <div class="v3-area">서울</div>
+            <div class="v3-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#00875A;font-weight:600;">✓ 한 화면에 8개 표시 · 로고 이미지 로딩 없음</div>
+  </div>
+
+  <!-- ────── 시안 4: Left-accent ────── -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-meta">
+        <div class="variant-title">시안 4 — Left Accent</div>
+        <div class="variant-desc">선택 시 왼쪽 보더 강조. 로고를 30px로 줄이고 배지를 연보라 배경으로 변경. 시각적 위계가 명확.</div>
+      </div>
+      <div class="variant-num">4</div>
+    </div>
+    <div class="spec-row">
+      <span class="spec-chip del">logo 65px</span>
+      <span class="spec-chip add">logo 30px</span>
+      <span class="spec-chip del">선택: bg만</span>
+      <span class="spec-chip add">좌측 border 강조</span>
+      <span class="spec-chip add">배지: 연보라</span>
+      <span class="spec-chip add">fontSize 12</span>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="mock-search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+            <span>대학교 이름 검색</span>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">서</div>
+            <div class="v4-info"><div class="v4-name">서울대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">연</div>
+            <div class="v4-info"><div class="v4-name">연세대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+          <div class="v4-card selected">
+            <div class="v4-logo">고</div>
+            <div class="v4-info"><div class="v4-name">고려대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge" style="background:var(--brand);color:#fff;">서울</div>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">성</div>
+            <div class="v4-info"><div class="v4-name">성균관대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">한</div>
+            <div class="v4-info"><div class="v4-name">한양대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">중</div>
+            <div class="v4-info"><div class="v4-name">중앙대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+          <div class="v4-card">
+            <div class="v4-logo">이</div>
+            <div class="v4-info"><div class="v4-name">이화여자대학교</div><div class="v4-sub">서울특별시</div></div>
+            <div class="v4-badge">서울</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#00875A;font-weight:600;">✓ 한 화면에 7개 표시 · 선택 상태 명확</div>
+  </div>
+
+  <!-- ────── 시안 5: Pill Chip ────── -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-meta">
+        <div class="variant-title">시안 5 — Pill Chip</div>
+        <div class="variant-desc">완전한 알약형 카드. 선택 시 보라 배경으로 반전. 가장 모던한 느낌. 텍스트 중심 고밀도.</div>
+      </div>
+      <div class="variant-num">5</div>
+    </div>
+    <div class="spec-row">
+      <span class="spec-chip del">logo 이미지</span>
+      <span class="spec-chip add">dot 아이콘</span>
+      <span class="spec-chip add">border-radius: 100px</span>
+      <span class="spec-chip add">선택: 배경 반전</span>
+      <span class="spec-chip add">fontSize 12</span>
+      <span class="spec-chip add">paddingV 7px</span>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="mock-search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+            <span>대학교 이름 검색</span>
+          </div>
+          <div class="v5-wrap">
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">서울대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">연세대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card selected"><div class="v5-dot"></div><div class="v5-name">고려대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">성균관대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">한양대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">중앙대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">이화여자대학교</div><div class="v5-badge">서울</div></div>
+            <div class="v5-card"><div class="v5-dot"></div><div class="v5-name">경희대학교</div><div class="v5-badge">서울</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#00875A;font-weight:600;">✓ 한 화면에 8개 표시 · 터치 영역 충분</div>
+  </div>
+
+</div>
+
+<!-- ── 비교표 ── -->
+<div class="compare-bar">
+  <h2>시안별 비교</h2>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>시안</th>
+        <th>카드 높이</th>
+        <th>화면당 항목</th>
+        <th>로고 유지</th>
+        <th>지역 배지</th>
+        <th>선택 피드백</th>
+        <th>구현 난이도</th>
+        <th>추천 상황</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:#D63031;">현재</td>
+        <td><span class="dot-bad">●</span> ~88px</td>
+        <td><span class="dot-bad">●</span> 3개</td>
+        <td>✓ 65px</td>
+        <td>하단 별도 줄</td>
+        <td>배경색</td>
+        <td><span class="tag green">Easy</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>시안 1</td>
+        <td><span class="dot-mid">●</span> ~52px</td>
+        <td><span class="dot-mid">●</span> 6개</td>
+        <td>✓ 36px</td>
+        <td>우측 인라인</td>
+        <td>배경 + 체크</td>
+        <td><span class="tag green">Easy</span></td>
+        <td>현재 구조 최소 수정</td>
+      </tr>
+      <tr>
+        <td>시안 2</td>
+        <td><span class="dot-good">●</span> ~70px</td>
+        <td><span class="dot-good">●</span> 8개</td>
+        <td>✓ 36px</td>
+        <td>하단 중앙</td>
+        <td>배경색</td>
+        <td><span class="tag orange">Medium</span></td>
+        <td>로고 중심 탐색</td>
+      </tr>
+      <tr>
+        <td style="color:#7A4AE2;font-weight:700;">시안 3 ★</td>
+        <td><span class="dot-good">●</span> ~46px</td>
+        <td><span class="dot-good">●</span> 8개</td>
+        <td>✗ 이니셜</td>
+        <td>텍스트</td>
+        <td>배경 + 점</td>
+        <td><span class="tag green">Easy</span></td>
+        <td>빠른 스캔, 로딩 없음</td>
+      </tr>
+      <tr>
+        <td>시안 4</td>
+        <td><span class="dot-good">●</span> ~48px</td>
+        <td><span class="dot-good">●</span> 7개</td>
+        <td>✓ 30px</td>
+        <td>우측 연보라</td>
+        <td>좌측 보더</td>
+        <td><span class="tag green">Easy</span></td>
+        <td>선택 상태 강조 필요 시</td>
+      </tr>
+      <tr>
+        <td>시안 5</td>
+        <td><span class="dot-good">●</span> ~44px</td>
+        <td><span class="dot-good">●</span> 8개</td>
+        <td>✗ dot</td>
+        <td>우측</td>
+        <td>배경 반전</td>
+        <td><span class="tag green">Easy</span></td>
+        <td>모던/플랫 UI 선호 시</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 높이 시각화 -->
+  <div class="height-compare">
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:88px;background:#D63031;">88</div>
+      <div class="height-bar-label">현재</div>
+    </div>
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:52px;background:#F59E0B;">52</div>
+      <div class="height-bar-label">시안 1</div>
+    </div>
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:70px;background:#7A4AE2;">70</div>
+      <div class="height-bar-label">시안 2</div>
+    </div>
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:46px;background:#00B37E;">46</div>
+      <div class="height-bar-label">시안 3 ★</div>
+    </div>
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:48px;background:#7A4AE2;">48</div>
+      <div class="height-bar-label">시안 4</div>
+    </div>
+    <div class="height-bar-col">
+      <div class="height-bar" style="height:44px;background:#7A4AE2;">44</div>
+      <div class="height-bar-label">시안 5</div>
+    </div>
+    <div style="font-size:10px;color:#999;align-self:flex-end;padding-bottom:20px;margin-left:4px;">px</div>
+  </div>
+</div>
+
+</body>
+</html>

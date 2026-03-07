@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대학 선택 뒤로가기 버그 수정 시연</title>
+  <style>
+    :root {
+      --brand-primary: #7A4AE2;
+      --brand-light: #EDE8FF;
+      --surface-bg: #FFFFFF;
+      --surface-subtle: #F8F7FF;
+      --text-primary: #1A1A2E;
+      --text-secondary: #6B6880;
+      --text-muted: #9B94AB;
+      --border-default: #E8E4F0;
+      --border-focus: #7A4AE2;
+      --success: #22C55E;
+      --danger: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Pretendard', sans-serif;
+      background: #F0ECF8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+
+    /* ───────── 타이틀 영역 ───────── */
+    .page-title {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .page-title h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .page-title p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ───────── 시나리오 탭 ───────── */
+    .scenario-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 840px;
+    }
+    .tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid var(--border-default);
+      background: white;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: white;
+    }
+
+    /* ───────── 2-column 레이아웃 ───────── */
+    .demo-layout {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      max-width: 840px;
+      width: 100%;
+    }
+
+    /* ───────── 폰 프레임 ───────── */
+    .phone-frame {
+      flex-shrink: 0;
+      width: 320px;
+      height: 640px;
+      background: #fff;
+      border-radius: 40px;
+      border: 8px solid #1a1a2e;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    /* 상단 노치 */
+    .phone-notch {
+      height: 28px;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notch-bar {
+      width: 80px;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+    }
+
+    /* ───────── 스크린 전환 ───────── */
+    .screens { position: relative; height: 612px; overflow: hidden; }
+    .screen {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ───────── 공통 스크린 헤더 ───────── */
+    .screen-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px 8px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .back-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--surface-subtle);
+      border: none;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .screen-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+    /* ───────── 스크린 0: 로그인 ───────── */
+    .login-screen {
+      background: linear-gradient(160deg, #F0ECF8 0%, #fff 60%);
+    }
+    .login-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 16px;
+    }
+    .app-logo {
+      width: 64px;
+      height: 64px;
+      background: var(--brand-primary);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .login-title { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+    .login-subtitle { font-size: 13px; color: var(--text-secondary); text-align: center; }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--brand-primary);
+      color: white;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* ───────── 스크린 1: 대학 선택 초기 ───────── */
+    .univ-initial {
+      background: linear-gradient(160deg, #F5F2FF 0%, #fff 50%);
+    }
+    .logo-strip {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 16px 12px 8px;
+    }
+    .univ-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--brand-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .welcome-text { text-align: center; padding: 4px 16px; }
+    .welcome-label { font-size: 14px; color: var(--brand-primary); font-weight: 600; margin-bottom: 2px; }
+    .welcome-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+    .search-box {
+      margin: 12px 16px 0;
+      height: 48px;
+      border-radius: 12px;
+      border: 2px solid var(--border-default);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .search-box:hover { border-color: var(--brand-primary); }
+    .search-icon { color: var(--text-muted); font-size: 14px; }
+    .search-placeholder { font-size: 14px; color: var(--text-muted); }
+
+    /* ───────── 스크린 2: 검색 모드 ───────── */
+    .search-active-box {
+      margin: 12px 16px 0;
+      height: 48px;
+      border-radius: 12px;
+      border: 2px solid var(--brand-primary);
+      background: #FDFBFF;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+    .search-active-icon { color: var(--brand-primary); font-size: 14px; }
+    .search-input-mock { font-size: 14px; color: var(--text-primary); flex: 1; }
+    .cursor { display: inline-block; width: 1px; height: 16px; background: var(--brand-primary); animation: blink 1s infinite; vertical-align: middle; margin-left: 1px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .univ-list { flex: 1; overflow-y: auto; padding: 8px 16px; }
+    .univ-card {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-default);
+      background: #fff;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .univ-card:hover { border-color: var(--brand-primary); background: var(--brand-light); }
+    .univ-card.selected { border-color: var(--brand-primary); background: #EDE8FF; }
+    .univ-card-logo {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--brand-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; margin-right: 10px; flex-shrink: 0;
+    }
+    .univ-card-info { flex: 1; }
+    .univ-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .univ-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .univ-check { font-size: 18px; color: var(--brand-primary); }
+
+    .bottom-btns {
+      display: flex;
+      gap: 10px;
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--border-default);
+      background: #fff;
+    }
+    .btn-prev, .btn-next {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-prev {
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-default);
+    }
+    .btn-next {
+      background: var(--brand-primary);
+      color: #fff;
+    }
+    .btn-next:disabled {
+      background: #D5CCF0;
+      cursor: not-allowed;
+    }
+
+    /* ───────── 모달 오버레이 ───────── */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 28px;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.show .modal-sheet { transform: translateY(0); }
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: var(--border-default);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .modal-icon { text-align: center; font-size: 32px; margin-bottom: 8px; }
+    .modal-title { font-size: 17px; font-weight: 700; color: var(--text-primary); text-align: center; margin-bottom: 6px; }
+    .modal-desc { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.5; margin-bottom: 20px; }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-btn-cancel {
+      flex: 1; padding: 13px; border-radius: 12px;
+      background: var(--surface-subtle); color: var(--text-secondary);
+      border: 1.5px solid var(--border-default); font-size: 14px; font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-btn-confirm {
+      flex: 1; padding: 13px; border-radius: 12px;
+      background: var(--danger); color: #fff;
+      border: none; font-size: 14px; font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ───────── Android 뒤로가기 버튼 ───────── */
+    .android-bar {
+      height: 40px;
+      background: #f5f5f5;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 0 24px;
+    }
+    .android-btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent;
+      font-size: 16px; cursor: pointer; border-radius: 50%;
+      transition: background 0.15s;
+    }
+    .android-btn:hover { background: rgba(0,0,0,0.08); }
+    .android-back { font-size: 18px; }
+
+    /* ───────── 우측 패널 ───────── */
+    .info-panel {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .scenario-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 12px;
+      border: 2px solid var(--border-default);
+      display: none;
+    }
+    .scenario-card.active { display: block; border-color: var(--brand-primary); }
+    .scenario-card h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+
+    .flow-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .step-num {
+      width: 24px; height: 24px; flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-num.done { background: var(--success); }
+    .step-num.warn { background: var(--danger); }
+    .step-body { flex: 1; }
+    .step-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .step-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-bug { background: #FEE2E2; color: var(--danger); }
+    .badge-fix { background: #DCFCE7; color: #15803D; }
+    .badge-info { background: var(--brand-light); color: var(--brand-primary); }
+
+    /* 코드 블록 */
+    .code-block {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+    .code-block .kw { color: #cba6f7; }
+    .code-block .fn { color: #89dceb; }
+    .code-block .str { color: #a6e3a1; }
+    .code-block .cm { color: #585b70; }
+
+    .diff-added { background: rgba(166,227,161,0.15); color: #a6e3a1; }
+    .diff-removed { background: rgba(243,139,168,0.15); color: #f38ba8; text-decoration: line-through; }
+
+    /* 버튼 컨트롤 */
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .ctrl-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1.5px solid var(--brand-primary);
+      background: white;
+      color: var(--brand-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ctrl-btn:hover { background: var(--brand-primary); color: white; }
+    .ctrl-btn.primary { background: var(--brand-primary); color: white; }
+    .ctrl-btn.primary:hover { opacity: 0.85; }
+
+    /* 상태 표시 */
+    .state-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      margin: 2px;
+    }
+    .state-chip.on { background: var(--brand-light); color: var(--brand-primary); }
+
+    .divider { height: 1px; background: var(--border-default); margin: 12px 0; }
+
+    /* 반응형 */
+    @media (max-width: 680px) {
+      .demo-layout { flex-direction: column; align-items: center; }
+      .info-panel { width: 100%; max-width: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>🔒 대학 선택 뒤로가기 버그 수정</h1>
+  <p>SMA — 2026.03.06 · Android 하드웨어 뒤로가기 확인 모달 추가</p>
+</div>
+
+<!-- 시나리오 탭 -->
+<div class="scenario-tabs">
+  <div class="tab active" onclick="switchScenario(0)">1. 검색 → 뒤로 (해제)</div>
+  <div class="tab" onclick="switchScenario(1)">2. 미선택 뒤로 → 모달</div>
+  <div class="tab" onclick="switchScenario(2)">3. 선택 후 뒤로 → 모달</div>
+  <div class="tab" onclick="switchScenario(3)">4. 모달 → 이동</div>
+</div>
+
+<div class="demo-layout">
+
+  <!-- ── 폰 프레임 ── -->
+  <div>
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-bar"></div></div>
+      <div class="screens">
+
+        <!-- 모달 (공용) -->
+        <div class="modal-overlay" id="confirmModal">
+          <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title">회원가입을 중단하시겠습니까?</div>
+            <div class="modal-desc">로그인 화면으로 이동하면<br>다시 본인인증을 진행해야 합니다.</div>
+            <div class="modal-btns">
+              <button class="modal-btn-cancel" onclick="closeModal()">취소</button>
+              <button class="modal-btn-confirm" onclick="goToLogin()">이동</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 0: 로그인 -->
+        <div class="screen" id="screen-login">
+          <div class="login-content login-screen" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:14px;">
+            <div class="app-logo">💜</div>
+            <div class="login-title">썸타임</div>
+            <div class="login-subtitle">대학생 소개팅 앱</div>
+            <div style="height:1px;background:#eee;width:80%;margin:4px 0;"></div>
+            <div style="font-size:12px;color:var(--text-muted);text-align:center;">뒤로가기로 로그인 화면에 도달했습니다<br>다시 본인인증을 처음부터 진행해야 합니다</div>
+            <button class="login-btn" onclick="resetToUniversity()">↩ 대학 선택으로 돌아가기 (시연)</button>
+          </div>
+          <div class="android-bar">
+            <button class="android-btn" onclick="androidBack()">◁</button>
+            <button class="android-btn">○</button>
+            <button class="android-btn">□</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 1: 대학 선택 초기 -->
+        <div class="screen active" id="screen-initial">
+          <div style="flex:1;background:linear-gradient(160deg,#F5F2FF 0%,#fff 55%);display:flex;flex-direction:column;overflow:hidden;">
+            <div class="logo-strip">
+              <div class="univ-logo">🏛️</div>
+              <div class="univ-logo">📚</div>
+              <div class="univ-logo">🎓</div>
+              <div class="univ-logo">🏫</div>
+              <div class="univ-logo">📖</div>
+            </div>
+            <div class="welcome-text">
+              <div class="welcome-label">재학생 인증</div>
+              <div class="welcome-title">재학 중인 대학교를 선택해 주세요</div>
+            </div>
+            <div class="search-box" onclick="enterSearch()">
+              <span class="search-icon">🔍</span>
+              <span class="search-placeholder">대학교 검색...</span>
+            </div>
+            <div style="flex:1;"></div>
+          </div>
+          <div class="android-bar">
+            <button class="android-btn android-back" onclick="androidBack()">◁</button>
+            <button class="android-btn">○</button>
+            <button class="android-btn">□</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 2: 검색 모드 -->
+        <div class="screen" id="screen-search">
+          <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px 4px;justify-content:center;">
+              <div class="univ-logo" style="width:28px;height:28px;font-size:13px;">🏛️</div>
+              <div class="univ-logo" style="width:28px;height:28px;font-size:13px;">📚</div>
+              <div class="univ-logo" style="width:28px;height:28px;font-size:13px;">🎓</div>
+            </div>
+            <div class="search-active-box">
+              <span class="search-active-icon">🔍</span>
+              <span class="search-input-mock" id="searchInputMock">서울<span class="cursor"></span></span>
+            </div>
+            <div class="univ-list" id="univList">
+              <div class="univ-card" id="card-snu" onclick="selectUniv('snu')">
+                <div class="univ-card-logo">🏛️</div>
+                <div class="univ-card-info">
+                  <div class="univ-name">서울대학교</div>
+                  <div class="univ-meta">국립 · 서울 · 관악구</div>
+                </div>
+              </div>
+              <div class="univ-card" id="card-yonsei" onclick="selectUniv('yonsei')">
+                <div class="univ-card-logo">📚</div>
+                <div class="univ-card-info">
+                  <div class="univ-name">연세대학교</div>
+                  <div class="univ-meta">사립 · 서울 · 서대문구</div>
+                </div>
+              </div>
+              <div class="univ-card" id="card-korea" onclick="selectUniv('korea')">
+                <div class="univ-card-logo">🎓</div>
+                <div class="univ-card-info">
+                  <div class="univ-name">고려대학교</div>
+                  <div class="univ-meta">사립 · 서울 · 성북구</div>
+                </div>
+              </div>
+              <div class="univ-card" id="card-sogang" onclick="selectUniv('sogang')">
+                <div class="univ-card-logo">🏫</div>
+                <div class="univ-card-info">
+                  <div class="univ-name">서강대학교</div>
+                  <div class="univ-meta">사립 · 서울 · 마포구</div>
+                </div>
+              </div>
+            </div>
+            <div class="bottom-btns">
+              <button class="btn-prev" onclick="androidBack()">이전</button>
+              <button class="btn-next" id="nextBtn" disabled>다음</button>
+            </div>
+          </div>
+          <div class="android-bar">
+            <button class="android-btn android-back" onclick="androidBack()">◁</button>
+            <button class="android-btn">○</button>
+            <button class="android-btn">□</button>
+          </div>
+        </div>
+
+      </div><!-- /screens -->
+    </div><!-- /phone-frame -->
+
+    <!-- 상태 표시 -->
+    <div style="margin-top:10px;text-align:center;">
+      <span class="state-chip" id="chip-focused">🔍 검색 OFF</span>
+      <span class="state-chip" id="chip-selected">✅ 선택 없음</span>
+    </div>
+  </div>
+
+  <!-- ── 우측 설명 패널 ── -->
+  <div class="info-panel">
+
+    <!-- 시나리오 0 -->
+    <div class="scenario-card active" id="info-0">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <h3 style="margin:0;">검색 모드에서 뒤로가기</h3>
+        <span class="badge badge-fix">✓ 정상 동작</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-label">검색창 터치 → 검색 모드 진입</div>
+          <div class="step-desc">isFocused = true, trigger = true</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num done">2</div>
+        <div class="step-body">
+          <div class="step-label">뒤로가기 → 검색 모드만 해제</div>
+          <div class="step-desc">isFocused가 true이면 fallback 실행 없이 검색 UI만 닫음. 로그인 이동 없음.</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn primary" onclick="enterSearch()">🔍 검색창 터치</button>
+        <button class="ctrl-btn" onclick="androidBack()">◁ 뒤로가기</button>
+      </div>
+    </div>
+
+    <!-- 시나리오 1 -->
+    <div class="scenario-card" id="info-1">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <h3 style="margin:0;">미선택 상태 뒤로가기</h3>
+        <span class="badge badge-fix">✓ 수정됨</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num warn">!</div>
+        <div class="step-body">
+          <div class="step-label">버그 (수정 전)</div>
+          <div class="step-desc">확인 팝업 없이 즉시 로그인으로 이동 → 재인증 피로</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num done">✓</div>
+        <div class="step-body">
+          <div class="step-label">수정 후 동작</div>
+          <div class="step-desc">isFocused=false인 상태에서 fallback 실행 → 확인 모달 표시</div>
+        </div>
+      </div>
+      <div class="code-block">
+<span class="cm">// university.tsx — handleBackPress</span>
+<span class="kw">const</span> <span class="fn">handleBackPress</span> = () => {
+  <span class="fn">onBackPress</span>(() => {
+    <span class="fn">showModal</span>({
+      title: <span class="str">'회원가입을 중단하시겠습니까?'</span>,
+      primaryButton: {
+        text: <span class="str">'이동'</span>,
+        onClick: () => router.<span class="fn">navigate</span>(<span class="str">'/auth/login'</span>)
+      },
+      secondaryButton: { text: <span class="str">'취소'</span> }
+    });
+  });
+};
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn primary" onclick="scenario1()">▶ 시나리오 실행</button>
+      </div>
+    </div>
+
+    <!-- 시나리오 2 -->
+    <div class="scenario-card" id="info-2">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <h3 style="margin:0;">대학 선택 후 뒤로가기</h3>
+        <span class="badge badge-fix">✓ 수정됨</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num warn">!</div>
+        <div class="step-body">
+          <div class="step-label">버그 (수정 전)</div>
+          <div class="step-desc">카드 선택 상태를 무시하고 바로 로그인 이동</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num done">✓</div>
+        <div class="step-body">
+          <div class="step-label">수정 후 동작</div>
+          <div class="step-desc">선택 여부와 무관하게 fallback = 확인 모달로 통일</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn primary" onclick="scenario2()">▶ 시나리오 실행</button>
+      </div>
+    </div>
+
+    <!-- 시나리오 3 -->
+    <div class="scenario-card" id="info-3">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <h3 style="margin:0;">모달에서 이동 확인</h3>
+        <span class="badge badge-info">UX 개선</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-label">모달 확인 버튼 탭 → 로그인 이동</div>
+          <div class="step-desc">hideModal() 후 router.navigate('/auth/login')</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num done">2</div>
+        <div class="step-body">
+          <div class="step-label">취소 버튼 탭 → 대학 선택 유지</div>
+          <div class="step-desc">모달만 닫히고 화면 상태 유지됨</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+        <strong>Android BackHandler</strong><br>
+        <code style="font-size:11px;background:#f5f5f5;padding:2px 6px;border-radius:4px;">useEffect</code>로 <code style="font-size:11px;background:#f5f5f5;padding:2px 6px;border-radius:4px;">isFocused</code> 의존성 등록.<br>
+        검색 모드 진입/해제 시 핸들러가 자동 갱신됨.
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn primary" onclick="scenario3()">▶ 시나리오 실행</button>
+      </div>
+    </div>
+
+  </div><!-- /info-panel -->
+</div><!-- /demo-layout -->
+
+<script>
+  // ──────────────────────────────────────
+  // 상태
+  // ──────────────────────────────────────
+  let isFocused = false;
+  let selectedUniv = null;
+  let currentScenario = 0;
+
+  function getScreen() {
+    if (document.getElementById('screen-initial').classList.contains('active')) return 'initial';
+    if (document.getElementById('screen-search').classList.contains('active')) return 'search';
+    if (document.getElementById('screen-login').classList.contains('active')) return 'login';
+    return 'initial';
+  }
+
+  function showScreen(id) {
+    ['screen-initial', 'screen-search', 'screen-login'].forEach(s => {
+      document.getElementById(s).classList.remove('active');
+    });
+    document.getElementById('screen-' + id).classList.add('active');
+  }
+
+  function updateChips() {
+    const fc = document.getElementById('chip-focused');
+    const sc = document.getElementById('chip-selected');
+    fc.textContent = isFocused ? '🔍 검색 ON' : '🔍 검색 OFF';
+    fc.classList.toggle('on', isFocused);
+    sc.textContent = selectedUniv ? `✅ ${univNames[selectedUniv]} 선택됨` : '✅ 선택 없음';
+    sc.classList.toggle('on', !!selectedUniv);
+    const nb = document.getElementById('nextBtn');
+    if (nb) nb.disabled = !selectedUniv;
+  }
+
+  const univNames = { snu: '서울대', yonsei: '연세대', korea: '고려대', sogang: '서강대' };
+
+  // ──────────────────────────────────────
+  // 핵심 로직 (앱 onBackPress 동일)
+  // ──────────────────────────────────────
+  function onBackPress(fallback) {
+    if (isFocused) {
+      // 검색 모드만 해제
+      isFocused = false;
+      showScreen('initial');
+      updateChips();
+    } else {
+      fallback();
+    }
+    return true;
+  }
+
+  function handleBackPress() {
+    onBackPress(() => {
+      openModal();
+    });
+  }
+
+  // ──────────────────────────────────────
+  // UI 액션
+  // ──────────────────────────────────────
+  function enterSearch() {
+    isFocused = true;
+    showScreen('search');
+    updateChips();
+  }
+
+  function selectUniv(id) {
+    if (selectedUniv === id) {
+      selectedUniv = null;
+    } else {
+      selectedUniv = id;
+    }
+    document.querySelectorAll('.univ-card').forEach(c => c.classList.remove('selected'));
+    if (selectedUniv) {
+      document.getElementById('card-' + selectedUniv)?.classList.add('selected');
+    }
+    updateChips();
+  }
+
+  function androidBack() { handleBackPress(); }
+
+  // ──────────────────────────────────────
+  // 모달
+  // ──────────────────────────────────────
+  function openModal() {
+    document.getElementById('confirmModal').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+  function goToLogin() {
+    closeModal();
+    isFocused = false;
+    selectedUniv = null;
+    updateChips();
+    showScreen('login');
+  }
+
+  function resetToUniversity() {
+    showScreen('initial');
+    updateChips();
+  }
+
+  // ──────────────────────────────────────
+  // 시나리오
+  // ──────────────────────────────────────
+  function switchScenario(n) {
+    currentScenario = n;
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === n));
+    document.querySelectorAll('.scenario-card').forEach((c, i) => c.classList.toggle('active', i === n));
+    // 상태 리셋
+    isFocused = false;
+    selectedUniv = null;
+    closeModal();
+    showScreen('initial');
+    updateChips();
+  }
+
+  function scenario1() {
+    // 미선택 뒤로가기
+    isFocused = false;
+    selectedUniv = null;
+    showScreen('initial');
+    updateChips();
+    setTimeout(() => openModal(), 200);
+  }
+
+  function scenario2() {
+    // 대학 선택 후 뒤로가기
+    isFocused = false;
+    selectedUniv = null;
+    enterSearch();
+    setTimeout(() => {
+      selectUniv('snu');
+      setTimeout(() => {
+        // 검색 해제 뒤로
+        isFocused = false;
+        showScreen('initial');
+        updateChips();
+        setTimeout(() => openModal(), 300);
+      }, 600);
+    }, 400);
+  }
+
+  function scenario3() {
+    // 모달 → 이동
+    isFocused = false;
+    selectedUniv = null;
+    showScreen('initial');
+    updateChips();
+    setTimeout(() => openModal(), 300);
+  }
+
+  // 초기화
+  updateChips();
+</script>
+</body>
+</html>

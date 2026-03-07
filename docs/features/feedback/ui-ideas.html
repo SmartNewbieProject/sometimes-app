@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>썸타임 피드백 UI 개선 아이디어</title>
+<style>
+  :root {
+    --purple: #7A4AE2;
+    --purple-light: #9B72EF;
+    --purple-pale: #F5F0FF;
+    --purple-border: #E2D6FF;
+    --purple-badge: #BEACFF;
+    --black: #1A1A1A;
+    --gray: #939598;
+    --gray-light: #F5F5F5;
+    --white: #FFFFFF;
+    --error: #FF4B4B;
+    --success: #4CAF50;
+    --shadow: 0 4px 24px rgba(122,74,226,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, 'Pretendard', sans-serif;
+    background: #F8F6FF;
+    color: var(--black);
+    line-height: 1.6;
+  }
+
+  /* ── 상단 헤더 ── */
+  .page-header {
+    background: linear-gradient(135deg, var(--purple) 0%, #A87AFF 100%);
+    color: white;
+    padding: 48px 40px 40px;
+    text-align: center;
+  }
+  .page-header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .page-header h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+  .page-header p { font-size: 15px; opacity: 0.85; max-width: 600px; margin: 0 auto; }
+
+  /* ── 섹션 레이아웃 ── */
+  .page-body { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+
+  .section { margin-bottom: 64px; }
+  .section-label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--purple);
+    margin-bottom: 12px;
+  }
+  .section-label::before, .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--purple-border);
+  }
+  .section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .section-desc { font-size: 14px; color: var(--gray); margin-bottom: 32px; }
+
+  /* ── 카드 그리드 ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--purple-border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(122,74,226,0.2); }
+
+  .card-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 10px; border-radius: 100px;
+    margin-bottom: 10px;
+  }
+  .tag-recommended { background: #7A4AE2; color: white; }
+  .tag-idea { background: var(--purple-pale); color: var(--purple); }
+  .tag-current { background: #FFE8D6; color: #E07030; }
+
+  .card-meta {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--purple-border);
+  }
+  .card-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+
+  .card-preview {
+    padding: 24px 22px;
+    background: var(--gray-light);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px;
+    min-height: 260px;
+  }
+
+  /* ── 모바일 목업 공통 ── */
+  .phone-frame {
+    width: 200px;
+    border: 2px solid #D0D0D0;
+    border-radius: 28px;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .phone-status {
+    background: var(--black);
+    color: white;
+    font-size: 8px;
+    padding: 6px 12px;
+    display: flex; justify-content: space-between;
+  }
+  .phone-body { padding: 12px; }
+
+  /* ── 현재 배너 (AnnounceCard) ── */
+  .announce-card {
+    background: var(--purple-pale);
+    border-radius: 20px;
+    height: 42px;
+    display: flex; align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    font-size: 10px; font-weight: 700;
+    color: var(--purple);
+  }
+
+  /* ── 아이디어 A: 그라디언트 배너 ── */
+  .gradient-banner {
+    background: linear-gradient(135deg, var(--purple) 0%, #A87AFF 100%);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px;
+    color: white;
+  }
+  .gradient-banner .banner-icon {
+    font-size: 22px;
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .gradient-banner .banner-text { flex: 1; }
+  .gradient-banner .banner-title { font-size: 12px; font-weight: 700; }
+  .gradient-banner .banner-sub { font-size: 9px; opacity: 0.8; margin-top: 2px; }
+  .gradient-banner .banner-arrow {
+    font-size: 14px; opacity: 0.8;
+  }
+
+  /* ── 아이디어 B: 카드 with CTA ── */
+  .cta-card {
+    border: 1.5px solid var(--purple-border);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    background: white;
+  }
+  .cta-card .cta-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cta-card .cta-emoji { font-size: 26px; }
+  .cta-card .cta-text .cta-title { font-size: 11px; font-weight: 700; color: var(--black); }
+  .cta-card .cta-text .cta-sub { font-size: 9px; color: var(--gray); margin-top: 2px; }
+  .cta-card .cta-btn {
+    background: var(--purple);
+    color: white;
+    border-radius: 10px;
+    font-size: 10px; font-weight: 700;
+    padding: 8px;
+    text-align: center;
+  }
+
+  /* ── 아이디어 C: 배너 + 배지 ── */
+  .badge-banner {
+    background: var(--purple-pale);
+    border-radius: 20px;
+    height: 52px;
+    display: flex; align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    position: relative;
+  }
+  .badge-banner .bb-text { font-size: 10px; font-weight: 700; color: var(--purple); flex: 1; }
+  .badge-banner .gem-badge {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    font-size: 9px; font-weight: 700;
+    padding: 3px 8px; border-radius: 100px;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .new-dot {
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 8px; height: 8px;
+    background: #FF4B4B;
+    border-radius: 50%;
+    border: 1.5px solid white;
+  }
+
+  /* ── 편지 모달 목업 ── */
+  .modal-overlay {
+    background: rgba(0,0,0,0.35);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  .modal-sheet {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 16px 14px 14px;
+    margin-top: 60px;
+  }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: #E0E0E0;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal-title { font-size: 15px; font-weight: 800; color: var(--black); text-align: center; margin-bottom: 4px; }
+  .modal-sub { font-size: 10px; color: var(--gray); text-align: center; margin-bottom: 12px; }
+
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; justify-content: center; }
+  .chip-item {
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1.5px solid var(--purple-border);
+    font-size: 9px; font-weight: 600;
+    color: var(--gray);
+    background: white;
+  }
+  .chip-item.active {
+    border-color: var(--purple);
+    background: var(--purple-pale);
+    color: var(--purple);
+  }
+
+  .letter-area {
+    background: var(--gray-light);
+    border: 1.5px solid var(--purple-border);
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 70px;
+    margin-bottom: 10px;
+  }
+  .letter-area .letter-placeholder { font-size: 9px; color: var(--gray); line-height: 1.6; }
+  .letter-area .letter-counter { font-size: 8px; color: var(--purple-badge); text-align: right; margin-top: 4px; }
+
+  .submit-btn {
+    background: var(--purple);
+    color: white;
+    border-radius: 14px;
+    padding: 10px;
+    font-size: 11px; font-weight: 700;
+    text-align: center;
+  }
+
+  /* ── 성공 화면 ── */
+  .success-sheet {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 14px 16px;
+    margin-top: 90px;
+    text-align: center;
+  }
+  .success-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+  .success-title { font-size: 16px; font-weight: 800; color: var(--black); margin-bottom: 6px; }
+  .success-desc { font-size: 10px; color: var(--gray); margin-bottom: 16px; line-height: 1.6; }
+  .success-btn {
+    background: var(--purple);
+    color: white;
+    border-radius: 14px;
+    padding: 10px;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* ── 플로우 화살표 ── */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-arrow { font-size: 20px; color: var(--purple); opacity: 0.5; }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .flow-step-label {
+    font-size: 11px; font-weight: 700; color: var(--purple);
+    background: var(--purple-pale);
+    padding: 3px 10px; border-radius: 100px;
+  }
+
+  /* ── 비교 표 ── */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare-table th {
+    background: var(--purple-pale);
+    color: var(--purple);
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--purple-border);
+  }
+  .compare-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F0F0F0;
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table .check { color: var(--success); font-weight: 700; }
+  .compare-table .cross { color: var(--error); font-weight: 700; }
+
+  /* ── API 블록 ── */
+  .api-block {
+    background: #1A1A2E;
+    color: #E2D6FF;
+    border-radius: 16px;
+    padding: 24px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .api-block .method { color: #7A4AE2; font-weight: 700; }
+  .api-block .path { color: #A87AFF; }
+  .api-block .key { color: #BEACFF; }
+  .api-block .val { color: #9BE8A1; }
+  .api-block .comment { color: #666; font-style: italic; }
+  .api-block .status-204 { color: #4CAF50; font-weight: 700; }
+
+  /* ── 임팩트 카드 ── */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .impact-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 1.5px solid var(--purple-border);
+  }
+  .impact-num { font-size: 32px; font-weight: 800; color: var(--purple); }
+  .impact-label { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+  @media (max-width: 640px) {
+    .impact-grid { grid-template-columns: repeat(2, 1fr); }
+    .page-header { padding: 32px 20px; }
+    .page-body { padding: 32px 16px; }
+    .flow-row { gap: 8px; }
+    .flow-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="page-header">
+  <div class="badge">Feature Design · Feedback v2</div>
+  <h1>📬 피드백 UI 개선 아이디어</h1>
+  <p>Walla 외부 링크 → 인앱 편지 모달 전환 · POST /feedback API 연동 · Slack 실시간 수신</p>
+</div>
+
+<div class="page-body">
+
+  <!-- ── 섹션 0: 임팩트 ── -->
+  <div class="section">
+    <div class="section-label">Why</div>
+    <div class="section-title">개선의 이유</div>
+    <div class="section-desc">현재 Walla 링크는 외부 이탈 → 낮은 완료율 · 운영 채널 부재 문제를 가집니다.</div>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-num">~0%</div>
+        <div class="impact-label">현재 의견이 Slack에 도달하는 비율</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-num">✉️→💬</div>
+        <div class="impact-label">인앱 편지 → Slack 실시간 알림</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-num">204</div>
+        <div class="impact-label">API 응답 코드 (No Content = 성공)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 섹션 1: 배너 UI 아이디어 ── -->
+  <div class="section">
+    <div class="section-label">Banner UI</div>
+    <div class="section-title">배너 노출 방식 3가지 아이디어</div>
+    <div class="section-desc">홈 하단에 위치하는 피드백 진입점의 시각적 개선 옵션입니다.</div>
+
+    <div class="card-grid">
+
+      <!-- 현재 -->
+      <div class="card">
+        <div class="card-meta">
+          <div class="card-tag tag-current">현재 (Current)</div>
+          <div class="card-title">AnnounceCard 단순 배너</div>
+          <div class="card-desc">클릭 시 Walla 외부 폼으로 이동. 내부 수집 없음.</div>
+        </div>
+        <div class="card-preview">
+          <div class="phone-frame">
+            <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+            <div class="phone-body" style="padding:10px 8px;">
+              <div style="font-size:9px;color:#aaa;margin-bottom:8px;">홈 하단</div>
+              <div class="announce-card">
+                <span>✉️</span>
+                <span style="font-size:9px;">여러분의 소중한 의견이 썸타임을 더 특별하게 만듭니다!</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray);text-align:center;">
+            클릭 → 외부 Walla 이동<br>✗ 내부 데이터 수집 없음
+          </div>
+        </div>
+      </div>
+
+      <!-- 아이디어 A -->
+      <div class="card">
+        <div class="card-meta">
+          <div class="card-tag tag-recommended">추천 (Recommended)</div>
+          <div class="card-title">그라디언트 풀-배너</div>
+          <div class="card-desc">브랜드 보라 그라디언트로 시선을 끌고, 아이콘·서브텍스트로 맥락 제공.</div>
+        </div>
+        <div class="card-preview">
+          <div class="phone-frame">
+            <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+            <div class="phone-body" style="padding:10px 8px;">
+              <div style="font-size:9px;color:#aaa;margin-bottom:8px;">홈 하단</div>
+              <div class="gradient-banner">
+                <div class="banner-icon">📬</div>
+                <div class="banner-text">
+                  <div class="banner-title">의견을 보내주세요</div>
+                  <div class="banner-sub">여러분의 피드백이 썸타임을 바꿉니다</div>
+                </div>
+                <div class="banner-arrow">›</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray);text-align:center;">
+            클릭 → 인앱 편지 모달 오픈<br>✓ 브랜드 일관성 · 높은 CTR
+          </div>
+        </div>
+      </div>
+
+      <!-- 아이디어 B -->
+      <div class="card">
+        <div class="card-meta">
+          <div class="card-tag tag-idea">아이디어 B</div>
+          <div class="card-title">카드형 CTA 배너</div>
+          <div class="card-desc">텍스트 + 버튼이 분리된 카드 형태. 명시적 행동 유도.</div>
+        </div>
+        <div class="card-preview">
+          <div class="phone-frame">
+            <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+            <div class="phone-body" style="padding:10px 8px;">
+              <div style="font-size:9px;color:#aaa;margin-bottom:8px;">홈 하단</div>
+              <div class="cta-card">
+                <div class="cta-top">
+                  <div class="cta-emoji">💌</div>
+                  <div class="cta-text">
+                    <div class="cta-title">썸타임에 편지를 보내주세요</div>
+                    <div class="cta-sub">의견이 실제 개선으로 이어집니다</div>
+                  </div>
+                </div>
+                <div class="cta-btn">✉️ 편지 쓰기</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray);text-align:center;">
+            클릭 → 인앱 편지 모달 오픈<br>✓ 명확한 행동 유도
+          </div>
+        </div>
+      </div>
+
+      <!-- 아이디어 C (보상) -->
+      <div class="card">
+        <div class="card-meta">
+          <div class="card-tag tag-idea">아이디어 C · 보상</div>
+          <div class="card-title">구슬 보상 배지 배너</div>
+          <div class="card-desc">의견 제출 시 구슬 지급 이벤트 표시. 참여율 극대화.</div>
+        </div>
+        <div class="card-preview">
+          <div class="phone-frame">
+            <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+            <div class="phone-body" style="padding:10px 8px;">
+              <div style="font-size:9px;color:#aaa;margin-bottom:8px;">홈 하단</div>
+              <div style="position:relative;display:inline-block;width:100%;">
+                <div class="badge-banner">
+                  <span style="font-size:16px;">📬</span>
+                  <span class="bb-text">의견 보내고 구슬 받기</span>
+                  <div class="gem-badge">💎 +1</div>
+                </div>
+                <div class="new-dot"></div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray);text-align:center;">
+            클릭 → 편지 모달 → 제출 시 구슬 지급<br>✓ 참여율 최고 · 서버 검증 필요
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 섹션 2: 편지 모달 플로우 ── -->
+  <div class="section">
+    <div class="section-label">Letter Modal Flow</div>
+    <div class="section-title">편지 작성 모달 UX 플로우</div>
+    <div class="section-desc">모먼트 편지 UI와 동일한 패턴으로 일관성 있는 편지 작성 경험을 제공합니다.</div>
+
+    <div class="flow-row" style="margin-bottom:32px;">
+      <div class="flow-step">
+        <div class="flow-step-label">① 배너 탭</div>
+        <div class="phone-frame" style="width:130px;">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="phone-body" style="padding:8px 6px;">
+            <div style="height:60px;background:var(--gray-light);border-radius:8px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:8px;color:#aaa;">홈 콘텐츠</span>
+            </div>
+            <div class="gradient-banner" style="padding:8px 10px;">
+              <span style="font-size:14px;">📬</span>
+              <span style="font-size:8px;font-weight:700;color:white;flex:1;">의견 보내기</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.7);">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-label">② 편지 작성</div>
+        <div class="phone-frame" style="width:130px;">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div style="background:rgba(0,0,0,0.3);padding:8px 0 0;">
+            <div class="modal-sheet" style="padding:10px 8px 8px;margin-top:0;">
+              <div class="modal-handle"></div>
+              <div class="modal-title" style="font-size:10px;">썸타임에 편지 보내기 ✉️</div>
+              <div class="modal-sub" style="font-size:8px;">솔직한 의견이 더 좋은 서비스를 만들어요</div>
+              <div class="chip-row" style="gap:4px;margin-bottom:8px;">
+                <span class="chip-item active" style="font-size:7px;padding:2px 6px;">💬 일반</span>
+                <span class="chip-item" style="font-size:7px;padding:2px 6px;">🐛 버그</span>
+                <span class="chip-item" style="font-size:7px;padding:2px 6px;">✨ 제안</span>
+                <span class="chip-item" style="font-size:7px;padding:2px 6px;">📝 기타</span>
+              </div>
+              <div class="letter-area" style="min-height:50px;margin-bottom:6px;">
+                <div class="letter-placeholder" style="font-size:7px;">자유롭게 의견을 적어주세요...</div>
+              </div>
+              <div class="submit-btn" style="font-size:9px;padding:7px;border-radius:10px;">의견 보내기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-label">③ 성공 확인</div>
+        <div class="phone-frame" style="width:130px;">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div style="background:rgba(0,0,0,0.3);padding:8px 0 0;">
+            <div style="background:white;border-radius:20px 20px 0 0;padding:16px 12px;text-align:center;margin-top:0;">
+              <div style="font-size:32px;margin-bottom:8px;">🙏</div>
+              <div style="font-size:11px;font-weight:800;margin-bottom:4px;">소중한 의견 감사해요!</div>
+              <div style="font-size:8px;color:var(--gray);margin-bottom:12px;line-height:1.5;">운영팀이 빠르게 확인하고<br>개선에 반영할게요</div>
+              <div style="background:var(--purple);color:white;border-radius:10px;padding:8px;font-size:9px;font-weight:700;">확인</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-label">④ Slack 수신</div>
+        <div style="background:white;border-radius:16px;padding:12px 14px;border:1.5px solid #E2D6FF;width:160px;font-size:11px;">
+          <div style="font-weight:700;margin-bottom:6px;font-size:12px;">📣 유저 피드백이 도착했어요!</div>
+          <div style="color:var(--gray);font-size:10px;margin-bottom:4px;">카테고리: 💬 일반</div>
+          <div style="background:#F5F5F5;border-left:3px solid var(--purple);padding:6px 8px;border-radius:0 6px 6px 0;font-size:10px;color:var(--black);">
+            "앱이 전반적으로 좋아졌어요!"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 섹션 3: 현재 vs 개선 비교 ── -->
+  <div class="section">
+    <div class="section-label">Comparison</div>
+    <div class="section-title">현재 vs 개선 후 비교</div>
+    <div class="section-desc"></div>
+    <div class="card" style="overflow:hidden;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:28%;">항목</th>
+            <th style="width:36%;">현재 (Walla 외부 링크)</th>
+            <th style="width:36%;">개선 후 (인앱 편지 모달)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>유저 이탈</strong></td>
+            <td><span class="cross">✗</span> 외부 브라우저로 이탈</td>
+            <td><span class="check">✓</span> 앱 내 바텀시트 유지</td>
+          </tr>
+          <tr>
+            <td><strong>Slack 알림</strong></td>
+            <td><span class="cross">✗</span> 없음</td>
+            <td><span class="check">✓</span> POST /feedback → Slack Block Kit</td>
+          </tr>
+          <tr>
+            <td><strong>카테고리 분류</strong></td>
+            <td><span class="cross">✗</span> 없음</td>
+            <td><span class="check">✓</span> 일반/버그/기능/기타 칩 선택</td>
+          </tr>
+          <tr>
+            <td><strong>완료율</strong></td>
+            <td><span class="cross">✗</span> 낮음 (이탈 후 미완료)</td>
+            <td><span class="check">✓</span> 높음 (모달 내 원스텝)</td>
+          </tr>
+          <tr>
+            <td><strong>UX 일관성</strong></td>
+            <td><span class="cross">✗</span> Walla 타 브랜드 UI</td>
+            <td><span class="check">✓</span> 모먼트 편지와 동일 패턴</td>
+          </tr>
+          <tr>
+            <td><strong>확장성</strong></td>
+            <td><span class="cross">✗</span> 없음</td>
+            <td><span class="check">✓</span> 구슬 보상 · 어드민 연동 가능</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 섹션 4: API 스펙 ── -->
+  <div class="section">
+    <div class="section-label">API Spec</div>
+    <div class="section-title">POST /feedback 연동 스펙</div>
+    <div class="section-desc">Public 엔드포인트. 인증 불필요. 성공 시 204 No Content.</div>
+    <div class="api-block">
+<span class="comment">// Request</span>
+<span class="method">POST</span> <span class="path">/feedback</span>
+Content-Type: application/json
+
+{
+  <span class="key">"message"</span>: <span class="val">"앱이 전반적으로 좋아졌어요!"</span>,   <span class="comment">// Required. Max 2000자</span>
+  <span class="key">"category"</span>: <span class="val">"general"</span>                          <span class="comment">// Optional. general|bug|feature|other</span>
+}
+
+<span class="comment">// Response (성공)</span>
+<span class="status-204">204 No Content</span>   <span class="comment">// Body 없음</span>
+
+<span class="comment">// Slack 수신 메시지 (Block Kit)</span>
+📣 유저 피드백이 도착했어요!
+카테고리: 💬 일반
+내용: "앱이 전반적으로 좋아졌어요!"
+
+<span class="comment">// 에러 케이스</span>
+400 <span class="comment">— message 누락 또는 2000자 초과</span>
+400 <span class="comment">— category가 허용값 외 문자열</span>
+500 <span class="comment">— Slack API 호출 실패</span>
+    </div>
+  </div>
+
+  <!-- ── 섹션 5: 구현 파일 구조 ── -->
+  <div class="section">
+    <div class="section-label">Implementation</div>
+    <div class="section-title">구현 파일 구조</div>
+    <div class="section-desc">FSD 아키텍처 기준 feedback feature 확장.</div>
+    <div class="api-block">
+src/features/feedback/
+├── <span class="path">api/index.ts</span>              <span class="comment">// feedbackApi.submit() — POST /feedback</span>
+├── <span class="path">hooks/</span>
+│   └── <span class="path">use-submit-feedback.ts</span>  <span class="comment">// useMutation 래퍼</span>
+├── <span class="path">ui/</span>
+│   ├── <span class="path">feedback-letter-content.tsx</span>  <span class="comment">// 편지 작성 모달 컨텐츠</span>
+│   └── <span class="path">index.tsx</span>              <span class="comment">// WallaFeedbackBanner (useModal 연동)</span>
+├── <span class="path">constants/index.ts</span>        <span class="comment">// 기존 유지</span>
+├── <span class="path">libs/index.ts</span>             <span class="comment">// 기존 유지 (Walla 함수 보존)</span>
+└── <span class="path">index.tsx</span>                 <span class="comment">// 기존 유지</span>
+
+<span class="comment">// 로케일 업데이트</span>
+src/shared/libs/locales/ko/features/feedback.json   <span class="comment">// ✓ 업데이트됨</span>
+src/shared/libs/locales/ja/features/feedback.json   <span class="comment">// ✓ 업데이트됨</span>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:24px;color:var(--gray);font-size:12px;border-top:1px solid var(--purple-border);">
+  썸타임 피드백 UI 개선 · 2026.03 · Sometimes App Design System
+</div>
+
+</body>
+</html>

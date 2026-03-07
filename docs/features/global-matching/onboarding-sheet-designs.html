@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnboardingBottomSheet - Design Concepts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #7A4AE2;
+    --primary-light: #E2D5FF;
+    --primary-bg: rgba(122, 74, 226, 0.06);
+    --primary-bg-strong: rgba(122, 74, 226, 0.12);
+    --surface: #FFFFFF;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --bg: #F8F9FA;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    --text-disabled: #AEAEAE;
+    --border-smooth: #e4e2e2;
+    --accent: #A892D7;
+    --deep: #49386E;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: #f0f0f0;
+    padding: 20px;
+    color: var(--text-primary);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 32px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .concept {
+    background: #e8e8e8;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .concept-header {
+    padding: 16px 20px;
+    background: #e8e8e8;
+  }
+
+  .concept-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .concept-header p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  .concept-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-top: 6px;
+  }
+
+  .tag-recommended {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .tag-playful {
+    background: #FF6B9D;
+    color: #fff;
+  }
+
+  .tag-elegant {
+    background: var(--deep);
+    color: #fff;
+  }
+
+  .tag-minimal {
+    background: #333;
+    color: #fff;
+  }
+
+  /* Phone mockup */
+  .phone {
+    width: 375px;
+    margin: 0 auto;
+    position: relative;
+    height: 520px;
+    overflow: hidden;
+  }
+
+  .phone-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+  }
+
+  .sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* ========================
+     A. Clean Minimal
+     ======================== */
+  .sheet-a {
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    padding: 0 0 24px 0;
+  }
+
+  .sheet-a .handle-bar {
+    width: 40px; height: 4px;
+    background: #E0E0E0;
+    border-radius: 2px;
+    margin: 12px auto 8px;
+  }
+
+  .sheet-a .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 24px 16px;
+  }
+
+  .sheet-a .header-title { font-size: 18px; font-weight: 700; }
+  .sheet-a .header-step { font-size: 12px; color: var(--text-disabled); margin-top: 4px; }
+  .sheet-a .close-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--text-disabled);
+    cursor: pointer;
+  }
+
+  .sheet-a .progress-dots {
+    display: flex; gap: 6px;
+    padding: 0 24px; margin-bottom: 16px;
+  }
+
+  .sheet-a .dot {
+    flex: 1; height: 4px;
+    border-radius: 2px; background: #F0F0F0;
+  }
+
+  .sheet-a .dot.active { background: var(--primary); }
+
+  .sheet-a .category-title {
+    font-size: 16px; font-weight: 700;
+    padding: 0 24px; margin-bottom: 4px; color: #1A1A1A;
+  }
+
+  .sheet-a .max-hint {
+    font-size: 12px; color: var(--text-disabled);
+    padding: 0 24px; margin-bottom: 16px;
+  }
+
+  .sheet-a .chip-grid {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 0 24px; margin-bottom: 20px;
+  }
+
+  .sheet-a .chip {
+    padding: 11px 18px;
+    border-radius: 22px;
+    background: #F5F5F5;
+    font-size: 14px;
+    color: #666;
+    border: 1.5px solid #F5F5F5;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sheet-a .chip.selected {
+    background: var(--primary-bg);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .sheet-a .action-btn {
+    margin: 0 24px;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .sheet-a .action-btn.disabled { opacity: 0.35; }
+
+  /* ========================
+     B. Card Header + Emoji
+     ======================== */
+  .sheet-b {
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    padding: 0 0 24px 0;
+  }
+
+  .sheet-b .handle-bar {
+    width: 40px; height: 4px;
+    background: #E0E0E0;
+    border-radius: 2px;
+    margin: 12px auto 0;
+  }
+
+  .sheet-b .hero {
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-tertiary) 100%);
+    margin: 12px 16px 0;
+    border-radius: 20px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+
+  .sheet-b .hero-emoji { font-size: 36px; margin-bottom: 8px; }
+  .sheet-b .hero-title { font-size: 18px; font-weight: 700; color: var(--deep); }
+  .sheet-b .hero-desc { font-size: 13px; color: var(--text-tertiary); margin-top: 4px; }
+
+  .sheet-b .progress-bar-wrap {
+    margin: 16px 24px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .sheet-b .progress-bar {
+    flex: 1; height: 6px;
+    background: #F0F0F0; border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sheet-b .progress-fill {
+    height: 100%; width: 33%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .sheet-b .progress-label {
+    font-size: 12px; font-weight: 600; color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .sheet-b .question-section { padding: 20px 24px 0; }
+
+  .sheet-b .question-label {
+    font-size: 15px; font-weight: 700; margin-bottom: 14px;
+    color: var(--text-secondary);
+  }
+
+  .sheet-b .option-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+  .sheet-b .option-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--bg);
+    border: 1.5px solid var(--bg);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sheet-b .option-card.selected {
+    background: var(--primary-bg);
+    border-color: var(--primary);
+  }
+
+  .sheet-b .option-emoji { font-size: 22px; }
+
+  .sheet-b .option-text { font-size: 15px; color: var(--text-secondary); }
+  .sheet-b .option-card.selected .option-text {
+    font-weight: 600; color: var(--primary);
+  }
+
+  .sheet-b .option-check {
+    margin-left: auto;
+    width: 22px; height: 22px;
+    border-radius: 11px;
+    border: 2px solid #D0D0D0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .sheet-b .option-card.selected .option-check {
+    border-color: var(--primary);
+    background: var(--primary);
+  }
+
+  .sheet-b .option-check-inner {
+    display: none;
+    color: #fff; font-size: 12px; font-weight: 700;
+  }
+
+  .sheet-b .option-card.selected .option-check-inner { display: block; }
+
+  .sheet-b .action-area { padding: 0 24px; }
+
+  .sheet-b .action-btn {
+    width: 100%; padding: 16px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #fff; font-size: 16px; font-weight: 700;
+    text-align: center; cursor: pointer;
+    border: none;
+  }
+
+  /* ========================
+     C. Gradient Header + Pill Chips
+     ======================== */
+  .sheet-c {
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    overflow: hidden;
+  }
+
+  .sheet-c .gradient-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #9B6DFF 50%, var(--accent) 100%);
+    padding: 20px 24px 24px;
+    position: relative;
+  }
+
+  .sheet-c .gradient-header::before {
+    content: '';
+    position: absolute; top: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 40px; height: 4px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+  }
+
+  .sheet-c .gh-row {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 8px;
+  }
+
+  .sheet-c .gh-title { font-size: 20px; font-weight: 700; color: #fff; }
+  .sheet-c .gh-step {
+    font-size: 12px; color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px; border-radius: 12px;
+  }
+
+  .sheet-c .gh-desc {
+    font-size: 13px; color: rgba(255,255,255,0.85);
+    margin-top: 6px;
+  }
+
+  .sheet-c .step-indicators {
+    display: flex; gap: 4px; margin-top: 14px;
+  }
+
+  .sheet-c .step-dot {
+    flex: 1; height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.25);
+  }
+
+  .sheet-c .step-dot.active { background: #fff; }
+
+  .sheet-c .body { padding: 20px 24px 24px; }
+
+  .sheet-c .q-title {
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 4px; color: var(--text-primary);
+  }
+
+  .sheet-c .q-hint {
+    font-size: 12px; color: var(--text-disabled);
+    margin-bottom: 16px;
+  }
+
+  .sheet-c .pill-grid {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .sheet-c .pill {
+    padding: 12px 20px;
+    border-radius: 28px;
+    background: var(--bg);
+    font-size: 14px;
+    color: var(--text-tertiary);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .sheet-c .pill.selected {
+    background: var(--primary-bg-strong);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(122, 74, 226, 0.15);
+  }
+
+  .sheet-c .action-row {
+    display: flex; gap: 10px;
+  }
+
+  .sheet-c .skip-btn {
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: var(--bg);
+    font-size: 15px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .sheet-c .next-btn {
+    flex: 1; padding: 16px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #fff; font-size: 16px; font-weight: 700;
+    text-align: center; cursor: pointer;
+  }
+
+  /* ========================
+     D. Swipe Card Style
+     ======================== */
+  .sheet-d {
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    padding: 0 0 24px 0;
+  }
+
+  .sheet-d .handle-bar {
+    width: 40px; height: 4px;
+    background: #E0E0E0;
+    border-radius: 2px;
+    margin: 12px auto 8px;
+  }
+
+  .sheet-d .header-row {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 4px 24px 12px;
+  }
+
+  .sheet-d .header-left { display: flex; align-items: center; gap: 8px; }
+
+  .sheet-d .step-badge {
+    background: var(--primary);
+    color: #fff; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 10px;
+  }
+
+  .sheet-d .header-title { font-size: 17px; font-weight: 700; }
+
+  .sheet-d .close-x {
+    font-size: 18px; color: var(--text-disabled);
+    cursor: pointer;
+  }
+
+  .sheet-d .card-container {
+    margin: 0 16px;
+    background: linear-gradient(145deg, #FAFAFA 0%, #F5F5F5 100%);
+    border-radius: 24px;
+    padding: 24px 20px;
+    border: 1px solid #EFEFEF;
+  }
+
+  .sheet-d .card-question {
+    font-size: 20px; font-weight: 700;
+    text-align: center; margin-bottom: 6px;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .sheet-d .card-hint {
+    font-size: 12px; color: var(--text-disabled);
+    text-align: center; margin-bottom: 20px;
+  }
+
+  .sheet-d .tag-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+  }
+
+  .sheet-d .tag {
+    padding: 10px 18px;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 14px;
+    color: var(--text-tertiary);
+    border: 1.5px solid #EBEBEB;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sheet-d .tag.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    transform: scale(1.02);
+    box-shadow: 0 3px 12px rgba(122, 74, 226, 0.25);
+  }
+
+  .sheet-d .bottom-area {
+    padding: 20px 24px 0;
+    display: flex; gap: 12px; align-items: center;
+  }
+
+  .sheet-d .page-dots {
+    display: flex; gap: 6px;
+  }
+
+  .sheet-d .page-dot {
+    width: 8px; height: 8px;
+    border-radius: 4px;
+    background: #E0E0E0;
+  }
+
+  .sheet-d .page-dot.active {
+    width: 24px;
+    background: var(--primary);
+  }
+
+  .sheet-d .next-btn {
+    flex: 1; padding: 16px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #fff; font-size: 16px; font-weight: 700;
+    text-align: center; cursor: pointer;
+  }
+
+  /* ========================
+     비교 테이블
+     ======================== */
+  .comparison {
+    max-width: 1200px;
+    margin: 48px auto 0;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+  }
+
+  .comparison h2 {
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .comparison table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .comparison th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg);
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+  }
+
+  .comparison td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: top;
+  }
+
+  .comparison .check { color: var(--primary); font-weight: 700; }
+  .comparison .star { color: #FFB02E; }
+</style>
+</head>
+<body>
+
+<h1>OnboardingBottomSheet - 디자인 시안</h1>
+<p class="subtitle">Sometimes App 색상 시스템 기반 | 하얀 배경 4가지 컨셉</p>
+
+<div class="grid">
+
+  <!-- ================================
+       A. Clean Minimal
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>A. Clean Minimal</h2>
+      <p>세그먼트 프로그레스 + 라운드 칩 | 현재 구현과 가장 유사</p>
+      <span class="concept-tag tag-minimal">현재 적용</span>
+    </div>
+    <div class="phone">
+      <div class="phone-bg"></div>
+      <div class="sheet sheet-a">
+        <div class="handle-bar"></div>
+        <div class="header">
+          <div>
+            <div class="header-title">매칭 선호도 설정</div>
+            <div class="header-step">Step 1/3</div>
+          </div>
+          <div class="close-btn">✕</div>
+        </div>
+        <div class="progress-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="category-title">원하는 성격을 골라주세요</div>
+        <div class="max-hint">최대 3개 선택 가능</div>
+        <div class="chip-grid">
+          <div class="chip selected">활발한</div>
+          <div class="chip">차분한</div>
+          <div class="chip selected">유머있는</div>
+          <div class="chip">다정한</div>
+          <div class="chip">지적인</div>
+          <div class="chip">감성적인</div>
+          <div class="chip">자유로운</div>
+          <div class="chip">성실한</div>
+        </div>
+        <div class="action-btn">다음</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       B. Card Header + Emoji Options
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>B. Illustrated Card</h2>
+      <p>이모지 일러스트 카드 + 그라데이션 히어로 | 친근하고 몰입감 있는 UX</p>
+      <span class="concept-tag tag-playful">추천</span>
+    </div>
+    <div class="phone">
+      <div class="phone-bg"></div>
+      <div class="sheet sheet-b">
+        <div class="handle-bar"></div>
+        <div class="hero">
+          <div class="hero-emoji">🎯</div>
+          <div class="hero-title">나에게 맞는 상대 찾기</div>
+          <div class="hero-desc">선호도를 설정하면 더 잘 맞는 상대를 찾아드려요</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 33%"></div>
+          </div>
+          <div class="progress-label">1/3</div>
+        </div>
+        <div class="question-section">
+          <div class="question-label">이상적인 만남의 분위기는?</div>
+          <div class="option-list">
+            <div class="option-card selected">
+              <span class="option-emoji">☕</span>
+              <span class="option-text">카페에서 차분하게</span>
+              <span class="option-check"><span class="option-check-inner">✓</span></span>
+            </div>
+            <div class="option-card">
+              <span class="option-emoji">🎮</span>
+              <span class="option-text">함께 게임하며 즐겁게</span>
+              <span class="option-check"><span class="option-check-inner">✓</span></span>
+            </div>
+            <div class="option-card">
+              <span class="option-emoji">🚶</span>
+              <span class="option-text">산책하며 자연스럽게</span>
+              <span class="option-check"><span class="option-check-inner">✓</span></span>
+            </div>
+            <div class="option-card">
+              <span class="option-emoji">🍽️</span>
+              <span class="option-text">맛집 탐방하며</span>
+              <span class="option-check"><span class="option-check-inner">✓</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="action-area">
+          <div class="action-btn">다음</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       C. Gradient Header + Pill Chips
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>C. Gradient Header</h2>
+      <p>보라 그라디언트 헤더 + 큰 필 칩 + 건너뛰기 | 브랜드 강조</p>
+      <span class="concept-tag tag-elegant">브랜드 임팩트</span>
+    </div>
+    <div class="phone">
+      <div class="phone-bg"></div>
+      <div class="sheet sheet-c">
+        <div class="gradient-header">
+          <div class="gh-row">
+            <div class="gh-title">매칭 선호도</div>
+            <div class="gh-step">1 / 3</div>
+          </div>
+          <div class="gh-desc">나에게 딱 맞는 상대를 찾기 위한 질문이에요</div>
+          <div class="step-indicators">
+            <div class="step-dot active"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="q-title">선호하는 나이대는?</div>
+          <div class="q-hint">최대 2개까지 선택할 수 있어요</div>
+          <div class="pill-grid">
+            <div class="pill">동갑</div>
+            <div class="pill selected">1~2살 차이</div>
+            <div class="pill">3~4살 차이</div>
+            <div class="pill selected">5살 이상</div>
+            <div class="pill">상관없음</div>
+          </div>
+          <div class="action-row">
+            <div class="skip-btn">건너뛰기</div>
+            <div class="next-btn">다음</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================
+       D. Swipe Card Style
+       ================================ -->
+  <div class="concept">
+    <div class="concept-header">
+      <h2>D. Card Swipe</h2>
+      <p>카드 중심 레이아웃 + 페이지 도트 + 뱃지 스텝 | 게이미피케이션</p>
+      <span class="concept-tag tag-recommended">몰입도 최고</span>
+    </div>
+    <div class="phone">
+      <div class="phone-bg"></div>
+      <div class="sheet sheet-d">
+        <div class="handle-bar"></div>
+        <div class="header-row">
+          <div class="header-left">
+            <span class="step-badge">Q1</span>
+            <span class="header-title">매칭 선호도</span>
+          </div>
+          <div class="close-x">✕</div>
+        </div>
+        <div class="card-container">
+          <div class="card-question">어떤 성격의<br>상대가 좋나요?</div>
+          <div class="card-hint">최대 3개까지 선택해주세요</div>
+          <div class="tag-grid">
+            <div class="tag selected">활발한 😄</div>
+            <div class="tag">차분한 🧘</div>
+            <div class="tag selected">유머있는 😂</div>
+            <div class="tag">다정한 🥰</div>
+            <div class="tag">지적인 🤓</div>
+            <div class="tag">감성적인 🎨</div>
+            <div class="tag">자유로운 🦋</div>
+            <div class="tag selected">성실한 📚</div>
+          </div>
+        </div>
+        <div class="bottom-area">
+          <div class="page-dots">
+            <div class="page-dot active"></div>
+            <div class="page-dot"></div>
+            <div class="page-dot"></div>
+          </div>
+          <div class="next-btn">다음 →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================
+     비교 테이블
+     ======================== -->
+<div class="comparison">
+  <h2>디자인 비교</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th>A. Clean Minimal</th>
+        <th>B. Illustrated Card</th>
+        <th>C. Gradient Header</th>
+        <th>D. Card Swipe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>분위기</strong></td>
+        <td>깔끔, 중립적</td>
+        <td>친근, 따뜻함</td>
+        <td>브랜드 임팩트</td>
+        <td>게이미피케이션</td>
+      </tr>
+      <tr>
+        <td><strong>진행 표시</strong></td>
+        <td>세그먼트 도트</td>
+        <td>그라데이션 바 + 숫자</td>
+        <td>헤더 내 인디케이터</td>
+        <td>페이지 도트 (확장형)</td>
+      </tr>
+      <tr>
+        <td><strong>선택 UI</strong></td>
+        <td>라운드 칩</td>
+        <td>이모지 + 카드 리스트</td>
+        <td>큰 필 칩 (그림자)</td>
+        <td>이모지 태그 (중앙 정렬)</td>
+      </tr>
+      <tr>
+        <td><strong>브랜드 반영</strong></td>
+        <td>보라 악센트만</td>
+        <td>연보라 히어로 영역</td>
+        <td class="check">보라 그라디언트 헤더</td>
+        <td>보라 뱃지 + 액센트</td>
+      </tr>
+      <tr>
+        <td><strong>건너뛰기</strong></td>
+        <td>없음</td>
+        <td>없음</td>
+        <td class="check">있음 (회색 버튼)</td>
+        <td>없음</td>
+      </tr>
+      <tr>
+        <td><strong>구현 난이도</strong></td>
+        <td>낮음 (현재 구현)</td>
+        <td>중간</td>
+        <td>중간</td>
+        <td>중간</td>
+      </tr>
+      <tr>
+        <td><strong>완성도 느낌</strong></td>
+        <td>기본</td>
+        <td class="star">★ 따뜻한 UX</td>
+        <td class="star">★ 브랜드 강화</td>
+        <td class="star">★★ 몰입감</td>
+      </tr>
+      <tr>
+        <td><strong>추천 상황</strong></td>
+        <td>빠른 출시 MVP</td>
+        <td>친근함 우선</td>
+        <td>브랜드 일관성 우선</td>
+        <td>UX 차별화 우선</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sometimes - MyPage Redesign v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  :root {
+    --brand: #7A4AE2; --brand2: #9747FF; --brand-deep: #49386E;
+    --brand-light: #E2D5FF; --brand-accent: #A892D7;
+    --sf-bg: #FFFFFF; --sf-alt: #F2F4F6; --sf-sec: #F7F3FF; --sf-ter: #F2EDFF;
+    --txt: #000; --txt2: #333; --txt-m: #7C7C7C; --txt-d: #AEAEAE; --txt-inv: #FFF;
+    --success: #22C55E;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#0a0a0a; color:#fff; }
+
+  .page-header { text-align:center; padding:60px 20px 40px; background:linear-gradient(135deg,#1a0a2e,#0d0d1a,#1a0a2e); border-bottom:1px solid rgba(122,74,226,0.2); }
+  .page-header h1 { font-size:42px; font-weight:800; background:linear-gradient(135deg,#E2D5FF,#7A4AE2,#9747FF); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+  .page-header p { font-size:15px; color:#999; max-width:600px; margin:0 auto; line-height:1.6; }
+  .current-tag { display:inline-block; background:rgba(122,74,226,0.15); color:var(--brand-accent); padding:6px 16px; border-radius:20px; font-size:13px; margin-top:16px; border:1px solid rgba(122,74,226,0.3); }
+
+  .section { max-width:1200px; margin:0 auto; padding:60px 20px; }
+  .section-header { display:flex; align-items:center; gap:16px; margin-bottom:32px; }
+  .section-number { width:48px;height:48px;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex-shrink:0; }
+  .section-title { font-size:24px; font-weight:700; }
+  .section-subtitle { font-size:14px; color:#888; margin-top:2px; }
+  .divider { max-width:1200px; margin:0 auto; height:1px; background:linear-gradient(90deg,transparent,rgba(122,74,226,0.3),transparent); }
+
+  .idea-layout { display:flex; gap:40px; align-items:flex-start; }
+  .idea-description { flex:1; min-width:280px; }
+  .concept { font-size:15px; color:#bbb; line-height:1.7; margin-bottom:20px; }
+  .idea-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .idea-tag { padding:4px 12px; border-radius:16px; font-size:12px; font-weight:500; }
+  .tag-layout { background:rgba(122,74,226,0.15); color:#B89AFF; }
+  .tag-vis { background:rgba(249,115,22,0.15); color:#FFA366; }
+  .tag-ux { background:rgba(34,197,94,0.15); color:#66D98A; }
+  .tag-int { background:rgba(56,113,255,0.15); color:#6FA0FF; }
+  .features-list { list-style:none; margin-top:12px; }
+  .features-list li { padding:6px 0; font-size:13px; color:#aaa; display:flex; align-items:center; gap:8px; }
+  .features-list li::before { content:''; width:6px;height:6px;background:var(--brand);border-radius:50%;flex-shrink:0; }
+
+  .phone-wrap { flex-shrink:0; }
+  .phone { width:320px; height:680px; border-radius:40px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 2px rgba(255,255,255,0.1); background:#000; }
+  .phone-screen { width:100%; height:100%; overflow-y:auto; overflow-x:hidden; position:relative; background:var(--sf-bg); }
+  .phone-screen::-webkit-scrollbar { display:none; }
+  .phone::before { content:''; position:absolute; top:0;left:50%; transform:translateX(-50%); width:120px;height:28px; background:#000; border-radius:0 0 16px 16px; z-index:100; }
+
+  .status-bar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; font-size:14px; font-weight:600; color:white; position:relative; z-index:10; }
+  .photo-bg { background:linear-gradient(180deg,#b8a0d8,#9a7fc4 30%,#8466b0 60%,#6b4d9a); position:absolute; top:0;left:0;right:0;bottom:0; }
+  .photo-bg.grad::after { content:''; position:absolute; bottom:0;left:0;right:0; height:60%; background:linear-gradient(to top,rgba(0,0,0,0.85),rgba(0,0,0,0.4) 50%,transparent); }
+  .photo-bg.grad-strong::after { content:''; position:absolute; bottom:0;left:0;right:0; height:70%; background:linear-gradient(to top,#000,rgba(0,0,0,0.5) 50%,transparent); }
+  .photo-bg.grad-white::after { content:''; position:absolute; bottom:0;left:0;right:0; height:80%; background:linear-gradient(to top,#fff 5%,rgba(255,255,255,0.3) 40%,transparent); }
+
+  .toggle { width:44px;height:24px;border-radius:12px;position:relative;flex-shrink:0; }
+  .toggle.on { background:#F3EDFF; }
+  .toggle.off { background:#E5E0F1; }
+  .toggle::after { content:''; position:absolute; top:3px; width:18px;height:18px; border-radius:50%; transition:0.2s; }
+  .toggle.on::after { right:3px; background:var(--brand); }
+  .toggle.off::after { left:3px; background:#B7A8E7; }
+  .chev { color:#BAC1CB; font-size:14px; flex-shrink:0; }
+
+  .menu-row { display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid #f2f2f2; font-size:13px; color:var(--txt2); }
+  .menu-row:last-child { border-bottom:none; }
+
+  @media (max-width:768px) {
+    .idea-layout { flex-direction:column-reverse; align-items:center; }
+    .idea-description { min-width:auto; }
+    .section-title { font-size:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MyPage Redesign v2</h1>
+  <p>모든 하위 메뉴를 0-depth로 펼쳐 한 화면에서 접근 가능한 10가지 레이아웃<br>
+  대표 사진 배경 + 검은 그라데이션 + 모던 오버레이</p>
+  <span class="current-tag">All Menus at 0-Depth</span>
+</div>
+
+<!-- ===== IDEA 1 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div><div class="section-title">Hero + Sectioned Scroll</div>
+    <div class="section-subtitle">풀스크린 사진 히어로 + 섹션별 플랫 메뉴 스크롤</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Full Bleed Hero</span><span class="idea-tag tag-layout">Sectioned List</span><span class="idea-tag tag-ux">0-Depth</span></div>
+      <p class="concept">사진 히어로 아래로 스크롤하면 모든 메뉴가 섹션 타이틀과 함께 플랫하게 나열됩니다. 프로필 수정/이상형 설정은 듀얼 CTA 버튼, 토글 설정은 인라인, 네비게이션 항목은 리스트로 구성됩니다.</p>
+      <ul class="features-list">
+        <li>사진 히어로로 시각적 임팩트 유지</li>
+        <li>스크롤 한 번에 모든 메뉴 접근</li>
+        <li>섹션 타이틀로 그룹핑하되 depth 없음</li>
+        <li>iOS Settings 앱의 익숙한 패턴</li>
+      </ul>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:280px;">
+        <div class="photo-bg grad"></div>
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:20px;left:16px;z-index:10;">
+          <div style="font-size:28px;font-weight:700;color:#fff;">간채아</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:2px;">05학번 &middot; 진주캐는대학교 &#9989;</div>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <span style="padding:4px 10px;border-radius:12px;background:rgba(122,74,226,0.4);font-size:11px;color:#E2D5FF;">ENFP</span>
+            <span style="padding:4px 10px;border-radius:12px;background:rgba(255,255,255,0.15);font-size:11px;color:rgba(255,255,255,0.8);">&#128142; 541</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;padding:16px;margin-top:-20px;position:relative;z-index:20;">
+        <div style="flex:1;padding:14px;border-radius:14px;background:var(--brand);color:#fff;text-align:center;font-size:13px;font-weight:600;">&#9998; 프로필 수정</div>
+        <div style="flex:1;padding:14px;border-radius:14px;background:var(--sf-sec);color:var(--brand);text-align:center;font-size:13px;font-weight:600;">&#10084; 이상형 설정</div>
+      </div>
+      <div style="padding:0 16px;">
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(135deg,#E9D9FF,#D6B6FF);font-size:12px;color:var(--brand-deep);font-weight:600;">&#128142; 구슬 541개 <span style="float:right;font-size:11px;">충전 &#8250;</span></div>
+          <div style="flex:1;padding:12px;border-radius:12px;background:var(--sf-alt);font-size:12px;color:var(--txt2);font-weight:600;">&#128247; 사진 관리 <span class="chev" style="float:right;">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="padding:0 16px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:8px;">&#127919; 매칭 설정</div>
+        <div class="menu-row"><span>같은 학과 제외</span><div class="toggle on"></div></div>
+        <div class="menu-row"><span>같은 학교 제외</span><div class="toggle off"></div></div>
+      </div>
+      <div style="padding:0 16px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:8px;">&#128276; 알림</div>
+        <div class="menu-row"><span>푸시 알림</span><div class="toggle on"></div></div>
+      </div>
+      <div style="padding:0 16px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:8px;">&#128274; 개인정보</div>
+        <div class="menu-row"><span>연락처 차단</span><span class="chev">&#8250;</span></div>
+      </div>
+      <div style="padding:0 16px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:8px;">&#128196; 내 활동</div>
+        <div class="menu-row"><span>내 프로필 미리보기</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row"><span>내 게시글</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row"><span>내 댓글</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row"><span>좋아요한 글</span><span class="chev">&#8250;</span></div>
+      </div>
+      <div style="padding:0 16px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:8px;">&#128736; 기타</div>
+        <div class="menu-row"><span>&#128172; 고객지원 챗봇</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 2 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div><div class="section-title">Glass Stats + iOS Grouped Cards</div>
+    <div class="section-subtitle">글래스 통계 카드 + iOS 스타일 그룹 카드</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:250px;">
+        <div class="photo-bg grad"></div>
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:16px;left:16px;right:16px;z-index:10;display:flex;align-items:flex-end;justify-content:space-between;">
+          <div><div style="font-size:24px;font-weight:700;color:#fff;">간채아</div><div style="font-size:12px;color:rgba(255,255,255,0.7);">05학번 &middot; 진주캐는대학교 &#9989;</div></div>
+          <div style="padding:7px 14px;border-radius:18px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);color:#fff;font-size:12px;font-weight:600;">&#9881;</div>
+        </div>
+      </div>
+      <div style="margin:-16px 12px 0;background:rgba(255,255,255,0.95);border-radius:18px;padding:16px;position:relative;z-index:20;box-shadow:0 4px 16px rgba(0,0,0,0.06);display:flex;text-align:center;">
+        <div style="flex:1;border-right:1px solid #eee;"><div style="font-size:18px;font-weight:700;color:var(--brand);">541</div><div style="font-size:10px;color:var(--txt-m);margin-top:2px;">구슬</div></div>
+        <div style="flex:1;border-right:1px solid #eee;"><div style="font-size:18px;font-weight:700;color:var(--brand);">ENFP</div><div style="font-size:10px;color:var(--txt-m);margin-top:2px;">MBTI</div></div>
+        <div style="flex:1;"><div style="font-size:18px;font-weight:700;color:var(--brand);">3</div><div style="font-size:10px;color:var(--txt-m);margin-top:2px;">리매칭권</div></div>
+      </div>
+      <div style="padding:12px;display:flex;gap:8px;">
+        <div style="flex:1;padding:16px 12px;border-radius:16px;background:var(--brand);color:#fff;text-align:center;font-size:12px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#9998;</div>프로필 수정</div>
+        <div style="flex:1;padding:16px 12px;border-radius:16px;background:var(--sf-sec);color:var(--brand);text-align:center;font-size:12px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#10084;</div>이상형 설정</div>
+        <div style="flex:1;padding:16px 12px;border-radius:16px;background:var(--sf-alt);color:var(--txt2);text-align:center;font-size:12px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#128247;</div>사진 관리</div>
+      </div>
+      <div style="padding:0 12px;">
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128100; 내 프로필 미리보기</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128196; 내 게시글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 내 댓글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#10084;&#65039; 좋아요한 글</span><span class="chev">&#8250;</span></div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Glass Overlay</span><span class="idea-tag tag-layout">Grouped Cards</span><span class="idea-tag tag-ux">iOS Style</span></div>
+      <p class="concept">iOS Settings 스타일로 토글/네비게이션 항목을 둥근 카드 그룹으로 묶어 0-depth에 모두 노출합니다. 글래스 통계 바가 사진과 메뉴를 연결하고, 3개 카드 그룹(설정/활동/기타)으로 시각적 구분을 유지합니다.</p>
+      <ul class="features-list">
+        <li>iOS Settings의 그룹 카드 패턴 - 가장 익숙한 UX</li>
+        <li>토글과 네비게이션이 같은 깊이에 공존</li>
+        <li>3분할 액션 버튼으로 핵심 기능 강조</li>
+        <li>구현 난이도 낮음 - 기존 컴포넌트 재활용</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 3 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div><div class="section-title">Magazine + Icon Grid</div>
+    <div class="section-subtitle">에디토리얼 히어로 + 4열 아이콘 그리드 + 플랫 메뉴</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Editorial Hero</span><span class="idea-tag tag-int">4-col Grid</span><span class="idea-tag tag-ux">Compact</span></div>
+      <p class="concept">매거진 스타일의 대형 히어로 아래에 4열 아이콘 그리드로 핵심 액션을, iOS 그룹 카드로 나머지 메뉴를 배치합니다. MBTI/구슬/리매칭을 반투명 칩으로 사진 위에 표현하여 스크롤 최소화.</p>
+      <ul class="features-list">
+        <li>매거진 커버 스타일의 프리미엄 임팩트</li>
+        <li>4열 그리드로 주요 기능 빠른 접근</li>
+        <li>칩으로 통계 정보를 사진 위에 압축</li>
+        <li>스크롤 적어 거의 한 화면에 전부 노출</li>
+      </ul>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:300px;">
+        <div class="photo-bg grad-strong"></div>
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:20px;left:16px;z-index:10;">
+          <div style="font-size:10px;letter-spacing:3px;color:var(--brand-light);font-weight:600;margin-bottom:6px;">MY PROFILE</div>
+          <div style="font-size:32px;font-weight:800;color:#fff;line-height:1.1;">간채아</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-top:4px;">05학번 &middot; 진주캐는대학교 &#9989;</div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="padding:4px 10px;border-radius:16px;background:rgba(122,74,226,0.35);font-size:11px;color:var(--brand-light);border:1px solid rgba(122,74,226,0.4);">ENFP</span>
+            <span style="padding:4px 10px;border-radius:16px;background:rgba(122,74,226,0.35);font-size:11px;color:var(--brand-light);">&#128142; 541</span>
+            <span style="padding:4px 10px;border-radius:16px;background:rgba(122,74,226,0.35);font-size:11px;color:var(--brand-light);">&#127915; 3</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px;">
+        <div style="text-align:center;padding:12px 4px;border-radius:14px;background:var(--brand);color:#fff;font-size:11px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#9998;</div>프로필 수정</div>
+        <div style="text-align:center;padding:12px 4px;border-radius:14px;background:var(--sf-sec);color:var(--brand);font-size:11px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#10084;</div>이상형</div>
+        <div style="text-align:center;padding:12px 4px;border-radius:14px;background:var(--sf-alt);color:var(--txt2);font-size:11px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#128247;</div>사진</div>
+        <div style="text-align:center;padding:12px 4px;border-radius:14px;background:var(--sf-alt);color:var(--txt2);font-size:11px;font-weight:600;"><div style="font-size:20px;margin-bottom:4px;">&#128100;</div>미리보기</div>
+      </div>
+      <div style="padding:0 16px;">
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128196; 내 게시글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 내 댓글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#10084;&#65039; 좋아요한 글</span><span class="chev">&#8250;</span></div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:14px;padding:4px 14px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 4 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div><div class="section-title">Sticky Header + Card Stream</div>
+    <div class="section-subtitle">컴팩트 보라 헤더 고정 + 카드 스트림으로 메뉴 공간 극대화</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen" style="background:var(--sf-alt);">
+      <div style="background:var(--brand);padding:48px 16px 16px;border-radius:0 0 24px 24px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c4a8e8,#8466b0);border:2px solid rgba(255,255,255,0.3);flex-shrink:0;"></div>
+          <div style="flex:1;"><div style="font-size:18px;font-weight:700;color:#fff;">간채아</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">05학번 &middot; 진주캐는대학교 &#9989;</div></div>
+          <div style="padding:7px 12px;border-radius:16px;background:rgba(255,255,255,0.2);color:#fff;font-size:11px;font-weight:600;">&#9998; 수정</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <div style="flex:1;padding:8px;border-radius:10px;background:rgba(255,255,255,0.15);text-align:center;font-size:11px;color:rgba(255,255,255,0.8);"><strong style="color:#fff;">541</strong> 구슬</div>
+          <div style="flex:1;padding:8px;border-radius:10px;background:rgba(255,255,255,0.15);text-align:center;font-size:11px;color:rgba(255,255,255,0.8);"><strong style="color:#fff;">ENFP</strong></div>
+          <div style="flex:1;padding:8px;border-radius:10px;background:rgba(255,255,255,0.15);text-align:center;font-size:11px;color:rgba(255,255,255,0.8);"><strong style="color:#fff;">3</strong> 리매칭</div>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:8px;display:flex;gap:8px;">
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:var(--sf-sec);text-align:center;font-size:11px;color:var(--brand);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#10084;</div>이상형</div>
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:var(--sf-alt);text-align:center;font-size:11px;color:var(--txt2);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#128247;</div>사진</div>
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:var(--sf-alt);text-align:center;font-size:11px;color:var(--txt2);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#128100;</div>미리보기</div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:4px 14px;margin-bottom:8px;">
+          <div style="padding:10px 0;font-size:12px;font-weight:700;color:var(--txt);">&#127919; 매칭 설정</div>
+          <div class="menu-row" style="font-size:12px;"><span>같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:4px 14px;margin-bottom:8px;">
+          <div style="padding:10px 0;font-size:12px;font-weight:700;color:var(--txt);">&#128196; 내 활동</div>
+          <div class="menu-row" style="font-size:12px;"><span>내 게시글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>내 댓글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>좋아요한 글</span><span class="chev">&#8250;</span></div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:4px 14px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-layout">Sticky Profile</span><span class="idea-tag tag-int">Card Stream</span><span class="idea-tag tag-ux">Compact</span></div>
+      <p class="concept">프로필을 컴팩트한 보라색 헤더로 압축하고 나머지를 카드 스트림으로 채웁니다. 회색 배경 + 흰 카드로 깔끔한 계층감, 스크롤해도 헤더 고정(sticky) 가능합니다.</p>
+      <ul class="features-list">
+        <li>프로필을 헤더에 압축 - 메뉴 공간 극대화</li>
+        <li>카드 스트림으로 메뉴 그룹을 시각적 분리</li>
+        <li>회색 배경 + 흰 카드의 깔끔한 계층감</li>
+        <li>스크롤 시 헤더 고정 가능</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 5 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div><div class="section-title">Immersive Dark Glass</div>
+    <div class="section-subtitle">풀스크린 사진 + 다크 글래스 패널로 전체 메뉴 오버레이</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Full-Screen</span><span class="idea-tag tag-layout">Dark Glass</span><span class="idea-tag tag-ux">Premium</span></div>
+      <p class="concept">사진이 전체 배경을 채우고, 모든 메뉴가 반투명 다크 글래스 패널로 오버레이됩니다. 중앙 아바타, 다크 통일 톤으로 프리미엄 데이팅앱 무드를 극대화합니다.</p>
+      <ul class="features-list">
+        <li>사진 100% 배경으로 최대 몰입감</li>
+        <li>다크 글래스 통일감</li>
+        <li>프리미엄 데이팅앱 무드</li>
+        <li>토글도 글래스 위에 자연스럽게 배치</li>
+      </ul>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen" style="background:#1a1a2e;">
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;"><div class="photo-bg" style="opacity:0.4;"></div></div>
+      <div style="position:relative;z-index:10;">
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="padding:10px 20px 16px;text-align:center;">
+          <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#c4a8e8,#8466b0);margin:0 auto 12px;border:3px solid rgba(255,255,255,0.2);box-shadow:0 8px 24px rgba(0,0,0,0.3);"></div>
+          <div style="font-size:24px;font-weight:700;color:#fff;">간채아</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">05학번 &middot; 진주캐는대학교 &#9989;</div>
+          <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;">
+            <span style="padding:4px 12px;border-radius:12px;background:rgba(122,74,226,0.3);font-size:11px;color:var(--brand-light);">ENFP</span>
+            <span style="padding:4px 12px;border-radius:12px;background:rgba(255,255,255,0.1);font-size:11px;color:rgba(255,255,255,0.7);">&#128142; 541</span>
+            <span style="padding:4px 12px;border-radius:12px;background:rgba(255,255,255,0.1);font-size:11px;color:rgba(255,255,255,0.7);">&#127915; 3</span>
+          </div>
+        </div>
+        <div style="margin:0 12px 8px;padding:12px;border-radius:16px;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);display:flex;gap:8px;">
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:rgba(122,74,226,0.3);text-align:center;font-size:11px;color:#fff;font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#9998;</div>프로필</div>
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:rgba(122,74,226,0.2);text-align:center;font-size:11px;color:var(--brand-light);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#10084;</div>이상형</div>
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:rgba(255,255,255,0.08);text-align:center;font-size:11px;color:rgba(255,255,255,0.7);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#128247;</div>사진</div>
+          <div style="flex:1;padding:12px 6px;border-radius:12px;background:rgba(255,255,255,0.08);text-align:center;font-size:11px;color:rgba(255,255,255,0.7);font-weight:600;"><div style="font-size:18px;margin-bottom:2px;">&#128100;</div>미리보기</div>
+        </div>
+        <div style="margin:0 12px 8px;padding:4px 14px;border-radius:16px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);">
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="margin:0 12px 8px;padding:4px 14px;border-radius:16px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);">
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#128196; 내 게시글</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#128172; 내 댓글</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#10084;&#65039; 좋아요한 글</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+        </div>
+        <div style="margin:0 12px;padding:4px 14px;border-radius:16px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);">
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#128274; 연락처 차단</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#128172; 고객지원</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+          <div class="menu-row" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.08);font-size:12px;"><span>&#9881; 계정 관리</span><span style="color:rgba(255,255,255,0.3);">&#8250;</span></div>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div></div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 6 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <div><div class="section-title">Dashboard + Category Labels</div>
+    <div class="section-subtitle">사진 배너 + 4열 타일 + 카테고리별 그룹 카드</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:200px;">
+        <div class="photo-bg grad-white"></div>
+        <div class="status-bar" style="color:#000;"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:8px;left:16px;z-index:10;display:flex;align-items:flex-end;gap:12px;">
+          <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#c4a8e8,#8466b0);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);flex-shrink:0;"></div>
+          <div style="padding-bottom:4px;"><div style="font-size:20px;font-weight:700;color:var(--txt);">간채아</div><div style="font-size:11px;color:var(--txt-m);">05학번 &middot; 진주캐는대학교 &#9989;</div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;padding:8px 12px;">
+        <div style="flex:1;padding:10px;border-radius:12px;background:linear-gradient(135deg,#E9D9FF,#D6B6FF);text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--brand-deep);">541</div><div style="font-size:9px;color:var(--brand-deep);opacity:0.7;">구슬</div></div>
+        <div style="flex:1;padding:10px;border-radius:12px;background:var(--sf-alt);text-align:center;"><div style="font-size:16px;font-weight:700;">ENFP</div><div style="font-size:9px;color:var(--txt-m);">MBTI</div></div>
+        <div style="flex:1;padding:10px;border-radius:12px;background:var(--sf-alt);text-align:center;"><div style="font-size:16px;font-weight:700;">3</div><div style="font-size:9px;color:var(--txt-m);">리매칭</div></div>
+        <div style="flex:1;padding:10px;border-radius:12px;background:var(--sf-alt);text-align:center;"><div style="font-size:16px;font-weight:700;">3</div><div style="font-size:9px;color:var(--txt-m);">사진</div></div>
+      </div>
+      <div style="display:flex;gap:8px;padding:4px 12px 8px;">
+        <div style="flex:1;padding:12px;border-radius:12px;background:var(--brand);color:#fff;text-align:center;font-size:12px;font-weight:600;">&#9998; 프로필 수정</div>
+        <div style="flex:1;padding:12px;border-radius:12px;background:var(--sf-sec);color:var(--brand);text-align:center;font-size:12px;font-weight:600;">&#10084; 이상형 설정</div>
+      </div>
+      <div style="padding:0 12px;">
+        <div style="font-size:12px;font-weight:700;color:var(--txt-m);padding:12px 4px 6px;letter-spacing:0.5px;">설정</div>
+        <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128247; 사진 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt-m);padding:4px 4px 6px;letter-spacing:0.5px;">활동</div>
+        <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128100; 프로필 미리보기</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128196; 내 게시글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 내 댓글</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#10084;&#65039; 좋아요한 글</span><span class="chev">&#8250;</span></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt-m);padding:4px 4px 6px;letter-spacing:0.5px;">기타</div>
+        <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+          <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-layout">Stat Tiles</span><span class="idea-tag tag-vis">Photo Banner</span><span class="idea-tag tag-ux">Category Labels</span></div>
+      <p class="concept">사진 배너 + 원형 아바타, 4열 타일로 숫자 데이터 시각화, 카테고리 라벨(설정/활동/기타)로 그룹핑하되 모두 0-depth에 노출합니다. 정보 밀도가 가장 높은 레이아웃.</p>
+      <ul class="features-list">
+        <li>4열 타일로 숫자 한눈에 파악</li>
+        <li>카테고리 라벨로 시각적 그룹핑</li>
+        <li>아바타가 사진과 대시보드 연결</li>
+        <li>최고 정보 밀도</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 7 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <div><div class="section-title">Bento Everything</div>
+    <div class="section-subtitle">모든 요소를 다양한 크기의 벤토 타일로 배치</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-layout">Bento Grid</span><span class="idea-tag tag-vis">Mixed Tiles</span><span class="idea-tag tag-int">Tap Anywhere</span></div>
+      <p class="concept">Apple 벤토 스타일로 사진, 통계, 액션, 토글, 네비게이션을 모두 타일로 배치합니다. 사진 타일이 가장 크고, 토글 설정까지 타일 안에 포함되어 모든 것이 같은 depth의 그리드입니다.</p>
+      <ul class="features-list">
+        <li>모든 요소가 같은 depth 타일</li>
+        <li>시각적 리듬감 있는 그리드</li>
+        <li>각 타일이 독립적 터치 영역</li>
+        <li>트렌디한 Apple 스타일</li>
+      </ul>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen" style="background:var(--sf-bg);padding-top:48px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 10px;">
+        <div style="grid-column:span 2;height:160px;border-radius:18px;background:linear-gradient(135deg,#c4a8e8,#8466b0);position:relative;overflow:hidden;">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);"></div>
+          <div style="position:absolute;bottom:14px;left:14px;z-index:2;"><div style="font-size:20px;font-weight:700;color:#fff;">간채아</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">05학번 &middot; 진주캐는대학교 &#9989;</div></div>
+          <div style="position:absolute;bottom:14px;right:14px;z-index:2;padding:6px 12px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);font-size:11px;color:#fff;font-weight:600;">&#9998; 수정</div>
+        </div>
+        <div style="border-radius:16px;background:linear-gradient(135deg,#E9D9FF,#D6B6FF);padding:14px;"><div style="font-size:20px;margin-bottom:2px;">&#128142;</div><div style="font-size:18px;font-weight:700;color:var(--brand-deep);">541</div><div style="font-size:10px;color:var(--brand-deep);opacity:0.7;">구슬</div></div>
+        <div style="border-radius:16px;background:var(--sf-alt);padding:14px;"><div style="font-size:20px;margin-bottom:2px;">&#129504;</div><div style="font-size:18px;font-weight:700;">ENFP</div><div style="font-size:10px;color:var(--txt-m);">MBTI</div></div>
+        <div style="border-radius:16px;background:var(--brand);padding:14px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:20px;margin-bottom:4px;">&#10084;</div><div style="font-size:11px;font-weight:600;">이상형 설정</div></div>
+        <div style="border-radius:16px;background:var(--sf-sec);padding:14px;color:var(--brand);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:20px;margin-bottom:4px;">&#128247;</div><div style="font-size:11px;font-weight:600;">사진 관리</div></div>
+        <div style="grid-column:span 2;border-radius:16px;background:var(--sf-alt);padding:10px 14px;">
+          <div class="menu-row" style="font-size:12px;padding:8px 0;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:12px;padding:8px 0;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:12px;padding:8px 0;border:none;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="grid-column:span 2;border-radius:16px;background:var(--sf-alt);padding:8px 14px;display:flex;justify-content:space-around;">
+          <div style="text-align:center;padding:6px;font-size:10px;color:var(--txt-m);"><div style="font-size:16px;margin-bottom:2px;">&#128100;</div>미리보기</div>
+          <div style="text-align:center;padding:6px;font-size:10px;color:var(--txt-m);"><div style="font-size:16px;margin-bottom:2px;">&#128196;</div>게시글</div>
+          <div style="text-align:center;padding:6px;font-size:10px;color:var(--txt-m);"><div style="font-size:16px;margin-bottom:2px;">&#128172;</div>댓글</div>
+          <div style="text-align:center;padding:6px;font-size:10px;color:var(--txt-m);"><div style="font-size:16px;margin-bottom:2px;">&#10084;&#65039;</div>좋아요</div>
+          <div style="text-align:center;padding:6px;font-size:10px;color:var(--txt-m);"><div style="font-size:16px;margin-bottom:2px;">&#128274;</div>차단</div>
+        </div>
+        <div style="border-radius:16px;background:var(--sf-alt);padding:14px;text-align:center;"><div style="font-size:18px;margin-bottom:4px;">&#128172;</div><div style="font-size:11px;color:var(--txt2);font-weight:500;">고객지원</div></div>
+        <div style="border-radius:16px;background:var(--sf-alt);padding:14px;text-align:center;"><div style="font-size:18px;margin-bottom:4px;">&#9881;</div><div style="font-size:11px;color:var(--txt2);font-weight:500;">계정 관리</div></div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 8 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">8</div>
+    <div><div class="section-title">Parallax + Progress + Categories</div>
+    <div class="section-subtitle">패럴랙스 사진 + 완성도 바 + 이모지 카테고리 섹션</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:260px;">
+        <div class="photo-bg grad"></div>
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:16px;left:16px;right:16px;z-index:10;display:flex;align-items:flex-end;justify-content:space-between;">
+          <div><div style="font-size:26px;font-weight:800;color:#fff;">간채아</div><div style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:2px;">05학번 &middot; 진주캐는대학교 &#9989;</div></div>
+          <div style="padding:7px 14px;border-radius:16px;background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:600;">&#9998; 수정</div>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:24px 24px 0 0;margin-top:-16px;position:relative;z-index:20;padding:20px 14px;">
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:600;">프로필 완성도</span><span style="color:var(--brand);font-weight:700;">85%</span></div>
+          <div style="height:6px;background:var(--sf-alt);border-radius:3px;overflow:hidden;"><div style="height:100%;width:85%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:3px;"></div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <div style="flex:1;padding:10px 6px;border-radius:12px;background:var(--brand);color:#fff;text-align:center;font-size:11px;font-weight:600;">&#10084; 이상형</div>
+          <div style="flex:1;padding:10px 6px;border-radius:12px;background:var(--sf-sec);color:var(--brand);text-align:center;font-size:11px;font-weight:600;">&#128247; 사진</div>
+          <div style="flex:1;padding:10px 6px;border-radius:12px;background:var(--sf-alt);color:var(--txt2);text-align:center;font-size:11px;font-weight:600;">&#128100; 미리보기</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#E9D9FF,#D6B6FF);border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <span style="font-size:12px;color:var(--brand-deep);font-weight:600;">&#128142; 구슬 541개</span>
+          <span style="font-size:11px;color:var(--brand);font-weight:600;">충전 &#8250;</span>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">&#127919; 매칭 설정</div>
+          <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+            <div class="menu-row" style="font-size:12px;"><span>같은 학과 제외</span><div class="toggle on"></div></div>
+            <div class="menu-row" style="font-size:12px;"><span>같은 학교 제외</span><div class="toggle off"></div></div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">&#128276; 알림</div>
+          <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+            <div class="menu-row" style="font-size:12px;"><span>푸시 알림</span><div class="toggle on"></div></div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">&#128196; 내 활동</div>
+          <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+            <div class="menu-row" style="font-size:12px;"><span>내 게시글</span><span class="chev">&#8250;</span></div>
+            <div class="menu-row" style="font-size:12px;"><span>내 댓글</span><span class="chev">&#8250;</span></div>
+            <div class="menu-row" style="font-size:12px;"><span>좋아요한 글</span><span class="chev">&#8250;</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">&#128736; 기타</div>
+          <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+            <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+            <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+            <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div></div></div>
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-int">Parallax</span><span class="idea-tag tag-ux">Progress Bar</span><span class="idea-tag tag-layout">Categorized</span></div>
+      <p class="concept">패럴랙스 사진 위로 둥근 시트가 올라오며 프로필 완성도 바로 시작합니다. 이모지 카테고리별 그룹 카드에 모든 메뉴가 플랫하게 나열됩니다. 가장 균형잡힌 조합.</p>
+      <ul class="features-list">
+        <li>프로필 완성도 바로 보강 동기 유발</li>
+        <li>패럴랙스 + 둥근 시트의 depth감</li>
+        <li>이모지 카테고리로 직관적 그룹핑</li>
+        <li>구슬 배너도 인라인 노출</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 9 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">9</div>
+    <div><div class="section-title">Layered Glass + 6-Tile Grid</div>
+    <div class="section-subtitle">글래스 프로필 카드 + 6타일 그리드 + 토글 리스트</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Multi-Layer</span><span class="idea-tag tag-layout">Tile + List</span><span class="idea-tag tag-int">3D Depth</span></div>
+      <p class="concept">3개 레이어(배경/글래스카드/바텀시트)로 depth를 만들고, 6타일 그리드와 플랫 토글 리스트를 조합하여 모든 메뉴를 0-depth에 노출합니다.</p>
+      <ul class="features-list">
+        <li>3-layer depth로 시각적 고급감</li>
+        <li>6타일 그리드로 주요 액션 즉시 접근</li>
+        <li>토글 리스트로 설정도 바로 조작</li>
+        <li>글래스카드로 핵심 정보 압축</li>
+      </ul>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:absolute;top:0;left:0;right:0;height:320px;"><div class="photo-bg" style="opacity:0.7;"></div></div>
+      <div class="status-bar" style="position:relative;z-index:20;"><span>9:41</span><span>5G</span></div>
+      <div style="position:relative;z-index:10;margin:8px 14px 0;padding:16px;border-radius:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#c4a8e8,#8466b0);border:2px solid rgba(255,255,255,0.2);flex-shrink:0;"></div>
+          <div><div style="font-size:20px;font-weight:700;color:#fff;">간채아</div><div style="font-size:11px;color:rgba(255,255,255,0.6);">05학번 &middot; 진주캐는대학교</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(34,197,94,0.2);border-radius:10px;font-size:10px;color:#66D98A;margin-top:4px;">&#9679; 인증됨</div>
+          </div>
+        </div>
+        <div style="display:flex;background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;">
+          <div style="flex:1;text-align:center;padding:10px 4px;"><div style="font-size:16px;font-weight:700;color:#fff;">541</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">구슬</div></div>
+          <div style="flex:1;text-align:center;padding:10px 4px;border-left:1px solid rgba(255,255,255,0.08);"><div style="font-size:16px;font-weight:700;color:#fff;">ENFP</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">MBTI</div></div>
+          <div style="flex:1;text-align:center;padding:10px 4px;border-left:1px solid rgba(255,255,255,0.08);"><div style="font-size:16px;font-weight:700;color:#fff;">3</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">리매칭</div></div>
+        </div>
+      </div>
+      <div style="position:relative;z-index:20;background:#fff;border-radius:24px 24px 0 0;margin-top:12px;padding:10px 14px;">
+        <div style="width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 12px;"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-sec);color:var(--brand);"><div style="font-size:18px;margin-bottom:2px;">&#9998;</div>프로필</div>
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-sec);color:var(--brand);"><div style="font-size:18px;margin-bottom:2px;">&#10084;</div>이상형</div>
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-alt);color:var(--txt2);"><div style="font-size:18px;margin-bottom:2px;">&#128247;</div>사진</div>
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-alt);color:var(--txt2);"><div style="font-size:18px;margin-bottom:2px;">&#128100;</div>미리보기</div>
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-alt);color:var(--txt2);"><div style="font-size:18px;margin-bottom:2px;">&#128196;</div>활동</div>
+          <div style="padding:12px 6px;border-radius:12px;text-align:center;font-size:10px;font-weight:600;background:var(--sf-alt);color:var(--txt2);"><div style="font-size:18px;margin-bottom:2px;">&#128172;</div>고객지원</div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;margin-bottom:8px;">
+          <div class="menu-row" style="font-size:11px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+          <div class="menu-row" style="font-size:11px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+          <div class="menu-row" style="font-size:11px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        </div>
+        <div style="background:var(--sf-alt);border-radius:12px;padding:2px 12px;">
+          <div class="menu-row" style="font-size:11px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+          <div class="menu-row" style="font-size:11px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+        </div>
+      </div>
+      <div style="height:10px;background:#fff;"></div>
+    </div></div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===== IDEA 10 ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">10</div>
+    <div><div class="section-title">Full Photo + Horizontal Chip Drawer</div>
+    <div class="section-subtitle">풀사진 + 가로스크롤 칩 + 구분선만으로 플랫 메뉴</div></div>
+  </div>
+  <div class="idea-layout">
+    <div class="phone-wrap"><div class="phone"><div class="phone-screen">
+      <div style="position:relative;height:320px;">
+        <div class="photo-bg grad-strong"></div>
+        <div class="status-bar"><span>9:41</span><span>5G</span></div>
+        <div style="position:absolute;bottom:20px;left:16px;z-index:10;">
+          <div style="display:inline-block;padding:4px 10px;border-radius:10px;background:rgba(122,74,226,0.4);font-size:11px;color:var(--brand-light);font-weight:600;margin-bottom:6px;">ENFP</div>
+          <div style="font-size:30px;font-weight:800;color:#fff;line-height:1.1;">간채아</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:4px;">05학번 &middot; 진주캐는대학교 &#9989;</div>
+        </div>
+        <div style="position:absolute;bottom:20px;right:16px;z-index:10;padding:8px 14px;border-radius:14px;background:rgba(0,0,0,0.3);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);">&#128142; 구슬</div>
+          <div style="font-size:18px;font-weight:700;color:#fff;">541</div>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:24px 24px 0 0;margin-top:-16px;position:relative;z-index:20;padding:10px 14px;">
+        <div style="width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 12px;"></div>
+        <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #f2f2f2;">
+          <div style="flex-shrink:0;padding:10px 16px;border-radius:12px;background:var(--brand);color:#fff;font-size:12px;font-weight:600;">&#9998; 프로필 수정</div>
+          <div style="flex-shrink:0;padding:10px 16px;border-radius:12px;background:var(--sf-sec);color:var(--brand);font-size:12px;font-weight:600;">&#10084; 이상형</div>
+          <div style="flex-shrink:0;padding:10px 16px;border-radius:12px;background:var(--sf-alt);color:var(--txt2);font-size:12px;font-weight:600;">&#128247; 사진</div>
+          <div style="flex-shrink:0;padding:10px 16px;border-radius:12px;background:var(--sf-alt);color:var(--txt2);font-size:12px;font-weight:600;">&#128100; 미리보기</div>
+        </div>
+        <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학과 제외</span><div class="toggle on"></div></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#127919; 같은 학교 제외</span><div class="toggle off"></div></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#128276; 푸시 알림</span><div class="toggle on"></div></div>
+        <div style="height:1px;background:#eee;margin:4px 0;"></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#128196; 내 게시글</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#128172; 내 댓글</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#10084;&#65039; 좋아요한 글</span><span class="chev">&#8250;</span></div>
+        <div style="height:1px;background:#eee;margin:4px 0;"></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#128274; 연락처 차단</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#128172; 고객지원</span><span class="chev">&#8250;</span></div>
+        <div class="menu-row" style="font-size:12px;"><span>&#9881; 계정 관리</span><span class="chev">&#8250;</span></div>
+      </div>
+      <div style="height:10px;background:#fff;"></div>
+    </div></div></div>
+    <div class="idea-description">
+      <div class="idea-tags"><span class="idea-tag tag-vis">Full Photo</span><span class="idea-tag tag-int">Scroll Chips</span><span class="idea-tag tag-ux">Minimal Flat</span></div>
+      <p class="concept">사진이 상단을 꽉 채우고 우측에 구슬 배지가 떠있습니다. 드로어가 올라오며 가로 스크롤 칩과 구분선만의 플랫 리스트로 모든 메뉴가 나열됩니다. 가장 심플한 0-depth 구현.</p>
+      <ul class="features-list">
+        <li>사진 비중 최대 + 하단 드로어 확장</li>
+        <li>가로 스크롤 칩으로 주요 액션</li>
+        <li>구분선만으로 그룹핑 - 최소 시각 장치</li>
+        <li>드로어 드래그로 사진/메뉴 비율 조절 가능</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center;padding:60px 20px;border-top:1px solid rgba(122,74,226,0.2);background:linear-gradient(135deg,#0d0d1a,#1a0a2e);">
+  <h2 style="font-size:24px;font-weight:700;margin-bottom:20px;background:linear-gradient(135deg,#E2D5FF,#7A4AE2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Comparison Summary</h2>
+  <div style="max-width:960px;margin:0 auto;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;text-align:left;font-size:12px;min-width:700px;">
+      <thead><tr style="border-bottom:1px solid rgba(122,74,226,0.3);">
+        <th style="padding:10px 6px;color:#B89AFF;">#</th><th style="padding:10px 6px;color:#B89AFF;">컨셉</th><th style="padding:10px 6px;color:#B89AFF;">사진비중</th><th style="padding:10px 6px;color:#B89AFF;">정보밀도</th><th style="padding:10px 6px;color:#B89AFF;">구현난이도</th><th style="padding:10px 6px;color:#B89AFF;">핵심 포인트</th>
+      </tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">1</td><td style="padding:8px 6px;color:#ddd;">Hero + Sectioned</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">가장 직관적, 기존 패턴 확장</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">2</td><td style="padding:8px 6px;color:#ddd;">Glass + iOS Cards</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">iOS Settings 패턴, 가장 익숙</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">3</td><td style="padding:8px 6px;color:#ddd;">Magazine + Grid</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">프리미엄 + 4열 아이콘 그리드</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">4</td><td style="padding:8px 6px;color:#ddd;">Sticky + Stream</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">메뉴 공간 극대화, 헤더 고정</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">5</td><td style="padding:8px 6px;color:#ddd;">Dark Glass</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">다크 프리미엄, 글래스 통일</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">6</td><td style="padding:8px 6px;color:#ddd;">Dashboard + Labels</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">카테고리 라벨 + 타일 데이터</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">7</td><td style="padding:8px 6px;color:#ddd;">Bento Everything</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">Apple 트렌드, 전부 타일화</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">8</td><td style="padding:8px 6px;color:#ddd;">Parallax + Progress</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">완성도바 + 카테고리 최적 균형</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 6px;color:#888;">9</td><td style="padding:8px 6px;color:#ddd;">Layered + 6Tiles</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">3-layer depth + 6타일</td></tr>
+        <tr><td style="padding:8px 6px;color:#888;">10</td><td style="padding:8px 6px;color:#ddd;">Photo + Chip Drawer</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;&#9733;&#9733;</td><td style="padding:8px 6px;color:#aaa;">&#9733;&#9733;</td><td style="padding:8px 6px;color:#66D98A;">최소 장치 + 가로 칩 스크롤</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="color:#555;font-size:13px;margin-top:20px;line-height:1.6;">모든 아이디어에 포함된 0-depth 메뉴: 프로필 수정 / 이상형 설정 / 사진 관리 / 프로필 미리보기<br>같은학과 제외 토글 / 같은학교 제외 토글 / 푸시알림 토글<br>내 게시글 / 내 댓글 / 좋아요한 글 / 연락처 차단 / 고객지원 / 계정 관리</p>
+  <p style="color:#666;font-size:12px;margin-top:16px;">Sometimes App &middot; MyPage Redesign v2 (0-Depth) &middot; 2026.02.22</p>
+</div>
+
+</body>
+</html>

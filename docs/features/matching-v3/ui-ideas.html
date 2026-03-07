@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V3 Matching UI Ideas — Sometimes App</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --purple: #7A4AE2;
+    --purple-light: #F5F1FF;
+    --purple-pale: #E8DFFF;
+    --purple-deep: #5B2FC9;
+    --pink: #FF6B9D;
+    --orange: #FF8A65;
+    --green: #4CAF50;
+    --blue: #42A5F5;
+    --bg: #F8F6FF;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text-secondary: #6B6B80;
+    --text-muted: #9CA3AF;
+    --border: #E8E4F0;
+    --shadow: rgba(122, 74, 226, 0.08);
+    --shadow-strong: rgba(122, 74, 226, 0.15);
+    --radius: 20px;
+    --phone-w: 320px;
+    --phone-h: 640px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    background: linear-gradient(135deg, #7A4AE2 0%, #5B2FC9 50%, #4A1FB8 100%);
+    padding: 60px 40px 48px;
+    color: white;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .page-header .subtitle {
+    font-size: 16px;
+    opacity: 0.8;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+  }
+
+  /* ── API Context ── */
+  .api-context {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 0;
+  }
+  .api-context h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--purple);
+  }
+  .response-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .resp-block {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .resp-block h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .resp-block .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .tag-required { background: var(--purple); color: white; }
+  .tag-optional { background: var(--purple-pale); color: var(--purple); }
+  .resp-block ul {
+    list-style: none;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .resp-block li {
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .resp-block li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--purple-pale);
+    flex-shrink: 0;
+  }
+
+  /* ── Section Grid ── */
+  .ideas-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .idea-section {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 48px;
+    align-items: start;
+  }
+  .idea-section:nth-child(even) {
+    grid-template-columns: 360px 1fr;
+  }
+  .idea-section:nth-child(even) .idea-info { order: 2; }
+  .idea-section:nth-child(even) .phone-wrap { order: 1; }
+
+  .idea-info { padding-top: 20px; }
+  .idea-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .idea-info h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .idea-info .desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .data-used {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .data-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: var(--purple-light);
+    color: var(--purple);
+  }
+  .data-chip.scheduled { background: #E3F2FD; color: #1565C0; }
+  .data-chip.rematching { background: #FFF3E0; color: #E65100; }
+  .data-chip.primary { background: var(--purple-light); color: var(--purple); }
+
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .pro, .con {
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    line-height: 1.5;
+  }
+  .pro { background: #F0FFF0; color: #2E7D32; }
+  .con { background: #FFF5F5; color: #C62828; }
+  .pro::before { content: '+ '; font-weight: 700; }
+  .con::before { content: '- '; font-weight: 700; }
+
+  /* ── Phone Mockup ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: var(--phone-w);
+    height: var(--phone-h);
+    background: var(--card);
+    border-radius: 36px;
+    border: 3px solid #E0DBE8;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px var(--shadow-strong), 0 4px 12px var(--shadow);
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    background: white;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .status-bar .time { font-weight: 700; }
+
+  /* App header */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: white;
+  }
+  .app-logo {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--purple);
+    letter-spacing: -0.5px;
+  }
+  .header-icons {
+    display: flex;
+    gap: 8px;
+  }
+  .h-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--purple-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  /* Content area */
+  .phone-content {
+    padding: 12px 14px;
+    background: #FAFAFA;
+    height: calc(var(--phone-h) - 44px - 44px - 60px);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: white;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .nav-item.active { color: var(--purple); }
+  .nav-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .nav-item.active .nav-dot { background: var(--purple-light); }
+
+  /* ── Common Card Styles ── */
+  .match-card {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+  .match-card-bg {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    position: relative;
+  }
+  .match-card-bg.female {
+    background: linear-gradient(135deg, #F472B6, #EC4899, #DB2777);
+  }
+  .match-card-bg.male {
+    background: linear-gradient(135deg, #60A5FA, #3B82F6, #2563EB);
+  }
+  .match-card-bg.rematch-bg {
+    background: linear-gradient(135deg, #FB923C, #F97316, #EA580C);
+  }
+  .match-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  }
+  .match-info-overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    color: white;
+    z-index: 2;
+  }
+  .match-info-overlay .name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .match-info-overlay .tags {
+    font-size: 11px;
+    opacity: 0.9;
+    margin-top: 2px;
+  }
+  .timer-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Specific UI Patterns ── */
+
+  /* 1. D-Timer Persistent Strip */
+  .d-timer-strip {
+    background: linear-gradient(90deg, var(--purple), var(--purple-deep));
+    color: white;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  .d-timer-strip .countdown {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .d-timer-strip .label {
+    font-size: 11px;
+    opacity: 0.8;
+  }
+
+  /* 2. Split Dual Card */
+  .split-card {
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    height: 340px;
+    position: relative;
+  }
+  .split-top, .split-bottom {
+    position: relative;
+    overflow: hidden;
+  }
+  .split-top {
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+  }
+  .split-bottom {
+    background: linear-gradient(135deg, #FB923C, #F97316);
+  }
+  .split-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    z-index: 2;
+  }
+  .split-info {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    color: white;
+    z-index: 2;
+  }
+  .split-info .name { font-size: 14px; font-weight: 700; }
+  .split-info .sub { font-size: 10px; opacity: 0.85; }
+  .split-divider {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: white;
+    z-index: 3;
+    transform: translateY(-1px);
+  }
+
+  /* 3. PIP */
+  .pip-container { position: relative; }
+  .pip-card {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 90px;
+    height: 110px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 5;
+  }
+  .pip-card .pip-bg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FB923C, #EA580C);
+    position: relative;
+  }
+  .pip-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: var(--orange);
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 100px;
+  }
+  .pip-name {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  /* 4. Carousel Dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .cdot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .cdot.active { background: var(--purple); width: 20px; border-radius: 4px; }
+  .cdot.orange { background: var(--orange); }
+
+  /* 5. Segmented Control */
+  .seg-control {
+    display: flex;
+    background: var(--purple-light);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 10px;
+  }
+  .seg-btn {
+    flex: 1;
+    text-align: center;
+    padding: 7px 0;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .seg-btn.active {
+    background: white;
+    color: var(--purple);
+    box-shadow: 0 1px 4px var(--shadow);
+  }
+  .seg-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* 6. Stacked */
+  .stacked-wrap {
+    position: relative;
+    height: 310px;
+  }
+  .stacked-back {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    right: 10px;
+    height: 280px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    opacity: 0.4;
+    transform: scale(0.95);
+    z-index: 1;
+  }
+  .stacked-front {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    height: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 2;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .stacked-hint {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    box-shadow: 0 2px 8px var(--shadow);
+    z-index: 3;
+    white-space: nowrap;
+  }
+
+  /* 7. Bottom Sheet */
+  .bs-peek {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 10px 14px 14px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 10;
+  }
+  .bs-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    margin: 0 auto 8px;
+  }
+  .bs-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .bs-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FB923C, #EA580C);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+  }
+  .bs-text { flex: 1; }
+  .bs-text .bs-title {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .bs-text .bs-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .bs-action {
+    background: var(--purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* 8. Timeline */
+  .timeline {
+    padding: 0 8px;
+  }
+  .tl-item {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 16px;
+    position: relative;
+  }
+  .tl-line {
+    position: absolute;
+    left: 11px;
+    top: 24px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: white;
+    font-weight: 700;
+    z-index: 2;
+  }
+  .tl-dot.purple { background: var(--purple); }
+  .tl-dot.orange { background: var(--orange); }
+  .tl-dot.gray { background: var(--text-muted); }
+  .tl-content {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .tl-content .tl-title {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .tl-content .tl-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .tl-mini-card {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--purple-light);
+    padding: 6px 8px;
+    border-radius: 8px;
+  }
+  .tl-mini-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .tl-mini-avatar.purple-bg { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+  .tl-mini-avatar.orange-bg { background: linear-gradient(135deg, #FB923C, #EA580C); }
+  .tl-mini-info { font-size: 11px; font-weight: 600; }
+
+  /* 9. Floating Chip */
+  .float-chip {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--orange);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(249,115,22,0.4);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: float-pulse 2s ease-in-out infinite;
+  }
+  @keyframes float-pulse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .float-chip .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* 10. Dashboard */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .dash-stat {
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .dash-stat .stat-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--purple);
+  }
+  .dash-stat .stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .dash-stat.orange .stat-num { color: var(--orange); }
+  .mini-match-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .mini-match-card {
+    flex: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 140px;
+    position: relative;
+  }
+  .mini-match-card .mini-bg {
+    width: 100%;
+    height: 100%;
+  }
+  .mini-match-card .mini-label {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+  }
+  .mini-match-card .mini-info {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    color: white;
+  }
+  .mini-match-card .mini-info .mn { font-size: 12px; font-weight: 700; }
+  .mini-match-card .mini-info .ms { font-size: 9px; opacity: 0.85; }
+
+  /* Person silhouette */
+  .silhouette {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    font-size: 64px;
+  }
+  .silhouette.small { font-size: 32px; }
+
+  /* Scenario tag */
+  .scenario-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .scenario-tag.normal { background: #E8F5E9; color: #2E7D32; }
+  .scenario-tag.transition { background: #FFF3E0; color: #E65100; }
+
+  /* Interaction buttons */
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .act-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+  }
+  .act-btn.like { background: var(--purple); color: white; }
+  .act-btn.pass { background: var(--purple-light); color: var(--purple); }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .idea-section,
+    .idea-section:nth-child(even) {
+      grid-template-columns: 1fr;
+    }
+    .idea-section:nth-child(even) .idea-info { order: 1; }
+    .idea-section:nth-child(even) .phone-wrap { order: 2; }
+    .response-blocks {
+      grid-template-columns: 1fr;
+    }
+    .page-header { padding: 40px 20px 32px; }
+    .ideas-grid { padding: 24px 16px; }
+    .api-context { padding: 24px 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ━━━ Header ━━━ -->
+<div class="page-header">
+  <h1>V3 Matching UI Ideas</h1>
+  <div class="subtitle">복합 응답(primary + scheduled + rematching)을 활용한 10가지 UI 컨셉</div>
+  <div class="badge-row">
+    <span class="badge">10 UI Concepts</span>
+    <span class="badge">V3 Composite API</span>
+    <span class="badge">D-? Timer</span>
+    <span class="badge">Dual View</span>
+  </div>
+</div>
+
+<!-- ━━━ API Context ━━━ -->
+<div class="api-context">
+  <h2>V3 응답 구조</h2>
+  <div class="response-blocks">
+    <div class="resp-block">
+      <h3>primary <span class="tag tag-required">필수</span></h3>
+      <ul>
+        <li>현재 메인으로 보여줄 매칭</li>
+        <li>type: open / waiting / not-found / rematching</li>
+        <li>partner, endOfView, connectionId</li>
+      </ul>
+    </div>
+    <div class="resp-block">
+      <h3>scheduled <span class="tag tag-optional">선택</span></h3>
+      <ul>
+        <li>정기매칭 예정/진행 정보</li>
+        <li>hasMatch, status, untilNext</li>
+        <li>리매칭 중에도 D-? 카운트다운 가능</li>
+      </ul>
+    </div>
+    <div class="resp-block">
+      <h3>rematching <span class="tag tag-optional">선택</span></h3>
+      <ul>
+        <li>활성 리매칭 파트너 정보</li>
+        <li>partner, endOfView, pendingCount</li>
+        <li>정기매칭 표시 중에도 리매칭 카드 가능</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="ideas-grid">
+
+<!-- ──────── IDEA 1 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 01</div>
+    <h2>D-? Persistent Timer Strip</h2>
+    <div class="desc">
+      리매칭 파트너를 보는 중에도 상단에 정기매칭까지 남은 시간을 항상 표시합니다.
+      <code>scheduled.untilNext</code>를 활용해 "D-2 14:32:10" 형태의 카운트다운을 보여줍니다.
+      유저가 정기매칭 일정을 절대 놓치지 않도록 합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.type = rematching</span>
+      <span class="data-chip scheduled">scheduled.untilNext</span>
+      <span class="data-chip scheduled">scheduled.hasMatch</span>
+    </div>
+    <div class="scenario-tag transition">리매칭 활성 + 정기매칭 예정</div>
+    <div class="pros-cons">
+      <div class="pro">정기매칭 일정 인지율 100%</div>
+      <div class="con">상단 공간 차지 (12px strip)</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:00</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <!-- D-Timer Strip -->
+        <div class="d-timer-strip">
+          <div>
+            <div class="label">다음 정기매칭까지</div>
+            <div style="font-size:11px; opacity:0.7; margin-top:1px;">목요일 21:00</div>
+          </div>
+          <div class="countdown">D-2 14:32</div>
+        </div>
+        <!-- Rematching Card -->
+        <div class="match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg rematch-bg" style="aspect-ratio: 1/0.85;">
+            <div class="timer-badge" style="background: rgba(234,88,12,0.7);">H-18:42</div>
+            <span class="silhouette">S</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">24 #ENFP</div>
+              <div class="tags">#S대 #연애 스타일: 적극적</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn pass">건너뛰기</div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 2 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 02</div>
+    <h2>Split Dual Card</h2>
+    <div class="desc">
+      정기매칭과 리매칭 파트너를 하나의 카드에 상하 분할로 동시에 보여줍니다.
+      21시 이후 정기매칭이 공개되면 상단에 정기매칭 파트너, 하단에 리매칭 파트너를 배치합니다.
+      각 영역을 탭하면 전체 프로필로 이동합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner</span>
+      <span class="data-chip rematching">rematching.partner</span>
+      <span class="data-chip rematching">rematching.endOfView</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">두 파트너를 한눈에 비교</div>
+      <div class="con">각 파트너 사진이 작아짐</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:15</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="split-card">
+          <div class="split-top">
+            <div class="split-label" style="background: var(--purple);">정기매칭</div>
+            <span class="silhouette">P</span>
+            <div class="match-gradient"></div>
+            <div class="split-info">
+              <div class="name">25 #INTJ</div>
+              <div class="sub">#Y대 #독서 #카페</div>
+            </div>
+            <div style="position:absolute; top:8px; right:8px; color:white; font-size:11px; font-weight:700; z-index:2; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:6px;">H-46:45</div>
+          </div>
+          <div class="split-divider"></div>
+          <div class="split-bottom">
+            <div class="split-label" style="background: var(--orange);">리매칭</div>
+            <span class="silhouette">Q</span>
+            <div class="match-gradient"></div>
+            <div class="split-info">
+              <div class="name">23 #ENFP</div>
+              <div class="sub">#K대 #운동 #음악</div>
+            </div>
+            <div style="position:absolute; top:8px; right:8px; color:white; font-size:11px; font-weight:700; z-index:2; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:6px;">H-12:30</div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:8px; font-size:11px; color:var(--text-muted);">탭하여 프로필 자세히 보기</div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 3 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 03</div>
+    <h2>Picture-in-Picture Card</h2>
+    <div class="desc">
+      메인 카드에 정기매칭 파트너를 크게 보여주고, 우하단에 리매칭 파트너를 PIP(Picture-in-Picture) 형태로 띄웁니다.
+      PIP를 탭하면 리매칭 프로필로 이동합니다. 유튜브 PIP 패턴에서 착안했습니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner (정기)</span>
+      <span class="data-chip rematching">rematching.partner</span>
+      <span class="data-chip rematching">rematching.pendingCount</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">정기매칭 몰입도 유지</div>
+      <div class="pro">리매칭 존재감도 확보</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:05</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="pip-container match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/1.05;">
+            <div class="timer-badge">H-46:55</div>
+            <span class="silhouette" style="font-size:72px;">A</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">24 #ISTJ</div>
+              <div class="tags">#H대 #요리 #카페투어</div>
+              <div style="margin-top:4px;">
+                <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px; font-size:10px;">정기매칭</span>
+              </div>
+            </div>
+          </div>
+          <!-- PIP -->
+          <div class="pip-card">
+            <div class="pip-bg">
+              <div class="pip-badge">리매칭</div>
+              <span class="silhouette small" style="opacity:0.2;">B</span>
+              <div class="pip-name">23 #ENFP</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn pass">건너뛰기</div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 4 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 04</div>
+    <h2>Swipe Carousel</h2>
+    <div class="desc">
+      좌우 스와이프로 정기매칭 카드와 리매칭 카드를 전환합니다.
+      하단 인디케이터에 보라색(정기)과 주황색(리매칭) 점으로 현재 위치를 표시합니다.
+      기존 단일 카드 UI를 최소한으로 변경하면서 두 매칭을 모두 노출합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner</span>
+      <span class="data-chip rematching">rematching.partner</span>
+      <span class="data-chip rematching">rematching.endOfView</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">기존 UI 패턴 유지</div>
+      <div class="con">리매칭 발견성 낮을 수 있음</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:20</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/0.95;">
+            <div class="timer-badge">H-46:40</div>
+            <div style="position:absolute; top:10px; right:10px; background:var(--purple); color:white; padding:3px 10px; border-radius:100px; font-size:10px; font-weight:700; z-index:2;">정기매칭</div>
+            <span class="silhouette" style="font-size:72px;">M</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">25 #INFP</div>
+              <div class="tags">#Y대 #그림 #카페</div>
+            </div>
+          </div>
+        </div>
+        <!-- Swipe hint -->
+        <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:4px;">
+          <span style="opacity:0.5;">&larr;</span> 스와이프하여 리매칭 파트너 보기 <span style="opacity:0.5;">&rarr;</span>
+        </div>
+        <!-- Carousel dots -->
+        <div class="carousel-dots">
+          <div class="cdot active"></div>
+          <div class="cdot orange"></div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn pass">건너뛰기</div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 5 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 05</div>
+    <h2>Segmented Tab View</h2>
+    <div class="desc">
+      카드 상단에 세그먼트 컨트롤(정기매칭 / 리매칭)을 배치합니다.
+      리매칭 탭에 <code>pendingCount</code> 뱃지를 표시하여 활성 리매칭이 있음을 알립니다.
+      탭 전환으로 같은 위치에서 두 매칭을 확인합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary (둘 다)</span>
+      <span class="data-chip rematching">rematching.pendingCount</span>
+      <span class="data-chip scheduled">scheduled.hasMatch</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">명확한 탐색 구조</div>
+      <div class="pro">pendingCount 활용으로 긴급감</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:30</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="seg-control">
+          <div class="seg-btn active">정기매칭</div>
+          <div class="seg-btn">리매칭 <span class="seg-count">1</span></div>
+        </div>
+        <div class="match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/0.9;">
+            <div class="timer-badge">H-46:30</div>
+            <span class="silhouette" style="font-size:72px;">K</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">24 #ENFJ</div>
+              <div class="tags">#S대 #요가 #여행</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn pass">건너뛰기</div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 6 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 06</div>
+    <h2>Stacked Cards with Peek</h2>
+    <div class="desc">
+      정기매칭 카드 뒤에 리매칭 카드가 살짝 보이는 스택 형태입니다.
+      아래로 스와이프하면 뒤에 있는 리매칭 카드가 올라옵니다.
+      "뒤에 1명 더 있어요" 힌트로 자연스럽게 탐색을 유도합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner</span>
+      <span class="data-chip rematching">rematching.partner</span>
+      <span class="data-chip rematching">rematching.pendingCount</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">Tinder 스타일로 친숙한 패턴</div>
+      <div class="con">제스처 학습 필요</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:10</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="stacked-wrap">
+          <div class="stacked-back" style="background: linear-gradient(135deg, #FB923C, #EA580C);"></div>
+          <div class="stacked-front">
+            <div class="match-card-bg" style="height:100%;">
+              <div class="timer-badge">H-46:50</div>
+              <div style="position:absolute; top:10px; right:10px; background:var(--purple); color:white; padding:3px 10px; border-radius:100px; font-size:10px; font-weight:700; z-index:2;">정기매칭</div>
+              <span class="silhouette" style="font-size:72px;">T</span>
+              <div class="match-gradient"></div>
+              <div class="match-info-overlay">
+                <div class="name">24 #ISTP</div>
+                <div class="tags">#C대 #기타 #등산</div>
+              </div>
+            </div>
+          </div>
+          <div class="stacked-hint">아래로 넘겨 리매칭 파트너 보기 +1</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 7 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 07</div>
+    <h2>Bottom Sheet Peek</h2>
+    <div class="desc">
+      메인에는 정기매칭 카드를 표시하고, 하단에 리매칭 알림 시트를 살짝 노출합니다.
+      시트를 위로 드래그하면 리매칭 파트너 상세가 펼쳐집니다.
+      기존 BottomSheetPicker 패턴을 재활용하여 개발 비용을 절감합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner (정기)</span>
+      <span class="data-chip rematching">rematching.partner</span>
+      <span class="data-chip rematching">rematching.endOfView</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">기존 BottomSheet 패턴 재활용</div>
+      <div class="pro">메인 카드 방해 없음</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:25</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content" style="overflow:visible;">
+        <div class="match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/0.85;">
+            <div class="timer-badge">H-46:35</div>
+            <span class="silhouette" style="font-size:72px;">R</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">25 #ENTP</div>
+              <div class="tags">#S대 #영화 #코딩</div>
+              <div style="margin-top:4px;">
+                <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px; font-size:10px;">정기매칭</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Bottom Sheet Peek -->
+      <div class="bs-peek">
+        <div class="bs-handle"></div>
+        <div class="bs-row">
+          <div class="bs-avatar">R</div>
+          <div class="bs-text">
+            <div class="bs-title">리매칭 파트너가 기다려요!</div>
+            <div class="bs-sub">23세 #ENFP #K대 · H-12:30 남음</div>
+          </div>
+          <button class="bs-action">보기</button>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 8 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 08</div>
+    <h2>Timeline Journey View</h2>
+    <div class="desc">
+      매칭 히스토리를 타임라인 형태로 시각화합니다.
+      정기매칭과 리매칭 이벤트를 시간순으로 나열하고, 각 노드에 미니 프로필 카드를 연결합니다.
+      매칭 전체 여정을 한눈에 파악할 수 있습니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.type + endOfView</span>
+      <span class="data-chip scheduled">scheduled.untilNext</span>
+      <span class="data-chip rematching">rematching.endOfView</span>
+    </div>
+    <div class="scenario-tag transition">리매칭 활성 + 정기매칭 예정</div>
+    <div class="pros-cons">
+      <div class="pro">전체 매칭 맥락 시각화</div>
+      <div class="con">구현 복잡도 높음</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">15:30</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div style="font-size:15px; font-weight:700; margin-bottom:12px;">이번 주 매칭 여정</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-line"></div>
+            <div class="tl-dot orange">R</div>
+            <div class="tl-content">
+              <div class="tl-title" style="color:var(--orange);">리매칭 활성중</div>
+              <div class="tl-desc">오늘 14:00에 매칭 · H-18:30 남음</div>
+              <div class="tl-mini-card" style="background:#FFF3E0;">
+                <div class="tl-mini-avatar orange-bg"></div>
+                <div class="tl-mini-info">23 #ENFP #K대</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-line"></div>
+            <div class="tl-dot purple">S</div>
+            <div class="tl-content">
+              <div class="tl-title" style="color:var(--purple);">정기매칭 예정</div>
+              <div class="tl-desc">목 21:00 공개 · D-0 5:30</div>
+              <div class="tl-mini-card">
+                <div class="tl-mini-avatar purple-bg"></div>
+                <div class="tl-mini-info" style="color:var(--text-muted);">21시에 공개됩니다</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot gray">N</div>
+            <div class="tl-content">
+              <div class="tl-title" style="color:var(--text-muted);">다음 정기매칭</div>
+              <div class="tl-desc">일요일 21:00 · D-3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 9 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 09</div>
+    <h2>Floating Notification Chip</h2>
+    <div class="desc">
+      정기매칭 카드를 기존처럼 표시하되, 리매칭이 활성화되면 우상단에 플로팅 칩이 나타납니다.
+      펄스 애니메이션으로 주목을 끌고, 탭하면 리매칭 파트너 프로필로 이동합니다.
+      기존 UI를 전혀 변경하지 않고 리매칭 알림만 추가하는 최소 변경 방식입니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.partner (정기)</span>
+      <span class="data-chip rematching">rematching 존재 여부</span>
+      <span class="data-chip rematching">rematching.pendingCount</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">기존 UI 변경 0 (최소 공수)</div>
+      <div class="con">칩이 작아서 놓칠 수 있음</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:08</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content" style="position:relative;">
+        <div class="float-chip">
+          <span class="pulse-dot"></span>
+          리매칭 파트너 1명
+        </div>
+        <div class="match-card" style="border-radius:16px; overflow:hidden;">
+          <div class="match-card-bg" style="aspect-ratio: 1/1;">
+            <div class="timer-badge">H-46:52</div>
+            <span class="silhouette" style="font-size:72px;">E</span>
+            <div class="match-gradient"></div>
+            <div class="match-info-overlay">
+              <div class="name">25 #INFJ</div>
+              <div class="tags">#E대 #독서 #와인</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="act-btn pass">건너뛰기</div>
+          <div class="act-btn like">좋아요 보내기</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────── IDEA 10 ──────── -->
+<div class="idea-section">
+  <div class="idea-info">
+    <div class="idea-number">Idea 10</div>
+    <h2>Dashboard Overview</h2>
+    <div class="desc">
+      매칭 상태를 대시보드 형태로 요약합니다. 상단에 카운트다운 타이머와 리매칭 수를 통계 카드로 보여주고,
+      아래에 정기매칭과 리매칭 파트너를 나란히 미니 카드로 배치합니다.
+      정보 밀도가 높아 파워 유저에게 적합합니다.
+    </div>
+    <div class="data-used">
+      <span class="data-chip primary">primary.endOfView</span>
+      <span class="data-chip scheduled">scheduled.untilNext</span>
+      <span class="data-chip rematching">rematching.pendingCount</span>
+      <span class="data-chip rematching">rematching.partner</span>
+    </div>
+    <div class="scenario-tag normal">정기매칭 공개 + 리매칭 활성</div>
+    <div class="pros-cons">
+      <div class="pro">높은 정보 밀도, 한눈에 파악</div>
+      <div class="con">데이팅 앱 감성과 거리감</div>
+    </div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status-bar"><span class="time">21:45</span><span>...</span></div>
+      <div class="app-header">
+        <span class="app-logo">Sometime</span>
+        <div class="header-icons"><div class="h-icon">N</div><div class="h-icon">G</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="dash-grid">
+          <div class="dash-stat">
+            <div class="stat-num">H-46</div>
+            <div class="stat-label">정기매칭 만료</div>
+          </div>
+          <div class="dash-stat orange">
+            <div class="stat-num">1</div>
+            <div class="stat-label">리매칭 활성</div>
+          </div>
+        </div>
+        <div style="font-size:13px; font-weight:700; margin:8px 0 6px;">오늘의 매칭</div>
+        <div class="mini-match-row">
+          <div class="mini-match-card">
+            <div class="mini-bg" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); height:100%;">
+              <span class="silhouette small" style="opacity:0.15; top:45%; font-size:40px;">S</span>
+            </div>
+            <div class="mini-label" style="background:var(--purple);">정기</div>
+            <div class="mini-info">
+              <div class="mn">24 #ENFJ</div>
+              <div class="ms">#S대 #요가</div>
+            </div>
+            <div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.4); color:white; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:700;">H-46</div>
+          </div>
+          <div class="mini-match-card">
+            <div class="mini-bg" style="background: linear-gradient(135deg, #FB923C, #EA580C); height:100%;">
+              <span class="silhouette small" style="opacity:0.15; top:45%; font-size:40px;">R</span>
+            </div>
+            <div class="mini-label" style="background:var(--orange);">리매칭</div>
+            <div class="mini-info">
+              <div class="mn">23 #ENFP</div>
+              <div class="ms">#K대 #음악</div>
+            </div>
+            <div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.4); color:white; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:700;">H-12</div>
+          </div>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-top:4px;">탭하여 프로필 자세히 보기</div>
+        <div style="margin-top:14px; font-size:13px; font-weight:700;">다음 일정</div>
+        <div style="background:white; border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:12px; font-weight:600;">일요일 정기매칭</div>
+            <div style="font-size:10px; color:var(--text-muted);">2026-02-29 21:00</div>
+          </div>
+          <div style="font-size:16px; font-weight:800; color:var(--purple);">D-5</div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot">H</div><span>홈</span></div>
+        <div class="nav-item"><div class="nav-dot">C</div><span>채팅</span></div>
+        <div class="nav-item"><div class="nav-dot">L</div><span>좋아요</span></div>
+        <div class="nav-item"><div class="nav-dot">M</div><span>마이</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ideas-grid -->
+
+<!-- ━━━ Summary ━━━ -->
+<div style="max-width:1200px; margin:0 auto; padding:0 40px 60px;">
+  <div style="background:white; border-radius:16px; padding:32px; border:1px solid var(--border);">
+    <h2 style="font-size:20px; font-weight:800; margin-bottom:20px;">UI Idea 비교 매트릭스</h2>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border);">
+            <th style="text-align:left; padding:10px 8px; font-weight:700;">#</th>
+            <th style="text-align:left; padding:10px 8px; font-weight:700;">패턴</th>
+            <th style="text-align:center; padding:10px 8px; font-weight:700;">구현 난이도</th>
+            <th style="text-align:center; padding:10px 8px; font-weight:700;">정보 밀도</th>
+            <th style="text-align:center; padding:10px 8px; font-weight:700;">기존 UI 변경</th>
+            <th style="text-align:center; padding:10px 8px; font-weight:700;">리매칭 발견성</th>
+            <th style="text-align:left; padding:10px 8px; font-weight:700;">핵심 V3 필드</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">01</td>
+            <td style="padding:8px; font-weight:600;">D-? Timer Strip</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">낮음</td>
+            <td style="text-align:center; padding:8px;">중</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">최소</td>
+            <td style="text-align:center; padding:8px;">-</td>
+            <td style="padding:8px; font-size:11px;">scheduled.untilNext</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">02</td>
+            <td style="padding:8px; font-weight:600;">Split Dual Card</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="text-align:center; padding:8px;">높음</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">큼</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">primary + rematching</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">03</td>
+            <td style="padding:8px; font-weight:600;">PIP Card</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="text-align:center; padding:8px;">높음</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">rematching.partner</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">04</td>
+            <td style="padding:8px; font-weight:600;">Swipe Carousel</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="text-align:center; padding:8px;">중</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">최소</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="padding:8px; font-size:11px;">primary + rematching</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">05</td>
+            <td style="padding:8px; font-weight:600;">Segmented Tab</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">낮음</td>
+            <td style="text-align:center; padding:8px;">중</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">최소</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">pendingCount</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">06</td>
+            <td style="padding:8px; font-weight:600;">Stacked Cards</td>
+            <td style="text-align:center; padding:8px; color:var(--pink);">높음</td>
+            <td style="text-align:center; padding:8px;">중</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">큼</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="padding:8px; font-size:11px;">pendingCount</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">07</td>
+            <td style="padding:8px; font-weight:600;">Bottom Sheet Peek</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">낮음</td>
+            <td style="text-align:center; padding:8px;">높음</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">최소</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">rematching.partner</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">08</td>
+            <td style="padding:8px; font-weight:600;">Timeline Journey</td>
+            <td style="text-align:center; padding:8px; color:var(--pink);">높음</td>
+            <td style="text-align:center; padding:8px;">높음</td>
+            <td style="text-align:center; padding:8px; color:var(--pink);">매우 큼</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">전체 필드 활용</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">09</td>
+            <td style="padding:8px; font-weight:600;">Floating Chip</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">매우 낮음</td>
+            <td style="text-align:center; padding:8px;">낮음</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">없음</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="padding:8px; font-size:11px;">rematching 존재 여부</td>
+          </tr>
+          <tr>
+            <td style="padding:8px;">10</td>
+            <td style="padding:8px; font-weight:600;">Dashboard Overview</td>
+            <td style="text-align:center; padding:8px; color:var(--orange);">중간</td>
+            <td style="text-align:center; padding:8px;">매우 높음</td>
+            <td style="text-align:center; padding:8px; color:var(--pink);">매우 큼</td>
+            <td style="text-align:center; padding:8px; color:var(--green);">높음</td>
+            <td style="padding:8px; font-size:11px;">전체 필드 활용</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:20px; padding:16px; background:var(--purple-light); border-radius:12px;">
+      <div style="font-size:14px; font-weight:700; color:var(--purple); margin-bottom:6px;">추천 조합</div>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.7;">
+        <strong>빠른 도입:</strong> #01 D-Timer Strip + #09 Floating Chip (구현 난이도 최소, 기존 UI 변경 없음)<br>
+        <strong>균형 잡힌:</strong> #05 Segmented Tab + #01 D-Timer Strip (명확한 탐색 + 일정 인지)<br>
+        <strong>최고 UX:</strong> #07 Bottom Sheet Peek + #01 D-Timer Strip (정보 밀도 + 기존 패턴 활용)
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

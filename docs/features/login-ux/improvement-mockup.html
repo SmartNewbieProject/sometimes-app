@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login UX Improvement Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --brand: #7A4AE2;
+    --brand-light: #F0EAFB;
+    --brand-pale: #F5F1FF;
+    --kakao: #FEE500;
+    --kakao-text: #1A1A1A;
+    --text-primary: #1A1A1A;
+    --text-secondary: #6B6B6B;
+    --text-muted: #ABABAB;
+    --surface: #FFFFFF;
+  }
+  body {
+    font-family: -apple-system, 'Pretendard', 'Noto Sans KR', sans-serif;
+    background: #EEEAF8;
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  .page-header {
+    background: var(--surface);
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E5E5F0;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 800; color: var(--brand); }
+  .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .badge-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+  .badge-problem { background: #FEEAEA; color: #C0392B; }
+  .badge-info { background: var(--brand-light); color: var(--brand); }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 24px;
+    padding: 28px 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .option-card {
+    background: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex; flex-direction: column;
+    border: 2px solid transparent;
+  }
+  .option-card.recommended { border-color: #27AE60; }
+  .option-card.problem { border-color: #E74C3C; }
+
+  .option-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #F0EDF8;
+  }
+  .option-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 5px;
+  }
+  .option-title { font-size: 16px; font-weight: 800; }
+  .option-desc { font-size: 12px; color: var(--text-secondary); margin-top: 5px; line-height: 1.6; }
+  .option-tag-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 9px; }
+  .tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 999px; font-weight: 600;
+  }
+  .tag-green { background: #EAF6EA; color: #1E8449; }
+  .tag-yellow { background: #FEF9E7; color: #B7770D; }
+  .tag-red { background: #FDECEA; color: #C0392B; }
+  .tag-blue { background: #EAF3FB; color: #1A5276; }
+
+  .phone-wrap {
+    padding: 20px;
+    display: flex; justify-content: center;
+    flex: 1;
+  }
+
+  .phone {
+    width: 268px;
+    min-height: 540px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F5F1FF 100%);
+    border-radius: 38px;
+    border: 3px solid #222;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.25);
+    display: flex; flex-direction: column;
+  }
+  .phone::before {
+    content: '';
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 72px; height: 5px;
+    background: #222; border-radius: 3px; z-index: 10;
+  }
+  .phone-screen {
+    flex: 1;
+    padding: 34px 14px 14px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+
+  .logo-area { text-align: center; margin-bottom: 14px; }
+  .logo-text {
+    font-size: 19px; font-weight: 900;
+    background: linear-gradient(135deg, #7A4AE2, #B07FFF);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .univ-logos {
+    display: flex; gap: 5px; justify-content: center; margin-bottom: 12px;
+  }
+  .univ-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: white;
+  }
+
+  .kakao-btn {
+    width: 100%;
+    background: #FEE500;
+    border: none; border-radius: 999px;
+    padding: 11px 0;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 13px; font-weight: 700; color: #1A1A1A;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(254,229,0,0.4);
+  }
+  .apple-btn {
+    width: 100%;
+    background: #000;
+    border: none; border-radius: 999px;
+    padding: 10px 0;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 12px; font-weight: 600; color: white;
+    cursor: pointer;
+    margin-top: 7px;
+  }
+  .privacy-text {
+    font-size: 9px; color: var(--text-muted); text-align: center;
+    line-height: 1.5; margin-top: 10px;
+  }
+
+  /* AS-IS Slide */
+  .slide-asis {
+    width: 100%; height: 42px;
+    background: white;
+    border: 2px solid rgba(122,74,226,0.15);
+    border-radius: 999px;
+    position: relative;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(122,74,226,0.08);
+  }
+  .slide-text-center {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; gap: 3px;
+  }
+  .slide-handle {
+    position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: white;
+    box-shadow: 0 3px 10px rgba(122,74,226,0.4);
+  }
+
+  /* Option A slide (improved) */
+  .slide-improved {
+    width: 100%; height: 46px;
+    background: var(--brand-light);
+    border: 2px solid var(--brand);
+    border-radius: 999px;
+    position: relative;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .slide-tap-hint {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 9px; color: var(--brand); font-weight: 600; opacity: 0.7;
+  }
+
+  /* Option B: outline button */
+  .about-btn {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--brand);
+    border-radius: 999px;
+    padding: 10px 0;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 12px; font-weight: 700; color: var(--brand);
+    cursor: pointer;
+    margin-bottom: 11px;
+  }
+
+  /* Option C: filled slide */
+  .slide-filled {
+    width: 100%; height: 48px;
+    background: linear-gradient(135deg, #7A4AE2, #B07FFF);
+    border-radius: 999px;
+    position: relative;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .slide-filled-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.85);
+  }
+  .slide-filled-handle {
+    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white;
+  }
+  .shimmer {
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2.2s infinite;
+  }
+  @keyframes shimmer { to { left: 120%; } }
+
+  /* Bottom CTA fixed */
+  .bottom-cta-fixed {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: white;
+    padding: 10px 14px 18px;
+    border-top: 1px solid #F0EDF8;
+    border-radius: 0 0 35px 35px;
+  }
+  .thumb-zone-label {
+    font-size: 8px; color: var(--brand); font-weight: 700;
+    text-align: center; margin-bottom: 5px; letter-spacing: 0.08em;
+    text-transform: uppercase; opacity: 0.55;
+  }
+
+  /* Thumb zone overlay */
+  .thumb-zone {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 190px;
+    background: linear-gradient(0deg, rgba(122,74,226,0.05), transparent);
+    border-radius: 0 0 35px 35px;
+    pointer-events: none;
+  }
+  .thumb-zone-line {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px; background: rgba(122,74,226,0.18);
+  }
+  .thumb-zone-tag {
+    position: absolute; top: 3px; right: 7px;
+    font-size: 8px; color: var(--brand); font-weight: 700; opacity: 0.45;
+  }
+
+  /* Problem annotation */
+  .ann {
+    position: absolute;
+    font-size: 8px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px;
+    white-space: nowrap; z-index: 5;
+  }
+  .ann-red { background: #FFECEC; color: #C0392B; border: 1px solid #F5B7B1; }
+  .ann-green { background: #EAFAF1; color: #1E8449; border: 1px solid #A9DFBF; }
+
+  @keyframes slide-anim {
+    0% { transform: translateX(0); }
+    35% { transform: translateX(70px); }
+    65% { transform: translateX(70px); }
+    100% { transform: translateX(0); }
+  }
+  .handle-anim { animation: slide-anim 3.5s ease-in-out infinite; }
+
+  /* Expand card */
+  .expand-card {
+    width: 100%;
+    background: var(--brand-light);
+    border: 1.5px solid rgba(122,74,226,0.2);
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .expand-card-left { display: flex; align-items: center; gap: 7px; }
+  .expand-card-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .expand-card-label { font-size: 11px; font-weight: 700; color: var(--brand); }
+  .expand-card-sub { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Comparison table */
+  .compare-section {
+    max-width: 1200px; margin: 0 auto;
+    padding: 0 40px 36px;
+  }
+  .compare-section h2 { font-size: 17px; font-weight: 800; margin-bottom: 16px; }
+  .compare-table {
+    width: 100%; border-collapse: collapse; background: white;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+  .compare-table th {
+    background: var(--brand); color: white;
+    padding: 11px 14px; text-align: left; font-size: 12px; font-weight: 700;
+  }
+  .compare-table td {
+    padding: 11px 14px; font-size: 12px; border-bottom: 1px solid #F0EDF8;
+    vertical-align: middle; line-height: 1.5;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: #FAFAFA; }
+  .star { color: #F39C12; }
+  .check { color: #1E8449; font-weight: 700; }
+  .cross { color: #C0392B; font-weight: 700; }
+
+  /* Recommendation */
+  .rec-box {
+    max-width: 1200px; margin: 0 auto 36px;
+    padding: 0 40px;
+  }
+  .rec-inner {
+    background: linear-gradient(135deg, var(--brand), #B07FFF);
+    border-radius: 18px; padding: 24px 28px; color: white;
+  }
+  .rec-inner h2 { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+  .rec-inner p { font-size: 13px; line-height: 1.7; opacity: 0.92; }
+  .rec-steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px; margin-top: 18px;
+  }
+  .rec-step {
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .rec-step-num { font-size: 22px; font-weight: 900; opacity: 0.55; }
+  .rec-step-title { font-size: 13px; font-weight: 700; margin-top: 3px; }
+  .rec-step-desc { font-size: 11px; opacity: 0.88; margin-top: 3px; line-height: 1.55; }
+
+  /* Code hint */
+  .code-box {
+    max-width: 1200px; margin: 0 auto 48px;
+    padding: 0 40px;
+  }
+  .code-inner {
+    background: #1A1A2E;
+    border-radius: 14px; padding: 22px 26px;
+    color: #E0E0E0; font-family: 'Fira Code', 'Courier New', monospace; font-size: 11.5px; line-height: 1.85;
+  }
+  .code-title { color: #7A4AE2; font-size: 13px; font-weight: 700; margin-bottom: 12px; font-family: sans-serif; }
+  .code-comment { color: #666; }
+  .code-del { color: #FF6B6B; }
+  .code-add { color: #6BFF6B; }
+
+  .section-head {
+    max-width: 1600px; margin: 24px auto 0;
+    padding: 0 40px 12px;
+    font-size: 14px; font-weight: 800; color: #999;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-head::after { content: ''; flex: 1; height: 1px; background: #DDD; }
+
+  .divider-line { flex: 1; height: 1px; background: #E5E5E5; }
+  .divider { display: flex; align-items: center; gap: 7px; margin: 7px 0; font-size: 10px; color: #CCC; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Login UX Improvement Mockup</h1>
+  <p>Android 한손 사용성 · ABOUT SOMETIME 진입성 · 카카오 CTA 도달성 개선</p>
+  <div class="badge-row">
+    <span class="badge badge-problem">버그: UNLOCK_THRESHOLD 0.7 (70% 드래그 필요)</span>
+    <span class="badge badge-problem">핸들 영역에만 GestureDetector (탭 불가)</span>
+    <span class="badge badge-problem">width:330 중앙 정렬 (thumb zone 미최적화)</span>
+    <span class="badge badge-info">src/shared/ui/slide-to-about/index.tsx</span>
+    <span class="badge badge-info">src/features/signup/ui/login-form.tsx</span>
+  </div>
+</div>
+
+<!-- AS-IS -->
+<div class="section-head">현재 상태 (AS-IS)</div>
+<div class="main-grid" style="grid-template-columns:minmax(330px,380px);padding-top:0;">
+  <div class="option-card problem">
+    <div class="option-header" style="background:#FFF5F5;">
+      <div class="option-label" style="color:#C0392B;">현재 문제 화면</div>
+      <div class="option-title">AS-IS: 현재 구현</div>
+      <div class="option-desc">UNLOCK_THRESHOLD=0.7, 핸들에만 GestureDetector, CTA 중앙 고정</div>
+      <div class="option-tag-row">
+        <span class="tag tag-red">탭 불가</span>
+        <span class="tag tag-red">70% 드래그 필수</span>
+        <span class="tag tag-red">한손 도달 어려움</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;">
+          <div class="logo-area">
+            <div class="logo-text">sometime</div>
+            <div class="logo-sub">대학생 소개팅 앱</div>
+          </div>
+          <div class="univ-logos">
+            <div class="univ-dot" style="background:#003087;">연</div>
+            <div class="univ-dot" style="background:#002366;">고</div>
+            <div class="univ-dot" style="background:#C41E3A;">성</div>
+            <div class="univ-dot" style="background:#1D4098;">서</div>
+            <div class="univ-dot" style="background:#007A3D;">이</div>
+          </div>
+          <div style="width:100%;position:relative;margin-bottom:12px;">
+            <div class="slide-asis">
+              <div class="slide-text-center">
+                <span>ABOUT</span>
+                <span style="color:var(--brand);font-weight:900;">sometime</span>
+              </div>
+              <div class="slide-handle handle-anim">›</div>
+            </div>
+            <div class="ann ann-red" style="right:-2px;top:-7px;">핸들만 반응</div>
+            <div class="ann ann-red" style="right:-2px;bottom:-17px;font-size:7px;">70% 이상 드래그 필요</div>
+          </div>
+          <div style="height:16px;"></div>
+          <div style="width:100%;position:relative;">
+            <button class="kakao-btn" style="font-size:12px;">
+              <span>💬</span> 카카오로 시작하기
+            </button>
+            <div class="ann ann-red" style="right:-2px;top:50%;transform:translateY(-50%);">중앙 고정</div>
+          </div>
+          <div class="thumb-zone">
+            <div class="thumb-zone-line"></div>
+            <div class="thumb-zone-tag">편한 thumb zone</div>
+          </div>
+          <div class="privacy-text" style="margin-top:auto;">가입 시 이용약관에 동의하게 됩니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TO-BE -->
+<div class="section-head">개선안 (TO-BE)</div>
+<div class="main-grid">
+
+  <!-- Option A -->
+  <div class="option-card">
+    <div class="option-header">
+      <div class="option-label">Option A · 최소 변경</div>
+      <div class="option-title">threshold 인하 + 전체 영역 탭</div>
+      <div class="option-desc">UNLOCK_THRESHOLD 0.7→0.3, GestureDetector를 컨테이너 전체로 이동, Gesture.Tap() 추가. 코드 변경 최소화.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">구현 2줄 수정</span>
+        <span class="tag tag-green">탭 대체 경로</span>
+        <span class="tag tag-yellow">CTA 위치 그대로</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;">
+          <div class="logo-area">
+            <div class="logo-text">sometime</div>
+            <div class="logo-sub">대학생 소개팅 앱</div>
+          </div>
+          <div class="univ-logos">
+            <div class="univ-dot" style="background:#003087;">연</div>
+            <div class="univ-dot" style="background:#002366;">고</div>
+            <div class="univ-dot" style="background:#C41E3A;">성</div>
+            <div class="univ-dot" style="background:#1D4098;">서</div>
+            <div class="univ-dot" style="background:#007A3D;">이</div>
+          </div>
+          <div style="width:100%;position:relative;margin-bottom:12px;">
+            <div class="slide-improved">
+              <div class="slide-text-center">
+                <span>ABOUT</span>
+                <span style="color:var(--brand);font-weight:900;">sometime</span>
+              </div>
+              <div class="slide-handle" style="background:var(--brand);width:32px;height:32px;border-radius:50%;position:absolute;left:7px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;box-shadow:0 3px 10px rgba(122,74,226,0.4);">›</div>
+              <div class="slide-tap-hint">탭 또는 스와이프</div>
+            </div>
+            <div class="ann ann-green" style="right:-2px;top:-7px;">전체 영역 탭 가능</div>
+            <div class="ann ann-green" style="right:-2px;bottom:-17px;font-size:7px;">30% 드래그로 진입</div>
+          </div>
+          <div style="height:14px;"></div>
+          <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+          <div class="thumb-zone">
+            <div class="thumb-zone-line"></div>
+            <div class="thumb-zone-tag">thumb zone</div>
+          </div>
+          <div class="privacy-text" style="margin-top:auto;">가입 시 이용약관에 동의하게 됩니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="option-card recommended">
+    <div class="option-header" style="background:#F0FBF4;">
+      <div class="option-label" style="color:#1E8449;">Option B · 권장 ★</div>
+      <div class="option-title">슬라이드 → 아웃라인 탭 버튼</div>
+      <div class="option-desc">슬라이드 컴포넌트를 ghost 버튼으로 교체. 진입 마찰 제로. CTA 위계 카카오(primary) > 소개(ghost) 명확화.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">진입 마찰 0</span>
+        <span class="tag tag-green">명확한 CTA 위계</span>
+        <span class="tag tag-green">접근성 향상</span>
+        <span class="tag tag-yellow">슬라이드 제거</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;">
+          <div class="logo-area">
+            <div class="logo-text">sometime</div>
+            <div class="logo-sub">대학생 소개팅 앱</div>
+          </div>
+          <div class="univ-logos">
+            <div class="univ-dot" style="background:#003087;">연</div>
+            <div class="univ-dot" style="background:#002366;">고</div>
+            <div class="univ-dot" style="background:#C41E3A;">성</div>
+            <div class="univ-dot" style="background:#1D4098;">서</div>
+            <div class="univ-dot" style="background:#007A3D;">이</div>
+          </div>
+          <button class="about-btn">
+            <span style="font-size:13px;">✦</span>
+            ABOUT SOMETIME 알아보기
+            <span style="font-size:13px;margin-left:2px;">›</span>
+          </button>
+          <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+          <button class="apple-btn" style="font-size:11px;"><span>🍎</span> Apple로 계속하기</button>
+          <div class="thumb-zone" style="height:210px;">
+            <div class="thumb-zone-line"></div>
+            <div class="thumb-zone-tag">모두 thumb zone 안에 있음</div>
+          </div>
+          <div class="privacy-text" style="margin-top:auto;">가입 시 이용약관에 동의하게 됩니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="option-card">
+    <div class="option-header">
+      <div class="option-label">Option C · 비주얼 강화</div>
+      <div class="option-title">Filled 슬라이드 + 전체 영역 스와이프</div>
+      <div class="option-desc">브랜드 컬러 filled 슬라이드로 교체, 컨테이너 어디서나 드래그 시작 가능. shimmer 애니메이션으로 어포던스 향상.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">브랜드 비주얼 강화</span>
+        <span class="tag tag-green">전체 영역 드래그</span>
+        <span class="tag tag-yellow">구현 중간 난이도</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;">
+          <div class="logo-area">
+            <div class="logo-text">sometime</div>
+            <div class="logo-sub">대학생 소개팅 앱</div>
+          </div>
+          <div class="univ-logos">
+            <div class="univ-dot" style="background:#003087;">연</div>
+            <div class="univ-dot" style="background:#002366;">고</div>
+            <div class="univ-dot" style="background:#C41E3A;">성</div>
+            <div class="univ-dot" style="background:#1D4098;">서</div>
+            <div class="univ-dot" style="background:#007A3D;">이</div>
+          </div>
+          <div class="slide-filled" style="margin-bottom:12px;">
+            <div class="shimmer"></div>
+            <div class="slide-filled-text">← ABOUT SOMETIME 스와이프</div>
+            <div class="slide-filled-handle">›</div>
+          </div>
+          <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+          <button class="apple-btn" style="font-size:11px;"><span>🍎</span> Apple로 계속하기</button>
+          <div class="thumb-zone" style="height:195px;">
+            <div class="thumb-zone-line"></div>
+            <div class="thumb-zone-tag">thumb zone</div>
+          </div>
+          <div class="privacy-text" style="margin-top:auto;">가입 시 이용약관에 동의하게 됩니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option D -->
+  <div class="option-card">
+    <div class="option-header">
+      <div class="option-label">Option D · 레이아웃 개선</div>
+      <div class="option-title">CTA 하단 고정 (Bottom-anchored)</div>
+      <div class="option-desc">카카오/Apple 버튼을 화면 하단 fixed 영역에 배치. iOS HIG Thumb-Friendly 패턴. 상단은 브랜드/소개 공간으로 활용.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">엄지 최적 위치</span>
+        <span class="tag tag-green">iOS HIG 준수</span>
+        <span class="tag tag-blue">레이아웃 변경 필요</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;padding-bottom:0;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding-bottom:145px;width:100%;">
+            <div class="logo-area" style="margin-top:10px;">
+              <div class="logo-text" style="font-size:24px;">sometime</div>
+              <div class="logo-sub">대학생 소개팅 앱</div>
+            </div>
+            <div class="univ-logos">
+              <div class="univ-dot" style="background:#003087;">연</div>
+              <div class="univ-dot" style="background:#002366;">고</div>
+              <div class="univ-dot" style="background:#C41E3A;">성</div>
+              <div class="univ-dot" style="background:#1D4098;">서</div>
+              <div class="univ-dot" style="background:#007A3D;">이</div>
+            </div>
+            <div style="width:100%;">
+              <div class="slide-improved" style="height:40px;">
+                <div class="slide-text-center" style="font-size:10px;">ABOUT sometime →</div>
+                <div class="slide-handle" style="background:var(--brand);width:28px;height:28px;border-radius:50%;position:absolute;left:6px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;">›</div>
+              </div>
+            </div>
+            <div style="width:100%;margin-top:14px;padding:12px;background:var(--brand-light);border-radius:14px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:5px;">💜</div>
+              <div style="font-size:11px;font-weight:700;color:var(--brand);">같은 학교 친구와 설레는 만남</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">138개 대학 · 30만+ 인증 회원</div>
+            </div>
+          </div>
+          <div class="bottom-cta-fixed">
+            <div class="thumb-zone-label">한손 thumb zone 최적화 영역</div>
+            <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+            <button class="apple-btn" style="font-size:11px;margin-top:6px;"><span>🍎</span> Apple로 계속하기</button>
+            <div class="privacy-text" style="margin-top:7px;">가입 시 이용약관에 동의하게 됩니다</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option E -->
+  <div class="option-card">
+    <div class="option-header">
+      <div class="option-label">Option E · 탐색 UX</div>
+      <div class="option-title">Expandable Card (인라인 펼침)</div>
+      <div class="option-desc">ABOUT SOMETIME을 Expandable Card로 교체. 탭하면 인라인에서 앱 소개가 펼쳐짐. 별도 온보딩 페이지 이동 없이 소개 열람.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">탐색 허들 최저</span>
+        <span class="tag tag-green">페이지 이동 없음</span>
+        <span class="tag tag-yellow">소개 깊이 감소</span>
+        <span class="tag tag-blue">신규 컴포넌트</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;">
+          <div class="logo-area">
+            <div class="logo-text">sometime</div>
+            <div class="logo-sub">대학생 소개팅 앱</div>
+          </div>
+          <div class="univ-logos">
+            <div class="univ-dot" style="background:#003087;">연</div>
+            <div class="univ-dot" style="background:#002366;">고</div>
+            <div class="univ-dot" style="background:#C41E3A;">성</div>
+            <div class="univ-dot" style="background:#1D4098;">서</div>
+            <div class="univ-dot" style="background:#007A3D;">이</div>
+          </div>
+          <div class="expand-card">
+            <div class="expand-card-left">
+              <div class="expand-card-icon">✦</div>
+              <div>
+                <div class="expand-card-label">ABOUT SOMETIME</div>
+                <div class="expand-card-sub">탭해서 앱 소개 보기</div>
+              </div>
+            </div>
+            <span style="font-size:14px;color:var(--brand);opacity:0.6;">›</span>
+          </div>
+          <!-- Expanded content -->
+          <div style="width:100%;background:var(--brand-light);border-radius:10px;padding:11px;margin-bottom:10px;border:1.5px solid rgba(122,74,226,0.2);">
+            <div style="font-size:10px;font-weight:800;color:var(--brand);margin-bottom:7px;">✦ 썸타임 소개</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;">
+                <span>🎓</span> <span>인증된 대학생만 가입 가능</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;">
+                <span>💌</span> <span>같은 학교 친구와의 설레는 만남</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;">
+                <span>🔒</span> <span>프로필 공개 범위 직접 설정</span>
+              </div>
+            </div>
+            <div style="font-size:9px;color:var(--brand);font-weight:600;margin-top:7px;text-align:right;">전체 소개 보기 →</div>
+          </div>
+          <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+          <button class="apple-btn" style="font-size:11px;"><span>🍎</span> Apple로 계속하기</button>
+          <div class="thumb-zone" style="height:195px;">
+            <div class="thumb-zone-line"></div>
+            <div class="thumb-zone-tag">thumb zone</div>
+          </div>
+          <div class="privacy-text" style="margin-top:auto;">가입 시 이용약관에 동의하게 됩니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option F (Best) -->
+  <div class="option-card recommended">
+    <div class="option-header" style="background:#F0FBF4;">
+      <div class="option-label" style="color:#1E8449;">Option F · 최종 권장 ★★</div>
+      <div class="option-title">A + D 통합: threshold 인하 + CTA 하단 고정</div>
+      <div class="option-desc">슬라이드 진입 허들 최소화(탭+짧은 스와이프)와 CTA 하단 고정을 동시 적용. 두 문제를 한 번에 해결하는 현실적 최적안.</div>
+      <div class="option-tag-row">
+        <span class="tag tag-green">두 문제 동시 해결</span>
+        <span class="tag tag-green">브랜드 슬라이드 유지</span>
+        <span class="tag tag-green">현실적 구현</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="align-items:center;padding-bottom:0;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding-bottom:148px;width:100%;">
+            <div class="logo-area" style="margin-top:8px;">
+              <div class="logo-text">sometime</div>
+              <div class="logo-sub">대학생 소개팅 앱</div>
+            </div>
+            <div class="univ-logos">
+              <div class="univ-dot" style="background:#003087;">연</div>
+              <div class="univ-dot" style="background:#002366;">고</div>
+              <div class="univ-dot" style="background:#C41E3A;">성</div>
+              <div class="univ-dot" style="background:#1D4098;">서</div>
+              <div class="univ-dot" style="background:#007A3D;">이</div>
+            </div>
+            <div style="width:100%;">
+              <div class="slide-improved" style="height:42px;">
+                <div class="slide-text-center">
+                  <span style="font-size:10px;font-weight:800;">ABOUT</span>
+                  <span style="font-size:10px;font-weight:900;color:var(--brand);margin-left:3px;">sometime</span>
+                </div>
+                <div class="slide-handle" style="background:var(--brand);width:30px;height:30px;border-radius:50%;position:absolute;left:6px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">›</div>
+                <div class="slide-tap-hint" style="font-size:8px;">탭 또는 스와이프</div>
+              </div>
+            </div>
+            <div style="width:100%;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+              <div style="background:var(--brand-light);border-radius:9px;padding:9px;text-align:center;">
+                <div style="font-size:16px;margin-bottom:2px;">🎓</div>
+                <div style="font-size:9px;font-weight:700;color:var(--brand);">대학 인증</div>
+              </div>
+              <div style="background:var(--brand-light);border-radius:9px;padding:9px;text-align:center;">
+                <div style="font-size:16px;margin-bottom:2px;">💜</div>
+                <div style="font-size:9px;font-weight:700;color:var(--brand);">30만 회원</div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-cta-fixed">
+            <div class="thumb-zone-label">한손 thumb zone 최적화</div>
+            <button class="kakao-btn" style="font-size:12px;"><span>💬</span> 카카오로 시작하기</button>
+            <div class="divider">
+              <div class="divider-line"></div>
+              <span style="padding:0 7px;font-size:10px;">또는</span>
+              <div class="divider-line"></div>
+            </div>
+            <button class="apple-btn" style="margin-top:0;font-size:11px;padding:8px 0;"><span>🍎</span> Apple로 계속하기</button>
+            <div class="privacy-text" style="margin-top:7px;">가입 시 이용약관에 동의하게 됩니다</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="compare-section">
+  <h2>개선안 비교 분석</h2>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>안</th>
+        <th>핵심 변경</th>
+        <th>슬라이드 진입성</th>
+        <th>카카오 도달성</th>
+        <th>브랜드 유지</th>
+        <th>구현 복잡도</th>
+        <th>권장도</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#FFF5F5;">
+        <td><strong>AS-IS</strong></td>
+        <td>현재 상태</td>
+        <td><span class="cross">✗ 70% 드래그 필수</span></td>
+        <td><span class="cross">✗ 중앙 고정</span></td>
+        <td><span class="check">✓ 유지</span></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><strong>A</strong></td>
+        <td>threshold 0.3 + 탭 지원</td>
+        <td><span class="check">✓ 탭 또는 30%</span></td>
+        <td><span class="cross">✗ 여전히 중앙</span></td>
+        <td><span class="check">✓ 유지</span></td>
+        <td>낮음 (2줄 수정)</td>
+        <td><span class="star">★★★☆☆</span></td>
+      </tr>
+      <tr style="background:#F0FBF4;">
+        <td><strong>B ★</strong></td>
+        <td>슬라이드 → 아웃라인 버튼</td>
+        <td><span class="check">✓ 탭 1회</span></td>
+        <td><span class="check">✓ 개선</span></td>
+        <td>△ 슬라이드 제거</td>
+        <td>낮음 (컴포넌트 교체)</td>
+        <td><span class="star">★★★★☆</span></td>
+      </tr>
+      <tr>
+        <td><strong>C</strong></td>
+        <td>Filled 슬라이드 + 전체 드래그</td>
+        <td><span class="check">✓ 어디서나 드래그</span></td>
+        <td><span class="cross">✗ 중앙 유지</span></td>
+        <td><span class="check">✓ 강화</span></td>
+        <td>중간 (제스처 리팩터)</td>
+        <td><span class="star">★★★☆☆</span></td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>CTA 하단 고정</td>
+        <td>△ 슬라이드 허들 유지</td>
+        <td><span class="check">✓ 하단 thumb zone</span></td>
+        <td><span class="check">✓ 유지</span></td>
+        <td>중간 (레이아웃 변경)</td>
+        <td><span class="star">★★★☆☆</span></td>
+      </tr>
+      <tr>
+        <td><strong>E</strong></td>
+        <td>Expandable Card</td>
+        <td><span class="check">✓ 탭 1회</span></td>
+        <td><span class="check">✓ 개선</span></td>
+        <td>△ 독립 페이지 없음</td>
+        <td>높음 (신규 컴포넌트)</td>
+        <td><span class="star">★★★☆☆</span></td>
+      </tr>
+      <tr style="background:#F0FBF4;">
+        <td><strong>F ★★</strong></td>
+        <td>A + D 통합</td>
+        <td><span class="check">✓ 탭/짧은 스와이프</span></td>
+        <td><span class="check">✓ 하단 thumb zone</span></td>
+        <td><span class="check">✓ 유지</span></td>
+        <td>중간</td>
+        <td><span class="star">★★★★★</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- RECOMMENDATION -->
+<div class="rec-box">
+  <div class="rec-inner">
+    <h2>최종 권장 방향</h2>
+    <p>빠른 적용이 목표라면 <strong>B안 (슬라이드→탭 버튼 교체)</strong>, 브랜드 감도를 유지하면서 두 문제를 모두 해결하려면 <strong>F안 (A+D 통합)</strong>을 권장합니다.</p>
+    <div class="rec-steps">
+      <div class="rec-step">
+        <div class="rec-step-num">01</div>
+        <div class="rec-step-title">SlideToAbout 수정</div>
+        <div class="rec-step-desc">GestureDetector를 핸들 → 컨테이너 전체로 이동. UNLOCK_THRESHOLD 0.7→0.3. Gesture.Tap() 추가.</div>
+      </div>
+      <div class="rec-step">
+        <div class="rec-step-num">02</div>
+        <div class="rec-step-title">CTA 하단 고정</div>
+        <div class="rec-step-desc">KrLoginForm의 buttonsContainer를 position:absolute + bottom:0 으로 변경. useSafeAreaInsets() 적용 필수.</div>
+      </div>
+      <div class="rec-step">
+        <div class="rec-step-num">03</div>
+        <div class="rec-step-title">hitSlop 확장</div>
+        <div class="rec-step-desc">슬라이드 핸들에 hitSlop 추가로 터치 영역 물리적 확장. 최소 44×44pt 보장.</div>
+      </div>
+      <div class="rec-step">
+        <div class="rec-step-num">04</div>
+        <div class="rec-step-title">A/B 테스트</div>
+        <div class="rec-step-desc">슬라이드 유지(F안) vs 탭버튼(B안) 두 변형을 배포 후 소개 페이지 진입률로 결정.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE HINTS -->
+<div class="code-box">
+  <div class="code-inner">
+    <div class="code-title">핵심 코드 수정 포인트 (F안 기준)</div>
+    <div class="code-comment">// 1. slide-to-about/index.tsx — threshold 인하</div>
+    <div class="code-del">- const UNLOCK_THRESHOLD = 0.7;</div>
+    <div class="code-add">+ const UNLOCK_THRESHOLD = 0.3;</div>
+    <br>
+    <div class="code-comment">// 2. 탭 제스처 추가 + GestureDetector 컨테이너 전체로 이동</div>
+    <div class="code-add">+ const tapGesture = Gesture.Tap().onEnd(() =&gt; { runOnJS(onAction)(); });</div>
+    <div class="code-del">- &lt;GestureDetector gesture={panGesture}&gt;&lt;Animated.View {/* handle only */}</div>
+    <div class="code-add">+ &lt;GestureDetector gesture={Gesture.Race(panGesture, tapGesture)}&gt;&lt;View {/* entire wrapper */}</div>
+    <br>
+    <div class="code-comment">// 3. login-form.tsx — CTA 하단 고정 (Safe Area 포함)</div>
+    <div class="code-del">- buttonsContainer: { width: '100%', alignItems: 'center', flexDirection: 'column' }</div>
+    <div class="code-add">+ buttonsContainer: { position: 'absolute', bottom: 0, left: 0, right: 0,</div>
+    <div class="code-add">+   paddingBottom: insets.bottom + 16, paddingHorizontal: 20, backgroundColor: '#fff' }</div>
+  </div>
+</div>
+
+</body>
+</html>

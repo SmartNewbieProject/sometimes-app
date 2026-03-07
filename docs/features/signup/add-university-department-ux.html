@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학교/학과 직접 추가 - UI/UX 5가지 시안</title>
+<style>
+  :root {
+    --brand-primary: #7A4AE2;
+    --brand-secondary: #9747FF;
+    --brand-accent: #A892D7;
+    --brand-deep: #49386E;
+    --brand-primary-light: #E2D5FF;
+    --brand-cta: #3871FF;
+    --surface-bg: #FFFFFF;
+    --surface-surface: #F8F9FA;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --surface-other: #E1D9FF;
+    --surface-disabled: #E5E7EB;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --text-inverse: #FFFFFF;
+    --border-smooth: #e4e2e2;
+    --border-default: #AEAEAE;
+    --border-card: #E5E8EB;
+    --state-error: #FF0000;
+    --state-success: #80FF80;
+    --state-warning: #FFB02E;
+    --state-attention: #F70A8D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F0ECF7;
+    color: var(--text-primary);
+    padding: 24px 16px 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--brand-deep);
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-tertiary);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .section-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 20px;
+    margin-left: 48px;
+    line-height: 1.5;
+  }
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-left: 48px;
+    margin-bottom: 16px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+  .tag-pro { background: #E6F9E6; color: #1A7A1A; }
+  .tag-con { background: #FFE6E6; color: #CC0000; }
+  .tag-neutral { background: var(--surface-tertiary); color: var(--brand-primary); }
+
+  /* Phone mockup */
+  .phone-frame {
+    width: 320px;
+    margin: 0 auto;
+    background: var(--surface-bg);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(122,74,226,0.15), 0 4px 16px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 3px solid #E0D4F5;
+  }
+  .phone-status-bar {
+    height: 44px;
+    background: var(--surface-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .phone-content {
+    min-height: 560px;
+    padding: 0 20px 24px;
+    position: relative;
+  }
+
+  /* Common UI elements */
+  .header-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .header-back svg { width: 20px; height: 20px; }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--surface-disabled);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+    border-radius: 2px;
+    width: 30%;
+  }
+
+  .step-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+  }
+  .step-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+    padding: 0 14px;
+    background: var(--surface-bg);
+    margin-bottom: 12px;
+  }
+  .search-box.focused {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(122,74,226,0.12);
+  }
+  .search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: transparent;
+  }
+  .search-box input::placeholder { color: var(--text-disabled); }
+  .search-icon { color: var(--text-muted); font-size: 18px; flex-shrink: 0; }
+
+  .univ-card {
+    display: flex;
+    align-items: center;
+    padding: 14px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+    margin-bottom: 8px;
+    background: var(--surface-bg);
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .univ-card:hover { border-color: var(--brand-primary); background: var(--surface-secondary); }
+  .univ-card.selected {
+    border-color: var(--brand-primary);
+    background: var(--surface-secondary);
+    box-shadow: 0 0 0 2px rgba(122,74,226,0.2);
+  }
+  .univ-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--surface-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .univ-info { flex: 1; }
+  .univ-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .univ-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .btn-primary {
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-primary:disabled {
+    background: var(--surface-disabled);
+    color: var(--text-disabled);
+  }
+  .btn-secondary {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--surface-bg);
+    color: var(--brand-primary);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid var(--brand-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--brand-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 0;
+  }
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  .empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .empty-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+  .input-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .input-field {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+    padding: 0 14px;
+    font-size: 15px;
+    outline: none;
+    background: var(--surface-bg);
+  }
+  .input-field:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(122,74,226,0.12);
+  }
+  .input-field::placeholder { color: var(--text-disabled); }
+
+  .select-field {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+    padding: 0 14px;
+    font-size: 15px;
+    outline: none;
+    background: var(--surface-bg);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23AEAEAE' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    color: var(--text-primary);
+  }
+
+  .chip-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .chip {
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border-card);
+    background: var(--surface-bg);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .chip.selected {
+    background: var(--brand-primary);
+    color: white;
+    border-color: var(--brand-primary);
+  }
+
+  /* Bottom sheet overlay */
+  .bottom-sheet-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: rgba(0,0,0,0.35);
+    border-radius: 36px 36px 0 0;
+    display: flex;
+    align-items: flex-end;
+  }
+  .bottom-sheet {
+    width: 100%;
+    background: var(--surface-bg);
+    border-radius: 24px 24px 0 0;
+    padding: 12px 20px 28px;
+    max-height: 75%;
+    overflow-y: auto;
+  }
+  .bottom-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--surface-disabled);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .bottom-sheet-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  /* Toast */
+  .toast {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    right: 20px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+  .toast-success {
+    background: var(--brand-deep);
+    color: white;
+  }
+  .toast-info {
+    background: var(--surface-tertiary);
+    color: var(--brand-deep);
+    border: 1px solid var(--brand-primary);
+  }
+
+  /* Inline banner */
+  .inline-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .inline-banner-info {
+    background: var(--surface-secondary);
+    border: 1px solid var(--brand-primary);
+    color: var(--text-secondary);
+  }
+  .inline-banner-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Floating action */
+  .fab {
+    position: absolute;
+    bottom: 24px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 16px rgba(122,74,226,0.35);
+    cursor: pointer;
+    border: none;
+  }
+
+  /* Badge */
+  .badge-new {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--state-attention);
+    color: white;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Divider */
+  .divider-with-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border-smooth);
+  }
+  .divider-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* Comparison table */
+  .comparison {
+    width: 100%;
+    max-width: 700px;
+    margin: 32px auto 0;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .comparison th {
+    background: var(--brand-deep);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .comparison td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-smooth);
+    vertical-align: top;
+  }
+  .comparison tr:nth-child(even) td { background: var(--surface-surface); }
+  .comparison .rank-star { color: var(--state-warning); }
+
+  .score-bar {
+    height: 6px;
+    background: var(--surface-disabled);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+  }
+
+  /* Annotation */
+  .annotation {
+    position: absolute;
+    font-size: 11px;
+    color: var(--brand-primary);
+    font-weight: 700;
+    background: var(--surface-secondary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 5;
+    border: 1px dashed var(--brand-accent);
+  }
+  .annotation::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--brand-accent);
+  }
+
+  @media (max-width: 360px) {
+    .phone-frame { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<h1>학교/학과 직접 추가</h1>
+<p class="subtitle">
+  회원가입 시 학교/학과가 목록에 없는 경우<br>
+  유저가 직접 추가할 수 있는 5가지 UI/UX 시안
+</p>
+
+<!-- ================= OPTION A ================= -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">A</div>
+    <div class="section-title">Inline Empty State + CTA 버튼</div>
+  </div>
+  <p class="section-desc">
+    검색 결과가 없을 때 Empty State 영역에 "직접 등록" CTA 버튼을 노출.<br>
+    기존 플로우를 변경하지 않고, 결과 없음 ➜ 자연스러운 다음 액션 유도.
+  </p>
+  <div class="tag-row">
+    <span class="tag tag-pro">낮은 개발 비용</span>
+    <span class="tag tag-pro">기존 UX 유지</span>
+    <span class="tag tag-neutral">자연스러운 전환</span>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-status-bar">9:41</div>
+    <div class="phone-content">
+      <div class="header-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        대학교 선택
+      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+
+      <div class="search-box focused">
+        <input type="text" value="한라대학교" readonly>
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="empty-state">
+        <div class="empty-icon">🏫</div>
+        <div class="empty-title">"한라대학교" 검색 결과가 없어요</div>
+        <div class="empty-desc">
+          아직 등록되지 않은 학교일 수 있어요.<br>
+          직접 등록하면 바로 가입할 수 있어요!
+        </div>
+        <button class="btn-primary" style="width: auto; padding: 0 32px; margin: 0 auto;">
+          ✏️ 우리 학교 직접 등록하기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OPTION B ================= -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">B</div>
+    <div class="section-title">Bottom Sheet 폼 (학교 + 학과 통합)</div>
+  </div>
+  <p class="section-desc">
+    "직접 등록" 탭 시 Bottom Sheet가 올라오며, 학교명 / 지역 / 학과명을<br>
+    한 화면에서 입력. 기존 화면 위에 오버레이되어 맥락 유지.
+  </p>
+  <div class="tag-row">
+    <span class="tag tag-pro">원스텝 입력</span>
+    <span class="tag tag-pro">맥락 보존</span>
+    <span class="tag tag-con">폼 복잡도</span>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-status-bar">9:41</div>
+    <div class="phone-content" style="position: relative;">
+      <div class="header-back" style="opacity: 0.3;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        대학교 선택
+      </div>
+
+      <div class="bottom-sheet-overlay">
+        <div class="bottom-sheet">
+          <div class="bottom-sheet-handle"></div>
+          <div class="bottom-sheet-title">🏫 학교 직접 등록</div>
+
+          <div class="inline-banner inline-banner-info">
+            <span class="inline-banner-icon">💡</span>
+            <span>등록 후 바로 가입이 진행돼요.<br>관리자 승인 후 다른 학생도 선택할 수 있어요.</span>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">학교 이름 *</div>
+            <input class="input-field" type="text" placeholder="예: 한라대학교" value="한라대학교" readonly>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">지역 *</div>
+            <select class="select-field">
+              <option>제주특별자치도</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">학과 이름 *</div>
+            <input class="input-field" type="text" placeholder="예: 컴퓨터공학과" readonly>
+          </div>
+
+          <button class="btn-primary" style="margin-top: 8px;">
+            등록하고 계속 진행하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OPTION C ================= -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">C</div>
+    <div class="section-title">검색 리스트 하단 고정 링크</div>
+  </div>
+  <p class="section-desc">
+    검색 결과 유무와 관계없이, 리스트 최하단에 항상 "학교를 찾을 수 없나요?" 링크를 노출.<br>
+    결과가 있어도 정확히 일치하지 않을 때 쉽게 접근 가능.
+  </p>
+  <div class="tag-row">
+    <span class="tag tag-pro">항상 접근 가능</span>
+    <span class="tag tag-pro">비침투적</span>
+    <span class="tag tag-neutral">발견성 보통</span>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-status-bar">9:41</div>
+    <div class="phone-content">
+      <div class="header-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        대학교 선택
+      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+
+      <div class="search-box focused">
+        <input type="text" value="한라" readonly>
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="univ-card">
+        <div class="univ-logo">🎓</div>
+        <div class="univ-info">
+          <div class="univ-name">한라대학교</div>
+          <div class="univ-meta">강원 · 사립</div>
+        </div>
+      </div>
+      <div class="univ-card">
+        <div class="univ-logo">🎓</div>
+        <div class="univ-info">
+          <div class="univ-name">한라산대학교</div>
+          <div class="univ-meta">제주 · 사립</div>
+        </div>
+      </div>
+
+      <div class="divider-with-text">
+        <div class="divider-line"></div>
+        <div class="divider-text">찾으시는 학교가 없나요?</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="btn-secondary">
+        ➕ 우리 학교 직접 등록하기 <span class="badge-new">NEW</span>
+      </button>
+
+      <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.5;">
+        등록된 학교가 없어도 걱정 마세요!<br>
+        직접 등록하면 바로 가입할 수 있어요.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OPTION D ================= -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">D</div>
+    <div class="section-title">풀스크린 2-Step 위자드</div>
+  </div>
+  <p class="section-desc">
+    "직접 등록" 진입 시 별도 풀스크린 플로우로 전환.<br>
+    Step 1: 학교 등록 → Step 2: 학과 등록. 기존 가입 플로우와 동일한 형태.
+  </p>
+  <div class="tag-row">
+    <span class="tag tag-pro">일관된 UX</span>
+    <span class="tag tag-pro">단계별 집중</span>
+    <span class="tag tag-con">추가 화면 필요</span>
+  </div>
+
+  <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+    <!-- Step 1 -->
+    <div class="phone-frame" style="width: 280px;">
+      <div class="phone-status-bar">9:41</div>
+      <div class="phone-content" style="min-height: 480px;">
+        <div class="header-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Step 1/2
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
+
+        <div class="step-title">학교 등록</div>
+        <div class="step-subtitle">재학 중인 학교 정보를 입력해 주세요</div>
+
+        <div class="input-group">
+          <div class="input-label">학교 이름</div>
+          <input class="input-field" type="text" value="한라대학교" readonly>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label">지역 선택</div>
+          <div class="chip-row">
+            <span class="chip">서울</span>
+            <span class="chip">경기</span>
+            <span class="chip">인천</span>
+            <span class="chip">대전</span>
+            <span class="chip">강원</span>
+            <span class="chip selected">제주</span>
+          </div>
+        </div>
+
+        <div style="position: absolute; bottom: 24px; left: 20px; right: 20px;">
+          <button class="btn-primary">다음</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="phone-frame" style="width: 280px;">
+      <div class="phone-status-bar">9:41</div>
+      <div class="phone-content" style="min-height: 480px;">
+        <div class="header-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Step 2/2
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+
+        <div class="step-title">학과 등록</div>
+        <div class="step-subtitle">한라대학교의 학과를 입력해 주세요</div>
+
+        <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--surface-secondary); border-radius: 12px; margin-bottom: 20px;">
+          <span style="font-size: 24px;">🏫</span>
+          <div>
+            <div style="font-size: 15px; font-weight: 600;">한라대학교</div>
+            <div style="font-size: 12px; color: var(--text-muted);">제주특별자치도</div>
+          </div>
+          <span style="margin-left: auto; font-size: 12px; color: #1A7A1A; font-weight: 600;">✓ 등록완료</span>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label">학과 이름</div>
+          <input class="input-field" type="text" placeholder="예: 컴퓨터공학과" value="관광경영학과" readonly>
+        </div>
+
+        <div style="position: absolute; bottom: 24px; left: 20px; right: 20px;">
+          <button class="btn-primary">등록 완료</button>
+        </div>
+
+        <div class="toast toast-success" style="bottom: 90px;">
+          ✅ 학교가 성공적으로 등록되었어요!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OPTION E ================= -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">E</div>
+    <div class="section-title">학과 검색 시 Inline 직접 입력</div>
+  </div>
+  <p class="section-desc">
+    학과 선택 단계에서, BottomSheetPicker 내부에 "직접 입력" 옵션을 추가.<br>
+    학교는 정상 선택됐지만, 학과가 없는 케이스에 대응. 별도 화면 전환 없이 인라인 처리.
+  </p>
+  <div class="tag-row">
+    <span class="tag tag-pro">최소 변경</span>
+    <span class="tag tag-pro">학과 전용</span>
+    <span class="tag tag-neutral">학교 미대응</span>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-status-bar">9:41</div>
+    <div class="phone-content" style="position: relative;">
+      <div class="header-back" style="opacity: 0.3;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        추가 정보 입력
+      </div>
+
+      <div class="bottom-sheet-overlay">
+        <div class="bottom-sheet">
+          <div class="bottom-sheet-handle"></div>
+          <div class="bottom-sheet-title">학과 선택</div>
+
+          <div class="search-box focused" style="margin-bottom: 16px;">
+            <input type="text" value="데이터" readonly>
+            <span class="search-icon">🔍</span>
+          </div>
+
+          <div class="univ-card" style="border-color: var(--brand-primary); background: var(--surface-secondary);">
+            <div style="font-size: 18px;">📊</div>
+            <div class="univ-info">
+              <div class="univ-name">데이터사이언스학과</div>
+            </div>
+            <span style="color: var(--brand-primary); font-weight: 600;">선택</span>
+          </div>
+
+          <div class="univ-card">
+            <div style="font-size: 18px;">💻</div>
+            <div class="univ-info">
+              <div class="univ-name">데이터공학과</div>
+            </div>
+            <span style="color: var(--text-muted);">선택</span>
+          </div>
+
+          <div class="divider-with-text" style="margin: 12px 0;">
+            <div class="divider-line"></div>
+            <div class="divider-text">찾으시는 학과가 없나요?</div>
+            <div class="divider-line"></div>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input class="input-field" type="text" placeholder="학과명을 직접 입력해주세요" style="flex: 1; height: 44px; font-size: 14px;">
+            <button style="height: 44px; padding: 0 16px; border-radius: 10px; background: var(--brand-primary); color: white; border: none; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer;">등록</button>
+          </div>
+
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+            💡 입력한 학과가 바로 등록되며, 관리자 검토 후 정식 반영돼요.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= COMPARISON TABLE ================= -->
+<div style="margin-top: 56px;">
+  <h2 style="text-align: center; font-size: 22px; font-weight: 700; color: var(--brand-deep); margin-bottom: 24px;">
+    시안 비교 평가
+  </h2>
+
+  <table class="comparison">
+    <thead>
+      <tr>
+        <th style="width: 60px;">시안</th>
+        <th>이름</th>
+        <th style="width: 80px;">발견성</th>
+        <th style="width: 80px;">개발비용</th>
+        <th style="width: 80px;">UX 자연도</th>
+        <th style="width: 80px;">대응범위</th>
+        <th style="width: 60px;">추천</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>A</strong></td>
+        <td>Inline Empty State + CTA</td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 90%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">낮음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 85%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 85%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">학교만</div>
+          <div class="score-bar"><div class="score-fill" style="width: 50%;"></div></div>
+        </td>
+        <td class="rank-star">⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong>B</strong></td>
+        <td>Bottom Sheet 통합 폼</td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 90%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">중간</div>
+          <div class="score-bar"><div class="score-fill" style="width: 60%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">중간</div>
+          <div class="score-bar"><div class="score-fill" style="width: 65%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">학교+학과</div>
+          <div class="score-bar"><div class="score-fill" style="width: 90%;"></div></div>
+        </td>
+        <td class="rank-star">⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong>C</strong></td>
+        <td>리스트 하단 고정 링크</td>
+        <td>
+          <div style="font-weight: 600;">중간</div>
+          <div class="score-bar"><div class="score-fill" style="width: 65%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">매우 낮음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 95%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 80%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">학교만</div>
+          <div class="score-bar"><div class="score-fill" style="width: 50%;"></div></div>
+        </td>
+        <td class="rank-star">⭐⭐⭐</td>
+      </tr>
+      <tr style="background: var(--surface-secondary) !important;">
+        <td><strong>D</strong></td>
+        <td>풀스크린 2-Step 위자드</td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 90%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 40%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">매우 높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 95%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">학교+학과</div>
+          <div class="score-bar"><div class="score-fill" style="width: 95%;"></div></div>
+        </td>
+        <td class="rank-star">⭐⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong>E</strong></td>
+        <td>학과 Inline 직접 입력</td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 85%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">낮음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 85%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">높음</div>
+          <div class="score-bar"><div class="score-fill" style="width: 85%;"></div></div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">학과만</div>
+          <div class="score-bar"><div class="score-fill" style="width: 40%;"></div></div>
+        </td>
+        <td class="rank-star">⭐⭐⭐</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="max-width: 700px; margin: 24px auto 0; padding: 20px; background: var(--surface-secondary); border-radius: 16px; border: 1px solid var(--brand-primary);">
+    <div style="font-size: 16px; font-weight: 700; color: var(--brand-deep); margin-bottom: 12px;">
+      💡 추천 조합: A + E 또는 C + E (학교 + 학과 모두 커버)
+    </div>
+    <ul style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; padding-left: 18px;">
+      <li><strong>A + E</strong>: 학교 미검색 시 Empty State CTA(A) + 학과 미검색 시 Inline 입력(E)</li>
+      <li><strong>C + E</strong>: 항상 보이는 리스트 하단 링크(C) + 학과 Inline(E) — 가장 낮은 개발비용</li>
+      <li><strong>D 단독</strong>: 풀스크린 위자드 — 가장 높은 UX 완성도, 다만 개발비용 높음</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

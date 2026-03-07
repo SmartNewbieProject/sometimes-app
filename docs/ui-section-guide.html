@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모먼트 리포트 UI 섹션 가이드</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Wanted Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      background: #F9FAFB;
+      color: #344054;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .hero .subtitle {
+      color: #98A2B3;
+      font-size: 0.95rem;
+    }
+    .hero .badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .hero .badge-pill {
+      background: rgba(122,74,226,0.3);
+      color: #C4ADFF;
+      border: 1px solid rgba(122,74,226,0.5);
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+      align-items: start;
+    }
+
+    /* ── Left: Phone Frame ── */
+    .phone-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .phone-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #667085;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .phone-frame {
+      width: 375px;
+      background: #FAFAFE;
+      border-radius: 44px;
+      border: 2px solid #D0D5DD;
+      box-shadow:
+        0 0 0 6px #F9FAFB,
+        0 0 0 8px #D0D5DD,
+        0 40px 80px -16px rgba(16,24,40,0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Status Bar */
+    .phone-statusbar {
+      background: #FFFFFF;
+      padding: 14px 24px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .statusbar-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1A1A1A;
+    }
+    .statusbar-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .statusbar-icons span {
+      font-size: 11px;
+      color: #1A1A1A;
+    }
+
+    .phone-scroll {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFE 30%, #F2EEFF 75%, #E4DAFF 100%);
+      padding: 0 0 100px;
+      overflow-y: auto;
+      max-height: 780px;
+    }
+
+    /* ── Section wrapper ── */
+    .app-section {
+      position: relative;
+      margin: 0 20px 24px;
+    }
+    .app-section:first-child { margin-top: 0; }
+
+    .section-label-tag {
+      position: absolute;
+      left: -20px;
+      transform: translateX(-100%);
+      top: 50%;
+      transform: translate(-100%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .section-label-tag .label-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #7A4AE2;
+      background: #F9F5FF;
+      border: 1.5px solid #D4C2F5;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .section-label-tag .arrow-line {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .arrow-dash {
+      width: 20px;
+      height: 1.5px;
+      background: #7A4AE2;
+    }
+    .arrow-head {
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #7A4AE2;
+    }
+
+    /* ── Title Award Section (칭호 카드) ── */
+    .title-award-card {
+      background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .title-award-card::before {
+      content: '';
+      position: absolute;
+      width: 120px; height: 120px;
+      border-radius: 60px;
+      background: rgba(255,255,255,0.08);
+      top: -30px; right: -20px;
+    }
+    .title-award-card::after {
+      content: '';
+      position: absolute;
+      width: 80px; height: 80px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.06);
+      bottom: -10px; left: 10px;
+    }
+    .ceremony-text {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-title-text {
+      color: #FFFFFF;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.02em;
+    }
+    .hero-subtitle-text {
+      color: rgba(255,255,255,0.85);
+      font-size: 13px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.5;
+    }
+
+    /* ── Section Title (앱 내부 섹션 제목) ── */
+    .app-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 12px;
+    }
+
+    /* ── Stat Rows (스탯 바) ── */
+    .stats-container {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 4px 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-score-box {
+      width: 48px;
+      flex-shrink: 0;
+    }
+    .stat-score-num {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+      color: #191F28;
+    }
+    .stat-score-num.med { color: #E65100; }
+    .stat-right {
+      flex: 1;
+    }
+    .stat-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .stat-name-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .stat-icon {
+      width: 14px;
+      height: 14px;
+      background: #7A4AE2;
+      border-radius: 3px;
+      opacity: 0.7;
+    }
+    .stat-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333333;
+    }
+    .stat-delta-pos {
+      font-size: 10px;
+      font-weight: 700;
+      color: #00C853;
+    }
+    .stat-bar-bg {
+      height: 5px;
+      background: #E5E7EB;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      height: 5px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #7A4AE2, #C4A8F5);
+    }
+
+    /* ── Radar Chart (레이더 차트) ── */
+    .chart-wrapper {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .radar-svg {
+      display: block;
+    }
+    .radar-legend {
+      margin-top: 14px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .radar-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radar-legend-label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1A1A1A;
+    }
+    .radar-legend-icon {
+      width: 13px;
+      height: 13px;
+      background: #7A4AE2;
+      border-radius: 2px;
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+    .radar-legend-score {
+      font-size: 12px;
+      font-weight: 700;
+      color: #7A4AE2;
+      width: 28px;
+      text-align: right;
+    }
+    .radar-legend-bar-bg {
+      width: 72px;
+      height: 5px;
+      background: #EDE9F8;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .radar-legend-bar-fill {
+      height: 5px;
+      background: #7A4AE2;
+      border-radius: 3px;
+    }
+
+    /* ── Pattern Insights (패턴 인사이트) ── */
+    .pattern-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+    .pattern-tag {
+      background: #F8F5FF;
+      border: 1px solid #D4C2F5;
+      color: #7A4AE2;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+    .quote-block {
+      border-left: 3px solid #7A4AE2;
+      padding-left: 13px;
+    }
+    .quote-text {
+      font-size: 13px;
+      color: #666666;
+      line-height: 1.65;
+    }
+
+    /* ── Story Card (스토리 카드) ── */
+    .story-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .story-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 10px;
+    }
+    .user-quote-chip {
+      display: inline-flex;
+      background: #EDE9F8;
+      border: 1px solid #C4ADFF;
+      border-radius: 20px;
+      padding: 5px 13px;
+      margin-bottom: 10px;
+    }
+    .user-quote-chip span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #7A4AE2;
+    }
+    .story-body-block {
+      background: #F8F5FF;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .story-body-text {
+      font-size: 12px;
+      color: #666666;
+      line-height: 1.6;
+    }
+    .journey-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+    .journey-chip {
+      background: #F8F5FF;
+      padding: 3px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #7A4AE2;
+    }
+    .journey-arrow {
+      font-size: 10px;
+      color: #999;
+      margin: 0 1px;
+    }
+
+    /* ── Growth Journey (성장 힌트) ── */
+    .growth-step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #FFFFFF;
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .growth-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 13px;
+      background: #7A4AE2;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .growth-step-text {
+      font-size: 13px;
+      color: #1A1A1A;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* ── Persona (페르소나 카드) ── */
+    .persona-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .persona-desc {
+      font-size: 13px;
+      color: #666666;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .char-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-bottom: 7px;
+    }
+    .char-check {
+      color: #7A4AE2;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .char-text {
+      font-size: 13px;
+      color: #1A1A1A;
+      line-height: 1.55;
+    }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      position: sticky;
+      bottom: 0;
+      background: transparent;
+      padding: 16px 20px 24px;
+      pointer-events: none;
+    }
+    .cta-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 16px;
+      border: none;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(122,74,226,0.45);
+      display: block;
+    }
+
+    /* ── Right: Legend + Reference ── */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .legend-card {
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.08);
+    }
+    .legend-header {
+      background: #F9F5FF;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #E4E7EC;
+    }
+    .legend-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .legend-header h2 .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7A4AE2;
+      display: inline-block;
+    }
+    .legend-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .legend-table th {
+      background: #F9FAFB;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #667085;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #E4E7EC;
+    }
+    .legend-table td {
+      padding: 0.8rem 1rem;
+      font-size: 0.88rem;
+      color: #344054;
+      border-top: 1px solid #F2F4F7;
+      vertical-align: top;
+    }
+    .legend-table tr:hover td { background: #FAFAFA; }
+    .section-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #7A4AE2;
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .num-cell { width: 36px; }
+    .nick-cell { font-weight: 700; color: #1A1A1A; }
+    .comp-cell {
+      font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+      font-size: 0.78rem;
+      color: #6941C6;
+      background: #F9F5FF;
+      padding: 2px 6px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .screen-cell { color: #667085; font-size: 0.82rem; }
+
+    /* Section detail cards */
+    .section-detail-card {
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+      border-left: 4px solid #7A4AE2;
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.06);
+    }
+    .section-detail-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-detail-card p {
+      font-size: 0.85rem;
+      color: #667085;
+      line-height: 1.6;
+      margin-bottom: 0.6rem;
+    }
+    .detail-props {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .prop-chip {
+      background: #F2F4F7;
+      color: #344054;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .prop-chip.purple { background: #F9F5FF; color: #6941C6; }
+    .prop-chip.green { background: #ECFDF3; color: #027A48; }
+    .prop-chip.orange { background: #FFFAEB; color: #B54708; }
+
+    /* Annotations box */
+    .annotations-card {
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.08);
+    }
+    .annotations-card .legend-header {
+      background: #F9FAFB;
+    }
+    .annotations-card .legend-header h2 .dot {
+      background: #12B76A;
+    }
+    .note-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.8rem 1.25rem;
+      border-top: 1px solid #F2F4F7;
+    }
+    .note-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .note-body .note-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 2px;
+    }
+    .note-body .note-desc {
+      font-size: 0.82rem;
+      color: #667085;
+      line-height: 1.5;
+    }
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      background: #F2F4F7;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      color: #344054;
+    }
+
+    /* Section divider labels inside phone */
+    .phone-section-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px;
+      margin-bottom: 8px;
+    }
+    .divider-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: #7A4AE2;
+      background: #F9F5FF;
+      border: 1px solid #D4C2F5;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .divider-name {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #7A4AE2;
+      white-space: nowrap;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #D4C2F5, transparent);
+    }
+
+    @media (max-width: 1100px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+      }
+      .phone-col {
+        position: relative;
+        top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Header -->
+  <div class="hero">
+    <h1>모먼트 리포트 UI 섹션 가이드</h1>
+    <p class="subtitle">2026-03-05 · Sometimes App · 온보딩 결과 & 주간 리포트 Narrative Mode</p>
+    <div class="badges">
+      <span class="badge-pill">narrative-report-components.tsx</span>
+      <span class="badge-pill">onboarding-result.tsx</span>
+      <span class="badge-pill">weekly-report-page.tsx</span>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="page-layout">
+
+    <!-- Left: Phone Preview -->
+    <div class="phone-col">
+      <div class="phone-label">실제 화면 목업 (375px)</div>
+
+      <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="phone-statusbar">
+          <span class="statusbar-time">9:41</span>
+          <div class="statusbar-icons">
+            <span>●●●</span>
+            <span>WiFi</span>
+            <span>🔋</span>
+          </div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="phone-scroll">
+
+          <!-- ① 칭호 카드 -->
+          <div style="padding: 20px 20px 0;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">1</div>
+              <div class="divider-name">칭호 카드</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="title-award-card">
+                <div class="ceremony-text">당신의 연애 유형을 발견했어요</div>
+                <div class="hero-title-text">감성 탐험가</div>
+                <div class="hero-subtitle-text">호기심 가득한 눈으로 상대를 바라보며<br>따뜻하게 이어가는 사람</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ② 스탯 바 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">2</div>
+              <div class="divider-name">스탯 바</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">나의 연애 성향</div>
+              <div class="stats-container">
+                <!-- Row 1 -->
+                <div class="stat-row">
+                  <div class="stat-score-box">
+                    <div class="stat-score-num">78</div>
+                  </div>
+                  <div class="stat-right">
+                    <div class="stat-name-row">
+                      <div class="stat-name-left">
+                        <div class="stat-icon" style="border-radius: 50%;"></div>
+                        <span class="stat-name">외향성</span>
+                      </div>
+                      <span class="stat-delta-pos">▲ +5</span>
+                    </div>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar-fill" style="width: 78%;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Row 2 -->
+                <div class="stat-row">
+                  <div class="stat-score-box">
+                    <div class="stat-score-num">85</div>
+                  </div>
+                  <div class="stat-right">
+                    <div class="stat-name-row">
+                      <div class="stat-name-left">
+                        <div class="stat-icon" style="border-radius: 2px;"></div>
+                        <span class="stat-name">개방성</span>
+                      </div>
+                      <span class="stat-delta-pos">▲ +3</span>
+                    </div>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar-fill" style="width: 85%;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Row 3 -->
+                <div class="stat-row">
+                  <div class="stat-score-box">
+                    <div class="stat-score-num med">62</div>
+                  </div>
+                  <div class="stat-right">
+                    <div class="stat-name-row">
+                      <div class="stat-name-left">
+                        <div class="stat-icon" style="background: #E65100; border-radius: 50%;"></div>
+                        <span class="stat-name">성실성</span>
+                      </div>
+                    </div>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar-fill" style="width: 62%;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Row 4 -->
+                <div class="stat-row">
+                  <div class="stat-score-box">
+                    <div class="stat-score-num">91</div>
+                  </div>
+                  <div class="stat-right">
+                    <div class="stat-name-row">
+                      <div class="stat-name-left">
+                        <div class="stat-icon" style="background: #E91E63; border-radius: 50%;"></div>
+                        <span class="stat-name">친화성</span>
+                      </div>
+                      <span class="stat-delta-pos">▲ +8</span>
+                    </div>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar-fill" style="width: 91%;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Row 5 -->
+                <div class="stat-row">
+                  <div class="stat-score-box">
+                    <div class="stat-score-num">73</div>
+                  </div>
+                  <div class="stat-right">
+                    <div class="stat-name-row">
+                      <div class="stat-name-left">
+                        <div class="stat-icon" style="background: #2196F3; border-radius: 4px;"></div>
+                        <span class="stat-name">정서적 안정</span>
+                      </div>
+                    </div>
+                    <div class="stat-bar-bg">
+                      <div class="stat-bar-fill" style="width: 73%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ③ 레이더 차트 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">3</div>
+              <div class="divider-name">레이더 차트</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">성향 전체 지도</div>
+              <div class="chart-wrapper">
+                <!-- SVG Radar Chart -->
+                <svg class="radar-svg" width="240" height="240" viewBox="0 0 240 240">
+                  <!-- Grid pentagons -->
+                  <polygon points="120,60 168,89 152,143 88,143 72,89" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <polygon points="120,76 158,99 145,137 95,137 82,99" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <polygon points="120,92 148,109 138,131 102,131 92,109" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <polygon points="120,108 138,119 131,125 109,125 102,119" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <!-- Axis lines -->
+                  <line x1="120" y1="120" x2="120" y2="60" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="120" y1="120" x2="168" y2="89" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="120" y1="120" x2="152" y2="143" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="120" y1="120" x2="88" y2="143" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="120" y1="120" x2="72" y2="89" stroke="#E5E5E5" stroke-width="1"/>
+                  <!-- Data polygon (78%, 85%, 62%, 91%, 73%) -->
+                  <polygon
+                    points="120,72 161,95 143,138 93,140 80,94"
+                    fill="rgba(122,74,226,0.2)"
+                    stroke="#7A4AE2"
+                    stroke-width="2"
+                  />
+                  <!-- Data dots -->
+                  <circle cx="120" cy="72" r="4" fill="#7A4AE2"/>
+                  <circle cx="161" cy="95" r="4" fill="#7A4AE2"/>
+                  <circle cx="143" cy="138" r="4" fill="#7A4AE2"/>
+                  <circle cx="93" cy="140" r="4" fill="#7A4AE2"/>
+                  <circle cx="80" cy="94" r="4" fill="#7A4AE2"/>
+                  <!-- Labels -->
+                  <text x="120" y="52" font-size="11" fill="#666666" text-anchor="middle">외향성</text>
+                  <text x="178" y="90" font-size="11" fill="#666666" text-anchor="start">개방성</text>
+                  <text x="162" y="155" font-size="11" fill="#666666" text-anchor="middle">성실성</text>
+                  <text x="78" y="155" font-size="11" fill="#666666" text-anchor="middle">친화성</text>
+                  <text x="60" y="90" font-size="11" fill="#666666" text-anchor="end">정서적 안정</text>
+                </svg>
+                <!-- Legend -->
+                <div class="radar-legend">
+                  <div class="radar-legend-row">
+                    <div class="radar-legend-label"><div class="radar-legend-icon" style="border-radius:50%"></div>외향성</div>
+                    <span class="radar-legend-score">78</span>
+                    <div class="radar-legend-bar-bg"><div class="radar-legend-bar-fill" style="width:78%"></div></div>
+                  </div>
+                  <div class="radar-legend-row">
+                    <div class="radar-legend-label"><div class="radar-legend-icon" style="border-radius:2px"></div>개방성</div>
+                    <span class="radar-legend-score">85</span>
+                    <div class="radar-legend-bar-bg"><div class="radar-legend-bar-fill" style="width:85%"></div></div>
+                  </div>
+                  <div class="radar-legend-row">
+                    <div class="radar-legend-label"><div class="radar-legend-icon" style="background:#E65100"></div>성실성</div>
+                    <span class="radar-legend-score">62</span>
+                    <div class="radar-legend-bar-bg"><div class="radar-legend-bar-fill" style="width:62%"></div></div>
+                  </div>
+                  <div class="radar-legend-row">
+                    <div class="radar-legend-label"><div class="radar-legend-icon" style="background:#E91E63;border-radius:50%"></div>친화성</div>
+                    <span class="radar-legend-score">91</span>
+                    <div class="radar-legend-bar-bg"><div class="radar-legend-bar-fill" style="width:91%"></div></div>
+                  </div>
+                  <div class="radar-legend-row">
+                    <div class="radar-legend-label"><div class="radar-legend-icon" style="background:#2196F3;border-radius:4px"></div>정서적 안정</div>
+                    <span class="radar-legend-score">73</span>
+                    <div class="radar-legend-bar-bg"><div class="radar-legend-bar-fill" style="width:73%"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ④ 패턴 인사이트 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">4</div>
+              <div class="divider-name">패턴 인사이트</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">내가 가진 연애 패턴</div>
+              <div class="pattern-tags-row">
+                <div class="pattern-tag"># 공감 우선형</div>
+                <div class="pattern-tag"># 감정 표현 솔직</div>
+                <div class="pattern-tag"># 장기 연애 선호</div>
+                <div class="pattern-tag"># 배려형 리더</div>
+              </div>
+              <div class="quote-block">
+                <p class="quote-text">
+                  상대의 감정을 먼저 헤아리는 당신은 관계에서 안정감을 주는 존재예요. 처음엔 천천히 마음을 열지만, 신뢰가 쌓이면 깊고 진한 연결을 만들어갑니다.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ⑤ 스토리 카드 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">5</div>
+              <div class="divider-name">스토리 카드</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">답변으로 보는 나</div>
+              <!-- Card 1 -->
+              <div class="story-card">
+                <div class="story-card-title">첫인상과 연결의 방식</div>
+                <div class="user-quote-chip">
+                  <span>"처음 만날 때 늘 설레고 떨려요"</span>
+                </div>
+                <div class="story-body-block">
+                  <p class="story-body-text">
+                    새로운 만남 앞에서 두근거림을 느끼는 당신은, 그 감정을 억누르기보다 솔직하게 표현하는 편입니다. 이런 진솔함이 상대에게 신뢰감을 줍니다.
+                  </p>
+                </div>
+                <div class="journey-row">
+                  <div class="journey-chip">설렘</div>
+                  <span class="journey-arrow">→</span>
+                  <div class="journey-chip">솔직 표현</div>
+                  <span class="journey-arrow">→</span>
+                  <div class="journey-chip">깊은 신뢰</div>
+                </div>
+              </div>
+              <!-- Card 2 -->
+              <div class="story-card">
+                <div class="story-card-title">갈등 해결 방식</div>
+                <div class="user-quote-chip">
+                  <span>"대화로 풀 수 있다고 믿어요"</span>
+                </div>
+                <div class="story-body-block">
+                  <p class="story-body-text">
+                    갈등을 회피하기보다 대화를 통해 해결하려는 성향은 관계의 지속성을 높여줍니다.
+                  </p>
+                </div>
+                <div class="journey-row">
+                  <div class="journey-chip">갈등 인식</div>
+                  <span class="journey-arrow">→</span>
+                  <div class="journey-chip">솔직 대화</div>
+                  <span class="journey-arrow">→</span>
+                  <div class="journey-chip">관계 성장</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ⑥ 성장 힌트 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">6</div>
+              <div class="divider-name">성장 힌트</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">앞으로의 성장 힌트</div>
+              <div class="growth-step-card">
+                <div class="growth-badge">1</div>
+                <p class="growth-step-text">상대의 말을 들을 때, 조언보다 공감을 먼저 건네는 연습을 해보세요.</p>
+              </div>
+              <div class="growth-step-card">
+                <div class="growth-badge">2</div>
+                <p class="growth-step-text">자신의 필요를 표현하는 것도 관계를 위한 용기임을 기억하세요.</p>
+              </div>
+              <div class="growth-step-card">
+                <div class="growth-badge">3</div>
+                <p class="growth-step-text">작은 일상을 공유하는 습관이 장기적인 친밀감의 기반이 됩니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ⑦ 페르소나 카드 -->
+          <div style="padding: 0 20px;">
+            <div class="phone-section-divider" style="padding: 0; margin-bottom: 10px;">
+              <div class="divider-num">7</div>
+              <div class="divider-name">페르소나 카드</div>
+              <div class="divider-line"></div>
+            </div>
+            <div class="app-section" style="margin: 0 0 24px;">
+              <div class="app-section-title">나의 페르소나</div>
+              <div class="persona-card">
+                <p class="persona-desc">
+                  감성 탐험가형인 당신은 관계에서 깊이와 진정성을 추구합니다. 표면적인 대화보다는 상대의 내면에 닿는 연결을 원하며, 그 과정에서 자신도 성장합니다.
+                </p>
+                <div class="char-item">
+                  <span class="char-check">✓</span>
+                  <span class="char-text">처음에는 조심스럽지만, 신뢰가 쌓이면 완전히 열려요</span>
+                </div>
+                <div class="char-item">
+                  <span class="char-check">✓</span>
+                  <span class="char-text">상대의 감정 변화를 민감하게 알아채는 편이에요</span>
+                </div>
+                <div class="char-item">
+                  <span class="char-check">✓</span>
+                  <span class="char-text">일상의 작은 것들에서 특별한 의미를 찾아요</span>
+                </div>
+                <div class="char-item">
+                  <span class="char-check">✓</span>
+                  <span class="char-text">장기적이고 깊은 관계를 선호해요</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Spacer for CTA -->
+          <div style="height: 16px;"></div>
+
+        </div>
+        <!-- END phone-scroll -->
+
+        <!-- Bottom CTA -->
+        <div class="bottom-cta">
+          <div class="cta-btn">인연 만나러 가기</div>
+        </div>
+
+      </div>
+      <!-- END phone-frame -->
+
+      <div class="phone-label" style="margin-top: 0.5rem;">
+        온보딩 결과 + 주간 리포트 Narrative 모드 공유
+      </div>
+    </div>
+    <!-- END phone-col -->
+
+
+    <!-- Right: Legend + Details -->
+    <div class="right-col">
+
+      <!-- Legend Table -->
+      <div class="legend-card">
+        <div class="legend-header">
+          <h2><span class="dot"></span> 섹션 레퍼런스 테이블</h2>
+        </div>
+        <table class="legend-table">
+          <thead>
+            <tr>
+              <th class="num-cell">#</th>
+              <th>호칭</th>
+              <th>컴포넌트</th>
+              <th>화면 제목</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="section-num">1</span></td>
+              <td class="nick-cell">칭호 카드</td>
+              <td><span class="comp-cell">TitleAwardSection</span></td>
+              <td class="screen-cell">—</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">2</span></td>
+              <td class="nick-cell">스탯 바</td>
+              <td><span class="comp-cell">AnimatedStatRow</span></td>
+              <td class="screen-cell">나의 연애 성향</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">3</span></td>
+              <td class="nick-cell">레이더 차트</td>
+              <td><span class="comp-cell">RadarChart</span></td>
+              <td class="screen-cell">성향 전체 지도</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">4</span></td>
+              <td class="nick-cell">패턴 인사이트</td>
+              <td><span class="comp-cell">IntegratedInsightsSection</span></td>
+              <td class="screen-cell">내가 가진 연애 패턴</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">5</span></td>
+              <td class="nick-cell">스토리 카드</td>
+              <td><span class="comp-cell">StoryCard</span></td>
+              <td class="screen-cell">답변으로 보는 나</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">6</span></td>
+              <td class="nick-cell">성장 힌트</td>
+              <td><span class="comp-cell">GrowthJourneySection</span></td>
+              <td class="screen-cell">앞으로의 성장 힌트</td>
+            </tr>
+            <tr>
+              <td><span class="section-num">7</span></td>
+              <td class="nick-cell">페르소나 카드</td>
+              <td><span class="comp-cell">PersonaNarrativeSection</span></td>
+              <td class="screen-cell">나의 페르소나</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section Detail Cards -->
+      <div class="section-detail-card">
+        <h3><span class="section-num">1</span> 칭호 카드 · <code>TitleAwardSection</code></h3>
+        <p>보라 그라디언트 배경에 큰 칭호 텍스트와 부제목을 표시. 우상단·좌하단에 반투명 장식 원형 포함. 항상 화면 최상단에 위치.</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: ceremonyText</span>
+          <span class="prop-chip purple">title</span>
+          <span class="prop-chip purple">subTitle</span>
+          <span class="prop-chip">LinearGradient #7A4AE2→#5B35C0</span>
+          <span class="prop-chip">borderRadius 20px</span>
+          <span class="prop-chip">장식 원형 2개</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">2</span> 스탯 바 · <code>AnimatedStatRow × 5</code></h3>
+        <p>5개 성향(외향성·개방성·성실성·친화성·정서적 안정)을 세로 목록으로 표시. 각 행은 큰 숫자(36px 900weight) + 아이콘 + 이름 + 그라디언트 바. 진입 시 순차 슬라이드-인 애니메이션(index × 120ms 딜레이).</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: category, score, change, label, index</span>
+          <span class="prop-chip green">애니메이션: withDelay + withTiming</span>
+          <span class="prop-chip">바 그라디언트 #7A4AE2→#C4A8F5</span>
+          <span class="prop-chip orange">score ≥70 검정, ≥50 주황, 미만 빨강</span>
+          <span class="prop-chip">흰 컨테이너 borderRadius 16px</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">3</span> 레이더 차트 · <code>RadarChart</code></h3>
+        <p>오각형 방사형 SVG 차트. 5개 성향을 꼭짓점으로 배치하며 격자선 5단계(20/40/60/80/100). 데이터 폴리곤은 보라 색상으로 채우고 꼭짓점에 원형 점 표시. 차트 하단에 <code>RadarLegend</code>로 수치 바 표시.</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: radarData (RadarDataItem[])</span>
+          <span class="prop-chip">채움 rgba(122,74,226,0.2)</span>
+          <span class="prop-chip">격자 #E5E5E5</span>
+          <span class="prop-chip">흰 카드 래퍼 borderRadius 20px</span>
+          <span class="prop-chip">주간 리포트: 이전 주 점선(#A0A0A0) 추가</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">4</span> 패턴 인사이트 · <code>IntegratedInsightsSection</code></h3>
+        <p>두 요소로 구성. 위: 태그 칩 행(keyPatterns 배열). 아래: 왼쪽 보라(3px) 테두리 인용구 블록(content 텍스트). 칩은 옅은 보라 배경에 보라 텍스트.</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: keyPatterns[], content</span>
+          <span class="prop-chip">태그 배경 #F8F5FF, 테두리 #D4C2F5</span>
+          <span class="prop-chip">인용 블록 borderLeft 3px #7A4AE2</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">5</span> 스토리 카드 · <code>StoryCard × N</code></h3>
+        <p>N개의 카드 반복. 각 카드: 제목 → 인용 칩(보라 둥근 태그, userQuote.highlight) → 스토리 텍스트 블록(옅은 보라 배경) → 감정 여정 화살표(chip → chip). 흰 카드, 가벼운 그림자.</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: title, userQuote, userStory, emotionalJourney[], whatThisTellsUs</span>
+          <span class="prop-chip">인용 칩 배경 #EDE9F8, 테두리 #C4ADFF</span>
+          <span class="prop-chip">본문 블록 #F8F5FF borderRadius 10px</span>
+          <span class="prop-chip">여정 칩 borderRadius 12px</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">6</span> 성장 힌트 · <code>GrowthJourneySection</code></h3>
+        <p>nextSteps 배열의 각 항목을 카드로 표시. 왼쪽에 번호 배지(보라 원, 흰 숫자), 오른쪽에 텍스트. 흰 카드 + 가벼운 그림자. 하단에 선택적 suggestion 텍스트(회색 이탤릭).</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: nextSteps[], suggestion?</span>
+          <span class="prop-chip">배지 28×28 borderRadius 14 #7A4AE2</span>
+          <span class="prop-chip">카드 borderRadius 14px</span>
+        </div>
+      </div>
+
+      <div class="section-detail-card">
+        <h3><span class="section-num">7</span> 페르소나 카드 · <code>PersonaNarrativeSection</code></h3>
+        <p>단일 흰 카드. 상단 description 텍스트(회색, 줄높이 24px) 이후 characteristics 배열을 체크리스트로 표시. 체크 아이콘(✓)은 보라색, 텍스트는 검정.</p>
+        <div class="detail-props">
+          <span class="prop-chip purple">props: description?, characteristics[]</span>
+          <span class="prop-chip">체크 ✓ 색상 #7A4AE2</span>
+          <span class="prop-chip">카드 borderRadius 16px</span>
+          <span class="prop-chip">항목 간격 gap 8px</span>
+        </div>
+      </div>
+
+      <!-- Notes / Annotations -->
+      <div class="annotations-card">
+        <div class="legend-header">
+          <h2><span class="dot" style="background:#12B76A;"></span> 개발 참고 사항</h2>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">📁</span>
+          <div class="note-body">
+            <div class="note-title">공유 컴포넌트 위치</div>
+            <div class="note-desc">7개 섹션 컴포넌트 모두 <code>src/features/moment/ui/shared/narrative-report-components.tsx</code> 한 파일에 정의됨. 온보딩 결과와 주간 리포트 양쪽에서 import.</div>
+          </div>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">🔀</span>
+          <div class="note-body">
+            <div class="note-title">Narrative 모드 분기</div>
+            <div class="note-desc">주간 리포트(<code>weekly-report-page.tsx</code>)는 <code>report.reportType === 'narrative'</code> 조건으로 분기. Legacy 모드는 별도 UI 사용.</div>
+          </div>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">🎨</span>
+          <div class="note-body">
+            <div class="note-title">배경 그라디언트</div>
+            <div class="note-desc">페이지 전체 배경: <code>LinearGradient</code> #FFFFFF → #FAFAFE → #F2EEFF → #E4DAFF (absolute fill). 카드들은 불투명 흰 배경으로 구분.</div>
+          </div>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">✨</span>
+          <div class="note-body">
+            <div class="note-title">스탯 바 애니메이션</div>
+            <div class="note-desc"><code>AnimatedStatRow</code>는 <code>react-native-reanimated</code>의 <code>withDelay + withTiming</code> 사용. index × 120ms 순차 딜레이, 상하 슬라이드 + 페이드인.</div>
+          </div>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">🌐</span>
+          <div class="note-body">
+            <div class="note-title">i18n 섹션 제목 키</div>
+            <div class="note-desc">
+              스탯: <code>result.statsTitle</code> ("나의 연애 성향")<br>
+              레이더: <code>result.radarChartTitle</code> ("성향 전체 지도")<br>
+              패턴: <code>result.patternsTitle</code> ("내가 가진 연애 패턴")<br>
+              스토리: <code>result.storyTitle</code> ("답변으로 보는 나")<br>
+              성장: <code>result.growthTitle</code> ("앞으로의 성장 힌트")<br>
+              페르소나: <code>result.personaTitle</code> ("나의 페르소나")
+            </div>
+          </div>
+        </div>
+        <div class="note-row">
+          <span class="note-icon">📊</span>
+          <div class="note-body">
+            <div class="note-title">성향 5가지 순서 (고정)</div>
+            <div class="note-desc"><code>DIMENSION_ORDER</code> 상수: extraversion → openness → conscientiousness → agreeableness → neuroticism. 순서 변경 시 이 상수 수정.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- END right-col -->
+
+  </div>
+  <!-- END page-layout -->
+
+</body>
+</html>

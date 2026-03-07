@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모먼트 리포트 화면 병합 분석</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Wanted Sans', 'Wanted Sans Variable', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      background: #FFFFFF;
+      color: #344054;
+      padding: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+      border-radius: 0 0 24px 24px;
+      padding: 3.5rem 3rem 3rem;
+      margin: 0 -0.01px 2.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .hero .subtitle {
+      color: #98A2B3;
+      font-size: 1.05rem;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+    .hero .badge-row {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .hero .badge {
+      background: rgba(122,74,226,0.25);
+      border: 1px solid rgba(122,74,226,0.5);
+      color: #C4A8F5;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+    }
+
+    .content { padding: 0 2.5rem 3rem; }
+
+    .stats { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.35rem 1.75rem; text-align: center; min-width: 148px; flex: 1; max-width: 220px;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .stat-card .num { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; color: #101828; }
+    .stat-card .label { font-size: 0.9rem; color: #667085; margin-top: 0.3rem; font-weight: 500; }
+    .stat-card.blue   .num { color: #2E90FA; }
+    .stat-card.green  .num { color: #12B76A; }
+    .stat-card.purple .num { color: #7A4AE2; }
+    .stat-card.orange .num { color: #F79009; }
+    .stat-card.red    .num { color: #F04438; }
+    .stat-card.cyan   .num { color: #0BA5EC; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-size: 1.35rem; font-weight: 700; margin-bottom: 1.15rem; color: #101828;
+      padding-bottom: 0.65rem; border-bottom: 2px solid #F2F4F7; letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section h2 .accent {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: #7A4AE2; flex-shrink: 0;
+    }
+    .section h2.green  .accent { background: #12B76A; }
+    .section h2.blue   .accent { background: #2E90FA; }
+    .section h2.purple .accent { background: #7A4AE2; }
+    .section h2.orange .accent { background: #F79009; }
+    .section h2.red    .accent { background: #F04438; }
+    .section h2.cyan   .accent { background: #0BA5EC; }
+
+    /* ── 비교 테이블 */
+    .compare-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .compare-table th {
+      background: #F9FAFB; padding: 0.9rem 1.25rem; text-align: left;
+      font-size: 0.85rem; font-weight: 600; color: #667085;
+      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #E4E7EC;
+    }
+    .compare-table th.center { text-align: center; }
+    .compare-table td { padding: 0.85rem 1.25rem; font-size: 0.93rem; color: #344054; border-top: 1px solid #F2F4F7; vertical-align: middle; }
+    .compare-table td.center { text-align: center; }
+    .compare-table tr:hover td { background: #FAFAFA; }
+    .compare-table .group-header td {
+      background: #F3EEFF; color: #6941C6; font-weight: 700; font-size: 0.82rem;
+      text-transform: uppercase; letter-spacing: 0.06em; border-top-color: #E4E7EC;
+      padding: 0.55rem 1.25rem;
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.78rem; font-weight: 600; padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+    }
+    .chip.yes    { background: #ECFDF3; color: #027A48; }
+    .chip.no     { background: #F9FAFB; color: #98A2B3; }
+    .chip.partial{ background: #FFFAEB; color: #B54708; }
+    .chip.new    { background: #EFF8FF; color: #175CD3; }
+
+    /* ── 장점 매트릭스 */
+    .advantage-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+    .advantage-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .advantage-card .card-header {
+      display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem;
+      padding-bottom: 0.75rem; border-bottom: 1px solid #F2F4F7;
+    }
+    .advantage-card .card-header .source-badge {
+      font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;
+    }
+    .source-onboarding { background: #F3EEFF; color: #6941C6; }
+    .source-weekly     { background: #EFF8FF; color: #175CD3; }
+    .source-merged     { background: #ECFDF3; color: #027A48; }
+    .advantage-card .card-title { font-size: 1.05rem; font-weight: 700; color: #101828; }
+    .advantage-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+    .advantage-list li {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 0.93rem; color: #344054; line-height: 1.5;
+    }
+    .advantage-list li .dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;
+    }
+    .dot-purple { background: #7A4AE2; }
+    .dot-blue   { background: #2E90FA; }
+    .dot-green  { background: #12B76A; }
+
+    /* ── 병합 설계도 */
+    .design-layout {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;
+      align-items: start;
+    }
+    .screen-column {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1);
+    }
+    .screen-column .col-header {
+      padding: 0.85rem 1.1rem; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.01em; text-align: center;
+    }
+    .col-header.onboarding { background: #F3EEFF; color: #6941C6; border-bottom: 2px solid #B692F6; }
+    .col-header.weekly     { background: #EFF8FF; color: #175CD3; border-bottom: 2px solid #84CAFF; }
+    .col-header.merged     { background: #ECFDF3; color: #027A48; border-bottom: 2px solid #6CE9A6; }
+    .screen-section-list { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .ss-item {
+      padding: 0.65rem 0.9rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+      display: flex; justify-content: space-between; align-items: center; gap: 0.4rem;
+    }
+    .ss-item.from-onboarding { background: #FAF5FF; color: #6941C6; border: 1px solid #E9D7FE; }
+    .ss-item.from-weekly     { background: #EFF8FF; color: #175CD3; border: 1px solid #B2DDFF; }
+    .ss-item.from-both       { background: #ECFDF3; color: #027A48; border: 1px solid #A9EFC5; }
+    .ss-item.from-new        { background: #FFFAEB; color: #B54708; border: 1px dashed #FEC84B; }
+    .ss-item.disabled        { background: #F9FAFB; color: #98A2B3; border: 1px solid #E4E7EC; }
+    .ss-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .ss-badge.ob { background: #B692F6; color: #fff; }
+    .ss-badge.wk { background: #84CAFF; color: #fff; }
+    .ss-badge.both { background: #32D583; color: #fff; }
+    .ss-badge.new  { background: #FEC84B; color: #7A3600; }
+    .ss-badge.del  { background: #FECDCA; color: #B42318; }
+    .design-arrow {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: #D0D5DD; padding-top: 3rem;
+    }
+
+    /* ── 구현 우선순위 */
+    .priority-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+    .priority-item {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.15rem 1.35rem; display: flex; align-items: flex-start; gap: 1rem;
+      box-shadow: 0 1px 2px rgba(16,24,40,0.05); transition: all 0.2s ease;
+    }
+    .priority-item:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1); transform: translateY(-1px); }
+    .priority-item .p-num {
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 0.85rem; font-weight: 800; flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .p-num.p1 { background: #FEF3F2; color: #B42318; }
+    .p-num.p2 { background: #FFFAEB; color: #B54708; }
+    .p-num.p3 { background: #EFF8FF; color: #175CD3; }
+    .p-num.p4 { background: #F9FAFB; color: #667085; }
+    .priority-item .p-content { flex: 1; }
+    .priority-item .p-title { font-size: 1rem; font-weight: 700; color: #101828; margin-bottom: 0.3rem; }
+    .priority-item .p-desc { font-size: 0.9rem; color: #667085; line-height: 1.55; }
+    .priority-item .p-meta {
+      display: flex; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap;
+    }
+    .p-tag {
+      font-size: 0.75rem; font-weight: 600; padding: 0.18rem 0.6rem; border-radius: 999px;
+    }
+    .p-tag.impact-high   { background: #ECFDF3; color: #027A48; }
+    .p-tag.impact-mid    { background: #FFFAEB; color: #B54708; }
+    .p-tag.impact-low    { background: #F9FAFB; color: #667085; }
+    .p-tag.effort-low    { background: #EFF8FF; color: #175CD3; }
+    .p-tag.effort-mid    { background: #F9F5FF; color: #6941C6; }
+    .p-tag.effort-high   { background: #FEF3F2; color: #B42318; }
+    .p-tag.type-refactor { background: #F3EEFF; color: #6941C6; }
+    .p-tag.type-feat     { background: #ECFDF3; color: #027A48; }
+    .p-tag.type-fix      { background: #FFFAEB; color: #B54708; }
+
+    /* ── Before/After 모바일 목업 */
+    .mockup-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: start;
+    }
+    .mockup-wrapper { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+    .mockup-label {
+      font-size: 0.85rem; font-weight: 700; color: #344054; text-align: center;
+    }
+    .mockup-sublabel {
+      font-size: 0.78rem; color: #98A2B3; text-align: center; margin-top: -0.4rem;
+    }
+    .phone {
+      width: 220px; border: 2px solid #1D2939; border-radius: 32px;
+      overflow: hidden; box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+      font-size: 0; line-height: 0;
+      background: #fff;
+    }
+    .phone-inner {
+      font-size: 10px; line-height: 1.4; font-family: 'Wanted Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* 상태바 */
+    .status-bar {
+      height: 20px; background: #101828;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px;
+    }
+    .status-bar span { color: #fff; font-size: 8px; font-weight: 600; }
+    /* 온보딩 헤더 */
+    .mock-grad-bg {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F5F1FF 45%, #DECEFF 78%, #B095E0 100%);
+      min-height: 520px;
+      padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .mock-char-header {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 8px 0 4px;
+    }
+    .mock-char-img {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1.5px solid #7A4AE2;
+      background: linear-gradient(135deg, #C4A8F5, #7A4AE2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: white; font-weight: bold;
+    }
+    .mock-char-title {
+      font-size: 9px; font-weight: 700; color: #7A4AE2; text-align: center;
+    }
+    .mock-date-badge {
+      background: #F8F5FF; border-radius: 8px; padding: 2px 8px;
+      font-size: 8px; color: #7A4AE2; font-weight: 600; text-align: center;
+      align-self: center;
+    }
+    /* 헤더 (weekly) */
+    .mock-compact-header {
+      background: #fff; border-bottom: 1px solid #EDE9F8;
+      padding: 8px 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mock-back-btn {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #F3EEFF; display: flex; align-items: center; justify-content: center;
+      font-size: 8px; color: #7A4AE2;
+    }
+    .mock-header-avatar {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 1px solid #7A4AE2;
+      background: linear-gradient(135deg, #C4A8F5, #7A4AE2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; color: white; font-weight: bold;
+    }
+    .mock-header-text { flex: 1; }
+    .mock-header-title { font-size: 9px; font-weight: 700; color: #101828; }
+    .mock-header-week { font-size: 7px; color: #7A4AE2; font-weight: 600; }
+    .mock-header-badge {
+      background: #F8F5FF; border: 1px solid #D4C2F5; border-radius: 5px;
+      padding: 2px 5px; font-size: 7px; color: #7A4AE2; font-weight: 700;
+    }
+    /* 공통 섹션 블록 */
+    .mock-section { margin-bottom: 6px; }
+    .mock-section-title { font-size: 8px; font-weight: 700; color: #101828; margin-bottom: 4px; }
+    /* 칭호 히어로 카드 */
+    .mock-title-card {
+      background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+      border-radius: 10px; padding: 10px 10px 8px;
+      margin-bottom: 6px;
+    }
+    .mock-ceremony { font-size: 7px; color: rgba(255,255,255,0.65); margin-bottom: 2px; }
+    .mock-big-title { font-size: 11px; font-weight: 800; color: #fff; line-height: 1.3; }
+    .mock-sub-title { font-size: 7px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+    /* CircularProgress 그리드 */
+    .mock-circular-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 4px;
+    }
+    .mock-circ-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .mock-circ {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid #7A4AE2; background: #F3EEFF;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 7px; font-weight: 800; color: #7A4AE2;
+    }
+    .mock-circ-label { font-size: 6px; color: #667085; text-align: center; }
+    /* AnimatedStatRow */
+    .mock-stat-row {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .mock-stat-num { font-size: 13px; font-weight: 900; color: #101828; width: 24px; flex-shrink: 0; }
+    .mock-stat-right { flex: 1; }
+    .mock-stat-name-row { display: flex; justify-content: space-between; align-items: center; }
+    .mock-stat-name { font-size: 7px; font-weight: 600; color: #333; }
+    .mock-stat-delta { font-size: 7px; font-weight: 700; color: #00C853; }
+    .mock-bar-bg { height: 3px; background: #E5E7EB; border-radius: 2px; margin-top: 2px; overflow: hidden; }
+    .mock-bar-fill { height: 3px; background: #7A4AE2; border-radius: 2px; }
+    /* RadarChart 대체 */
+    .mock-radar-placeholder {
+      background: #F9F5FF; border-radius: 8px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid #E9D7FE;
+    }
+    .mock-radar-placeholder span { font-size: 7px; color: #98A2B3; }
+    .mock-radar-prev-legend {
+      display: flex; gap: 8px; justify-content: center; margin-top: 2px;
+    }
+    .mock-legend-item { display: flex; align-items: center; gap: 2px; }
+    .mock-legend-box { width: 8px; height: 4px; border-radius: 1px; }
+    .mock-legend-label { font-size: 6px; color: #667085; }
+    /* InsightCard */
+    .mock-insight-card {
+      background: #fff; border-radius: 8px; padding: 6px 8px;
+      margin-bottom: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .mock-insight-header { display: flex; justify-content: space-between; align-items: center; }
+    .mock-insight-title { font-size: 8px; font-weight: 700; color: #101828; }
+    .mock-insight-score { font-size: 8px; font-weight: 700; color: #00C853; }
+    .mock-insight-text { font-size: 7px; color: #667085; margin-top: 2px; line-height: 1.4; }
+    /* 패턴 태그 */
+    .mock-pattern-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 4px; }
+    .mock-tag { background: #F8F5FF; border-radius: 10px; padding: 2px 6px; font-size: 7px; color: #7A4AE2; font-weight: 600; }
+    /* 인용구 */
+    .mock-quote { border-left: 2px solid #7A4AE2; padding-left: 6px; }
+    .mock-quote-text { font-size: 7px; color: #667085; line-height: 1.4; }
+    /* StoryCard */
+    .mock-story-card {
+      background: #fff; border-radius: 8px; padding: 6px 8px;
+      margin-bottom: 4px; border-left: 2px solid #7A4AE2;
+    }
+    .mock-story-title { font-size: 8px; font-weight: 700; color: #101828; }
+    .mock-story-text { font-size: 7px; color: #667085; margin-top: 2px; }
+    /* 성장 */
+    .mock-growth-step {
+      display: flex; gap: 4px; align-items: flex-start; margin-bottom: 3px;
+    }
+    .mock-growth-num {
+      width: 13px; height: 13px; border-radius: 50%; background: #7A4AE2;
+      color: #fff; font-size: 7px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .mock-growth-text { font-size: 7px; color: #344054; line-height: 1.3; }
+    /* 페르소나 */
+    .mock-persona-item { display: flex; gap: 3px; align-items: flex-start; margin-bottom: 2px; }
+    .mock-persona-check { font-size: 7px; color: #12B76A; }
+    .mock-persona-text { font-size: 7px; color: #344054; }
+    /* 병합 헤더 */
+    .mock-merged-header-section {
+      padding: 10px 10px 4px;
+    }
+    /* CTA 버튼 */
+    .mock-cta {
+      background: linear-gradient(135deg, #7A4AE2, #5B35C0);
+      border-radius: 10px; padding: 7px;
+      text-align: center; margin-top: 4px;
+      font-size: 9px; font-weight: 700; color: #fff;
+    }
+    /* 병합 화면 스크롤 영역 */
+    .mock-merged-bg {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F5F1FF 45%, #DECEFF 78%, #B095E0 100%);
+      min-height: 520px; padding: 0;
+    }
+    .mock-scroll-area { padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 6px; }
+    /* 미호 이미지 (병합 화면에서 헤더 아래 작게) */
+    .mock-miho-mini {
+      display: flex; align-items: center; gap: 5px; padding: 6px 10px 0;
+    }
+    .mock-miho-mini .img {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid #7A4AE2;
+      background: linear-gradient(135deg, #C4A8F5, #7A4AE2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: white;
+    }
+    .mock-miho-mini .text { font-size: 8px; color: #7A4AE2; font-weight: 600; }
+    .mock-new-badge {
+      background: #ECFDF3; color: #027A48; font-size: 6px; font-weight: 700;
+      padding: 1px 4px; border-radius: 4px; margin-left: 3px;
+    }
+
+    /* ── 범례 */
+    .legend-row {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; padding: 0.85rem 1rem;
+      background: #F9FAFB; border-radius: 8px; border: 1px solid #E4E7EC;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: #667085; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── 인라인 코드 */
+    code {
+      background: #F2F4F7; padding: 0.12rem 0.45rem; border-radius: 5px;
+      font-size: 0.85rem; color: #344054;
+      font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    }
+
+    /* ── 플로우 다이어그램 */
+    .flow {
+      display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
+      padding: 1.5rem; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 12px;
+    }
+    .flow-step {
+      background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 10px;
+      padding: 0.9rem 1.15rem; min-width: 130px; text-align: center;
+      transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+    }
+    .flow-step:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1); transform: translateY(-1px); }
+    .flow-step .title { font-weight: 600; font-size: 0.88rem; color: #101828; }
+    .flow-step .desc  { font-size: 0.78rem; color: #667085; margin-top: 0.25rem; line-height: 1.4; }
+    .flow-arrow { color: #D0D5DD; font-size: 1.4rem; font-weight: bold; }
+    .flow-step.green  { border-color: #32D583; background: #ECFDF3; }
+    .flow-step.green  .title { color: #027A48; }
+    .flow-step.orange { border-color: #FDB022; background: #FFFAEB; }
+    .flow-step.orange .title { color: #B54708; }
+    .flow-step.purple { border-color: #B692F6; background: #F9F5FF; }
+    .flow-step.purple .title { color: #6941C6; }
+    .flow-step.blue   { border-color: #84CAFF; background: #EFF8FF; }
+    .flow-step.blue   .title { color: #175CD3; }
+    .flow-step.cyan   { border-color: #67E3F9; background: #F0F9FF; }
+    .flow-step.cyan   .title { color: #0E7090; }
+
+    /* ── 비고 테이블 */
+    .note-box {
+      background: #FFFAEB; border: 1px solid #FEC84B; border-radius: 10px;
+      padding: 0.9rem 1.15rem; margin-top: 1rem; font-size: 0.9rem; color: #B54708;
+    }
+    .note-box strong { font-weight: 700; }
+
+    @media (max-width: 900px) {
+      .content { padding: 0 1rem 2rem; }
+      .hero { padding: 2.5rem 1.5rem 2rem; border-radius: 0 0 16px 16px; }
+      .hero h1 { font-size: 1.75rem; }
+      .advantage-grid { grid-template-columns: 1fr; }
+      .design-layout { grid-template-columns: 1fr; }
+      .design-arrow { display: none; }
+      .mockup-grid { grid-template-columns: 1fr; align-items: start; }
+      .mockup-wrapper { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>모먼트 리포트 화면 병합 분석</h1>
+    <p class="subtitle">2026-03-05 · Sometimes App · Feature Merge Design</p>
+    <div class="badge-row">
+      <span class="badge">OnboardingResult</span>
+      <span class="badge">WeeklyReportPage</span>
+      <span class="badge">narrative-report-components</span>
+      <span class="badge">병합 설계</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 1. Stats Bar -->
+    <div class="stats">
+      <div class="stat-card purple">
+        <div class="num">2</div>
+        <div class="label">분석 대상 화면</div>
+      </div>
+      <div class="stat-card green">
+        <div class="num">9</div>
+        <div class="label">공유 컴포넌트</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="num">5</div>
+        <div class="label">병합 전용 개선</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="num">4</div>
+        <div class="label">우선 구현 과제</div>
+      </div>
+      <div class="stat-card cyan">
+        <div class="num">2</div>
+        <div class="label">리포트 타입 (narrative / legacy)</div>
+      </div>
+    </div>
+
+    <!-- 2. 현재 상태 비교 테이블 -->
+    <div class="section">
+      <h2 class="blue"><span class="accent"></span>현재 상태 비교 — 컴포넌트/섹션</h2>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:34%">컴포넌트 / 섹션</th>
+            <th class="center" style="width:22%">OnboardingResult</th>
+            <th class="center" style="width:22%">WeeklyReportPage</th>
+            <th style="width:22%">비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 네비게이션 -->
+          <tr class="group-header"><td colspan="4">네비게이션 & 레이아웃</td></tr>
+          <tr>
+            <td>뒤로가기 버튼 (헤더)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>온보딩은 항상 진입점이므로 생략됨</td>
+          </tr>
+          <tr>
+            <td>컴팩트 헤더 (미호 아바타 + 주차 텍스트)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td><code>Header.Container</code> 사용</td>
+          </tr>
+          <tr>
+            <td>풀스크린 그라디언트 배경</td>
+            <td class="center"><span class="chip yes">항상</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>legacy 타입은 <code>#F2F4F6</code> 단색</td>
+          </tr>
+          <tr>
+            <td>미호 캐릭터 이미지 (대형 · mailbox)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td>온보딩만 <code>miho-mailbox.webp</code></td>
+          </tr>
+          <tr>
+            <td>날짜 배지 (년도 + 주차)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>양쪽 모두 보라 배경 배지</td>
+          </tr>
+          <!-- 칭호 카드 -->
+          <tr class="group-header"><td colspan="4">칭호 히어로 카드</td></tr>
+          <tr>
+            <td><code>TitleAwardSection</code> (공유 컴포넌트)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>동일 컴포넌트, legacy는 인라인 그라디언트 카드</td>
+          </tr>
+          <tr>
+            <td><code>ceremonyText</code> 서브문구</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td><code>sf.titleAward.ceremonyText</code></td>
+          </tr>
+          <tr>
+            <td>Legacy 인라인 히어로 카드</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip partial">legacy만</span></td>
+            <td>보라 그라디언트 + 주차 라벨 + 제목</td>
+          </tr>
+          <!-- 스탯 -->
+          <tr class="group-header"><td colspan="4">성향 스탯 시각화</td></tr>
+          <tr>
+            <td><code>DimensionStatsSection</code> (CircularProgress + 가로 바)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>공유 컴포넌트</td>
+          </tr>
+          <tr>
+            <td><code>AnimatedStatRow</code> (대형 숫자 36px + delta)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip partial">legacy만</span></td>
+            <td>▲+N / ▼-N 변화량 표시, 순차 애니메이션</td>
+          </tr>
+          <tr>
+            <td>이전 주 대비 delta (▲▼)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip partial">legacy만</span></td>
+            <td><code>prevScore</code> 기반 계산</td>
+          </tr>
+          <!-- 레이더 -->
+          <tr class="group-header"><td colspan="4">방사형 차트 (RadarChart)</td></tr>
+          <tr>
+            <td>RadarChart — 이번 주 색상면</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>양쪽 구현</td>
+          </tr>
+          <tr>
+            <td>이전 주 대시선 (<code>prevValue</code>)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>weekly 전용 RadarChart, dashed polygon</td>
+          </tr>
+          <tr>
+            <td>이번 주 / 지난 주 범례</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip partial">legacy만</span></td>
+            <td>narrative 모드에서는 없음</td>
+          </tr>
+          <tr>
+            <td><code>RadarLegend</code> (점수 + 바)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>구현 방식 약간 다름 (props 다름)</td>
+          </tr>
+          <!-- 인사이트 -->
+          <tr class="group-header"><td colspan="4">인사이트 & 내러티브</td></tr>
+          <tr>
+            <td><code>IntegratedInsightsSection</code> (keyPatterns + 인용구)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>공유 컴포넌트</td>
+          </tr>
+          <tr>
+            <td><code>InsightCard</code> (definition + feedback)</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip partial">legacy만</span></td>
+            <td>차원별 상세 카드</td>
+          </tr>
+          <tr>
+            <td><code>StoryCard</code> (사용자 인용구 + 여정)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>공유 컴포넌트</td>
+          </tr>
+          <tr>
+            <td><code>GrowthJourneySection</code> (번호 배지 + 스텝)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>공유 컴포넌트</td>
+          </tr>
+          <tr>
+            <td><code>PersonaNarrativeSection</code> (체크마크 특성)</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip partial">narrative만</span></td>
+            <td>공유 컴포넌트</td>
+          </tr>
+          <!-- CTA -->
+          <tr class="group-header"><td colspan="4">CTA & 애널리틱스</td></tr>
+          <tr>
+            <td>하단 고정 CTA 버튼</td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td>온보딩: "모먼트 시작하기", 위클리: "이전으로"</td>
+          </tr>
+          <tr>
+            <td>애널리틱스 트래킹</td>
+            <td class="center"><span class="chip no">없음</span></td>
+            <td class="center"><span class="chip yes">있음</span></td>
+            <td><code>useMomentAnalytics</code> — reportView, chartView, keywordView</td>
+          </tr>
+          <tr>
+            <td>로딩 / 에러 / 빈 상태 처리</td>
+            <td class="center"><span class="chip partial">최소</span></td>
+            <td class="center"><span class="chip yes">완전</span></td>
+            <td>weekly는 3가지 상태 UI 완비</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#12B76A"></div> 있음 — 해당 화면에서 구현됨</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#F79009"></div> 부분 — 특정 모드(narrative/legacy)에서만</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#D0D5DD"></div> 없음 — 미구현</div>
+      </div>
+    </div>
+
+    <!-- 3. 장점 매트릭스 -->
+    <div class="section">
+      <h2 class="purple"><span class="accent"></span>장점 매트릭스 — 각 화면에서 가져올 Best Point</h2>
+      <div class="advantage-grid">
+        <div class="advantage-card">
+          <div class="card-header">
+            <span class="source-badge source-onboarding">OnboardingResult</span>
+            <span class="card-title">감성 · 시각 강점</span>
+          </div>
+          <ul class="advantage-list">
+            <li>
+              <div class="dot dot-purple"></div>
+              <div><strong>풀스크린 그라디언트 배경</strong> — #FFFFFF→#F5F1FF→#DECEFF→#B095E0, 4-stop 부드러운 색상 전환으로 보고서 분위기 연출</div>
+            </li>
+            <li>
+              <div class="dot dot-purple"></div>
+              <div><strong>미호 캐릭터 이미지 헤더</strong> — <code>miho-mailbox.webp</code> 70×70 원형, 브랜드 감성 진입점 제공</div>
+            </li>
+            <li>
+              <div class="dot dot-purple"></div>
+              <div><strong>DimensionStatsSection (CircularProgress)</strong> — 원형 진행바 + 가로 바 조합, 시각적 직관성 높음</div>
+            </li>
+            <li>
+              <div class="dot dot-purple"></div>
+              <div><strong>완전한 narrative 섹션 셋</strong> — StoryCard, GrowthJourney, PersonaNarrative가 항상 표시됨</div>
+            </li>
+            <li>
+              <div class="dot dot-purple"></div>
+              <div><strong>TitleAwardSection에 ceremonyText</strong> — 칭호 수여 의식 문구로 감동 연출</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="advantage-card">
+          <div class="card-header">
+            <span class="source-badge source-weekly">WeeklyReportPage</span>
+            <span class="card-title">기능 · 네비게이션 강점</span>
+          </div>
+          <ul class="advantage-list">
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>컴팩트 헤더 네비게이션</strong> — 뒤로가기 버튼 + 미호 아바타 + 제목/주차 텍스트 + 날짜 배지, 명확한 컨텍스트</div>
+            </li>
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>AnimatedStatRow</strong> — 36px 대형 숫자 + ▲▼ delta + 순차 슬라이드 애니메이션, 성장 체감 극대화</div>
+            </li>
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>이전 주 비교 RadarChart</strong> — dashed polygon으로 지난 주 위치 표시, 성장 변화 시각화</div>
+            </li>
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>InsightCard</strong> — 차원별 definition + feedback 텍스트, legacy 사용자에게 상세 설명 제공</div>
+            </li>
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>완전한 로딩/에러/빈 상태 UI</strong> — <code>ActivityIndicator</code> + 에러 CTA + 빈 데이터 안내</div>
+            </li>
+            <li>
+              <div class="dot dot-blue"></div>
+              <div><strong>useMomentAnalytics 트래킹</strong> — reportView · chartView · keywordView 이벤트 전송</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="advantage-card">
+          <div class="card-header">
+            <span class="source-badge source-merged">병합 시 신규 추가</span>
+            <span class="card-title">통합 화면 개선 사항</span>
+          </div>
+          <ul class="advantage-list">
+            <li>
+              <div class="dot dot-green"></div>
+              <div><strong>narrative 모드에서도 delta 표시</strong> — DimensionStatsSection에 prevScore 연동, CircularProgress 옆 ▲▼ 표기</div>
+            </li>
+            <li>
+              <div class="dot dot-green"></div>
+              <div><strong>narrative RadarChart에 이전 주 비교선 추가</strong> — weekly의 dashed polygon 로직을 NarrativeRadarChart에 이식</div>
+            </li>
+            <li>
+              <div class="dot dot-green"></div>
+              <div><strong>미호 캐릭터를 헤더 아래 인라인 배치</strong> — 컴팩트 헤더 하단에 소형 캐릭터 이미지 섹션 추가</div>
+            </li>
+            <li>
+              <div class="dot dot-green"></div>
+              <div><strong>OnboardingResult에 애널리틱스 추가</strong> — <code>useMomentAnalytics</code> 훅 이식</div>
+            </li>
+            <li>
+              <div class="dot dot-green"></div>
+              <div><strong>단일 파일로 유지보수 통합</strong> — <code>weekly-report-page.tsx</code>가 양쪽 타입을 모두 처리</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 병합 설계도 (섹션 흐름) -->
+    <div class="section">
+      <h2 class="green"><span class="accent"></span>병합 설계도 — 통합 WeeklyReportPage 섹션 구조</h2>
+
+      <!-- 플로우 다이어그램 -->
+      <div class="flow" style="margin-bottom: 1.5rem;">
+        <div class="flow-step">
+          <div class="title">타입 판별</div>
+          <div class="desc"><code>isNarrativeReport</code></div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step purple">
+          <div class="title">Narrative 모드</div>
+          <div class="desc">onboarding / narrative</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step green">
+          <div class="title">풀 리포트</div>
+          <div class="desc">9개 섹션 전체</div>
+        </div>
+        <div class="flow-arrow" style="margin: 0 0.25rem; font-size:1rem; color:#D0D5DD;">|</div>
+        <div class="flow-step blue">
+          <div class="title">Legacy 모드</div>
+          <div class="desc">기존 API 응답</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step cyan">
+          <div class="title">간소 리포트</div>
+          <div class="desc">4개 섹션</div>
+        </div>
+      </div>
+
+      <div class="design-layout">
+        <!-- 온보딩 컬럼 -->
+        <div class="screen-column">
+          <div class="col-header onboarding">OnboardingResult (현재)</div>
+          <div class="screen-section-list">
+            <div class="ss-item from-onboarding"><span>풀스크린 그라디언트 배경</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>미호 캐릭터 이미지 헤더</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>년도 + 주차 배지</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>TitleAwardSection</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>DimensionStatsSection (CircularProgress)</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>RadarChart (이번 주만)</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>IntegratedInsightsSection</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>StoryCard</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>GrowthJourneySection</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>PersonaNarrativeSection</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item from-onboarding"><span>"모먼트 시작하기" CTA</span><span class="ss-badge ob">OB</span></div>
+            <div class="ss-item disabled"><span>뒤로가기 헤더 없음</span><span class="ss-badge del">DEL</span></div>
+            <div class="ss-item disabled"><span>delta 변화량 없음</span><span class="ss-badge del">DEL</span></div>
+            <div class="ss-item disabled"><span>이전 주 비교선 없음</span><span class="ss-badge del">DEL</span></div>
+            <div class="ss-item disabled"><span>애널리틱스 없음</span><span class="ss-badge del">DEL</span></div>
+          </div>
+        </div>
+
+        <div class="design-arrow">&rarr;</div>
+
+        <!-- 병합 컬럼 -->
+        <div class="screen-column">
+          <div class="col-header merged">통합 WeeklyReportPage (목표)</div>
+          <div class="screen-section-list">
+            <div class="ss-item from-weekly"><span>컴팩트 헤더 (뒤로가기 + 아바타 + 주차)</span><span class="ss-badge wk">WK</span></div>
+            <div class="ss-item from-new"><span>미호 캐릭터 인라인 섹션 (헤더 아래)</span><span class="ss-badge new">NEW</span></div>
+            <div class="ss-item from-both"><span>풀스크린 그라디언트 배경 (narrative)</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-both"><span>TitleAwardSection (ceremonyText 포함)</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-new"><span>DimensionStats + delta 표시</span><span class="ss-badge new">NEW</span></div>
+            <div class="ss-item from-new"><span>RadarChart (이번 주 + 이전 주 비교선)</span><span class="ss-badge new">NEW</span></div>
+            <div class="ss-item from-both"><span>IntegratedInsightsSection</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-both"><span>StoryCard</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-both"><span>GrowthJourneySection</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-both"><span>PersonaNarrativeSection</span><span class="ss-badge both">BOTH</span></div>
+            <div class="ss-item from-weekly"><span>Legacy: AnimatedStatRow + InsightCard</span><span class="ss-badge wk">WK</span></div>
+            <div class="ss-item from-new"><span>useMomentAnalytics 트래킹</span><span class="ss-badge new">NEW</span></div>
+            <div class="ss-item from-weekly"><span>로딩 / 에러 / 빈 상태 UI</span><span class="ss-badge wk">WK</span></div>
+            <div class="ss-item from-weekly"><span>하단 고정 CTA (뒤로가기)</span><span class="ss-badge wk">WK</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-row" style="margin-top: 1rem;">
+        <div class="legend-item"><div class="legend-dot" style="background:#B692F6"></div> OB — OnboardingResult 소스</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#84CAFF"></div> WK — WeeklyReportPage 소스</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#32D583"></div> BOTH — 양쪽에서 동일하게 존재 (공유 컴포넌트)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FEC84B"></div> NEW — 병합 과정에서 신규 추가/개선</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FECDCA"></div> DEL — 제거 예정 항목</div>
+      </div>
+
+      <div class="note-box" style="margin-top: 1rem;">
+        <strong>OnboardingResult 처리 방향:</strong> 온보딩 완료 후 라우팅을 <code>WeeklyReportPage</code>로 통일. <code>reportType: 'onboarding'</code> 파라미터를 URL에 포함하여 동일 화면에서 렌더링. <code>OnboardingResult</code> 파일은 추후 제거하거나 <code>WeeklyReportPage</code>로의 래퍼로 남김.
+      </div>
+    </div>
+
+    <!-- 5. 구현 우선순위 -->
+    <div class="section">
+      <h2 class="orange"><span class="accent"></span>구현 우선순위 — 변경 과제 목록</h2>
+
+      <div class="priority-grid">
+
+        <div class="priority-item">
+          <div class="p-num p1">1</div>
+          <div class="p-content">
+            <div class="p-title">narrative 모드 RadarChart에 이전 주 비교선 추가</div>
+            <div class="p-desc">
+              현재 <code>NarrativeRadarChart</code>는 이번 주 데이터만 그림. <code>WeeklyReportPage</code>의 <code>RadarChart</code>가 구현한 <code>prevPolygon</code> + dashed stroke 로직을 <code>narrative-report-components.tsx</code>의 공유 컴포넌트에 이식. props에 <code>prevRadarData?</code> 옵셔널 추가 후, <code>OnboardingReport</code>와 <code>WeeklyReport</code> 양쪽에서 <code>prevScore</code> 데이터를 넘기도록 변경.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-high">임팩트: 높음</span>
+              <span class="p-tag effort-mid">난이도: 중간</span>
+              <span class="p-tag type-feat">신규 기능</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p1">2</div>
+          <div class="p-content">
+            <div class="p-title">narrative DimensionStats에 delta(▲▼) 표시 추가</div>
+            <div class="p-desc">
+              <code>DimensionStatsSection</code>에 <code>prevScores?: Record&lt;string, number&gt;</code> props 추가. 내부에서 <code>currentScore - prevScore</code> 계산 후 <code>CircularProgress</code> 옆 또는 가로 바 우측에 <code>▲+N</code> / <code>▼-N</code> 텍스트 표시. legacy AnimatedStatRow의 delta 표현 방식(초록/빨강 색상)을 그대로 참조.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-high">임팩트: 높음</span>
+              <span class="p-tag effort-low">난이도: 낮음</span>
+              <span class="p-tag type-feat">신규 기능</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p2">3</div>
+          <div class="p-content">
+            <div class="p-title">OnboardingResult → WeeklyReportPage 라우팅 통합</div>
+            <div class="p-desc">
+              온보딩 완료 후 <code>router.replace</code> 대상을 <code>/moment/weekly-report?reportType=onboarding&amp;reportData=...</code>로 변경. <code>WeeklyReportPage</code>에서 <code>reportType=onboarding</code> 파라미터를 감지하여 CTA를 "모먼트 시작하기"로 교체. <code>useLocalSearchParams</code>에 <code>reportData?: string</code> 파싱 로직 추가. <code>OnboardingResult</code>는 deprecated 처리.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-high">임팩트: 높음</span>
+              <span class="p-tag effort-mid">난이도: 중간</span>
+              <span class="p-tag type-refactor">리팩토링</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p2">4</div>
+          <div class="p-content">
+            <div class="p-title">미호 캐릭터 섹션 — 헤더 아래 인라인 배치</div>
+            <div class="p-desc">
+              <code>WeeklyReportPage</code> narrative 모드 진입 시, 컴팩트 헤더 바로 아래에 미호 이미지(<code>miho-mailbox.webp</code>) + 완료 타이틀 텍스트 섹션 추가. 기존 <code>OnboardingResult</code>의 <code>headerSection</code> 스타일 그대로 이식. 이미지 크기 70→56px로 축소하여 컴팩트 헤더와 밀도 균형 유지.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-mid">임팩트: 중간</span>
+              <span class="p-tag effort-low">난이도: 낮음</span>
+              <span class="p-tag type-feat">신규 기능</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p3">5</div>
+          <div class="p-content">
+            <div class="p-title">useMomentAnalytics — OnboardingResult 이식</div>
+            <div class="p-desc">
+              현재 <code>OnboardingResult</code>에 애널리틱스 트래킹이 없음. <code>WeeklyReportPage</code>의 <code>useEffect</code> 트래킹 블록(<code>trackWeeklyReportView</code>, <code>trackReportChartView</code>, <code>trackReportKeywordView</code>)을 이식. 라우팅 통합(과제 3) 후에는 자동으로 해결되므로 별도 작업 불필요.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-mid">임팩트: 중간</span>
+              <span class="p-tag effort-low">난이도: 낮음</span>
+              <span class="p-tag type-feat">신규 기능</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p3">6</div>
+          <div class="p-content">
+            <div class="p-title">narrative RadarChart — 이번 주/지난 주 범례 추가</div>
+            <div class="p-desc">
+              <code>WeeklyReportPage</code>의 legacy 모드에는 범례가 있지만, narrative 모드의 <code>NarrativeRadarChart</code> 아래에는 없음. 과제 1(이전 주 비교선 추가) 이후, 차트 하단에 ■ 이번 주 / ─ ─ 지난 주 범례 행을 추가. <code>chartWrapper</code> 내부에 <code>legend</code> View 삽입.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-mid">임팩트: 중간</span>
+              <span class="p-tag effort-low">난이도: 낮음</span>
+              <span class="p-tag type-feat">신규 기능</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-item">
+          <div class="p-num p4">7</div>
+          <div class="p-content">
+            <div class="p-title">OnboardingResult 파일 제거 (클린업)</div>
+            <div class="p-desc">
+              라우팅 통합 완료 후, <code>src/features/moment/ui/onboarding/onboarding-result.tsx</code> 삭제. <code>app/</code> 디렉토리의 온보딩 결과 라우트 파일도 <code>WeeklyReportPage</code>로 리다이렉트 또는 제거. 관련 import/export를 <code>moment/ui/index.ts</code>에서 정리.
+            </div>
+            <div class="p-meta">
+              <span class="p-tag impact-low">임팩트: 낮음 (코드 정리)</span>
+              <span class="p-tag effort-low">난이도: 낮음</span>
+              <span class="p-tag type-refactor">리팩토링</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 6. Before/After 모바일 목업 -->
+    <div class="section">
+      <h2 class="cyan"><span class="accent"></span>Before / After 모바일 목업</h2>
+
+      <div class="mockup-grid">
+
+        <!-- Before: OnboardingResult -->
+        <div class="mockup-wrapper">
+          <div class="mockup-label">Before — OnboardingResult</div>
+          <div class="mockup-sublabel">온보딩 완료 전용 화면</div>
+          <div class="phone">
+            <div class="phone-inner">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span>■■■</span>
+              </div>
+              <!-- 풀스크린 그라디언트 -->
+              <div class="mock-grad-bg">
+                <!-- 캐릭터 헤더 -->
+                <div class="mock-char-header">
+                  <div class="mock-char-img">M</div>
+                  <div class="mock-char-title">모먼트 리포트 완성!</div>
+                  <div class="mock-date-badge">2026년 9주차</div>
+                </div>
+
+                <!-- 칭호 카드 -->
+                <div class="mock-title-card">
+                  <div class="mock-ceremony">✨ 당신의 칭호가 도착했습니다</div>
+                  <div class="mock-big-title">사려깊은 관찰자</div>
+                  <div class="mock-sub-title">조용히 세상을 읽어내는 사람</div>
+                </div>
+
+                <!-- CircularProgress 그리드 -->
+                <div class="mock-section">
+                  <div class="mock-section-title">이번 주 성향 분석</div>
+                  <div class="mock-circular-grid">
+                    <div class="mock-circ-item"><div class="mock-circ">72</div><div class="mock-circ-label">외향</div></div>
+                    <div class="mock-circ-item"><div class="mock-circ">65</div><div class="mock-circ-label">개방</div></div>
+                    <div class="mock-circ-item"><div class="mock-circ">80</div><div class="mock-circ-label">성실</div></div>
+                    <div class="mock-circ-item"><div class="mock-circ">58</div><div class="mock-circ-label">친화</div></div>
+                    <div class="mock-circ-item"><div class="mock-circ">45</div><div class="mock-circ-label">신경</div></div>
+                  </div>
+                </div>
+
+                <!-- 레이더 (이번 주만) -->
+                <div class="mock-section">
+                  <div class="mock-section-title">성향 레이더</div>
+                  <div class="mock-radar-placeholder"><span>RadarChart — 이번 주만</span></div>
+                  <!-- delta 없음 표시 -->
+                  <div style="font-size:7px;color:#F04438;margin-top:2px;text-align:center;">이전 주 비교선 없음</div>
+                </div>
+
+                <!-- 인사이트 패턴 -->
+                <div class="mock-section">
+                  <div class="mock-section-title">핵심 패턴</div>
+                  <div class="mock-pattern-tags">
+                    <div class="mock-tag">#경청</div>
+                    <div class="mock-tag">#관찰력</div>
+                    <div class="mock-tag">#신중함</div>
+                  </div>
+                  <div class="mock-quote">
+                    <div class="mock-quote-text">조용히 상대방을 배려하는 성향이 두드러집니다.</div>
+                  </div>
+                </div>
+
+                <!-- StoryCard -->
+                <div class="mock-section">
+                  <div class="mock-section-title">나의 이야기</div>
+                  <div class="mock-story-card">
+                    <div class="mock-story-title">진심 어린 배려</div>
+                    <div class="mock-story-text">"상대방의 말을 끝까지 들어주는 게 자연스러워요."</div>
+                  </div>
+                </div>
+
+                <!-- 성장 -->
+                <div class="mock-section">
+                  <div class="mock-section-title">성장 여정</div>
+                  <div class="mock-growth-step"><div class="mock-growth-num">1</div><div class="mock-growth-text">매주 1명과 깊은 대화 나누기</div></div>
+                  <div class="mock-growth-step"><div class="mock-growth-num">2</div><div class="mock-growth-text">감정 일기 3줄 쓰기</div></div>
+                </div>
+
+                <!-- CTA -->
+                <div class="mock-cta">모먼트 시작하기</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Before: WeeklyReportPage (legacy) -->
+        <div class="mockup-wrapper">
+          <div class="mockup-label">Before — WeeklyReportPage</div>
+          <div class="mockup-sublabel">주간 리포트 (legacy 타입)</div>
+          <div class="phone">
+            <div class="phone-inner">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span>■■■</span>
+              </div>
+              <!-- 컴팩트 헤더 -->
+              <div class="mock-compact-header">
+                <div class="mock-back-btn">←</div>
+                <div class="mock-header-avatar">M</div>
+                <div class="mock-header-text">
+                  <div class="mock-header-title">사려깊은 관찰자</div>
+                  <div class="mock-header-week">2026년 9주차</div>
+                </div>
+                <div class="mock-header-badge">9주차</div>
+              </div>
+
+              <!-- 단색 배경 -->
+              <div style="background:#F2F4F6; min-height:490px; padding:10px;">
+
+                <!-- 히어로 카드 (legacy 인라인) -->
+                <div class="mock-title-card" style="margin-bottom:8px;">
+                  <div class="mock-ceremony" style="font-size:7px;letter-spacing:0.5px;text-transform:uppercase;">9주차 이번 주</div>
+                  <div class="mock-big-title">사려깊은 관찰자</div>
+                  <div class="mock-sub-title">조용히 세상을 읽어내는 사람</div>
+                </div>
+
+                <!-- AnimatedStatRow (delta 있음) -->
+                <div class="mock-section">
+                  <div class="mock-section-title">이번 주 성향 분석</div>
+                  <div style="background:#fff;border-radius:8px;padding:6px 8px;">
+                    <div class="mock-stat-row">
+                      <div class="mock-stat-num">72</div>
+                      <div class="mock-stat-right">
+                        <div class="mock-stat-name-row">
+                          <div class="mock-stat-name">외향성</div>
+                          <div class="mock-stat-delta">▲ +5</div>
+                        </div>
+                        <div class="mock-bar-bg"><div class="mock-bar-fill" style="width:72%"></div></div>
+                      </div>
+                    </div>
+                    <div class="mock-stat-row">
+                      <div class="mock-stat-num">65</div>
+                      <div class="mock-stat-right">
+                        <div class="mock-stat-name-row">
+                          <div class="mock-stat-name">개방성</div>
+                          <div class="mock-stat-delta" style="color:#FF5252;">▼ -3</div>
+                        </div>
+                        <div class="mock-bar-bg"><div class="mock-bar-fill" style="width:65%"></div></div>
+                      </div>
+                    </div>
+                    <div class="mock-stat-row">
+                      <div class="mock-stat-num">80</div>
+                      <div class="mock-stat-right">
+                        <div class="mock-stat-name-row">
+                          <div class="mock-stat-name">성실성</div>
+                          <div class="mock-stat-delta">▲ +8</div>
+                        </div>
+                        <div class="mock-bar-bg"><div class="mock-bar-fill" style="width:80%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 레이더 (이전 주 비교선 있음) -->
+                <div class="mock-section">
+                  <div class="mock-section-title">성향 레이더</div>
+                  <div style="background:#fff;border-radius:8px;padding:6px 8px;">
+                    <div class="mock-radar-placeholder" style="height:60px;"><span>RadarChart — 이전 주 비교선 포함</span></div>
+                    <div class="mock-radar-prev-legend">
+                      <div class="mock-legend-item">
+                        <div class="mock-legend-box" style="background:#7A4AE2;"></div>
+                        <div class="mock-legend-label">이번 주</div>
+                      </div>
+                      <div class="mock-legend-item">
+                        <div class="mock-legend-box" style="border:1px dashed #A0A0A0;background:none;"></div>
+                        <div class="mock-legend-label">지난 주</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- InsightCard -->
+                <div class="mock-section">
+                  <div class="mock-section-title">차원별 분석</div>
+                  <div class="mock-insight-card">
+                    <div class="mock-insight-header">
+                      <div class="mock-insight-title">외향성</div>
+                      <div class="mock-insight-score">72</div>
+                    </div>
+                    <div class="mock-insight-text">다른 사람과 어울리며 에너지를 얻는 성향. 이번 주 대화에서 적극성이 돋보였습니다.</div>
+                  </div>
+                </div>
+
+                <!-- 미호 없음 표시 -->
+                <div style="font-size:7px;color:#F04438;text-align:center;margin-top:4px;">미호 캐릭터 이미지 없음</div>
+
+                <!-- CTA -->
+                <div class="mock-cta" style="margin-top:8px;">이전으로</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- After: 통합 WeeklyReportPage (narrative) -->
+        <div class="mockup-wrapper">
+          <div class="mockup-label">After — 통합 WeeklyReportPage</div>
+          <div class="mockup-sublabel">narrative 타입 (병합 목표)</div>
+          <div class="phone">
+            <div class="phone-inner">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span>■■■</span>
+              </div>
+              <!-- 컴팩트 헤더 (weekly에서) -->
+              <div class="mock-compact-header">
+                <div class="mock-back-btn">←</div>
+                <div class="mock-header-avatar">M</div>
+                <div class="mock-header-text">
+                  <div class="mock-header-title">사려깊은 관찰자</div>
+                  <div class="mock-header-week">2026년 9주차</div>
+                </div>
+                <div class="mock-header-badge">9주차</div>
+              </div>
+
+              <!-- 풀스크린 그라디언트 -->
+              <div class="mock-merged-bg">
+                <!-- 미호 캐릭터 인라인 섹션 (NEW) -->
+                <div class="mock-miho-mini">
+                  <div class="img">M</div>
+                  <div class="text">모먼트 리포트 완성! <span class="mock-new-badge">NEW</span></div>
+                </div>
+
+                <div class="mock-scroll-area">
+                  <!-- 칭호 카드 (ceremonyText 포함) -->
+                  <div class="mock-title-card">
+                    <div class="mock-ceremony">✨ 당신의 칭호가 도착했습니다</div>
+                    <div class="mock-big-title">사려깊은 관찰자</div>
+                    <div class="mock-sub-title">조용히 세상을 읽어내는 사람</div>
+                  </div>
+
+                  <!-- CircularProgress + delta (NEW) -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">이번 주 성향 분석</div>
+                    <div class="mock-circular-grid">
+                      <div class="mock-circ-item">
+                        <div class="mock-circ">72</div>
+                        <div class="mock-circ-label">외향</div>
+                        <div style="font-size:6px;color:#00C853;font-weight:700;">▲+5</div>
+                      </div>
+                      <div class="mock-circ-item">
+                        <div class="mock-circ">65</div>
+                        <div class="mock-circ-label">개방</div>
+                        <div style="font-size:6px;color:#FF5252;font-weight:700;">▼-3</div>
+                      </div>
+                      <div class="mock-circ-item">
+                        <div class="mock-circ">80</div>
+                        <div class="mock-circ-label">성실</div>
+                        <div style="font-size:6px;color:#00C853;font-weight:700;">▲+8</div>
+                      </div>
+                      <div class="mock-circ-item">
+                        <div class="mock-circ">58</div>
+                        <div class="mock-circ-label">친화</div>
+                        <div style="font-size:6px;color:#FF5252;font-weight:700;">▼-2</div>
+                      </div>
+                      <div class="mock-circ-item">
+                        <div class="mock-circ">45</div>
+                        <div class="mock-circ-label">신경</div>
+                        <div style="font-size:6px;color:#00C853;font-weight:700;">▲+1</div>
+                      </div>
+                    </div>
+                    <div style="font-size:6px;color:#027A48;text-align:center;margin-top:2px;font-weight:600;">delta 표시 추가 (NEW)</div>
+                  </div>
+
+                  <!-- 레이더 (이전 주 비교선 추가) -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">성향 레이더</div>
+                    <div style="background:rgba(255,255,255,0.8);border-radius:8px;padding:6px 8px;">
+                      <div class="mock-radar-placeholder" style="height:60px;"><span>RadarChart — 이전 주 비교선 추가 (NEW)</span></div>
+                      <div class="mock-radar-prev-legend">
+                        <div class="mock-legend-item">
+                          <div class="mock-legend-box" style="background:#7A4AE2;"></div>
+                          <div class="mock-legend-label">이번 주</div>
+                        </div>
+                        <div class="mock-legend-item">
+                          <div class="mock-legend-box" style="border:1px dashed #A0A0A0;background:none;"></div>
+                          <div class="mock-legend-label">지난 주 (NEW)</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 인사이트 패턴 -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">핵심 패턴</div>
+                    <div class="mock-pattern-tags">
+                      <div class="mock-tag">#경청</div>
+                      <div class="mock-tag">#관찰력</div>
+                      <div class="mock-tag">#신중함</div>
+                    </div>
+                    <div class="mock-quote"><div class="mock-quote-text">조용히 상대방을 배려하는 성향이 두드러집니다.</div></div>
+                  </div>
+
+                  <!-- StoryCard -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">나의 이야기</div>
+                    <div class="mock-story-card">
+                      <div class="mock-story-title">진심 어린 배려</div>
+                      <div class="mock-story-text">"상대방의 말을 끝까지 들어주는 게 자연스러워요."</div>
+                    </div>
+                  </div>
+
+                  <!-- 성장 -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">성장 여정</div>
+                    <div class="mock-growth-step"><div class="mock-growth-num">1</div><div class="mock-growth-text">매주 1명과 깊은 대화 나누기</div></div>
+                    <div class="mock-growth-step"><div class="mock-growth-num">2</div><div class="mock-growth-text">감정 일기 3줄 쓰기</div></div>
+                  </div>
+
+                  <!-- 페르소나 -->
+                  <div class="mock-section">
+                    <div class="mock-section-title">나의 특성</div>
+                    <div class="mock-persona-item"><div class="mock-persona-check">✓</div><div class="mock-persona-text">타인의 감정에 민감하게 반응</div></div>
+                    <div class="mock-persona-item"><div class="mock-persona-check">✓</div><div class="mock-persona-text">세심한 관찰력으로 분위기 파악</div></div>
+                  </div>
+
+                  <!-- CTA (onboarding 타입이면 "모먼트 시작하기") -->
+                  <div class="mock-cta">모먼트 시작하기</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 목업 범례 -->
+      <div class="legend-row" style="margin-top: 1.25rem;">
+        <div class="legend-item"><div class="legend-dot" style="background:#7A4AE2"></div> Before-OB: 온보딩 결과 (현재)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2E90FA"></div> Before-WK: 주간 리포트 legacy (현재)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#12B76A"></div> After: 통합 WeeklyReportPage narrative 타입 (목표)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FEC84B"></div> NEW: 병합으로 새로 추가되는 요소</div>
+      </div>
+
+      <div class="note-box" style="margin-top: 1rem;">
+        <strong>목업 주의:</strong> After 화면은 narrative 타입 기준입니다. legacy 타입은 기존 WeeklyReportPage와 동일하게 AnimatedStatRow + InsightCard 구조를 유지합니다. 컴팩트 헤더와 풀스크린 그라디언트 배경은 legacy 타입에도 적용됩니다.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

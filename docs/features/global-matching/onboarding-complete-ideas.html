@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Matching - Onboarding Complete UI/UX Ideas</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #F9FAFB;
+  color: #344054;
+  padding: 0;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+}
+.hero h1 { font-size: 2rem; font-weight: 700; color: #FFF; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.hero .subtitle { color: #98A2B3; font-size: 1rem; }
+
+/* Content */
+.content { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+/* Section */
+.section { margin-bottom: 3rem; }
+.section-title {
+  font-size: 1.1rem; font-weight: 700; color: #101828;
+  padding-bottom: 0.6rem; border-bottom: 2px solid #F2F4F7;
+  margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.purple { background: #7A4AE2; }
+.dot.green { background: #12B76A; }
+.dot.blue { background: #2E90FA; }
+.dot.orange { background: #F79009; }
+
+/* Flow Diagram */
+.flow-diagram {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  padding: 1.5rem; background: #FFFFFF; border: 1px solid #E4E7EC;
+  border-radius: 12px; margin-bottom: 2rem;
+}
+.flow-step {
+  background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 10px;
+  padding: 0.8rem 1rem; text-align: center; min-width: 120px; flex: 1;
+}
+.flow-step.active { border-color: #7A4AE2; background: #F9F5FF; }
+.flow-step.new { border-color: #12B76A; background: #ECFDF3; }
+.flow-step.missing { border-color: #F04438; background: #FEF3F2; border-style: dashed; }
+.flow-step .step-title { font-weight: 600; font-size: 0.85rem; color: #101828; }
+.flow-step.active .step-title { color: #6941C6; }
+.flow-step.new .step-title { color: #027A48; }
+.flow-step.missing .step-title { color: #B42318; }
+.flow-step .step-desc { font-size: 0.75rem; color: #667085; margin-top: 0.2rem; }
+.flow-arrow { color: #D0D5DD; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; }
+
+/* Concept grid */
+.concept-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Concept card */
+.concept-card {
+  background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 16px;
+  overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,0.1);
+  transition: all 0.2s;
+}
+.concept-card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08); transform: translateY(-2px); }
+.concept-header {
+  padding: 1.2rem 1.5rem; border-bottom: 1px solid #F2F4F7;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.concept-header h3 { font-size: 1.1rem; font-weight: 700; color: #101828; }
+.concept-tag {
+  font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 999px;
+  font-weight: 600; flex-shrink: 0; margin-left: 0.5rem;
+}
+.tag-recommended { background: #ECFDF3; color: #027A48; }
+.tag-minimal { background: #EFF8FF; color: #175CD3; }
+.tag-premium { background: #F9F5FF; color: #6941C6; }
+.tag-safe { background: #FFFAEB; color: #B54708; }
+
+.concept-body { padding: 1.5rem; }
+.concept-desc { font-size: 0.9rem; color: #667085; line-height: 1.6; margin-bottom: 1rem; }
+.concept-pros { font-size: 0.85rem; color: #344054; line-height: 1.6; }
+.concept-pros li { margin-bottom: 0.3rem; }
+
+/* Phone mockup */
+.phone {
+  width: 280px; height: 500px; margin: 1rem auto;
+  border: 2px solid #D0D5DD; border-radius: 32px;
+  background: #000; overflow: hidden; position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.phone-notch {
+  width: 120px; height: 24px; background: #000;
+  border-radius: 0 0 14px 14px; margin: 0 auto;
+  position: relative; z-index: 10;
+}
+.phone-screen {
+  width: 100%; height: 100%; background: #FFFFFF;
+  border-radius: 30px; overflow: hidden; position: relative;
+}
+.phone-inner {
+  padding: 0; height: 100%; overflow: hidden; position: relative;
+}
+
+/* --- Concept A: Sheet Success Morph --- */
+.mockup-a .sheet-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 65%; background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+.mockup-a .success-check {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #7A4AE2, #9B6DFF);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; animation: scaleIn 0.5s ease;
+  box-shadow: 0 8px 24px rgba(122,74,226,0.3);
+}
+@keyframes scaleIn { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.mockup-a .success-check svg { width: 40px; height: 40px; }
+.mockup-a .success-title { font-size: 20px; font-weight: 700; color: #101828; margin-bottom: 6px; }
+.mockup-a .success-sub { font-size: 13px; color: #667085; margin-bottom: 20px; text-align: center; line-height: 1.5; }
+.mockup-a .translation-badge {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; background: #F9F5FF; border-radius: 20px;
+  margin-bottom: 24px;
+}
+.mockup-a .translation-badge .spinner {
+  width: 16px; height: 16px; border: 2px solid #E2D5FF;
+  border-top-color: #7A4AE2; border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.mockup-a .translation-badge span { font-size: 12px; color: #6941C6; font-weight: 500; }
+.mockup-a .success-btn {
+  width: 240px; padding: 14px; border: none;
+  background: linear-gradient(135deg, #9B6DFF, #7A4AE2, #6B3FD4);
+  color: #FFF; font-size: 16px; font-weight: 700;
+  border-radius: 14px; cursor: pointer;
+}
+
+/* --- Concept B: Celebration Overlay --- */
+.mockup-b .celebration-overlay {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(122,74,226,0.95) 0%, rgba(26,16,64,0.98) 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 30px 20px;
+}
+.mockup-b .confetti-area { position: absolute; inset: 0; overflow: hidden; }
+.mockup-b .confetti {
+  position: absolute; width: 8px; height: 8px; border-radius: 2px;
+  animation: fall 3s ease-in infinite;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(520px) rotate(720deg); opacity: 0; }
+}
+.mockup-b .celebration-icon {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px; animation: scaleIn 0.6s ease;
+  position: relative; z-index: 1;
+}
+.mockup-b .celebration-icon::after {
+  content: ''; position: absolute; inset: -8px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+  animation: pulseRing 2s ease infinite;
+}
+@keyframes pulseRing { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.3; } }
+.mockup-b .cele-title { font-size: 22px; font-weight: 800; color: #FFF; margin-bottom: 8px; position: relative; z-index: 1; }
+.mockup-b .cele-sub { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 24px; text-align: center; line-height: 1.5; position: relative; z-index: 1; }
+.mockup-b .cele-progress {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; background: rgba(255,255,255,0.1);
+  border-radius: 20px; margin-bottom: 28px; position: relative; z-index: 1;
+}
+.mockup-b .cele-progress .dot-spin {
+  width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #FFF; border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.mockup-b .cele-progress span { font-size: 12px; color: rgba(255,255,255,0.8); }
+.mockup-b .cele-btn {
+  width: 200px; padding: 14px; border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15); color: #FFF;
+  font-size: 16px; font-weight: 700; border-radius: 14px;
+  cursor: pointer; position: relative; z-index: 1;
+  backdrop-filter: blur(8px);
+}
+
+/* --- Concept C: Step Progress --- */
+.mockup-c .progress-screen {
+  position: absolute; inset: 0; background: #FFFFFF;
+  display: flex; flex-direction: column;
+  padding: 60px 24px 30px;
+}
+.mockup-c .progress-title { font-size: 18px; font-weight: 700; color: #101828; margin-bottom: 8px; }
+.mockup-c .progress-sub { font-size: 13px; color: #667085; margin-bottom: 30px; }
+.mockup-c .step-list { flex: 1; display: flex; flex-direction: column; gap: 0; }
+.mockup-c .step-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 0; position: relative;
+}
+.mockup-c .step-line {
+  position: absolute; left: 17px; top: 50px; bottom: -16px;
+  width: 2px; background: #E4E7EC;
+}
+.mockup-c .step-item:last-child .step-line { display: none; }
+.mockup-c .step-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 16px; position: relative; z-index: 1;
+}
+.mockup-c .step-icon.done { background: #ECFDF3; border: 2px solid #12B76A; }
+.mockup-c .step-icon.active { background: #F9F5FF; border: 2px solid #7A4AE2; }
+.mockup-c .step-icon.waiting { background: #F9FAFB; border: 2px solid #E4E7EC; }
+.mockup-c .step-icon.active .spinner-mini {
+  width: 18px; height: 18px; border: 2px solid #E2D5FF;
+  border-top-color: #7A4AE2; border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.mockup-c .step-info { flex: 1; }
+.mockup-c .step-name { font-size: 14px; font-weight: 600; color: #101828; }
+.mockup-c .step-name.done { color: #027A48; }
+.mockup-c .step-name.active { color: #6941C6; }
+.mockup-c .step-name.waiting { color: #98A2B3; }
+.mockup-c .step-desc { font-size: 12px; color: #667085; margin-top: 2px; }
+.mockup-c .step-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  font-weight: 600; margin-top: 6px; display: inline-block;
+}
+.mockup-c .step-badge.done { background: #ECFDF3; color: #027A48; }
+.mockup-c .step-badge.active { background: #F9F5FF; color: #6941C6; }
+.mockup-c .step-badge.waiting { background: #F9FAFB; color: #98A2B3; }
+.mockup-c .progress-btn {
+  width: 100%; padding: 14px; border: none;
+  background: linear-gradient(135deg, #9B6DFF, #7A4AE2);
+  color: #FFF; font-size: 16px; font-weight: 700;
+  border-radius: 14px; cursor: pointer; margin-top: auto;
+}
+.mockup-c .progress-btn.disabled { opacity: 0.35; }
+
+/* --- Concept D: Toast + Badge --- */
+.mockup-d .card-area {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #2a1a50 0%, #1a0e3a 100%);
+  display: flex; flex-direction: column;
+}
+.mockup-d .video-placeholder {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 20px;
+  position: relative;
+}
+.mockup-d .toast {
+  position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+  background: rgba(18,183,106,0.95); color: #FFF;
+  padding: 10px 18px; border-radius: 12px;
+  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  animation: slideDown 0.4s ease;
+  white-space: nowrap;
+}
+@keyframes slideDown { 0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } 100% { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.mockup-d .card-badge {
+  position: absolute; top: 50px; right: 16px;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; background: rgba(255,255,255,0.15);
+  border-radius: 16px; backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.mockup-d .card-badge .badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #FDB022; animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.mockup-d .card-badge span { font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 500; }
+.mockup-d .headline-area { margin-bottom: 10px; }
+.mockup-d .headline-area h2 { font-size: 22px; font-weight: 700; color: #FFF; }
+.mockup-d .headline-area p { font-size: 12px; color: rgba(255,255,255,0.6); }
+.mockup-d .nav-area {
+  padding: 16px 20px; display: flex; gap: 8px;
+}
+.mockup-d .nav-btn {
+  flex: 1; padding: 14px; border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 700; cursor: pointer; text-align: center;
+}
+.mockup-d .nav-btn.primary {
+  background: linear-gradient(135deg, #9B6DFF, #7A4AE2);
+  color: #FFF;
+}
+
+/* --- Concept E: Split Confirm Modal --- */
+.mockup-e .modal-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.mockup-e .confirm-modal {
+  width: 100%; background: #FFFFFF; border-radius: 20px;
+  padding: 28px 24px; text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.mockup-e .modal-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #F9F5FF; border: 2px solid #E2D5FF;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-size: 28px;
+}
+.mockup-e .modal-title { font-size: 18px; font-weight: 700; color: #101828; margin-bottom: 6px; }
+.mockup-e .modal-desc { font-size: 13px; color: #667085; margin-bottom: 20px; line-height: 1.5; }
+.mockup-e .status-pills {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;
+}
+.mockup-e .status-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 16px;
+  font-size: 12px; font-weight: 500;
+}
+.mockup-e .status-pill.done { background: #ECFDF3; color: #027A48; }
+.mockup-e .status-pill.pending { background: #FFFAEB; color: #B54708; }
+.mockup-e .modal-primary {
+  width: 100%; padding: 14px; border: none;
+  background: linear-gradient(135deg, #9B6DFF, #7A4AE2);
+  color: #FFF; font-size: 16px; font-weight: 700;
+  border-radius: 14px; cursor: pointer; margin-bottom: 10px;
+}
+.mockup-e .modal-secondary {
+  width: 100%; padding: 12px; border: none;
+  background: transparent; color: #667085;
+  font-size: 14px; font-weight: 500;
+  border-radius: 14px; cursor: pointer;
+}
+
+/* --- Concept F: Lottie-style Animation Card --- */
+.mockup-f .anim-card {
+  position: absolute; inset: 0;
+  background: #FFFFFF;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 30px 24px;
+}
+.mockup-f .ring-container {
+  width: 120px; height: 120px; position: relative;
+  margin-bottom: 24px;
+}
+.mockup-f .ring-bg {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 4px solid #F2F4F7; position: absolute;
+}
+.mockup-f .ring-progress {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 4px solid transparent; border-top-color: #7A4AE2;
+  border-right-color: #7A4AE2; border-bottom-color: #7A4AE2;
+  position: absolute;
+  animation: fillRing 2s ease forwards;
+}
+@keyframes fillRing {
+  0% { border-top-color: transparent; border-right-color: transparent; border-bottom-color: transparent; }
+  33% { border-top-color: #7A4AE2; border-right-color: transparent; border-bottom-color: transparent; }
+  66% { border-top-color: #7A4AE2; border-right-color: #7A4AE2; border-bottom-color: transparent; }
+  100% { border-top-color: #7A4AE2; border-right-color: #7A4AE2; border-bottom-color: #7A4AE2; }
+}
+.mockup-f .ring-center {
+  position: absolute; inset: 12px;
+  background: #F9F5FF; border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.mockup-f .ring-center .emoji { font-size: 32px; margin-bottom: 2px; }
+.mockup-f .ring-center .pct { font-size: 14px; font-weight: 700; color: #6941C6; }
+.mockup-f .anim-title { font-size: 20px; font-weight: 700; color: #101828; margin-bottom: 6px; text-align: center; }
+.mockup-f .anim-sub { font-size: 13px; color: #667085; text-align: center; line-height: 1.5; margin-bottom: 20px; }
+.mockup-f .status-list { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.mockup-f .status-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 12px; background: #F9FAFB;
+}
+.mockup-f .status-row .s-icon { font-size: 18px; }
+.mockup-f .status-row .s-text { flex: 1; font-size: 13px; color: #344054; font-weight: 500; }
+.mockup-f .status-row .s-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+}
+.mockup-f .s-badge.done { background: #ECFDF3; color: #027A48; }
+.mockup-f .s-badge.loading { background: #F9F5FF; color: #6941C6; }
+.mockup-f .s-badge.waiting { background: #F2F4F7; color: #98A2B3; }
+.mockup-f .anim-btn {
+  width: 100%; padding: 14px; border: none;
+  background: linear-gradient(135deg, #9B6DFF, #7A4AE2);
+  color: #FFF; font-size: 16px; font-weight: 700;
+  border-radius: 14px; cursor: pointer;
+}
+
+/* --- Implementation Section --- */
+.impl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+.impl-card {
+  background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+  padding: 1.25rem; box-shadow: 0 1px 3px rgba(16,24,40,0.1);
+}
+.impl-card h4 { font-size: 1rem; font-weight: 700; color: #101828; margin-bottom: 0.5rem; }
+.impl-card p { font-size: 0.88rem; color: #667085; line-height: 1.6; }
+.impl-card code {
+  background: #F2F4F7; padding: 0.15rem 0.5rem; border-radius: 5px;
+  font-size: 0.82rem; color: #344054; font-family: 'JetBrains Mono', monospace;
+}
+.impl-card ul { font-size: 0.88rem; color: #344054; line-height: 1.8; padding-left: 1.2rem; }
+.impl-card .highlight { background: #FFFAEB; border-left: 3px solid #FDB022; padding: 0.5rem 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.5rem; font-size: 0.85rem; }
+
+/* Comparison table */
+.comparison-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: #FFFFFF; border: 1px solid #E4E7EC;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 3px rgba(16,24,40,0.1);
+}
+.comparison-table th {
+  background: #F9FAFB; padding: 0.8rem 1rem; text-align: left;
+  font-size: 0.82rem; font-weight: 600; color: #667085;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  border-bottom: 1px solid #E4E7EC;
+}
+.comparison-table td {
+  padding: 0.75rem 1rem; font-size: 0.88rem; color: #344054;
+  border-top: 1px solid #F2F4F7;
+}
+.comparison-table tr:hover td { background: #F9FAFB; }
+.emoji-score { font-size: 0.85rem; }
+
+@media (max-width: 768px) {
+  .concept-grid { grid-template-columns: 1fr; }
+  .phone { width: 260px; height: 460px; }
+  .hero h1 { font-size: 1.5rem; }
+  .content { padding: 1rem; }
+  .flow-diagram { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Onboarding Complete UI/UX</h1>
+  <p class="subtitle">2026-02-22 &middot; Global Matching &middot; POST /onboarding 완료 피드백 시안</p>
+</div>
+
+<div class="content">
+
+  <!-- Section 0: Current Flow -->
+  <div class="section">
+    <h2 class="section-title"><span class="dot orange"></span> 현재 플로우 (Before)</h2>
+    <div class="flow-diagram">
+      <div class="flow-step active">
+        <div class="step-title">선호도 선택</div>
+        <div class="step-desc">OnboardingBottomSheet</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">"완료" 탭</div>
+        <div class="step-desc">로컬 상태만 저장</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step missing">
+        <div class="step-title">피드백 없음</div>
+        <div class="step-desc">성공/실패 UI 부재</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">"매칭 시작" 탭</div>
+        <div class="step-desc">onboarding + rematch</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">매칭 로딩</div>
+        <div class="step-desc">RematchLoading</div>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="dot green"></span> 개선 플로우 (After)</h2>
+    <div class="flow-diagram">
+      <div class="flow-step active">
+        <div class="step-title">선호도 선택</div>
+        <div class="step-desc">OnboardingBottomSheet</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">"완료" 탭</div>
+        <div class="step-desc">POST /onboarding 호출</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step new">
+        <div class="step-title">완료 피드백 UI</div>
+        <div class="step-desc">성공 + 번역 상태</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">"매칭 시작" 탭</div>
+        <div class="step-desc">rematch만 호출</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">
+        <div class="step-title">매칭 로딩</div>
+        <div class="step-desc">RematchLoading</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: 6 Concepts -->
+  <div class="section">
+    <h2 class="section-title"><span class="dot purple"></span> 6가지 UI/UX 시안</h2>
+
+    <div class="concept-grid">
+
+      <!-- Concept A -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>A. Sheet Success Morph</h3>
+          <span class="concept-tag tag-recommended">추천</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            OnboardingBottomSheet가 "완료" 후 <strong>성공 화면으로 자연스럽게 전환</strong>됩니다.
+            체크마크 애니메이션 + 번역 진행 배지 표시 후, CTA 버튼으로 매칭 시작.
+          </div>
+          <div class="phone mockup-a">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner" style="background: linear-gradient(135deg, #2a1a50, #1a0e3a);">
+                <div class="sheet-overlay">
+                  <div class="success-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <div class="success-title">이상형 설정 완료!</div>
+                  <div class="success-sub">선호도가 저장되었어요.<br>이제 딱 맞는 상대를 찾아볼까요?</div>
+                  <div class="translation-badge">
+                    <div class="spinner"></div>
+                    <span>프로필 번역 진행 중...</span>
+                  </div>
+                  <button class="success-btn">매칭 시작하기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>기존 시트 재활용 &rarr; 새 컴포넌트 최소</li>
+            <li>API 호출 &rarr; 성공 &rarr; 매칭 시작 3단계 명확</li>
+            <li>번역 상태를 비침입적으로 표시</li>
+            <li>자연스러운 전환 (시트 내용만 변경)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Concept B -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>B. Celebration Overlay</h3>
+          <span class="concept-tag tag-premium">프리미엄</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            풀스크린 다크 오버레이 + <strong>confetti 파티클 효과</strong>로 축하 분위기.
+            "설정 완료!" 타이틀 + 자동 카운트다운 후 매칭 시작.
+          </div>
+          <div class="phone mockup-b">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner">
+                <div class="celebration-overlay">
+                  <div class="confetti-area">
+                    <div class="confetti" style="left:10%; top:-5%; background:#E2D5FF; animation-delay:0s;"></div>
+                    <div class="confetti" style="left:25%; top:-10%; background:#FDB022; animation-delay:0.3s; width:6px;"></div>
+                    <div class="confetti" style="left:45%; top:-3%; background:#12B76A; animation-delay:0.6s;"></div>
+                    <div class="confetti" style="left:65%; top:-8%; background:#2E90FA; animation-delay:0.2s; width:10px; height:6px;"></div>
+                    <div class="confetti" style="left:80%; top:-6%; background:#F04438; animation-delay:0.8s;"></div>
+                    <div class="confetti" style="left:35%; top:-12%; background:#9B6DFF; animation-delay:0.4s; width:6px; height:10px;"></div>
+                    <div class="confetti" style="left:55%; top:-2%; background:#FDB022; animation-delay:1s; width:5px;"></div>
+                    <div class="confetti" style="left:90%; top:-9%; background:#E2D5FF; animation-delay:0.7s;"></div>
+                  </div>
+                  <div class="celebration-icon">
+                    <span style="font-size: 42px;">🎉</span>
+                  </div>
+                  <div class="cele-title">이상형 설정 완료!</div>
+                  <div class="cele-sub">나에게 맞는 상대를<br>찾아드릴게요</div>
+                  <div class="cele-progress">
+                    <div class="dot-spin"></div>
+                    <span>프로필 번역 준비 중...</span>
+                  </div>
+                  <button class="cele-btn">매칭 시작하기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>임팩트 높은 축하 경험</li>
+            <li>Confetti + 이모지로 감성적 연출</li>
+            <li>다크 배경으로 브랜드 톤 유지</li>
+            <li>Lottie 애니메이션 추가 가능</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Concept C -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>C. Step-by-Step Progress</h3>
+          <span class="concept-tag tag-safe">신뢰감</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            <strong>3단계 진행 표시</strong>: 선호도 저장 &rarr; 프로필 번역 &rarr; 매칭 준비.
+            각 단계가 실시간으로 완료/진행 중 상태를 보여줍니다.
+          </div>
+          <div class="phone mockup-c">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner">
+                <div class="progress-screen">
+                  <div class="progress-title">매칭 준비 중이에요</div>
+                  <div class="progress-sub">잠시만 기다리면 바로 시작할 수 있어요</div>
+
+                  <div class="step-list">
+                    <div class="step-item">
+                      <div class="step-icon done">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#12B76A" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      </div>
+                      <div class="step-info">
+                        <div class="step-name done">이상형 선호도 저장</div>
+                        <div class="step-desc">선택한 3개 항목이 저장되었어요</div>
+                        <span class="step-badge done">완료</span>
+                      </div>
+                      <div class="step-line" style="background: #12B76A;"></div>
+                    </div>
+
+                    <div class="step-item">
+                      <div class="step-icon active">
+                        <div class="spinner-mini"></div>
+                      </div>
+                      <div class="step-info">
+                        <div class="step-name active">프로필 번역 중</div>
+                        <div class="step-desc">일본어로 프로필을 번역하고 있어요</div>
+                        <span class="step-badge active">진행 중</span>
+                      </div>
+                      <div class="step-line"></div>
+                    </div>
+
+                    <div class="step-item">
+                      <div class="step-icon waiting">
+                        <span style="font-size: 14px; color: #98A2B3;">3</span>
+                      </div>
+                      <div class="step-info">
+                        <div class="step-name waiting">매칭 시작 대기</div>
+                        <div class="step-desc">번역이 완료되면 바로 매칭해요</div>
+                        <span class="step-badge waiting">대기</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="progress-btn">바로 매칭 시작하기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>각 단계별 진행 상태가 명확</li>
+            <li>번역 비동기 처리를 자연스럽게 설명</li>
+            <li>기다리는 시간이 의미있게 느껴짐</li>
+            <li>"바로 매칭" 버튼으로 건너뛸 수 있음</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Concept D -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>D. Toast + Card Badge</h3>
+          <span class="concept-tag tag-minimal">미니멀</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            <strong>최소한의 개입</strong>. 토스트 알림 한 줄 + 카드 위 작은 번역 상태 배지.
+            시트 닫힌 후 즉시 매칭 플로우로 진행.
+          </div>
+          <div class="phone mockup-d">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner">
+                <div class="card-area">
+                  <div class="video-placeholder">
+                    <div class="toast">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      이상형 설정이 저장되었어요!
+                    </div>
+                    <div class="card-badge">
+                      <div class="badge-dot"></div>
+                      <span>번역 중</span>
+                    </div>
+                    <div style="flex:1;"></div>
+                    <div class="headline-area">
+                      <p>🇰🇷 🇯🇵</p>
+                      <h2>일본에서 온 인연</h2>
+                      <p>나와 맞는 친구를 찾아보세요</p>
+                    </div>
+                  </div>
+                  <div class="nav-area" style="background: #FFF;">
+                    <button class="nav-btn primary">매칭 시작하기 ✨</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>플로우 중단 최소화</li>
+            <li>기존 UI 변경 거의 없음</li>
+            <li>구현 작업량 가장 적음</li>
+            <li>번역 상태는 배지로 비침입 표시</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Concept E -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>E. Split Confirm Modal</h3>
+          <span class="concept-tag tag-safe">안전</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            온보딩 완료 후 <strong>확인 모달</strong>로 다음 단계 선택권 제공.
+            "바로 매칭 시작" 또는 "나중에 하기" 선택 가능.
+          </div>
+          <div class="phone mockup-e">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner" style="background: linear-gradient(135deg, #2a1a50, #1a0e3a);">
+                <div class="modal-overlay">
+                  <div class="confirm-modal">
+                    <div class="modal-icon">✅</div>
+                    <div class="modal-title">이상형 설정이 완료되었어요!</div>
+                    <div class="modal-desc">선호도가 저장되었습니다.<br>지금 바로 매칭을 시작할까요?</div>
+                    <div class="status-pills">
+                      <div class="status-pill done">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        선호도 저장
+                      </div>
+                      <div class="status-pill pending">
+                        <span style="font-size: 10px;">🔄</span>
+                        프로필 번역 중
+                      </div>
+                    </div>
+                    <button class="modal-primary">💎 매칭 시작하기</button>
+                    <button class="modal-secondary">나중에 할게요</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>유저에게 선택권 제공 (구슬 소모 고려)</li>
+            <li>기존 showModal 패턴 재사용 가능</li>
+            <li>"나중에" 선택 시 온보딩만 완료 가능</li>
+            <li>비용 관련 의사결정 분리</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Concept F -->
+      <div class="concept-card">
+        <div class="concept-header">
+          <h3>F. Progress Ring Card</h3>
+          <span class="concept-tag tag-premium">프리미엄</span>
+        </div>
+        <div class="concept-body">
+          <div class="concept-desc">
+            <strong>진행 링 애니메이션</strong> + 상태 리스트로 각 단계를 시각화.
+            프로그레스 링이 채워지며 준비 과정을 보여줍니다.
+          </div>
+          <div class="phone mockup-f">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-inner">
+                <div class="anim-card">
+                  <div class="ring-container">
+                    <div class="ring-bg"></div>
+                    <div class="ring-progress"></div>
+                    <div class="ring-center">
+                      <span class="emoji">🇰🇷🇯🇵</span>
+                      <span class="pct">75%</span>
+                    </div>
+                  </div>
+                  <div class="anim-title">매칭 준비 중!</div>
+                  <div class="anim-sub">이상형 설정이 완료되었어요.<br>매칭을 위한 준비를 진행하고 있어요.</div>
+                  <div class="status-list">
+                    <div class="status-row">
+                      <span class="s-icon">✅</span>
+                      <span class="s-text">이상형 선호도 저장</span>
+                      <span class="s-badge done">완료</span>
+                    </div>
+                    <div class="status-row">
+                      <span class="s-icon">🔄</span>
+                      <span class="s-text">프로필 일본어 번역</span>
+                      <span class="s-badge loading">진행 중</span>
+                    </div>
+                    <div class="status-row">
+                      <span class="s-icon">⏳</span>
+                      <span class="s-text">매칭 대기</span>
+                      <span class="s-badge waiting">대기</span>
+                    </div>
+                  </div>
+                  <button class="anim-btn">바로 매칭 시작하기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="concept-pros">
+            <li>시각적으로 풍부한 진행 표시</li>
+            <li>프로그레스 링으로 진행률 직관적 표현</li>
+            <li>상태 리스트로 각 단계 명확</li>
+            <li>React Native Reanimated로 구현 가능</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 2: Comparison -->
+  <div class="section">
+    <h2 class="section-title"><span class="dot blue"></span> 시안별 비교</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>시안</th>
+          <th>구현 난이도</th>
+          <th>UX 임팩트</th>
+          <th>플로우 중단</th>
+          <th>번역 상태 표시</th>
+          <th>유저 선택권</th>
+          <th>종합 점수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: #ECFDF3;">
+          <td><strong>A. Sheet Morph</strong></td>
+          <td class="emoji-score">⭐⭐ 낮음</td>
+          <td class="emoji-score">⭐⭐⭐⭐ 높음</td>
+          <td>자연스러움</td>
+          <td>배지 표시</td>
+          <td>CTA 버튼</td>
+          <td><strong style="color: #027A48;">★ 추천</strong></td>
+        </tr>
+        <tr>
+          <td><strong>B. Celebration</strong></td>
+          <td class="emoji-score">⭐⭐⭐ 중간</td>
+          <td class="emoji-score">⭐⭐⭐⭐⭐ 최고</td>
+          <td>완전 중단</td>
+          <td>진행 표시</td>
+          <td>CTA 버튼</td>
+          <td>임팩트 중시</td>
+        </tr>
+        <tr>
+          <td><strong>C. Step Progress</strong></td>
+          <td class="emoji-score">⭐⭐⭐ 중간</td>
+          <td class="emoji-score">⭐⭐⭐⭐ 높음</td>
+          <td>완전 중단</td>
+          <td>단계별 상세</td>
+          <td>"바로 시작" 옵션</td>
+          <td>정보성 중시</td>
+        </tr>
+        <tr>
+          <td><strong>D. Toast + Badge</strong></td>
+          <td class="emoji-score">⭐ 최소</td>
+          <td class="emoji-score">⭐⭐ 낮음</td>
+          <td>거의 없음</td>
+          <td>배지만</td>
+          <td>없음 (자동)</td>
+          <td>최소 구현</td>
+        </tr>
+        <tr>
+          <td><strong>E. Confirm Modal</strong></td>
+          <td class="emoji-score">⭐⭐ 낮음</td>
+          <td class="emoji-score">⭐⭐⭐ 중간</td>
+          <td>모달 1회</td>
+          <td>필 표시</td>
+          <td>매칭/나중에 선택</td>
+          <td>안전한 선택</td>
+        </tr>
+        <tr>
+          <td><strong>F. Progress Ring</strong></td>
+          <td class="emoji-score">⭐⭐⭐⭐ 높음</td>
+          <td class="emoji-score">⭐⭐⭐⭐⭐ 최고</td>
+          <td>완전 중단</td>
+          <td>링 + 리스트</td>
+          <td>"바로 시작" 옵션</td>
+          <td>시각 효과 최고</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 3: Implementation Approach -->
+  <div class="section">
+    <h2 class="section-title"><span class="dot green"></span> API 연동 구현 방안</h2>
+    <div class="impl-grid">
+      <div class="impl-card">
+        <h4>1. 온보딩 API 분리 (핵심 변경)</h4>
+        <p>현재 <code>useGlobalRematch</code>에서 <code>completeOnboarding</code> + <code>globalRematch</code>를 동시 호출합니다.</p>
+        <div class="highlight">
+          <strong>개선:</strong> <code>useCompleteOnboarding</code> 훅을 별도 생성하여 온보딩 완료를 독립 mutation으로 분리
+        </div>
+        <ul style="margin-top: 0.75rem;">
+          <li><code>OnboardingBottomSheet</code> "완료" &rarr; <code>completeOnboarding</code> API 직접 호출</li>
+          <li>성공 시 &rarr; 완료 피드백 UI 표시</li>
+          <li><code>useGlobalRematch</code>에서 온보딩 로직 제거</li>
+          <li>status 쿼리 invalidate &rarr; <code>onboardingCompleted: true</code> 반영</li>
+        </ul>
+      </div>
+
+      <div class="impl-card">
+        <h4>2. useCompleteOnboarding 훅</h4>
+        <ul>
+          <li><code>mutationFn</code>: POST /global-matching/onboarding</li>
+          <li><code>onSuccess</code>: status 쿼리 invalidate + completeFirstMatch()</li>
+          <li><code>onError</code>: 에러 모달 표시 (시트 유지)</li>
+          <li>반환: <code>{ mutate, isPending, isSuccess, data }</code></li>
+        </ul>
+        <div class="highlight">
+          <strong>Response 활용:</strong> <code>data.profileTranslated</code> 로 번역 상태 UI 표시, <code>data.preferenceCount</code>로 저장 확인
+        </div>
+      </div>
+
+      <div class="impl-card">
+        <h4>3. OnboardingBottomSheet 변경</h4>
+        <ul>
+          <li>"완료" 버튼 &rarr; <code>useCompleteOnboarding.mutate()</code> 호출</li>
+          <li><code>isPending</code> 시 &rarr; 버튼 로딩 상태</li>
+          <li><code>isSuccess</code> 시 &rarr; 시트 내용을 성공 UI로 전환</li>
+          <li>성공 UI에서 "매칭 시작" &rarr; <code>onComplete(ids)</code> + 시트 닫기</li>
+        </ul>
+      </div>
+
+      <div class="impl-card">
+        <h4>4. useGlobalRematch 단순화</h4>
+        <ul>
+          <li>온보딩 관련 코드 제거 (<code>completeOnboarding</code> 호출 삭제)</li>
+          <li><code>shouldCompleteOnboarding</code> 분기 제거</li>
+          <li>순수하게 <code>globalRematch()</code>만 호출</li>
+          <li>에러 처리는 기존 유지</li>
+        </ul>
+        <div class="highlight">
+          <strong>안전장치:</strong> 서버 측에서 온보딩 미완료 시 rematch 거부 가능. 프론트에서도 <code>status.onboardingCompleted</code> 체크 유지
+        </div>
+      </div>
+
+      <div class="impl-card">
+        <h4>5. i18n 추가 키</h4>
+        <ul>
+          <li><code>onboarding_complete_title</code>: "이상형 설정 완료!"</li>
+          <li><code>onboarding_complete_desc</code>: "선호도가 저장되었어요"</li>
+          <li><code>onboarding_translating</code>: "프로필 번역 진행 중..."</li>
+          <li><code>onboarding_start_matching</code>: "매칭 시작하기"</li>
+          <li><code>onboarding_later</code>: "나중에 할게요"</li>
+          <li><code>onboarding_save_error</code>: "설정 저장에 실패했어요"</li>
+        </ul>
+      </div>
+
+      <div class="impl-card">
+        <h4>6. 파일 변경 예상</h4>
+        <ul>
+          <li><code>hooks/use-complete-onboarding.ts</code> (신규)</li>
+          <li><code>ui/onboarding-bottom-sheet.tsx</code> (수정)</li>
+          <li><code>ui/onboarding-success.tsx</code> (신규, 선택)</li>
+          <li><code>hooks/use-global-rematch.ts</code> (단순화)</li>
+          <li><code>ui/global-matching-timer.tsx</code> (플로우 변경)</li>
+          <li><code>locales/{ko,en,ja}/features/global-matching.json</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

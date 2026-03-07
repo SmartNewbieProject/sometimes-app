@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대학 선택 - 키보드 UX 시연</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, 'Pretendard', sans-serif; }
+
+  body {
+    background: #F4F0FF;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  /* ─── 시나리오 컬럼 ─── */
+  .scenario-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .scenario-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #7A4AE2;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: #EDE5FF;
+    padding: 4px 14px;
+    border-radius: 100px;
+  }
+  .scenario-desc {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    max-width: 200px;
+    line-height: 1.6;
+  }
+
+  /* ─── 폰 프레임 ─── */
+  .phone {
+    width: 200px;
+    height: 420px;
+    background: #fff;
+    border-radius: 32px;
+    border: 3px solid #222;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(122,74,226,0.18), 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 16px;
+    background: #222;
+    border-radius: 0 0 10px 10px;
+    z-index: 20;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* ─── 앱 배경 그라디언트 ─── */
+  .app-gradient {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 160px;
+    background: linear-gradient(180deg, rgba(237,229,255,0.6) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+  }
+
+  /* ─── 앱 컨텐츠 ─── */
+  .app-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+  }
+
+  /* 타이틀 영역 */
+  .title-area {
+    padding-top: 26px;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+  }
+  .title-welcome {
+    font-size: 10px;
+    color: #7A4AE2;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .title-main {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  /* 검색창 */
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    background: #fff;
+    border: 2px solid #E0D9F0;
+    border-radius: 8px;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .search-box.focused {
+    border-color: #7A4AE2;
+    background: #FDFBFF;
+  }
+  .search-icon {
+    width: 12px;
+    height: 12px;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+  .search-input-fake {
+    font-size: 10px;
+    color: #1a1a1a;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .search-input-fake.placeholder {
+    color: #9B94AB;
+  }
+  .cursor {
+    display: inline-block;
+    width: 1px;
+    height: 10px;
+    background: #7A4AE2;
+    margin-left: 1px;
+    animation: blink 1s step-start infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 검색 팁 */
+  .search-tip {
+    background: #F8F5FF;
+    border-radius: 8px;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    font-size: 9px;
+    color: #555;
+    line-height: 1.5;
+    transition: opacity 0.2s, max-height 0.2s;
+    overflow: hidden;
+    max-height: 60px;
+  }
+  .search-tip strong { color: #7A4AE2; }
+  .search-tip.hidden {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  /* 리스트 */
+  .univ-list {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+  .univ-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1.5px solid #E0D9F0;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+  }
+  .univ-item:hover { border-color: #7A4AE2; background: #FDFBFF; }
+  .univ-item.selected {
+    border-color: #7A4AE2;
+    background: #F3EDFF;
+  }
+  .univ-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #E8E0F8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: #7A4AE2;
+    flex-shrink: 0;
+  }
+  .univ-name {
+    font-size: 10px;
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+  .univ-check {
+    margin-left: auto;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #7A4AE2;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .univ-item.selected .univ-check { display: flex; }
+  .univ-check::after {
+    content: '';
+    width: 5px;
+    height: 3px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  /* ─── 하단 버튼 영역 ─── */
+  .bottom-area {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    padding: 8px 12px 14px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .bottom-area.hidden {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+
+  /* 이전 tip 텍스트 (Before 상태에서만 표시) */
+  .tip-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 6px;
+    opacity: 0.45;
+  }
+  .tip-text span {
+    font-size: 8px;
+    color: #999;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 6px;
+  }
+  .btn {
+    flex: 1;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-prev {
+    background: #F0EBFF;
+    color: #7A4AE2;
+  }
+  .btn-next {
+    background: #7A4AE2;
+    color: #fff;
+  }
+  .btn-next:disabled {
+    background: #D5C8F5;
+    cursor: default;
+  }
+
+  /* ─── 키보드 ─── */
+  .keyboard {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 110px;
+    background: #D1D5DB;
+    border-top: 1px solid #bbb;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    transform: translateY(100%);
+    z-index: 10;
+    padding: 6px 4px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .keyboard.visible { transform: translateY(0); }
+  .key-row {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+  }
+  .key {
+    flex: 1;
+    max-width: 18px;
+    height: 22px;
+    background: #fff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    color: #222;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    font-weight: 500;
+  }
+  .key.wide { max-width: 28px; flex: 1.5; font-size: 6px; background: #AEB0B5; }
+  .key.space { max-width: 80px; flex: 5; }
+  .key.return { max-width: 32px; flex: 2; background: #AEB0B5; font-size: 6px; }
+
+  /* ─── 배지 ─── */
+  .change-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #FF4757;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 100px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(255,71,87,0.4);
+    z-index: 10;
+  }
+
+  /* ─── 화살표 (개선 전→후) ─── */
+  .arrow-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 60px;
+  }
+  .arrow-svg { color: #7A4AE2; opacity: 0.7; }
+  .arrow-label {
+    font-size: 11px;
+    color: #7A4AE2;
+    font-weight: 600;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    letter-spacing: 2px;
+  }
+
+  /* ─── 범례 ─── */
+  .legend {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 20px rgba(122,74,226,0.1);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .legend-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #7A4AE2;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .legend-text { font-size: 12px; color: #333; line-height: 1.6; }
+  .legend-text strong { color: #7A4AE2; }
+
+  /* 페이지 타이틀 */
+  .page-title {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .page-subtitle {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 32px;
+  }
+  .page-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 상태 인디케이터 */
+  .state-indicator {
+    font-size: 10px;
+    color: #7A4AE2;
+    font-weight: 600;
+    background: #EDE5FF;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-top: -4px;
+  }
+
+  /* ─── 인터랙티브 데모 ─── */
+  .interactive-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .interactive-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .demo-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ctrl-btn {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 2px solid #7A4AE2;
+    background: #fff;
+    color: #7A4AE2;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ctrl-btn:hover, .ctrl-btn.active {
+    background: #7A4AE2;
+    color: #fff;
+  }
+
+  /* ─── 흐름 다이어그램 ─── */
+  .flow-section {
+    width: 100%;
+    max-width: 680px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 20px rgba(122,74,226,0.1);
+  }
+  .flow-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .flow-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .flow-icon.purple { background: #EDE5FF; }
+  .flow-icon.green { background: #E5F7EE; }
+  .flow-icon.orange { background: #FFF0E5; }
+  .flow-step-label { font-size: 10px; color: #555; text-align: center; max-width: 70px; line-height: 1.4; }
+  .flow-arrow {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, #7A4AE2, #A07AEF);
+    position: relative;
+    min-width: 20px;
+    margin: 0 4px;
+    margin-bottom: 20px;
+  }
+  .flow-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -3px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid #A07AEF;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">대학 선택 화면 — 키보드 UX 개선</div>
+  <div class="page-subtitle">app/auth/signup/university.tsx · 2026-03-06</div>
+</div>
+
+<!-- ───────────── 비교 섹션 ───────────── -->
+<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+
+  <!-- BEFORE -->
+  <div class="scenario-col">
+    <div class="scenario-label" style="background:#FFE8E8;color:#D63031;">Before</div>
+
+    <!-- 상태 1: 기본 -->
+    <div class="state-indicator">기본 상태</div>
+    <div class="phone" style="border-color:#D63031;">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-gradient"></div>
+        <div class="app-content">
+          <div class="title-area"><div class="title-welcome">대학교를 찾아보세요</div><div class="title-main">학교를 선택해주세요</div></div>
+          <div class="search-box"><svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg><span class="search-input-fake placeholder">대학교 이름 검색</span></div>
+          <div class="search-tip"><strong>검색 팁</strong><br>학교명 또는 약어로 검색하세요</div>
+          <div class="univ-list">
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">연</div><div class="univ-name">연세대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">고</div><div class="univ-name">고려대학교</div><div class="univ-check"></div></div>
+          </div>
+        </div>
+        <div class="bottom-area">
+          <div class="tip-text"><span>🛈</span><span>학교 인증을 통해 안전하게 이용할 수 있습니다.</span></div>
+          <div class="btn-row">
+            <button class="btn btn-prev">이전</button>
+            <button class="btn btn-next" disabled>다음</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 상태 2: 키보드 올라옴 -->
+    <div class="state-indicator">키보드 올라온 상태</div>
+    <div class="phone" style="border-color:#D63031;">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-gradient"></div>
+        <div class="app-content">
+          <div class="title-area"><div class="title-welcome">대학교를 찾아보세요</div><div class="title-main">학교를 선택해주세요</div></div>
+          <div class="search-box focused"><svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="#7A4AE2" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg><span class="search-input-fake">서울<span class="cursor"></span></span></div>
+          <div class="search-tip"><strong>검색 팁</strong><br>학교명 또는 약어로 검색하세요</div>
+          <div class="univ-list">
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울시립대</div><div class="univ-check"></div></div>
+          </div>
+        </div>
+        <!-- 버튼이 키보드에 눌려서 이상한 위치에 존재 (Before 문제점) -->
+        <div class="bottom-area" style="bottom:110px;background:rgba(255,255,255,0.9);">
+          <div class="tip-text" style="opacity:0.3"><span>🛈</span><span>학교 인증을 통해 안전하게 이용할 수 있습니다.</span></div>
+          <div class="btn-row">
+            <button class="btn btn-prev">이전</button>
+            <button class="btn btn-next" disabled>다음</button>
+          </div>
+        </div>
+        <div class="keyboard visible">
+          <div class="key-row"><div class="key">ㅂ</div><div class="key">ㅈ</div><div class="key">ㄷ</div><div class="key">ㄱ</div><div class="key">ㅅ</div><div class="key">ㅛ</div><div class="key">ㅕ</div><div class="key">ㅑ</div><div class="key">ㅐ</div><div class="key">ㅔ</div></div>
+          <div class="key-row"><div class="key">ㅁ</div><div class="key">ㄴ</div><div class="key">ㅇ</div><div class="key">ㄹ</div><div class="key">ㅎ</div><div class="key">ㅗ</div><div class="key">ㅓ</div><div class="key">ㅏ</div><div class="key">ㅣ</div></div>
+          <div class="key-row"><div class="key wide">⇧</div><div class="key">ㅋ</div><div class="key">ㅌ</div><div class="key">ㅊ</div><div class="key">ㅍ</div><div class="key">ㅠ</div><div class="key">ㅜ</div><div class="key">ㅡ</div><div class="key wide">⌫</div></div>
+          <div class="key-row"><div class="key wide">한/영</div><div class="key space">space</div><div class="key return">검색</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-desc" style="color:#D63031;">❌ 키보드에 버튼이 눌려 UI 깨짐<br>❌ 가독성 없는 tip 텍스트 노출</div>
+  </div>
+
+  <!-- 화살표 -->
+  <div class="arrow-divider">
+    <svg width="24" height="40" viewBox="0 0 24 40" fill="none" class="arrow-svg">
+      <path d="M12 0 L12 32 M4 24 L12 36 L20 24" stroke="#7A4AE2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div style="font-size:11px;color:#7A4AE2;font-weight:700;text-align:center;">개선</div>
+    <svg width="24" height="40" viewBox="0 0 24 40" fill="none" class="arrow-svg" style="transform:rotate(180deg)">
+      <path d="M12 0 L12 32 M4 24 L12 36 L20 24" stroke="#7A4AE2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- AFTER -->
+  <div class="scenario-col">
+    <div class="scenario-label">After</div>
+
+    <!-- 상태 1: 기본 -->
+    <div class="state-indicator">기본 상태</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-gradient"></div>
+        <div class="app-content">
+          <div class="title-area"><div class="title-welcome">대학교를 찾아보세요</div><div class="title-main">학교를 선택해주세요</div></div>
+          <div class="search-box"><svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg><span class="search-input-fake placeholder">대학교 이름 검색</span></div>
+          <div class="search-tip"><strong>검색 팁</strong><br>학교명 또는 약어로 검색하세요</div>
+          <div class="univ-list">
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">연</div><div class="univ-name">연세대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">고</div><div class="univ-name">고려대학교</div><div class="univ-check"></div></div>
+          </div>
+        </div>
+        <div class="bottom-area">
+          <!-- tip 없음 -->
+          <div class="btn-row">
+            <button class="btn btn-prev">이전</button>
+            <button class="btn btn-next" disabled>다음</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 상태 2: 키보드 올라옴 -->
+    <div class="state-indicator">키보드 올라온 상태</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-gradient"></div>
+        <div class="app-content">
+          <div class="title-area"><div class="title-welcome">대학교를 찾아보세요</div><div class="title-main">학교를 선택해주세요</div></div>
+          <div class="search-box focused"><svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="#7A4AE2" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg><span class="search-input-fake">서울<span class="cursor"></span></span></div>
+          <div class="search-tip hidden"><strong>검색 팁</strong><br>학교명 또는 약어로 검색하세요</div>
+          <div class="univ-list">
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울대학교</div><div class="univ-check"></div></div>
+            <div class="univ-item"><div class="univ-logo">서</div><div class="univ-name">서울시립대</div><div class="univ-check"></div></div>
+          </div>
+        </div>
+        <!-- 버튼이 자연스럽게 아래로 사라짐 -->
+        <div class="bottom-area hidden">
+          <div class="btn-row">
+            <button class="btn btn-prev">이전</button>
+            <button class="btn btn-next" disabled>다음</button>
+          </div>
+        </div>
+        <div class="keyboard visible">
+          <div class="key-row"><div class="key">ㅂ</div><div class="key">ㅈ</div><div class="key">ㄷ</div><div class="key">ㄱ</div><div class="key">ㅅ</div><div class="key">ㅛ</div><div class="key">ㅕ</div><div class="key">ㅑ</div><div class="key">ㅐ</div><div class="key">ㅔ</div></div>
+          <div class="key-row"><div class="key">ㅁ</div><div class="key">ㄴ</div><div class="key">ㅇ</div><div class="key">ㄹ</div><div class="key">ㅎ</div><div class="key">ㅗ</div><div class="key">ㅓ</div><div class="key">ㅏ</div><div class="key">ㅣ</div></div>
+          <div class="key-row"><div class="key wide">⇧</div><div class="key">ㅋ</div><div class="key">ㅌ</div><div class="key">ㅊ</div><div class="key">ㅍ</div><div class="key">ㅠ</div><div class="key">ㅜ</div><div class="key">ㅡ</div><div class="key wide">⌫</div></div>
+          <div class="key-row"><div class="key wide">한/영</div><div class="key space">space</div><div class="key return">검색</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-desc">✅ 버튼이 부드럽게 사라져 충돌 없음<br>✅ tip 텍스트 제거, 화면 깔끔</div>
+  </div>
+
+</div>
+
+<!-- ───────────── 인터랙티브 데모 ───────────── -->
+<div class="interactive-section">
+  <div class="interactive-title">인터랙티브 시연 — 직접 조작해보세요</div>
+  <div class="demo-controls">
+    <button class="ctrl-btn active" onclick="setDemoState('idle')">기본 상태</button>
+    <button class="ctrl-btn" onclick="setDemoState('searching')">검색 중 (키보드 올라옴)</button>
+    <button class="ctrl-btn" onclick="setDemoState('selected')">대학교 선택 완료</button>
+  </div>
+
+  <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <div class="scenario-col">
+      <div class="scenario-label" style="background:#E5F7EE;color:#00B37E;">Live Demo</div>
+      <div id="demo-state-label" class="state-indicator">기본 상태</div>
+      <div class="phone" style="border-color:#7A4AE2;box-shadow:0 20px 60px rgba(122,74,226,0.25);">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-gradient"></div>
+          <div class="app-content">
+            <div class="title-area"><div class="title-welcome">대학교를 찾아보세요</div><div class="title-main">학교를 선택해주세요</div></div>
+            <div id="demo-search" class="search-box">
+              <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="4"/><line x1="10" y1="10" x2="13" y2="13"/></svg>
+              <span id="demo-search-text" class="search-input-fake placeholder">대학교 이름 검색</span>
+            </div>
+            <div id="demo-tip" class="search-tip"><strong>검색 팁</strong><br>학교명 또는 약어로 검색하세요</div>
+            <div class="univ-list">
+              <div id="demo-item-1" class="univ-item" onclick="selectItem(1)"><div class="univ-logo">서</div><div class="univ-name">서울대학교</div><div class="univ-check"></div></div>
+              <div id="demo-item-2" class="univ-item" onclick="selectItem(2)"><div class="univ-logo">연</div><div class="univ-name">연세대학교</div><div class="univ-check"></div></div>
+              <div id="demo-item-3" class="univ-item" onclick="selectItem(3)"><div class="univ-logo">고</div><div class="univ-name">고려대학교</div><div class="univ-check"></div></div>
+            </div>
+          </div>
+          <div id="demo-bottom" class="bottom-area">
+            <div class="btn-row">
+              <button class="btn btn-prev">이전</button>
+              <button id="demo-next-btn" class="btn btn-next" disabled>다음</button>
+            </div>
+          </div>
+          <div id="demo-keyboard" class="keyboard">
+            <div class="key-row"><div class="key">ㅂ</div><div class="key">ㅈ</div><div class="key">ㄷ</div><div class="key">ㄱ</div><div class="key">ㅅ</div><div class="key">ㅛ</div><div class="key">ㅕ</div><div class="key">ㅑ</div><div class="key">ㅐ</div><div class="key">ㅔ</div></div>
+            <div class="key-row"><div class="key">ㅁ</div><div class="key">ㄴ</div><div class="key">ㅇ</div><div class="key">ㄹ</div><div class="key">ㅎ</div><div class="key">ㅗ</div><div class="key">ㅓ</div><div class="key">ㅏ</div><div class="key">ㅣ</div></div>
+            <div class="key-row"><div class="key wide">⇧</div><div class="key">ㅋ</div><div class="key">ㅌ</div><div class="key">ㅊ</div><div class="key">ㅍ</div><div class="key">ㅠ</div><div class="key">ㅜ</div><div class="key">ㅡ</div><div class="key wide">⌫</div></div>
+            <div class="key-row"><div class="key wide">한/영</div><div class="key space">space</div><div class="key return">검색</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 상태별 설명 패널 -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:60px;max-width:220px;">
+      <div id="desc-idle" class="scenario-desc" style="background:#F8F5FF;border-radius:12px;padding:12px;font-size:11px;color:#333;line-height:1.7;max-width:220px;">
+        <strong style="color:#7A4AE2;display:block;margin-bottom:6px;">기본 상태</strong>
+        검색 팁이 표시됩니다.<br>
+        이전/다음 버튼이 하단에 고정되어 있습니다.<br>
+        tip 문구가 제거되어 화면이 깔끔합니다.
+      </div>
+      <div id="desc-searching" class="scenario-desc" style="background:#fff;border-radius:12px;padding:12px;font-size:11px;color:#999;line-height:1.7;max-width:220px;border:1px solid #eee;">
+        <strong style="color:#ccc;display:block;margin-bottom:6px;">검색 중 상태</strong>
+        키보드가 올라오면:<br>
+        · 검색 팁 숨김 (max-height)<br>
+        · 버튼이 translateY(50) + opacity 0<br>
+        · 리스트 공간이 최대화
+      </div>
+      <div id="desc-selected" class="scenario-desc" style="background:#fff;border-radius:12px;padding:12px;font-size:11px;color:#999;line-height:1.7;max-width:220px;border:1px solid #eee;">
+        <strong style="color:#ccc;display:block;margin-bottom:6px;">선택 완료 상태</strong>
+        대학교 탭 시:<br>
+        · Keyboard.dismiss() 즉시 호출<br>
+        · 키보드 내려가며 버튼 복귀<br>
+        · 다음 버튼 활성화
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────── 흐름 다이어그램 ───────────── -->
+<div class="flow-section">
+  <div class="flow-title">키보드 dismiss 트리거 흐름</div>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-icon purple">🔍</div>
+      <div class="flow-step-label">검색창 포커스<br>(키보드 UP)</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-step">
+      <div class="flow-icon purple">📋</div>
+      <div class="flow-step-label">리스트 결과<br>표시</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-step">
+      <div class="flow-icon orange">↕️</div>
+      <div class="flow-step-label">스크롤 드래그<br>→ 키보드 DOWN</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-step">
+      <div class="flow-icon green">✅</div>
+      <div class="flow-step-label">대학 탭<br>→ 즉시 DOWN</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-step">
+      <div class="flow-icon green">🎯</div>
+      <div class="flow-step-label">버튼 복귀<br>다음 활성화</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid #F0EBFF;display:flex;gap:20px;flex-wrap:wrap;">
+    <div style="font-size:11px;color:#555;"><strong style="color:#7A4AE2;">keyboardDismissMode</strong>="on-drag" — 리스트 스크롤 시 자동 dismiss</div>
+    <div style="font-size:11px;color:#555;"><strong style="color:#7A4AE2;">keyboardShouldPersistTaps</strong>="handled" — 탭 이벤트 정상 전달</div>
+    <div style="font-size:11px;color:#555;"><strong style="color:#7A4AE2;">Keyboard.dismiss()</strong> — 대학 선택 onClick에서 즉시 호출</div>
+  </div>
+</div>
+
+<!-- ───────────── 범례 ───────────── -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-num">1</div>
+    <div class="legend-text"><strong>tip 문구 제거</strong><br>배경과 겹쳐 읽기 어렵던 "학교 인증을 통해..." 문구 삭제. HelpIcon import, tipContainer/tip 스타일 함께 제거.</div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">2</div>
+    <div class="legend-text"><strong>버튼 페이드아웃</strong><br>키보드 올라올 때 <code>translateY(50) + opacity:0</code> 애니메이션(200ms). 기존 bottomButtonsAnimatedStyle 활용.</div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">3</div>
+    <div class="legend-text"><strong>스크롤로 키보드 내리기</strong><br><code>keyboardDismissMode="on-drag"</code> 추가. 리스트를 드래그하면 키보드가 자연스럽게 내려가고 버튼이 복귀.</div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">4</div>
+    <div class="legend-text"><strong>선택 시 즉시 dismiss</strong><br>대학교 카드 클릭 시 <code>Keyboard.dismiss()</code> 즉시 호출. 선택→키보드 내림→버튼 활성화 흐름이 자연스러움.</div>
+  </div>
+</div>
+
+<script>
+  let currentState = 'idle';
+  let selectedItem = null;
+
+  function setDemoState(state) {
+    currentState = state;
+    document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const keyboard = document.getElementById('demo-keyboard');
+    const bottom = document.getElementById('demo-bottom');
+    const tip = document.getElementById('demo-tip');
+    const search = document.getElementById('demo-search');
+    const searchText = document.getElementById('demo-search-text');
+    const stateLabel = document.getElementById('demo-state-label');
+    const descs = ['desc-idle','desc-searching','desc-selected'];
+
+    if (state === 'idle') {
+      keyboard.classList.remove('visible');
+      bottom.classList.remove('hidden');
+      tip.classList.remove('hidden');
+      search.classList.remove('focused');
+      searchText.textContent = '대학교 이름 검색';
+      searchText.classList.add('placeholder');
+      searchText.innerHTML = '대학교 이름 검색';
+      stateLabel.textContent = '기본 상태';
+      // 선택 초기화
+      document.querySelectorAll('.univ-item').forEach(i => i.classList.remove('selected'));
+      document.getElementById('demo-next-btn').disabled = true;
+      selectedItem = null;
+      highlight('desc-idle');
+    } else if (state === 'searching') {
+      keyboard.classList.add('visible');
+      bottom.classList.add('hidden');
+      tip.classList.add('hidden');
+      search.classList.add('focused');
+      searchText.innerHTML = '서울<span class="cursor"></span>';
+      searchText.classList.remove('placeholder');
+      stateLabel.textContent = '키보드 올라온 상태';
+      highlight('desc-searching');
+    } else if (state === 'selected') {
+      keyboard.classList.remove('visible');
+      bottom.classList.remove('hidden');
+      tip.classList.remove('hidden');
+      search.classList.remove('focused');
+      searchText.textContent = '서울';
+      searchText.classList.remove('placeholder');
+      stateLabel.textContent = '대학교 선택 완료';
+      // 첫 번째 선택
+      document.querySelectorAll('.univ-item').forEach(i => i.classList.remove('selected'));
+      document.getElementById('demo-item-1').classList.add('selected');
+      document.getElementById('demo-next-btn').disabled = false;
+      highlight('desc-selected');
+    }
+  }
+
+  function highlight(activeId) {
+    ['desc-idle','desc-searching','desc-selected'].forEach(id => {
+      const el = document.getElementById(id);
+      if (id === activeId) {
+        el.style.background = '#F8F5FF';
+        el.style.border = '1.5px solid #C4ACFF';
+        el.querySelectorAll('strong').forEach(s => s.style.color = '#7A4AE2');
+        el.style.color = '#333';
+      } else {
+        el.style.background = '#fff';
+        el.style.border = '1px solid #eee';
+        el.querySelectorAll('strong').forEach(s => s.style.color = '#ccc');
+        el.style.color = '#999';
+      }
+    });
+  }
+
+  function selectItem(n) {
+    // 검색 중 상태에서 선택 시 → 키보드 dismiss 시뮬레이션
+    if (currentState === 'searching') {
+      setDemoStateByItem(n);
+      return;
+    }
+    document.querySelectorAll('.univ-item').forEach(i => i.classList.remove('selected'));
+    document.getElementById('demo-item-' + n).classList.add('selected');
+    document.getElementById('demo-next-btn').disabled = false;
+    selectedItem = n;
+  }
+
+  function setDemoStateByItem(n) {
+    const keyboard = document.getElementById('demo-keyboard');
+    const bottom = document.getElementById('demo-bottom');
+    const tip = document.getElementById('demo-tip');
+    const search = document.getElementById('demo-search');
+    currentState = 'selected';
+    // Keyboard.dismiss() 시뮬레이션
+    keyboard.classList.remove('visible');
+    bottom.classList.remove('hidden');
+    tip.classList.remove('hidden');
+    search.classList.remove('focused');
+    document.getElementById('demo-search-text').textContent = '서울';
+    document.getElementById('demo-state-label').textContent = '대학교 선택 완료';
+    document.querySelectorAll('.univ-item').forEach(i => i.classList.remove('selected'));
+    document.getElementById('demo-item-' + n).classList.add('selected');
+    document.getElementById('demo-next-btn').disabled = false;
+    document.querySelectorAll('.ctrl-btn').forEach((b,i) => {
+      b.classList.remove('active');
+      if (i === 2) b.classList.add('active');
+    });
+    highlight('desc-selected');
+  }
+</script>
+</body>
+</html>

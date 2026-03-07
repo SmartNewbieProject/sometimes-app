@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sometime - Matching Report Preview</title>
+<style>
+  :root {
+    --brand: #7A4AE2;
+    --brand-light: #E8DEFF;
+    --brand-deep: #5C3D8F;
+    --brand-gradient-start: #9B6DFF;
+    --brand-gradient-end: #7A4AE2;
+    --green: #00C853;
+    --orange: #FF9800;
+    --red: #FF5252;
+    --gray: #9CA3AF;
+    --gray-light: #F3F4F6;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --bg: #F8F6FF;
+    --card: #FFFFFF;
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    max-width: 393px;
+    margin: 0 auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header Gradient ── */
+  .header-bg {
+    background: linear-gradient(180deg, #E8DEFF 0%, #F5F1FF 40%, #FFFFFF 100%);
+    padding: 60px 24px 40px;
+    position: relative;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--brand);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .header-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--brand-deep);
+    background: rgba(122, 74, 226, 0.08);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    margin: 0 16px 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(122, 74, 226, 0.06);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  .card-title .icon { font-size: 18px; }
+
+  /* ── Radar Chart ── */
+  .radar-wrap {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 300px;
+    margin-bottom: 12px;
+  }
+
+  .radar-canvas {
+    width: 280px;
+    height: 280px;
+  }
+
+  .radar-label {
+    position: absolute;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+    width: 80px;
+  }
+
+  .radar-label .score {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--brand);
+    margin-top: 2px;
+  }
+
+  .radar-label.top    { top: 0; left: 50%; transform: translateX(-50%); }
+  .radar-label.right-top  { top: 60px; right: -10px; }
+  .radar-label.right-bot  { bottom: 40px; right: -10px; }
+  .radar-label.left-bot   { bottom: 40px; left: -10px; }
+  .radar-label.left-top   { top: 60px; left: -10px; }
+
+  .radar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .legend-dot.current { background: var(--brand); opacity: 0.5; }
+  .legend-dot.avg { border: 2px dashed var(--gray); }
+
+  /* ── Score Cards ── */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .score-item {
+    background: var(--gray-light);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .score-item.excellent::before { background: var(--brand); }
+  .score-item.good::before { background: var(--green); }
+  .score-item.warning::before { background: var(--orange); }
+  .score-item.low::before { background: var(--red); }
+
+  .score-item .label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .score-item .value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .score-item .unit {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .score-item .change {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .change.up { color: var(--green); }
+  .change.down { color: var(--red); }
+  .change.stable { color: var(--text-muted); }
+
+  /* ── Percentile Bar ── */
+  .percentile-section { margin-top: 8px; }
+
+  .percentile-item {
+    margin-bottom: 16px;
+  }
+
+  .percentile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .percentile-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .percentile-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand);
+  }
+
+  .percentile-bar {
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .percentile-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--brand-gradient-start), var(--brand-gradient-end));
+    transition: width 1s ease;
+  }
+
+  .percentile-avg-marker {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 14px;
+    background: var(--text-muted);
+    border-radius: 1px;
+  }
+
+  .percentile-avg-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  /* ── Insight Cards ── */
+  .insight-item {
+    background: var(--gray-light);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .insight-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .insight-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(122, 74, 226, 0.1);
+    border-radius: 10px;
+  }
+
+  .insight-content { flex: 1; }
+
+  .insight-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .insight-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .insight-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  .insight-badge.positive { background: rgba(0, 200, 83, 0.1); color: var(--green); }
+  .insight-badge.neutral { background: rgba(156, 163, 175, 0.15); color: var(--text-secondary); }
+  .insight-badge.action { background: rgba(255, 152, 0, 0.1); color: var(--orange); }
+
+  /* ── Match Quality Timeline ── */
+  .timeline {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 80px;
+    padding: 0 4px;
+    margin-bottom: 8px;
+  }
+
+  .timeline-bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    min-height: 8px;
+    position: relative;
+  }
+
+  .timeline-labels {
+    display: flex;
+    gap: 6px;
+    padding: 0 4px;
+  }
+
+  .timeline-labels span {
+    flex: 1;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* ── Keywords ── */
+  .keyword-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .keyword {
+    background: var(--brand-light);
+    color: var(--brand-deep);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 0 16px 40px;
+  }
+
+  .cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    background: var(--brand);
+    border: none;
+    cursor: pointer;
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    height: 1px;
+    background: var(--gray-light);
+    margin: 20px 0;
+  }
+
+  /* ── Summary Box ── */
+  .summary-box {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .summary-title {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+
+  .summary-text {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ Header ═══════════ -->
+<div class="header-bg">
+  <div class="header-badge">Premium Report</div>
+  <div class="header-title">나의 매칭 리포트</div>
+  <div class="header-sub">매칭 데이터를 분석해 나만의 연애 지표를 알려드려요</div>
+  <div class="header-meta">
+    <div class="meta-chip">325회 매칭</div>
+    <div class="meta-chip">42회 좋아요 수신</div>
+    <div class="meta-chip">256명 프로필 열람</div>
+  </div>
+</div>
+
+<!-- ═══════════ Section 1: Matching Radar ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">🔮</span>
+    나의 매칭 다각형
+  </div>
+
+  <div class="radar-wrap">
+    <svg class="radar-canvas" viewBox="0 0 280 280">
+      <!-- Background pentagons -->
+      <g opacity="0.15">
+        <polygon points="140,20 256,100 211,240 69,240 24,100" fill="none" stroke="#9CA3AF" stroke-width="1"/>
+        <polygon points="140,44 232,112 197,224 83,224 48,112" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,4"/>
+        <polygon points="140,68 208,124 183,208 97,208 72,124" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,4"/>
+        <polygon points="140,92 184,136 169,192 111,192 96,136" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,4"/>
+        <polygon points="140,116 160,148 155,176 125,176 120,148" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,4"/>
+      </g>
+      <!-- Axis lines -->
+      <g opacity="0.2">
+        <line x1="140" y1="140" x2="140" y2="20" stroke="#9CA3AF" stroke-width="1"/>
+        <line x1="140" y1="140" x2="256" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+        <line x1="140" y1="140" x2="211" y2="240" stroke="#9CA3AF" stroke-width="1"/>
+        <line x1="140" y1="140" x2="69" y2="240" stroke="#9CA3AF" stroke-width="1"/>
+        <line x1="140" y1="140" x2="24" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+      </g>
+      <!-- Average (dashed) -->
+      <polygon points="140,68 208,124 183,208 97,208 72,124" fill="none" stroke="#A0A0A0" stroke-width="2" stroke-dasharray="6,4"/>
+      <!-- User data -->
+      <polygon points="140,30 248,106 191,234 89,210 42,108" fill="#7A4AE2" fill-opacity="0.2" stroke="#7A4AE2" stroke-width="2.5"/>
+      <!-- Data dots -->
+      <circle cx="140" cy="30" r="4" fill="#7A4AE2"/>
+      <circle cx="248" cy="106" r="4" fill="#7A4AE2"/>
+      <circle cx="191" cy="234" r="4" fill="#7A4AE2"/>
+      <circle cx="89" cy="210" r="4" fill="#7A4AE2"/>
+      <circle cx="42" cy="108" r="4" fill="#7A4AE2"/>
+    </svg>
+
+    <!-- Labels with scores -->
+    <div class="radar-label top">
+      호환성<span class="score">81</span>
+    </div>
+    <div class="radar-label right-top">
+      인기도<span class="score">78</span>
+    </div>
+    <div class="radar-label right-bot">
+      매력도<span class="score">72</span>
+    </div>
+    <div class="radar-label left-bot">
+      적극성<span class="score">65</span>
+    </div>
+    <div class="radar-label left-top">
+      활동성<span class="score">88</span>
+    </div>
+  </div>
+
+  <div class="radar-legend">
+    <div class="legend-item">
+      <div class="legend-dot current"></div>나의 지표
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot avg"></div>전체 평균
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ Section 2: Key Stats ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">📊</span>
+    핵심 수치
+  </div>
+
+  <div class="score-grid">
+    <div class="score-item excellent">
+      <div class="label">평균 매칭 점수</div>
+      <div class="value">81<span class="unit">점</span></div>
+      <div class="change up">상위 15%</div>
+    </div>
+    <div class="score-item good">
+      <div class="label">좋아요 수신</div>
+      <div class="value">42<span class="unit">회</span></div>
+      <div class="change up">상위 8%</div>
+    </div>
+    <div class="score-item excellent">
+      <div class="label">프로필 열람</div>
+      <div class="value">256<span class="unit">명</span></div>
+      <div class="change up">상위 3%</div>
+    </div>
+    <div class="score-item warning">
+      <div class="label">채팅 전환율</div>
+      <div class="value">0<span class="unit">%</span></div>
+      <div class="change down">개선 필요</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ Section 3: Percentile ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">🏆</span>
+    전체 유저 대비 나의 위치
+  </div>
+
+  <div class="percentile-section">
+    <div class="percentile-item">
+      <div class="percentile-header">
+        <span class="percentile-name">호환성 (매칭 점수)</span>
+        <span class="percentile-value">상위 15%</span>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" style="width: 85%"></div>
+        <div class="percentile-avg-marker" style="left: 52%"></div>
+      </div>
+      <div class="percentile-avg-label">평균 52점</div>
+    </div>
+
+    <div class="percentile-item">
+      <div class="percentile-header">
+        <span class="percentile-name">인기도 (프로필 열람)</span>
+        <span class="percentile-value">상위 3%</span>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" style="width: 97%"></div>
+        <div class="percentile-avg-marker" style="left: 40%"></div>
+      </div>
+      <div class="percentile-avg-label">평균 5명</div>
+    </div>
+
+    <div class="percentile-item">
+      <div class="percentile-header">
+        <span class="percentile-name">매력도 (좋아요 수신)</span>
+        <span class="percentile-value">상위 8%</span>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" style="width: 92%"></div>
+        <div class="percentile-avg-marker" style="left: 35%"></div>
+      </div>
+      <div class="percentile-avg-label">평균 3회</div>
+    </div>
+
+    <div class="percentile-item">
+      <div class="percentile-header">
+        <span class="percentile-name">활동성 (매칭 참여)</span>
+        <span class="percentile-value">상위 1%</span>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" style="width: 99%"></div>
+        <div class="percentile-avg-marker" style="left: 28%"></div>
+      </div>
+      <div class="percentile-avg-label">평균 12회</div>
+    </div>
+
+    <div class="percentile-item">
+      <div class="percentile-header">
+        <span class="percentile-name">적극성 (좋아요 발신)</span>
+        <span class="percentile-value">하위 40%</span>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" style="width: 12%"></div>
+        <div class="percentile-avg-marker" style="left: 45%"></div>
+      </div>
+      <div class="percentile-avg-label">평균 8회</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ Section 4: Monthly Trend ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">📈</span>
+    월별 매칭 품질 추이
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-bar" style="height: 32px; background: rgba(122,74,226,0.25);"></div>
+    <div class="timeline-bar" style="height: 80px; background: var(--brand); opacity: 0.4;"></div>
+    <div class="timeline-bar" style="height: 42px; background: rgba(122,74,226,0.35);"></div>
+    <div class="timeline-bar" style="height: 48px; background: rgba(122,74,226,0.4);"></div>
+    <div class="timeline-bar" style="height: 18px; background: rgba(122,74,226,0.2);"></div>
+    <div class="timeline-bar" style="height: 38px; background: rgba(122,74,226,0.35);"></div>
+    <div class="timeline-bar" style="height: 50px; background: var(--brand); opacity: 0.7;"></div>
+    <div class="timeline-bar" style="height: 65px; background: var(--brand);"></div>
+  </div>
+  <div class="timeline-labels">
+    <span>6월</span><span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span><span>1월</span>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="stat-row">
+    <span class="stat-label">최고 호환 점수</span>
+    <span class="stat-value">1.30 (9월)</span>
+  </div>
+  <div class="stat-row">
+    <span class="stat-label">고호환(0.8+) 매칭 비율</span>
+    <span class="stat-value">75%</span>
+  </div>
+  <div class="stat-row">
+    <span class="stat-label">최근 3개월 평균</span>
+    <span class="stat-value">0.57 → 개선 중</span>
+  </div>
+</div>
+
+<!-- ═══════════ Section 5: AI Insights ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">💡</span>
+    AI 매칭 인사이트
+  </div>
+
+  <div class="summary-box">
+    <div class="summary-title">미호의 한줄 분석</div>
+    <div class="summary-text">
+      매칭 호환성은 상위권이지만, 좋아요를 거의 보내지 않아 대화로 이어지는 경우가 적어요. 적극적으로 마음을 표현하면 훨씬 좋은 결과가 있을 거예요!
+    </div>
+  </div>
+
+  <div class="insight-item">
+    <div class="insight-header">
+      <div class="insight-icon">💪</div>
+      <div class="insight-content">
+        <div class="insight-title">강점: 높은 매칭 호환성</div>
+        <div class="insight-desc">
+          매칭 점수 평균 81점으로 전체 유저 상위 15%에요. 알고리즘이 추천한 상대와의 궁합이 좋다는 뜻이에요.
+        </div>
+        <div class="insight-badge positive">매칭 점수 상위 15%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-item">
+    <div class="insight-header">
+      <div class="insight-icon">🔥</div>
+      <div class="insight-content">
+        <div class="insight-title">강점: 높은 프로필 매력도</div>
+        <div class="insight-desc">
+          256명이 프로필을 열람하고, 42번의 좋아요를 받았어요. 프로필이 상대방에게 매력적으로 보이고 있어요.
+        </div>
+        <div class="insight-badge positive">프로필 열람 상위 3%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-item">
+    <div class="insight-header">
+      <div class="insight-icon">⚡</div>
+      <div class="insight-content">
+        <div class="insight-title">개선 포인트: 적극성 부족</div>
+        <div class="insight-desc">
+          325번의 매칭 중 좋아요를 보낸 건 단 2번이에요. 마음에 드는 상대에게 먼저 다가가보세요. 상대도 당신의 관심을 기다리고 있을 수 있어요.
+        </div>
+        <div class="insight-badge action">좋아요 발신 2회 → 개선 필요</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-item">
+    <div class="insight-header">
+      <div class="insight-icon">💬</div>
+      <div class="insight-content">
+        <div class="insight-title">개선 포인트: 채팅 전환</div>
+        <div class="insight-desc">
+          좋아요를 보내거나 받은 후 실제 채팅으로 이어진 경우가 아직 없어요. 첫 메시지를 보내는 것부터 시작해보세요!
+        </div>
+        <div class="insight-badge action">채팅 전환율 0% → 첫 메시지 도전</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ Section 6: Keywords ═══════════ -->
+<div class="card">
+  <div class="card-title">
+    <span class="icon">🏷️</span>
+    나를 표현하는 매칭 키워드
+  </div>
+
+  <div class="keyword-wrap">
+    <div class="keyword">#고호환_매칭러</div>
+    <div class="keyword">#프로필_매력왕</div>
+    <div class="keyword">#은근한_인기</div>
+    <div class="keyword">#신중한_선택</div>
+    <div class="keyword">#꾸준한_활동가</div>
+  </div>
+</div>
+
+<!-- ═══════════ CTA ═══════════ -->
+<div class="cta-section">
+  <button class="cta-btn">매칭 시작하기</button>
+</div>
+
+</body>
+</html>

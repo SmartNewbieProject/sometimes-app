@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Report UI 시안 — 섹션별 A/B/C</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Wanted Sans','Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#F4F1FB;color:#1A1A2E;min-height:100vh}
+/* ── 전역 헤더 */
+.page-hero{background:linear-gradient(135deg,#3a1a7a 0%,#7A4AE2 60%,#9B6FF0 100%);padding:2.5rem 2rem 2rem;text-align:center}
+.page-hero h1{font-size:1.9rem;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:.4rem}
+.page-hero p{color:rgba(255,255,255,.75);font-size:.95rem}
+/* ── 탭 네비 */
+.tab-nav{display:flex;gap:.5rem;padding:1.25rem 1.5rem;background:#fff;border-bottom:1px solid #E4D9F7;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(122,74,226,.10)}
+.tab-btn{padding:.5rem 1.1rem;border-radius:999px;border:1.5px solid #D4C2F5;background:#fff;color:#7A4AE2;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:#EDE9F8}
+.tab-btn.active{background:#7A4AE2;color:#fff;border-color:#7A4AE2}
+/* ── 섹션 블록 */
+.section-block{display:none;padding:2rem 1.5rem}
+.section-block.visible{display:block}
+.section-label{font-size:1.4rem;font-weight:800;color:#3a1a7a;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:3px solid #7A4AE2;letter-spacing:-.01em}
+/* ── 3개 카드 가로 배치 */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;align-items:start}
+@media(max-width:1100px){.trio{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.trio{grid-template-columns:1fr}}
+/* ── 시안 래퍼 */
+.concept-wrap{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(122,74,226,.12)}
+.concept-badge{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;font-size:.82rem;font-weight:700;letter-spacing:.01em}
+.concept-badge.a{background:#E8F4FD;color:#0056B3}
+.concept-badge.b{background:#FFF3E0;color:#E65100}
+.concept-badge.c{background:#F3E5F5;color:#6A1B9A}
+/* ── 모바일 프레임 */
+.phone-frame{width:375px;max-width:100%;margin:0 auto;background:#FAFAFA;min-height:200px;position:relative;overflow:hidden}
+/* ── 시안 설명 */
+.concept-desc{padding:.9rem 1rem;background:#FAFAFA;border-top:1px solid #EDE9F8;font-size:.8rem;color:#555;line-height:1.6}
+.concept-desc strong{color:#7A4AE2}
+
+/* ═══════════════════════════════════════════
+   섹션 1 — 헤더
+═══════════════════════════════════════════ */
+/* A: 접근성 */
+.s1a-wrap{padding:20px;background:#fff}
+.s1a-back{display:flex;align-items:center;gap:6px;margin-bottom:16px;min-height:44px;min-width:44px;background:#EDE9F8;border:3px solid transparent;border-radius:10px;padding:8px 12px;width:fit-content}
+.s1a-back:focus-within,.s1a-back:focus{outline:3px solid #005FCC;outline-offset:2px}
+.s1a-back span{color:#7A4AE2;font-size:13px;font-weight:600}
+.s1a-body{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 0}
+.s1a-avatar{width:72px;height:72px;border-radius:36px;border:3px solid #7A4AE2;background:linear-gradient(135deg,#EDE9F8,#B69DF0);display:flex;align-items:center;justify-content:center;font-size:32px}
+.s1a-title{font-size:17px;font-weight:700;color:#1A1A2E;text-align:center;line-height:1.4}
+.s1a-title .sr-hint{display:block;font-size:10px;color:#005FCC;font-weight:500;margin-top:2px}
+.s1a-badge{background:#EDE9F8;border:1.5px solid #7A4AE2;border-radius:20px;padding:5px 14px;display:flex;align-items:center;gap:6px}
+.s1a-badge .badge-icon{font-size:13px}
+.s1a-badge span{color:#3a1a7a;font-size:12px;font-weight:600}
+.s1a-focus-ring{outline:3px solid #005FCC;outline-offset:2px}
+.s1a-aria-note{font-size:10px;color:#005FCC;background:#E8F4FD;border-radius:6px;padding:6px 10px;margin-top:12px;line-height:1.5}
+
+/* B: 인터랙션 */
+.s1b-wrap{padding:20px;background:linear-gradient(180deg,#F8F5FF 0%,#fff 100%)}
+.s1b-skeleton{border-radius:12px;background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.s1b-skel-avatar{width:72px;height:72px;border-radius:36px;margin:0 auto 10px}
+.s1b-skel-line{height:14px;border-radius:7px;margin:0 auto 8px}
+.s1b-loaded{animation:fadeSlideUp .6s ease both}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.s1b-avatar{width:72px;height:72px;border-radius:36px;border:3px solid #7A4AE2;background:linear-gradient(135deg,#C4A8F5,#7A4AE2);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto;animation:avatarPulse 2s ease-in-out infinite;box-shadow:0 0 0 0 rgba(122,74,226,.4)}
+@keyframes avatarPulse{0%,100%{box-shadow:0 0 0 0 rgba(122,74,226,.4)}50%{box-shadow:0 0 0 10px rgba(122,74,226,0)}}
+.s1b-title{font-size:17px;font-weight:700;color:#1A1A2E;text-align:center;margin:10px 0 6px}
+.s1b-badge-anim{background:#EDE9F8;border-radius:20px;padding:5px 14px;width:fit-content;margin:0 auto;animation:badgeBounce .5s .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes badgeBounce{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.s1b-badge-anim span{color:#7A4AE2;font-size:12px;font-weight:600}
+.haptic-tag{display:inline-block;background:#FFF3E0;color:#E65100;font-size:10px;padding:2px 7px;border-radius:999px;font-weight:600;margin-top:8px}
+.s1b-states{display:flex;gap:6px;margin-top:12px;justify-content:center}
+.s1b-state{font-size:9px;padding:3px 8px;border-radius:999px;border:1px solid #ddd;color:#888}
+.s1b-state.active-state{background:#7A4AE2;color:#fff;border-color:#7A4AE2}
+
+/* C: 모던 */
+.s1c-wrap{padding:20px;background:linear-gradient(160deg,#1a0a3a 0%,#3a1a7a 50%,#7A4AE2 100%);min-height:180px}
+.s1c-back{display:flex;align-items:center;gap:4px;margin-bottom:20px}
+.s1c-back span{color:rgba(255,255,255,.7);font-size:12px}
+.s1c-body{display:flex;flex-direction:column;align-items:center;gap:12px}
+.s1c-avatar-glow{width:76px;height:76px;border-radius:38px;background:linear-gradient(135deg,#C4A8F5,#7A4AE2);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 0 4px rgba(196,168,245,.3),0 0 32px rgba(122,74,226,.6);animation:glowPulse 3s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 4px rgba(196,168,245,.3),0 0 24px rgba(122,74,226,.4)}50%{box-shadow:0 0 0 8px rgba(196,168,245,.15),0 0 48px rgba(122,74,226,.7)}}
+.s1c-title{font-size:18px;font-weight:800;color:#fff;text-align:center;background:linear-gradient(135deg,#fff,#C4A8F5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s1c-badge{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 16px}
+.s1c-badge span{color:#fff;font-size:12px;font-weight:600}
+
+/* ═══════════════════════════════════════════
+   섹션 2 — 칭호 히어로 카드
+═══════════════════════════════════════════ */
+/* A: 접근성 */
+.s2a-wrap{padding:20px;background:#fff}
+.s2a-card{background:#3a1a7a;border-radius:20px;padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+.s2a-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.s2a-label .sr-only-hint{display:block;font-size:9px;color:#A5C8FF;margin-top:2px}
+.s2a-title{font-size:26px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px}
+.s2a-sub{font-size:13px;color:rgba(255,255,255,.85);line-height:1.6}
+.s2a-contrast-note{font-size:10px;color:#A5C8FF;margin-top:10px}
+.s2a-shape-badge{display:inline-flex;align-items:center;gap:5px;background:#FFD700;border-radius:8px;padding:4px 12px;margin-top:12px}
+.s2a-shape-badge span{color:#1a1a2e;font-size:12px;font-weight:700}
+
+/* B: 인터랙션 */
+.s2b-wrap{padding:20px;background:#F8F5FF}
+.s2b-card{background:linear-gradient(135deg,#7A4AE2,#5B35C0);border-radius:20px;padding:28px 20px;text-align:center;position:relative;overflow:hidden;animation:heroEntrance .7s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes heroEntrance{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.s2b-circle1{position:absolute;width:120px;height:120px;border-radius:60px;background:rgba(255,255,255,.08);top:-30px;right:-20px}
+.s2b-circle2{position:absolute;width:80px;height:80px;border-radius:40px;background:rgba(255,255,255,.06);bottom:-10px;left:10px}
+.s2b-inner{position:relative;z-index:1}
+.s2b-sub{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:8px}
+.s2b-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:6px;animation:titleReveal .5s .3s ease both}
+@keyframes titleReveal{from{opacity:0;letter-spacing:.3em}to{opacity:1;letter-spacing:-.01em}}
+.s2b-desc{font-size:13px;color:rgba(255,255,255,.85)}
+.s2b-haptic{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:10px}
+.s2b-haptic span{font-size:10px;color:rgba(255,255,255,.6)}
+.s2b-tap-hint{background:rgba(255,255,255,.2);border-radius:8px;padding:4px 10px;font-size:10px;color:#fff;margin-top:8px;display:inline-block}
+
+/* C: 모던 */
+.s2c-wrap{padding:20px;background:#0f0520}
+.s2c-card{border-radius:24px;padding:28px 20px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#7A4AE2 0%,#9B6FF0 50%,#C4A8F5 100%)}
+.s2c-noise{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.s2c-glow{position:absolute;width:200px;height:200px;border-radius:100px;background:radial-gradient(circle,rgba(255,255,255,.25) 0%,transparent 70%);top:-60px;left:50%;transform:translateX(-50%)}
+.s2c-inner{position:relative;z-index:1}
+.s2c-crown{font-size:32px;display:block;margin-bottom:10px;filter:drop-shadow(0 0 12px rgba(255,215,0,.8));animation:crownFloat 3s ease-in-out infinite}
+@keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.s2c-title{font-size:28px;font-weight:900;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.3);margin-bottom:8px;letter-spacing:-.02em}
+.s2c-sub{font-size:13px;color:rgba(255,255,255,.9)}
+.s2c-divider{width:40px;height:2px;background:rgba(255,255,255,.4);margin:12px auto;border-radius:1px}
+.s2c-chip{display:inline-block;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:4px 14px;font-size:11px;color:#fff;font-weight:600}
+
+/* ═══════════════════════════════════════════
+   섹션 3 — 스탯 목록
+═══════════════════════════════════════════ */
+/* A: 접근성 */
+.s3a-wrap{padding:20px;background:#fff}
+.s3a-card{background:#fff;border:1.5px solid #D4C2F5;border-radius:16px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.s3a-ring{position:relative;width:64px;height:64px;flex-shrink:0}
+.s3a-ring svg{transform:rotate(-90deg)}
+.s3a-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#1A1A2E}
+.s3a-info{flex:1}
+.s3a-label-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.s3a-icon-box{width:22px;height:22px;background:#EDE9F8;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.s3a-name{font-size:14px;font-weight:700;color:#1A1A2E}
+.s3a-change{font-size:11px;font-weight:600;display:flex;align-items:center;gap:2px}
+.s3a-change.up{color:#00C853}
+.s3a-change.down{color:#FF5252}
+.s3a-change .change-shape{font-size:9px}
+.s3a-bar-bg{height:8px;background:#EDE9F8;border-radius:4px;overflow:hidden;margin-top:4px}
+.s3a-bar-fill{height:100%;border-radius:4px;background:#7A4AE2;animation:barGrow 1s ease both}
+@keyframes barGrow{from{width:0!important}to{}}
+.s3a-aria-note{font-size:10px;color:#005FCC;background:#E8F4FD;border-radius:6px;padding:5px 8px;margin-top:8px}
+
+/* B: 인터랙션 */
+.s3b-wrap{padding:20px;background:#F8F5FF}
+.s3b-skel-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center}
+.s3b-skel-circle{width:64px;height:64px;border-radius:32px;background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;flex-shrink:0}
+.s3b-skel-lines{flex:1}
+.s3b-skel-line{height:10px;border-radius:5px;background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:8px}
+.s3b-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(122,74,226,.1);transform:translateY(20px);opacity:0}
+.s3b-card.loaded{animation:cardSlide .5s ease forwards}
+@keyframes cardSlide{to{transform:translateY(0);opacity:1}}
+.s3b-card:nth-child(1){animation-delay:.1s}
+.s3b-card:nth-child(2){animation-delay:.2s}
+.s3b-ring{position:relative;width:64px;height:64px;flex-shrink:0}
+.s3b-ring svg{transform:rotate(-90deg)}
+.s3b-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#1A1A2E}
+.s3b-counter{display:inline-block;animation:countUp .8s ease both}
+@keyframes countUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.s3b-info{flex:1}
+.s3b-label-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.s3b-icon{font-size:16px}
+.s3b-name{font-size:14px;font-weight:700;color:#1A1A2E}
+.s3b-change{font-size:11px;font-weight:600;color:#00C853}
+.s3b-bar-bg{height:6px;background:#EDE9F8;border-radius:3px;overflow:hidden;margin-top:4px}
+.s3b-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#7A4AE2,#9B6FF0);animation:barGrow 1.2s .3s ease both}
+.s3b-haptic-note{font-size:10px;color:#E65100;margin-top:8px;background:#FFF3E0;border-radius:6px;padding:4px 8px}
+
+/* C: 모던 */
+.s3c-wrap{padding:20px;background:#0f0520}
+.s3c-card{background:rgba(255,255,255,.07);backdrop-filter:blur(16px);border:1px solid rgba(196,168,245,.25);border-radius:20px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+.s3c-ring{position:relative;width:68px;height:68px;flex-shrink:0}
+.s3c-ring svg{transform:rotate(-90deg)}
+.s3c-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff}
+.s3c-info{flex:1}
+.s3c-label-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.s3c-icon{font-size:18px}
+.s3c-name{font-size:15px;font-weight:700;color:#fff}
+.s3c-change{font-size:11px;font-weight:700;color:#A5C8FF;margin-left:auto}
+.s3c-bar-bg{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.s3c-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#C4A8F5,#7A4AE2);box-shadow:0 0 8px rgba(122,74,226,.6);animation:barGrow 1.2s ease both}
+
+/* ═══════════════════════════════════════════
+   섹션 4 — 레이더 차트
+═══════════════════════════════════════════ */
+.radar-canvas{width:100%;max-width:240px;margin:0 auto;display:block}
+/* A: 접근성 */
+.s4a-wrap{padding:20px;background:#fff}
+.s4a-chart-box{background:#fff;border:1.5px solid #D4C2F5;border-radius:16px;padding:16px;text-align:center}
+.s4a-legend{display:flex;justify-content:center;gap:16px;margin:10px 0}
+.s4a-leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#1A1A2E;font-weight:600}
+.s4a-leg-box{width:16px;height:10px;border-radius:3px}
+.s4a-leg-pattern{width:16px;height:10px;border-radius:3px;border:2px dashed #999;background:none}
+.s4a-score-list{margin-top:12px}
+.s4a-score-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0f0f0}
+.s4a-score-icon{width:20px;height:20px;background:#EDE9F8;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.s4a-score-name{flex:1;font-size:12px;font-weight:600;color:#1A1A2E}
+.s4a-score-val{font-size:13px;font-weight:800;color:#7A4AE2;width:30px;text-align:right}
+.s4a-score-bar-bg{width:60px;height:6px;background:#EDE9F8;border-radius:3px;overflow:hidden}
+.s4a-score-bar-fill{height:100%;background:#7A4AE2;border-radius:3px;animation:barGrow 1s ease both}
+
+/* B: 인터랙션 */
+.s4b-wrap{padding:20px;background:#F8F5FF}
+.s4b-chart-box{background:#fff;border-radius:20px;padding:16px;text-align:center;box-shadow:0 4px 20px rgba(122,74,226,.12)}
+.s4b-chart-anim{animation:radarDraw .8s ease both}
+@keyframes radarDraw{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.s4b-legend{display:flex;justify-content:center;gap:16px;margin:10px 0}
+.s4b-leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
+.s4b-score-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F0EBFF}
+.s4b-score-name{flex:1;font-size:12px;color:#444;display:flex;align-items:center;gap:5px}
+.s4b-score-val{font-size:13px;font-weight:800;color:#7A4AE2;width:28px;text-align:right}
+.s4b-score-bar-bg{width:70px;height:6px;background:#EDE9F8;border-radius:3px;overflow:hidden}
+.s4b-score-bar-fill{height:100%;background:linear-gradient(90deg,#7A4AE2,#9B6FF0);border-radius:3px;animation:barGrow 1.2s ease both}
+.s4b-swipe-hint{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:10px;font-size:10px;color:#999}
+
+/* C: 모던 */
+.s4c-wrap{padding:20px;background:#0f0520}
+.s4c-chart-box{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(196,168,245,.2);border-radius:24px;padding:20px;text-align:center}
+.s4c-title{font-size:13px;font-weight:700;color:#C4A8F5;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+.s4c-legend{display:flex;justify-content:center;gap:16px;margin:10px 0}
+.s4c-leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.7)}
+.s4c-bento{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.s4c-bento-cell{background:rgba(255,255,255,.08);border:1px solid rgba(196,168,245,.15);border-radius:12px;padding:10px;display:flex;align-items:center;gap:6px}
+.s4c-bc-icon{font-size:16px}
+.s4c-bc-info{flex:1}
+.s4c-bc-name{font-size:10px;color:rgba(255,255,255,.6);margin-bottom:2px}
+.s4c-bc-val{font-size:16px;font-weight:900;color:#fff}
+.s4c-bc-bar{height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:4px;overflow:hidden}
+.s4c-bc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#C4A8F5,#7A4AE2);animation:barGrow 1s ease both}
+
+/* ═══════════════════════════════════════════
+   섹션 5 — 키워드 패턴
+═══════════════════════════════════════════ */
+/* A: 접근성 */
+.s5a-wrap{padding:20px;background:#fff}
+.s5a-title{font-size:13px;font-weight:700;color:#1A1A2E;margin-bottom:10px}
+.s5a-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.s5a-tag{min-height:44px;display:inline-flex;align-items:center;gap:6px;background:#EDE9F8;border:1.5px solid #7A4AE2;border-radius:22px;padding:0 16px;font-size:13px;font-weight:600;color:#3a1a7a}
+.s5a-tag .tag-icon{font-size:14px}
+.s5a-quote{border-left:4px solid #7A4AE2;padding:12px 14px;background:#F8F5FF;border-radius:0 12px 12px 0;position:relative}
+.s5a-quote::before{content:'"';font-size:40px;color:#C4A8F5;line-height:1;position:absolute;top:2px;left:8px;font-family:Georgia,serif}
+.s5a-quote-text{font-size:13px;color:#3a1a7a;line-height:1.7;padding-left:20px;font-weight:500}
+.s5a-aria{font-size:10px;color:#005FCC;background:#E8F4FD;border-radius:6px;padding:5px 8px;margin-top:8px}
+
+/* B: 인터랙션 */
+.s5b-wrap{padding:20px;background:#F8F5FF}
+.s5b-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.s5b-tag{display:inline-flex;align-items:center;gap:6px;background:#EDE9F8;border-radius:22px;padding:6px 14px;font-size:13px;font-weight:600;color:#7A4AE2;cursor:pointer;transition:all .2s;animation:tagPop .4s cubic-bezier(.34,1.56,.64,1) both}
+.s5b-tag:nth-child(1){animation-delay:.05s}
+.s5b-tag:nth-child(2){animation-delay:.1s}
+.s5b-tag:nth-child(3){animation-delay:.15s}
+.s5b-tag:nth-child(4){animation-delay:.2s}
+.s5b-tag:nth-child(5){animation-delay:.25s}
+.s5b-tag:nth-child(6){animation-delay:.3s}
+@keyframes tagPop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.s5b-tag:hover,.s5b-tag.selected{background:#7A4AE2;color:#fff}
+.s5b-quote{border-left:4px solid #7A4AE2;padding:12px 14px;background:#fff;border-radius:0 12px 12px 0;box-shadow:0 2px 8px rgba(122,74,226,.1);animation:quoteReveal .6s .4s ease both}
+@keyframes quoteReveal{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.s5b-quote-text{font-size:13px;color:#444;line-height:1.7}
+.s5b-haptic-note{font-size:10px;color:#E65100;background:#FFF3E0;border-radius:6px;padding:4px 8px;margin-top:8px}
+
+/* C: 모던 */
+.s5c-wrap{padding:20px;background:linear-gradient(160deg,#0f0520,#1a0a3a)}
+.s5c-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.s5c-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(122,74,226,.25);backdrop-filter:blur(8px);border:1px solid rgba(196,168,245,.4);border-radius:999px;padding:6px 16px;font-size:13px;font-weight:600;color:#E4D9FF;box-shadow:0 0 12px rgba(122,74,226,.2)}
+.s5c-tag.highlight{background:rgba(122,74,226,.6);border-color:#C4A8F5;color:#fff;box-shadow:0 0 20px rgba(122,74,226,.5)}
+.s5c-quote{background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(196,168,245,.2);border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.s5c-quote::before{content:'"';font-size:60px;color:rgba(196,168,245,.15);position:absolute;top:-10px;left:8px;font-family:Georgia,serif;line-height:1}
+.s5c-quote-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.7;position:relative;z-index:1;padding-left:4px}
+.s5c-quote-line{width:32px;height:3px;background:linear-gradient(90deg,#7A4AE2,#C4A8F5);border-radius:2px;margin-bottom:10px}
+
+/* ═══════════════════════════════════════════
+   섹션 6 — 인사이트 카드
+═══════════════════════════════════════════ */
+/* A: 접근성 */
+.s6a-wrap{padding:20px;background:#fff}
+.s6a-card{background:#fff;border:1.5px solid #D4C2F5;border-radius:16px;padding:16px;margin-bottom:10px}
+.s6a-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.s6a-icon-box{width:36px;height:36px;background:#EDE9F8;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.s6a-card-title{flex:1;font-size:15px;font-weight:700;color:#1A1A2E}
+.s6a-score{font-size:13px;font-weight:800;display:flex;align-items:center;gap:4px}
+.s6a-score .score-bar{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.s6a-score.good{color:#00C853}
+.s6a-score.good .score-bar{background:#00C853}
+.s6a-score.mid{color:#FF9800}
+.s6a-score.mid .score-bar{background:#FF9800}
+.s6a-score.low{color:#FF5252}
+.s6a-score.low .score-bar{background:#FF5252}
+.s6a-def{font-size:12px;color:#444;line-height:1.6;margin-bottom:8px}
+.s6a-feedback{border-left:3px solid #7A4AE2;padding:8px 12px;background:#F8F5FF;border-radius:0 8px 8px 0;font-size:12px;color:#3a1a7a;line-height:1.6}
+.s6a-aria{font-size:10px;color:#005FCC;background:#E8F4FD;border-radius:6px;padding:4px 8px;margin-top:8px}
+
+/* B: 인터랙션 */
+.s6b-wrap{padding:20px;background:#F8F5FF}
+.s6b-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 12px rgba(122,74,226,.1);animation:cardFadeIn .5s ease both}
+@keyframes cardFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.s6b-card:nth-child(1){animation-delay:.1s}
+.s6b-card:nth-child(2){animation-delay:.25s}
+.s6b-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.s6b-icon{font-size:20px}
+.s6b-title{flex:1;font-size:15px;font-weight:700;color:#1A1A2E}
+.s6b-score-ring{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.s6b-score-ring.good{background:#E6F9F0;color:#00C853;border:2px solid #00C853}
+.s6b-score-ring.mid{background:#FFF3E0;color:#FF9800;border:2px solid #FF9800}
+.s6b-def{font-size:12px;color:#555;line-height:1.6;margin-bottom:8px}
+.s6b-feedback{border-left:3px solid #7A4AE2;padding:8px 12px;background:#F8F5FF;font-size:12px;color:#444;line-height:1.6;border-radius:0 8px 8px 0}
+.s6b-haptic{font-size:10px;color:#E65100;background:#FFF3E0;border-radius:6px;padding:3px 7px;display:inline-flex;align-items:center;gap:3px;margin-top:8px}
+.s6b-expand-hint{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:6px;font-size:10px;color:#999}
+
+/* C: 모던 */
+.s6c-wrap{padding:20px;background:linear-gradient(160deg,#0f0520,#1a0a3a)}
+.s6c-card{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);border:1px solid rgba(196,168,245,.2);border-radius:20px;padding:18px;margin-bottom:10px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.s6c-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.s6c-icon-ring{width:40px;height:40px;border-radius:20px;background:linear-gradient(135deg,#7A4AE2,#C4A8F5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 0 16px rgba(122,74,226,.4)}
+.s6c-title{flex:1;font-size:15px;font-weight:700;color:#fff}
+.s6c-score-badge{padding:4px 12px;border-radius:999px;font-size:13px;font-weight:800}
+.s6c-score-badge.good{background:rgba(0,200,83,.15);border:1px solid #00C853;color:#00C853}
+.s6c-score-badge.mid{background:rgba(255,152,0,.15);border:1px solid #FF9800;color:#FF9800}
+.s6c-score-badge.low{background:rgba(255,82,82,.15);border:1px solid #FF5252;color:#FF5252}
+.s6c-def{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:10px}
+.s6c-feedback{background:rgba(122,74,226,.2);border:1px solid rgba(196,168,245,.2);border-radius:12px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,.85);line-height:1.6}
+.s6c-glow-line{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(196,168,245,.4),transparent);margin:10px 0}
+
+/* ═══════════════════════════════════════════
+   레이아웃 탐색 공통 (D / E / F)
+═══════════════════════════════════════════ */
+.layout-row{margin-top:2.5rem;padding-top:2rem;border-top:3px dashed #EDE9F8}
+.layout-row-title{font-size:1.05rem;font-weight:800;color:#5B35C0;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+.layout-row-title::before{content:'';display:block;width:4px;height:22px;background:linear-gradient(180deg,#7A4AE2,#C4A8F5);border-radius:2px}
+.concept-badge.d{background:#D1FAE5;color:#065F46}
+.concept-badge.e{background:#FEF9C3;color:#92400E}
+.concept-badge.f{background:#EDE9F8;color:#4C1D95}
+/* ── 벤토 그리드 공통 */
+.bento{display:grid;gap:8px;padding:14px;background:#F8F5FF}
+.bento-cell{background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 8px rgba(122,74,226,.1)}
+.bento-cell.span2{grid-column:span 2}
+/* ── 수평 스크롤 공통 */
+.h-strip{display:flex;gap:8px;overflow-x:auto;padding:12px;scrollbar-width:none}
+.h-strip::-webkit-scrollbar{display:none}
+.h-card{min-width:96px;flex-shrink:0;background:#fff;border-radius:14px;padding:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
+/* ── 풀블리드 공통 */
+.fb-tag{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 12px;font-size:11px;font-weight:600;color:#fff}
+.fb-tag-dark{background:#F8F5FF;border:1.5px solid #D4C2F5;border-radius:999px;padding:3px 12px;font-size:11px;font-weight:600;color:#7A4AE2}
+/* ── Swipe/Carousel 공통 */
+.carousel-wrap{position:relative;overflow:hidden;padding:12px}
+.carousel-track{display:flex;gap:8px;transform:translateX(0)}
+.carousel-btn{width:28px;height:28px;border-radius:14px;background:#7A4AE2;color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dots{display:flex;gap:5px;justify-content:center;padding:8px 0}
+.dot{width:6px;height:6px;border-radius:3px;background:#D4C2F5}
+.dot.active{width:18px;background:#7A4AE2}
+/* ── 타임라인 공통 */
+.timeline{padding:14px 14px 14px 30px;position:relative}
+.tl-item{position:relative;margin-bottom:16px;padding-left:16px}
+.tl-item::before{content:'';position:absolute;left:-16px;top:6px;width:10px;height:10px;border-radius:5px;background:#7A4AE2;border:2px solid #fff;box-shadow:0 0 0 2px #7A4AE2}
+.tl-item::after{content:'';position:absolute;left:-12px;top:16px;width:2px;height:calc(100% + 10px);background:linear-gradient(180deg,#7A4AE2,#EDE9F8)}
+.tl-item:last-child::after{display:none}
+.tl-header{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.tl-score{font-size:13px;font-weight:800;padding:2px 8px;border-radius:8px}
+.tl-score.good{background:#E6F9F0;color:#00C853}
+.tl-score.mid{background:#FFF3E0;color:#FF9800}
+.tl-score.low{background:#FFE8E8;color:#FF5252}
+
+/* ════ 섹션 1 - D/E/F ════ */
+/* D: Bento 헤더 */
+.s1d-bento{display:grid;grid-template-columns:1fr 80px;gap:8px;padding:14px;background:#F8F5FF}
+.s1d-main{background:#fff;border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(122,74,226,.1)}
+.s1d-avatar{width:52px;height:52px;border-radius:26px;background:linear-gradient(135deg,#EDE9F8,#B69DF0);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:2px solid #7A4AE2}
+.s1d-side{display:flex;flex-direction:column;gap:8px}
+.s1d-badge-cell{background:linear-gradient(135deg,#7A4AE2,#5B35C0);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 4px 12px rgba(122,74,226,.3)}
+.s1d-week{font-size:18px;font-weight:900;color:#fff;line-height:1}
+.s1d-unit{font-size:10px;color:rgba(255,255,255,.8);font-weight:600}
+/* E: Horizontal 헤더 */
+.s1e-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border-bottom:1px solid #EDE9F8}
+.s1e-back{width:36px;height:36px;border-radius:10px;background:#EDE9F8;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.s1e-avatar{width:36px;height:36px;border-radius:18px;background:linear-gradient(135deg,#C4A8F5,#7A4AE2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.s1e-text{flex:1}
+.s1e-title{font-size:13px;font-weight:700;color:#1A1A2E;line-height:1.3}
+.s1e-sub{font-size:11px;color:#7A4AE2;font-weight:600}
+.s1e-badge{background:#F8F5FF;border:1.5px solid #D4C2F5;border-radius:8px;padding:4px 8px}
+.s1e-badge span{font-size:10px;font-weight:700;color:#7A4AE2}
+.s1e-content{padding:16px 14px}
+/* F: Full-bleed 몰입형 */
+.s1f-wrap{background:linear-gradient(160deg,#0f0520 0%,#3a1a7a 45%,#7A4AE2 100%);min-height:200px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative;overflow:hidden}
+.s1f-particle{position:absolute;border-radius:50%;background:rgba(255,255,255,.12);animation:particleFloat 4s ease-in-out infinite}
+@keyframes particleFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.1)}}
+.s1f-avatar{width:80px;height:80px;border-radius:40px;background:rgba(255,255,255,.15);backdrop-filter:blur(16px);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 40px rgba(122,74,226,.6),0 0 80px rgba(196,168,245,.3)}
+.s1f-title{font-size:18px;font-weight:800;color:#fff;text-align:center;letter-spacing:-.01em}
+.s1f-badge{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 16px}
+.s1f-badge span{font-size:12px;color:#fff;font-weight:600}
+
+/* ════ 섹션 2 - D/E/F ════ */
+/* D: 분할 벤토 */
+.s2d-grid{display:grid;grid-template-columns:1fr 72px;gap:8px;padding:14px;background:#F8F5FF}
+.s2d-main{background:linear-gradient(135deg,#7A4AE2,#5B35C0);border-radius:18px;padding:20px;position:relative;overflow:hidden}
+.s2d-label{font-size:10px;color:rgba(255,255,255,.7);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.s2d-title{font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:6px}
+.s2d-sub{font-size:12px;color:rgba(255,255,255,.8);line-height:1.5}
+.s2d-side{display:flex;flex-direction:column;gap:8px}
+.s2d-rank{background:#fff;border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.s2d-rank-num{font-size:20px;font-weight:900;color:#7A4AE2;line-height:1}
+.s2d-rank-label{font-size:9px;color:#888;font-weight:600;text-align:center}
+.s2d-history{background:#fff;border-radius:14px;padding:8px;flex:1;display:flex;flex-direction:column;gap:4px}
+.s2d-bar-row{display:flex;align-items:center;gap:4px}
+.s2d-bar-label{font-size:8px;color:#999;width:12px;text-align:right}
+.s2d-mini-bar{flex:1;height:4px;background:#EDE9F8;border-radius:2px;overflow:hidden}
+.s2d-mini-fill{height:4px;border-radius:2px}
+/* E: 스와이프 힌트 */
+.s2e-wrap{padding:14px;background:#F8F5FF;position:relative}
+.s2e-hint{font-size:10px;color:#999;text-align:center;margin-bottom:8px}
+.s2e-stack{position:relative;height:160px}
+.s2e-card{position:absolute;width:100%;border-radius:20px;padding:24px 20px;text-align:center;transition:all .3s}
+.s2e-card.prev{background:rgba(122,74,226,.3);top:12px;left:-16px;right:-16px;transform:scale(.9);z-index:1;filter:blur(1px)}
+.s2e-card.curr{background:linear-gradient(135deg,#7A4AE2,#5B35C0);top:0;z-index:2;box-shadow:0 8px 32px rgba(122,74,226,.4)}
+.s2e-card.next{background:rgba(122,74,226,.3);top:12px;left:auto;right:-16px;transform:scale(.9) translateX(8px);z-index:1;filter:blur(1px)}
+.s2e-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:160px}
+.s2e-progress{font-size:10px;color:#888}
+/* F: 레이어드 스택 */
+.s2f-wrap{padding:24px 20px 20px;background:#1a0a3a;position:relative}
+.s2f-stack{position:relative;height:180px}
+.s2f-card{position:absolute;width:100%;border-radius:20px;padding:20px;transition:.3s;left:0;right:0}
+.s2f-c3{background:rgba(122,74,226,.2);backdrop-filter:blur(4px);border:1px solid rgba(196,168,245,.1);top:20px;transform:scale(.88);z-index:1}
+.s2f-c2{background:rgba(122,74,226,.35);backdrop-filter:blur(8px);border:1px solid rgba(196,168,245,.2);top:10px;transform:scale(.94);z-index:2}
+.s2f-c1{background:linear-gradient(135deg,rgba(122,74,226,.9),rgba(91,53,192,.9));backdrop-filter:blur(20px);border:1px solid rgba(196,168,245,.3);top:0;z-index:3;box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.s2f-label{font-size:10px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.s2f-title{font-size:24px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:4px}
+.s2f-sub{font-size:12px;color:rgba(255,255,255,.75);line-height:1.5}
+.s2f-swipe{text-align:center;margin-top:180px;font-size:10px;color:rgba(255,255,255,.4)}
+
+/* ════ 섹션 3 - D/E/F ════ */
+/* D: Bento 스탯 그리드 */
+.s3d-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px;background:#F8F5FF}
+.s3d-cell{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(122,74,226,.1);display:flex;align-items:center;gap:10px}
+.s3d-cell.feat{grid-column:span 2;background:linear-gradient(135deg,#F8F5FF,#EDE9F8)}
+.s3d-ring{width:52px;height:52px;flex-shrink:0;position:relative}
+.s3d-ring svg{transform:rotate(-90deg)}
+.s3d-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#1A1A2E}
+.s3d-info{flex:1}
+.s3d-name{font-size:12px;font-weight:700;color:#1A1A2E}
+.s3d-change-up{font-size:10px;color:#00C853;font-weight:600}
+.s3d-change-dn{font-size:10px;color:#FF5252;font-weight:600}
+.s3d-mini-bar{height:4px;background:#EDE9F8;border-radius:2px;overflow:hidden;margin-top:4px}
+.s3d-mini-fill{height:4px;background:#7A4AE2;border-radius:2px}
+/* E: Horizontal 원형 스크롤 */
+.s3e-scroll{display:flex;gap:10px;overflow-x:auto;padding:14px;scrollbar-width:none;background:#F8F5FF}
+.s3e-scroll::-webkit-scrollbar{display:none}
+.s3e-item{min-width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:#fff;border-radius:16px;padding:10px;box-shadow:0 2px 8px rgba(122,74,226,.1)}
+.s3e-ring{position:relative;width:56px;height:56px}
+.s3e-ring svg{transform:rotate(-90deg)}
+.s3e-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1A1A2E}
+.s3e-name{font-size:10px;font-weight:700;color:#555;text-align:center}
+.s3e-delta{font-size:10px;font-weight:700}
+.s3e-scroll-hint{font-size:10px;color:#999;text-align:center;padding:4px 14px 8px;background:#F8F5FF}
+/* F: 대형 숫자 리스트 */
+.s3f-list{padding:14px;background:#1a0a3a}
+.s3f-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.s3f-row:last-child{border-bottom:none}
+.s3f-score{font-size:32px;font-weight:900;color:#fff;width:52px;flex-shrink:0;line-height:1}
+.s3f-right{flex:1}
+.s3f-name-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.s3f-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.8)}
+.s3f-delta{font-size:11px;font-weight:700}
+.s3f-bar{height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden}
+.s3f-fill{height:5px;border-radius:3px;background:linear-gradient(90deg,#7A4AE2,#C4A8F5)}
+
+/* ════ 섹션 4 - D/E/F ════ */
+/* D: Side-by-side 벤토 */
+.s4d-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;padding:14px;background:#fff}
+.s4d-divider{background:#EDE9F8;align-self:stretch}
+.s4d-left{padding-right:10px}
+.s4d-right{padding-left:10px}
+.s4d-chart-placeholder{width:100%;aspect-ratio:1;background:#F8F5FF;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.s4d-legend-list{display:flex;flex-direction:column;gap:6px}
+.s4d-legend-item{display:flex;align-items:center;gap:6px}
+.s4d-legend-dot{width:8px;height:8px;border-radius:4px;background:#7A4AE2;flex-shrink:0}
+.s4d-legend-name{font-size:11px;color:#555;flex:1}
+.s4d-legend-val{font-size:12px;font-weight:800;color:#7A4AE2}
+.s4d-legend-bar{flex:1;height:4px;background:#EDE9F8;border-radius:2px;overflow:hidden;margin-left:4px}
+.s4d-legend-fill{height:4px;background:#7A4AE2;border-radius:2px}
+/* E: 미니 레이더 + 칩 스크롤 */
+.s4e-wrap{background:#F8F5FF;padding:12px}
+.s4e-top{background:#fff;border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(122,74,226,.1)}
+.s4e-mini-radar{width:72px;height:72px;flex-shrink:0}
+.s4e-summary{flex:1}
+.s4e-summary-title{font-size:12px;font-weight:700;color:#1A1A2E;margin-bottom:4px}
+.s4e-avg{font-size:24px;font-weight:900;color:#7A4AE2;line-height:1}
+.s4e-avg-label{font-size:10px;color:#999}
+.s4e-chip-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.s4e-chip-scroll::-webkit-scrollbar{display:none}
+.s4e-chip{min-width:80px;flex-shrink:0;background:#fff;border-radius:12px;padding:8px;box-shadow:0 2px 6px rgba(122,74,226,.1);display:flex;flex-direction:column;align-items:center;gap:4px}
+.s4e-chip-val{font-size:18px;font-weight:900;color:#7A4AE2}
+.s4e-chip-name{font-size:10px;font-weight:600;color:#555}
+/* F: 오버사이즈 레이더 */
+.s4f-wrap{background:linear-gradient(180deg,#0f0520,#1a0a3a);overflow:hidden;padding:16px 0 16px}
+.s4f-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;margin-bottom:8px}
+.s4f-chart{display:flex;justify-content:center;position:relative}
+.s4f-legend{display:flex;justify-content:center;gap:8px;padding:8px 14px;flex-wrap:wrap}
+.s4f-legend-item{display:flex;align-items:center;gap:4px}
+.s4f-legend-box{width:10px;height:3px;border-radius:2px}
+
+/* ════ 섹션 5 - D/E/F ════ */
+/* D: 인용 + 태그 벤토 */
+.s5d-wrap{padding:14px;background:#F8F5FF;display:flex;flex-direction:column;gap:8px}
+.s5d-quote{background:linear-gradient(135deg,#7A4AE2,#5B35C0);border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.s5d-quote::before{content:'\201C';position:absolute;top:-10px;left:10px;font-size:80px;color:rgba(255,255,255,.1);font-family:serif;line-height:1}
+.s5d-quote-text{font-size:13px;color:#fff;line-height:1.7;position:relative;z-index:1;font-style:italic}
+.s5d-tag-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.s5d-tag{background:#fff;border:1.5px solid #D4C2F5;border-radius:20px;padding:5px 0;text-align:center;font-size:11px;font-weight:600;color:#7A4AE2}
+/* E: 수평 태그 + 콜랩스 인용 */
+.s5e-wrap{background:#fff;padding:14px}
+.s5e-tags{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px}
+.s5e-tags::-webkit-scrollbar{display:none}
+.s5e-tag{min-width:fit-content;background:#F8F5FF;border:1.5px solid #D4C2F5;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:#7A4AE2;flex-shrink:0}
+.s5e-tag.active{background:#7A4AE2;border-color:#7A4AE2;color:#fff}
+.s5e-collapse{border:1.5px solid #D4C2F5;border-radius:14px;overflow:hidden}
+.s5e-collapse-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer}
+.s5e-collapse-title{font-size:12px;font-weight:700;color:#1A1A2E}
+.s5e-collapse-arrow{font-size:12px;color:#7A4AE2}
+.s5e-collapse-body{padding:0 14px 12px;font-size:12px;color:#555;line-height:1.7;border-top:1px solid #EDE9F8}
+/* F: 풀블리드 인용 카드 */
+.s5f-wrap{background:linear-gradient(160deg,#0f0520,#3a1a7a,#7A4AE2);padding:24px 20px;position:relative;overflow:hidden}
+.s5f-deco-q{position:absolute;top:-20px;left:10px;font-size:140px;color:rgba(255,255,255,.06);font-family:serif;line-height:1;pointer-events:none}
+.s5f-quote{font-size:16px;font-weight:700;color:#fff;line-height:1.7;text-align:center;position:relative;z-index:1;margin-bottom:16px;letter-spacing:-.01em}
+.s5f-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.s5f-divider{width:40px;height:2px;background:rgba(255,255,255,.3);margin:14px auto;border-radius:1px}
+
+/* ════ 섹션 6 - D/E/F ════ */
+/* D: 컴팩트 벤토 인사이트 */
+.s6d-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px;background:#F8F5FF}
+.s6d-cell{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(122,74,226,.1)}
+.s6d-cell-header{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.s6d-icon{font-size:16px}
+.s6d-name{font-size:12px;font-weight:700;color:#1A1A2E;flex:1}
+.s6d-score{font-size:13px;font-weight:900;padding:2px 6px;border-radius:6px}
+.s6d-score.good{background:#E6F9F0;color:#00C853}
+.s6d-score.mid{background:#FFF3E0;color:#FF9800}
+.s6d-score.low{background:#FFE8E8;color:#FF5252}
+.s6d-desc{font-size:10px;color:#888;line-height:1.5}
+.s6d-cell.feat{grid-column:span 2;display:flex;align-items:center;gap:12px}
+.s6d-feat-score{font-size:40px;font-weight:900;color:#7A4AE2;line-height:1;flex-shrink:0}
+.s6d-feat-info{flex:1}
+.s6d-feat-name{font-size:14px;font-weight:700;color:#1A1A2E;margin-bottom:4px}
+.s6d-feat-bar{height:6px;background:#EDE9F8;border-radius:3px;overflow:hidden}
+.s6d-feat-fill{height:6px;border-radius:3px;background:linear-gradient(90deg,#7A4AE2,#C4A8F5)}
+/* E: 스와이프 캐러셀 */
+.s6e-wrap{background:#F8F5FF;padding:14px}
+.s6e-hint{font-size:10px;color:#999;text-align:center;margin-bottom:8px}
+.s6e-card{background:#fff;border-radius:20px;padding:18px;box-shadow:0 4px 16px rgba(122,74,226,.15)}
+.s6e-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.s6e-card-icon-ring{width:40px;height:40px;border-radius:20px;background:linear-gradient(135deg,#EDE9F8,#C4A8F5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.s6e-card-title{font-size:15px;font-weight:700;color:#1A1A2E;flex:1}
+.s6e-score-chip{padding:5px 12px;border-radius:999px;font-size:14px;font-weight:900}
+.s6e-def{font-size:12px;color:#555;line-height:1.6;margin-bottom:10px}
+.s6e-feedback{background:#F8F5FF;border-left:3px solid #7A4AE2;padding:8px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#444;line-height:1.6}
+.s6e-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+/* F: 타임라인 플로우 */
+.s6f-timeline{padding:16px 16px 16px 36px;background:#fff;position:relative}
+.s6f-item{position:relative;margin-bottom:14px}
+.s6f-dot{position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:6px;background:#7A4AE2;border:2px solid #fff;box-shadow:0 0 0 2px #7A4AE2;z-index:1}
+.s6f-line{position:absolute;left:-21px;top:16px;width:2px;height:calc(100% + 6px);background:linear-gradient(180deg,#7A4AE2,#EDE9F8)}
+.s6f-item:last-child .s6f-line{display:none}
+.s6f-header{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.s6f-icon{font-size:15px}
+.s6f-name{font-size:13px;font-weight:700;color:#1A1A2E;flex:1}
+.s6f-score-tl{font-size:13px;font-weight:900;padding:2px 8px;border-radius:8px}
+.s6f-score-tl.good{background:#E6F9F0;color:#00C853}
+.s6f-score-tl.mid{background:#FFF3E0;color:#FF9800}
+.s6f-score-tl.low{background:#FFE8E8;color:#FF5252}
+.s6f-body{font-size:11px;color:#888;line-height:1.5;padding:6px 10px;background:#F8F5FF;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="page-hero">
+  <h1>Weekly Report UI 시안</h1>
+  <p>섹션별 6가지 — ♿ WCAG 접근성 &nbsp;/&nbsp; ✨ 인터랙션 체험 &nbsp;/&nbsp; 🎨 모던 디자인 &nbsp;+&nbsp; 🔲 Bento &nbsp;/&nbsp; ↔ 수평 스크롤 &nbsp;/&nbsp; ⬛ Full-bleed</p>
+</div>
+
+<nav class="tab-nav" role="navigation" aria-label="섹션 탭">
+  <button class="tab-btn active" onclick="showSection('s1')" aria-selected="true">헤더</button>
+  <button class="tab-btn" onclick="showSection('s2')">히어로 카드</button>
+  <button class="tab-btn" onclick="showSection('s3')">스탯 목록</button>
+  <button class="tab-btn" onclick="showSection('s4')">레이더 차트</button>
+  <button class="tab-btn" onclick="showSection('s5')">키워드 패턴</button>
+  <button class="tab-btn" onclick="showSection('s6')">인사이트 카드</button>
+</nav>
+
+<!-- ═══════════════ 섹션 1: 헤더 ═══════════════ -->
+<div id="s1" class="section-block visible">
+  <div class="section-label">섹션 1 — 헤더 (캐릭터 이미지 + 타이틀 + 날짜 배지)</div>
+  <div class="trio">
+
+    <!-- A: 접근성 -->
+    <div class="concept-wrap">
+      <div class="concept-badge a">♿ A. WCAG 3.0 접근성</div>
+      <div class="phone-frame">
+        <div class="s1a-wrap">
+          <div class="s1a-back" tabindex="0" role="button" aria-label="뒤로 가기">
+            <span aria-hidden="true">←</span>
+            <span>뒤로</span>
+          </div>
+          <div class="s1a-body">
+            <div class="s1a-avatar" role="img" aria-label="미호 캐릭터 이미지">🐰</div>
+            <div class="s1a-title">
+              이번 주 나의 성향 분석
+              <span class="sr-hint" aria-hidden="true">스크린리더: role="heading" level=1</span>
+            </div>
+            <div class="s1a-badge" role="status" aria-label="2026년 9주차 리포트">
+              <span class="badge-icon" aria-hidden="true">📅</span>
+              <span>2026년 9주차</span>
+            </div>
+          </div>
+          <div class="s1a-aria-note">
+            <strong>접근성 적용:</strong><br>
+            • back btn: role="button", min 44×44px<br>
+            • avatar: role="img" + aria-label<br>
+            • badge: role="status" (동적 업데이트 알림)<br>
+            • focus ring: 3px solid #005FCC, offset 2px
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 터치 타겟 44×44px 보장, 아이콘+텍스트 병기, APCA Lc 60+ 대비, 포커스 링 명시. 색상만으로 구분하지 않고 레이블 텍스트를 항상 병기합니다.
+      </div>
+    </div>
+
+    <!-- B: 인터랙션 -->
+    <div class="concept-wrap">
+      <div class="concept-badge b">✨ B. 인터랙션 체험</div>
+      <div class="phone-frame">
+        <div class="s1b-wrap">
+          <!-- 스켈레톤 상태 표현 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;color:#999;margin-bottom:6px">① 로딩 중 (스켈레톤)</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div class="s1b-skeleton s1b-skel-avatar"></div>
+              <div class="s1b-skeleton s1b-skel-line" style="width:60%"></div>
+              <div class="s1b-skeleton s1b-skel-line" style="width:40%;height:10px"></div>
+            </div>
+          </div>
+          <div style="border-top:1px dashed #ddd;padding-top:14px">
+            <div style="font-size:10px;color:#999;margin-bottom:8px">② 로드 완료 (fadeSlideUp)</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px" class="s1b-loaded">
+              <div class="s1b-avatar" aria-hidden="true">🐰</div>
+              <div class="s1b-title">이번 주 나의 성향 분석</div>
+              <div class="s1b-badge-anim"><span>2026년 9주차</span></div>
+              <div class="haptic-tag">💥 진입 시 Haptic Light</div>
+            </div>
+          </div>
+          <div class="s1b-states">
+            <span class="s1b-state">idle</span>
+            <span class="s1b-state active-state">→ result</span>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 스켈레톤 → fadeSlideUp 진입, 아바타 pulse glow 루프, 날짜 배지 bounceIn(.6s delay), 진입 시 Haptic Light 1회. 로딩 → 완료 상태 전환을 명확히 시각화합니다.
+      </div>
+    </div>
+
+    <!-- C: 모던 -->
+    <div class="concept-wrap">
+      <div class="concept-badge c">🎨 C. 모던 디자인</div>
+      <div class="phone-frame">
+        <div class="s1c-wrap">
+          <div class="s1c-back">
+            <span aria-hidden="true" style="color:rgba(255,255,255,.7);font-size:18px">←</span>
+            <span>뒤로</span>
+          </div>
+          <div class="s1c-body">
+            <div class="s1c-avatar-glow" aria-hidden="true">🐰</div>
+            <div class="s1c-title">이번 주 나의 성향 분석</div>
+            <div class="s1c-badge"><span>✦ 2026년 9주차</span></div>
+          </div>
+          <div style="margin-top:20px;display:flex;justify-content:center;gap:6px">
+            <div style="width:6px;height:6px;border-radius:3px;background:#7A4AE2"></div>
+            <div style="width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.3)"></div>
+            <div style="width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.3)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 다크 그라디언트 배경에 Glassmorphism 배지, 아바타 glow 애니메이션, 그라디언트 텍스트(-webkit-text-fill), 페이지 인디케이터 도트로 스크롤 위치 표현.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ 레이아웃 탐색 D / E / F ════ -->
+  <div class="layout-row">
+    <div class="layout-row-title">🔲 레이아웃 탐색 — D. Bento Grid &nbsp;/&nbsp; E. 수평 압축 &nbsp;/&nbsp; F. Full-bleed 몰입형</div>
+    <div class="trio">
+
+      <!-- D: Bento 헤더 -->
+      <div class="concept-wrap">
+        <div class="concept-badge d">🔲 D. Bento Grid</div>
+        <div class="phone-frame">
+          <div class="s1d-bento">
+            <div class="s1d-main">
+              <div class="s1d-avatar">🐰</div>
+              <div>
+                <div style="font-size:14px;font-weight:800;color:#1A1A2E;margin-bottom:3px">이번 주 나의 성향</div>
+                <div style="font-size:11px;color:#7A4AE2;font-weight:600">주간 분석 리포트</div>
+              </div>
+            </div>
+            <div class="s1d-side">
+              <div class="s1d-badge-cell">
+                <div class="s1d-week">9</div>
+                <div class="s1d-unit">주차</div>
+                <div style="font-size:9px;color:rgba(255,255,255,.6)">2026</div>
+              </div>
+            </div>
+            <div class="bento-cell span2" style="padding:8px 10px;display:flex;align-items:center;gap:8px">
+              <div style="width:28px;height:28px;border-radius:8px;background:#EDE9F8;display:flex;align-items:center;justify-content:center;font-size:14px">←</div>
+              <span style="font-size:11px;color:#7A4AE2;font-weight:600">모먼트 홈으로</span>
+              <span style="margin-left:auto;font-size:10px;color:#AAA">44×44px ✓</span>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Bento 포인트:</strong> 아바타+제목 메인 셀(2/3) + 주차 배지 사이드 셀(1/3) + 하단 풀-스팬 뒤로가기 셀. 정보 위계가 그리드 크기로 표현됨.</div>
+      </div>
+
+      <!-- E: Horizontal 헤더 -->
+      <div class="concept-wrap">
+        <div class="concept-badge e">↔ E. 수평 압축</div>
+        <div class="phone-frame">
+          <div>
+            <div class="s1e-bar">
+              <div class="s1e-back">←</div>
+              <div class="s1e-avatar">🐰</div>
+              <div class="s1e-text">
+                <div class="s1e-title">이번 주 나의 성향 분석</div>
+                <div class="s1e-sub">2026년 9주차</div>
+              </div>
+              <div class="s1e-badge"><span>📅 9W</span></div>
+            </div>
+            <div class="s1e-content" style="background:#F8F5FF">
+              <div style="font-size:11px;color:#888;margin-bottom:8px">↑ 단 56px 헤더바, 스크롤 시 sticky 유지</div>
+              <div style="background:#fff;border-radius:12px;padding:10px;font-size:11px;color:#555;line-height:1.6">
+                콘텐츠 영역이 헤더 바로 아래부터 시작되어<br>세로 공간을 최대로 활용할 수 있어요.<br><br>
+                <span style="color:#7A4AE2;font-weight:600">✓ 모바일 foldable 환경에 적합</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>수평 압축 포인트:</strong> 아바타·제목·주차를 56px 1행에 압축. 스크롤 시 sticky 헤더로 동작. 세로 뷰포트를 콘텐츠에 최대 할당.</div>
+      </div>
+
+      <!-- F: Full-bleed 몰입형 -->
+      <div class="concept-wrap">
+        <div class="concept-badge f">⬛ F. Full-bleed 몰입형</div>
+        <div class="phone-frame">
+          <div class="s1f-wrap">
+            <div class="s1f-particle" style="width:60px;height:60px;top:10px;right:20px;animation-delay:.5s"></div>
+            <div class="s1f-particle" style="width:30px;height:30px;bottom:20px;left:30px;animation-delay:1.5s"></div>
+            <div class="s1f-particle" style="width:20px;height:20px;top:50%;left:15px;animation-delay:2.5s"></div>
+            <div style="position:absolute;top:12px;left:12px;width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff">←</div>
+            <div class="s1f-avatar">🐰</div>
+            <div class="s1f-title">이번 주 나의<br>성향 분석</div>
+            <div class="s1f-badge"><span>✦ 2026년 9주차</span></div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Full-bleed 포인트:</strong> 어두운 그라디언트 전체 배경. 파티클 애니메이션. glow 아바타. Glassmorphism 뒤로가기 버튼. 강렬한 첫인상.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 섹션 2: 히어로 카드 ═══════════════ -->
+<div id="s2" class="section-block">
+  <div class="section-label">섹션 2 — 칭호 히어로 카드 (보라 그라디언트 + 칭호 텍스트)</div>
+  <div class="trio">
+
+    <!-- A: 접근성 -->
+    <div class="concept-wrap">
+      <div class="concept-badge a">♿ A. WCAG 3.0 접근성</div>
+      <div class="phone-frame">
+        <div class="s2a-wrap">
+          <div class="s2a-card" role="region" aria-label="이번 주 성향 칭호: 공감의 별">
+            <div class="s2a-label">
+              이번 주 나의 칭호
+              <span class="s2a-label sr-only-hint">aria-label로 전체 내용 제공됨</span>
+            </div>
+            <div class="s2a-title">공감의 별 ✦</div>
+            <div class="s2a-sub">따뜻한 감수성으로 상대방의 마음을<br>자연스럽게 헤아리는 유형이에요</div>
+            <div class="s2a-contrast-note">배경 #3a1a7a → 텍스트 #fff : Lc 87 ✓</div>
+            <div class="s2a-shape-badge">
+              <span>★ 상위 12%</span>
+            </div>
+          </div>
+          <div class="s1a-aria-note" style="margin-top:8px">
+            <strong>접근성 적용:</strong><br>
+            • role="region" + aria-label (카드 전체 맥락)<br>
+            • 색상 외 모양(★) + 텍스트로 순위 표현<br>
+            • 텍스트 대비 Lc 87 (APCA 기준 충족)<br>
+            • 장식 이미지: aria-hidden="true"
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 단색 다크 배경으로 Lc 87 대비 확보, role="region"+aria-label로 카드 전체 의미 전달, 순위 표현 시 색상+모양+텍스트 세 가지 동시 사용. 텍스트 크기 26px 이상.
+      </div>
+    </div>
+
+    <!-- B: 인터랙션 -->
+    <div class="concept-wrap">
+      <div class="concept-badge b">✨ B. 인터랙션 체험</div>
+      <div class="phone-frame">
+        <div class="s2b-wrap">
+          <div class="s2b-card">
+            <div class="s2b-circle1" aria-hidden="true"></div>
+            <div class="s2b-circle2" aria-hidden="true"></div>
+            <div class="s2b-inner">
+              <div class="s2b-sub">이번 주 나의 칭호</div>
+              <div class="s2b-title">공감의 별 ✦</div>
+              <div class="s2b-desc">따뜻한 감수성으로 상대방의 마음을<br>자연스럽게 헤아리는 유형이에요</div>
+              <div class="s2b-haptic">
+                <span>💥 카드 진입 시 Haptic Medium</span>
+              </div>
+              <div class="s2b-tap-hint">꾹 눌러 공유하기 →</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#888;margin-top:8px;text-align:center">
+            heroEntrance: scale(.88)→(1), titleReveal: letter-spacing 펼침
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> heroEntrance(scale+translate), titleReveal(letter-spacing 펼침), 배경 원 장식 시각적 깊이, 진입 시 Haptic Medium, 꾹 누르기 → 공유 힌트 제공.
+      </div>
+    </div>
+
+    <!-- C: 모던 -->
+    <div class="concept-wrap">
+      <div class="concept-badge c">🎨 C. 모던 디자인</div>
+      <div class="phone-frame">
+        <div class="s2c-wrap">
+          <div class="s2c-card">
+            <div class="s2c-noise" aria-hidden="true"></div>
+            <div class="s2c-glow" aria-hidden="true"></div>
+            <div class="s2c-inner">
+              <span class="s2c-crown" aria-hidden="true">👑</span>
+              <div class="s2c-title">공감의 별 ✦</div>
+              <div class="s2c-divider" aria-hidden="true"></div>
+              <div class="s2c-sub">따뜻한 감수성으로 상대방의 마음을<br>자연스럽게 헤아리는 유형이에요</div>
+              <div style="margin-top:14px">
+                <span class="s2c-chip">★ 상위 12%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 라이트 그라디언트 overlay + noise texture, 상단 radial glow, 크라운 float 애니메이션, Glassmorphism 칩 배지, 구분선 divider로 계층 분리.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ 레이아웃 탐색 D / E / F ════ -->
+  <div class="layout-row">
+    <div class="layout-row-title">🔲 레이아웃 탐색 — D. 분할 벤토 &nbsp;/&nbsp; E. 스와이프 힌트 &nbsp;/&nbsp; F. 레이어드 카드 스택</div>
+    <div class="trio">
+
+      <!-- D: 분할 벤토 -->
+      <div class="concept-wrap">
+        <div class="concept-badge d">🔲 D. 분할 Bento</div>
+        <div class="phone-frame">
+          <div class="s2d-grid">
+            <div class="s2d-main">
+              <div class="s2d-label">이번 주 나의 칭호</div>
+              <div class="s2d-title">공감의 별 ✦</div>
+              <div class="s2d-sub">따뜻한 감수성으로 상대의 마음을 헤아리는 유형</div>
+            </div>
+            <div class="s2d-side">
+              <div class="s2d-rank">
+                <div class="s2d-rank-num">12%</div>
+                <div class="s2d-rank-label">상위</div>
+              </div>
+              <div class="s2d-history">
+                <div style="font-size:9px;color:#AAA;margin-bottom:4px">4주 추이</div>
+                <div class="s2d-bar-row"><span class="s2d-bar-label">W6</span><div class="s2d-mini-bar"><div style="width:60%;height:4px;background:#C4A8F5;border-radius:2px"></div></div></div>
+                <div class="s2d-bar-row"><span class="s2d-bar-label">W7</span><div class="s2d-mini-bar"><div style="width:72%;height:4px;background:#9B6FF0;border-radius:2px"></div></div></div>
+                <div class="s2d-bar-row"><span class="s2d-bar-label">W8</span><div class="s2d-mini-bar"><div style="width:78%;height:4px;background:#7A4AE2;border-radius:2px"></div></div></div>
+                <div class="s2d-bar-row"><span class="s2d-bar-label">W9</span><div class="s2d-mini-bar"><div style="width:82%;height:4px;background:#5B35C0;border-radius:2px"></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Bento 포인트:</strong> 타이틀 2/3 + 순위·추이 차트 1/3 분리. 4주 미니 바 차트로 성장 히스토리 제공. 주 정보와 보조 정보를 공간으로 구분.</div>
+      </div>
+
+      <!-- E: 스와이프 힌트 -->
+      <div class="concept-wrap">
+        <div class="concept-badge e">↔ E. 스와이프 힌트</div>
+        <div class="phone-frame">
+          <div class="s2e-wrap">
+            <div class="s2e-hint">← 이전 주차를 스와이프해서 비교해보세요</div>
+            <div class="s2e-stack">
+              <div class="s2e-card prev" style="display:flex;flex-direction:column;align-items:center;padding:16px">
+                <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:4px">8주차</div>
+                <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,.6)">에너지의 빛</div>
+              </div>
+              <div class="s2e-card curr" style="display:flex;flex-direction:column;align-items:center">
+                <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:6px">9주차 (이번 주)</div>
+                <div style="font-size:24px;font-weight:900;color:#fff;margin-bottom:6px">공감의 별 ✦</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.85);text-align:center;line-height:1.5">따뜻한 감수성으로 상대의<br>마음을 헤아리는 유형</div>
+              </div>
+            </div>
+            <div class="s2e-nav" style="padding:0 12px">
+              <button class="carousel-btn">‹</button>
+              <span class="s2e-progress" style="font-size:10px;color:#888">9 / 12주차</span>
+              <button class="carousel-btn">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>스와이프 포인트:</strong> 이전 주차 카드가 왼쪽 가장자리에 살짝 노출. 스와이프 제스처로 주차 간 비교 탐색. 과거 칭호 변화 흐름 인지.</div>
+      </div>
+
+      <!-- F: 레이어드 스택 -->
+      <div class="concept-wrap">
+        <div class="concept-badge f">⬛ F. 레이어드 카드 스택</div>
+        <div class="phone-frame">
+          <div class="s2f-wrap">
+            <div style="font-size:10px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:10px">위로 스와이프하면 이전 주차 카드</div>
+            <div class="s2f-stack">
+              <div class="s2f-card s2f-c3">
+                <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center">7주차</div>
+              </div>
+              <div class="s2f-card s2f-c2">
+                <div style="font-size:11px;color:rgba(255,255,255,.4);text-align:center">8주차 — 에너지의 빛</div>
+              </div>
+              <div class="s2f-card s2f-c1">
+                <div class="s2f-label">9주차 이번 주</div>
+                <div class="s2f-title">공감의 별 ✦</div>
+                <div class="s2f-sub">따뜻한 감수성으로 상대방의 마음을 자연스럽게 헤아리는 유형이에요.</div>
+              </div>
+            </div>
+            <div class="s2f-swipe">↑ 위로 스와이프 — 이전 주차</div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>스택 포인트:</strong> 3장의 카드가 Z-depth로 쌓임. 가장 앞 카드가 현재 주차. 위로 스와이프 시 이전 주차 카드가 올라오는 페이저.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 섹션 3: 스탯 목록 ═══════════════ -->
+<div id="s3" class="section-block">
+  <div class="section-label">섹션 3 — 스탯 목록 (CircularProgress + 아이콘 + 변화량 + 프로그레스 바)</div>
+  <div class="trio">
+
+    <!-- A: 접근성 -->
+    <div class="concept-wrap">
+      <div class="concept-badge a">♿ A. WCAG 3.0 접근성</div>
+      <div class="phone-frame">
+        <div class="s3a-wrap">
+          <!-- 스탯 카드 1 -->
+          <div class="s3a-card" role="listitem">
+            <div class="s3a-ring" role="img" aria-label="외향성 점수 75점 (75%)">
+              <svg width="64" height="64" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/>
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="131.9 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/>
+              </svg>
+              <div class="s3a-ring-val" aria-hidden="true">75</div>
+            </div>
+            <div class="s3a-info">
+              <div class="s3a-label-row">
+                <div class="s3a-icon-box" aria-hidden="true">✨</div>
+                <span class="s3a-name">외향성</span>
+                <span class="s3a-change up" role="status" aria-label="지난주 대비 5점 상승">
+                  <span class="change-shape" aria-hidden="true">▲</span> +5
+                </span>
+              </div>
+              <div class="s3a-bar-bg" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="외향성 75%">
+                <div class="s3a-bar-fill" style="width:75%"></div>
+              </div>
+            </div>
+          </div>
+          <!-- 스탯 카드 2 -->
+          <div class="s3a-card" role="listitem">
+            <div class="s3a-ring" role="img" aria-label="개방성 점수 60점">
+              <svg width="64" height="64" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/>
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="105.5 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/>
+              </svg>
+              <div class="s3a-ring-val" aria-hidden="true">60</div>
+            </div>
+            <div class="s3a-info">
+              <div class="s3a-label-row">
+                <div class="s3a-icon-box" aria-hidden="true">🪄</div>
+                <span class="s3a-name">개방성</span>
+                <span class="s3a-change down" role="status" aria-label="지난주 대비 3점 하락">
+                  <span class="change-shape" aria-hidden="true">▼</span> -3
+                </span>
+              </div>
+              <div class="s3a-bar-bg" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="개방성 60%">
+                <div class="s3a-bar-fill" style="width:60%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="s3a-aria-note">
+            <strong>접근성:</strong> role="progressbar" + aria-valuenow/min/max, 변화량 role="status", 원형 차트 role="img"+aria-label, 아이콘+텍스트 병기
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> SVG 링에 role="img"+aria-label 숫자 읽힘, 프로그레스 바 aria-valuenow, 변화 방향은 ▲▼ 기호+텍스트+색상 3중 표현, 카드 테두리로 포커스 영역 명확화.
+      </div>
+    </div>
+
+    <!-- B: 인터랙션 -->
+    <div class="concept-wrap">
+      <div class="concept-badge b">✨ B. 인터랙션 체험</div>
+      <div class="phone-frame">
+        <div class="s3b-wrap">
+          <div style="font-size:10px;color:#999;margin-bottom:6px">① 스켈레톤 로딩</div>
+          <div class="s3b-skel-card">
+            <div class="s3b-skel-circle"></div>
+            <div class="s3b-skel-lines">
+              <div class="s3b-skel-line" style="width:70%"></div>
+              <div class="s3b-skel-line" style="width:100%;height:6px"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#999;margin:8px 0 6px;border-top:1px dashed #ddd;padding-top:8px">② 로드 완료 (순차 슬라이드)</div>
+          <div class="s3b-card loaded" style="animation-delay:.1s">
+            <div class="s3b-ring">
+              <svg width="64" height="64" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/>
+                <circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="131.9 175.9" stroke-linecap="round" transform="rotate(-90 34 34)" style="animation:dashDraw 1.2s ease both">
+                </circle>
+              </svg>
+              <div class="s3b-ring-val"><span class="s3b-counter">75</span></div>
+            </div>
+            <div class="s3b-info">
+              <div class="s3b-label-row">
+                <span class="s3b-icon">✨</span>
+                <span class="s3b-name">외향성</span>
+                <span class="s3b-change">▲ +5 📈</span>
+              </div>
+              <div class="s3b-bar-bg">
+                <div class="s3b-bar-fill" style="width:75%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="s3b-haptic-note">💥 각 카드 진입 시 Haptic Light (0.1s 간격)</div>
+          <div style="font-size:10px;color:#888;margin-top:6px">카운트업 0→75, 바 0→75% 동시 진행</div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 스켈레톤→cardSlide 순차 진입(0.1s 간격), SVG stroke 카운트업, 프로그레스 바 0→값 동시 애니메이션, 각 카드 Haptic Light, 변화량 아이콘 이모지 강조.
+      </div>
+    </div>
+
+    <!-- C: 모던 -->
+    <div class="concept-wrap">
+      <div class="concept-badge c">🎨 C. 모던 디자인</div>
+      <div class="phone-frame">
+        <div class="s3c-wrap">
+          <div class="s3c-card">
+            <div class="s3c-ring">
+              <svg width="68" height="68" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="28" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="7"/>
+                <circle cx="34" cy="34" r="28" fill="none" stroke="url(#g1)" stroke-width="7" stroke-dasharray="131.9 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/>
+                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C4A8F5"/><stop offset="100%" stop-color="#7A4AE2"/></linearGradient></defs>
+              </svg>
+              <div class="s3c-ring-val">75</div>
+            </div>
+            <div class="s3c-info">
+              <div class="s3c-label-row">
+                <span class="s3c-icon">✨</span>
+                <span class="s3c-name">외향성</span>
+                <span class="s3c-change">▲ +5</span>
+              </div>
+              <div class="s3c-bar-bg">
+                <div class="s3c-bar-fill" style="width:75%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="s3c-card">
+            <div class="s3c-ring">
+              <svg width="68" height="68" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="28" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="7"/>
+                <circle cx="34" cy="34" r="28" fill="none" stroke="url(#g2)" stroke-width="7" stroke-dasharray="105.5 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/>
+                <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C4A8F5"/><stop offset="100%" stop-color="#7A4AE2"/></linearGradient></defs>
+              </svg>
+              <div class="s3c-ring-val">60</div>
+            </div>
+            <div class="s3c-info">
+              <div class="s3c-label-row">
+                <span class="s3c-icon">🪄</span>
+                <span class="s3c-name">개방성</span>
+                <span class="s3c-change" style="color:#A5C8FF">▼ -3</span>
+              </div>
+              <div class="s3c-bar-bg">
+                <div class="s3c-bar-fill" style="width:60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> Glassmorphism 카드(blur+반투명), SVG 링에 그라디언트 stroke, 프로그레스 바 glow, 다크 배경으로 색상 발광 효과 극대화. 큰 숫자(16px bold)로 타이포 대비.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ 레이아웃 탐색 D / E / F ════ -->
+  <div class="layout-row">
+    <div class="layout-row-title">🔲 레이아웃 탐색 — D. Bento Grid &nbsp;/&nbsp; E. 수평 원형 스크롤 &nbsp;/&nbsp; F. 대형 숫자 풀블리드</div>
+    <div class="trio">
+
+      <!-- D: Bento 스탯 -->
+      <div class="concept-wrap">
+        <div class="concept-badge d">🔲 D. Bento Grid</div>
+        <div class="phone-frame">
+          <div class="s3d-grid">
+            <!-- 카드 1: 외향성 -->
+            <div class="s3d-cell">
+              <div class="s3d-ring">
+                <svg width="52" height="52" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="131.9 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                <div class="s3d-ring-val">75</div>
+              </div>
+              <div class="s3d-info">
+                <div style="display:flex;align-items:center;gap:4px"><div class="s3d-name">외향성</div><span class="s3d-change-up">▲+3</span></div>
+                <div class="s3d-mini-bar"><div class="s3d-mini-fill" style="width:75%"></div></div>
+              </div>
+            </div>
+            <!-- 카드 2: 개방성 -->
+            <div class="s3d-cell">
+              <div class="s3d-ring">
+                <svg width="52" height="52" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="105.5 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                <div class="s3d-ring-val">60</div>
+              </div>
+              <div class="s3d-info">
+                <div style="display:flex;align-items:center;gap:4px"><div class="s3d-name">개방성</div><span class="s3d-change-dn">▼-3</span></div>
+                <div class="s3d-mini-bar"><div class="s3d-mini-fill" style="width:60%"></div></div>
+              </div>
+            </div>
+            <!-- 카드 3: 성실성 -->
+            <div class="s3d-cell">
+              <div class="s3d-ring">
+                <svg width="52" height="52" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="123.1 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                <div class="s3d-ring-val">70</div>
+              </div>
+              <div class="s3d-info">
+                <div style="display:flex;align-items:center;gap:4px"><div class="s3d-name">성실성</div><span class="s3d-change-up">▲+2</span></div>
+                <div class="s3d-mini-bar"><div class="s3d-mini-fill" style="width:70%"></div></div>
+              </div>
+            </div>
+            <!-- 카드 4: 친화성 -->
+            <div class="s3d-cell">
+              <div class="s3d-ring">
+                <svg width="52" height="52" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="140.7 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                <div class="s3d-ring-val">80</div>
+              </div>
+              <div class="s3d-info">
+                <div style="display:flex;align-items:center;gap:4px"><div class="s3d-name">친화성</div><span class="s3d-change-up">▲+5</span></div>
+                <div class="s3d-mini-bar"><div class="s3d-mini-fill" style="width:80%"></div></div>
+              </div>
+            </div>
+            <!-- Featured: 신경성 -->
+            <div class="s3d-cell feat">
+              <div class="s3d-ring" style="width:60px;height:60px;flex-shrink:0">
+                <svg width="60" height="60" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#FF9800" stroke-width="7" stroke-dasharray="79.2 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                <div class="s3d-ring-val" style="font-size:15px">45</div>
+              </div>
+              <div class="s3d-info">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                  <div class="s3d-name" style="font-size:14px">신경성</div>
+                  <span class="s3d-change-dn">▼-2</span>
+                  <span style="font-size:10px;background:#FFF3E0;color:#FF9800;border-radius:6px;padding:2px 6px;font-weight:600">주의</span>
+                </div>
+                <div style="font-size:11px;color:#888;margin-bottom:4px">감정 기복 지표 — 낮을수록 안정적</div>
+                <div class="s3d-mini-bar"><div class="s3d-mini-fill" style="width:45%;background:#FF9800"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Bento 포인트:</strong> 2×2 그리드 + 하단 featured 전폭 셀. 5번째 성향(주의 필요한 신경성)을 특별 강조. 카드 크기 자체가 중요도를 전달.</div>
+      </div>
+
+      <!-- E: 수평 원형 스크롤 -->
+      <div class="concept-wrap">
+        <div class="concept-badge e">↔ E. 수평 스크롤</div>
+        <div class="phone-frame">
+          <div style="background:#F8F5FF;padding-top:12px">
+            <div class="s3e-scroll">
+              <div class="s3e-item">
+                <div class="s3e-ring">
+                  <svg width="56" height="56" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="131.9 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                  <div class="s3e-ring-val">75</div>
+                </div>
+                <div class="s3e-name">외향성</div>
+                <div class="s3e-delta" style="color:#00C853">▲+3</div>
+              </div>
+              <div class="s3e-item">
+                <div class="s3e-ring">
+                  <svg width="56" height="56" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="105.5 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                  <div class="s3e-ring-val">60</div>
+                </div>
+                <div class="s3e-name">개방성</div>
+                <div class="s3e-delta" style="color:#FF5252">▼-3</div>
+              </div>
+              <div class="s3e-item">
+                <div class="s3e-ring">
+                  <svg width="56" height="56" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="123.1 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                  <div class="s3e-ring-val">70</div>
+                </div>
+                <div class="s3e-name">성실성</div>
+                <div class="s3e-delta" style="color:#00C853">▲+2</div>
+              </div>
+              <div class="s3e-item">
+                <div class="s3e-ring">
+                  <svg width="56" height="56" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#7A4AE2" stroke-width="7" stroke-dasharray="140.7 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                  <div class="s3e-ring-val">80</div>
+                </div>
+                <div class="s3e-name">친화성</div>
+                <div class="s3e-delta" style="color:#00C853">▲+5</div>
+              </div>
+              <div class="s3e-item" style="border:2px solid #FF9800">
+                <div class="s3e-ring">
+                  <svg width="56" height="56" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDE9F8" stroke-width="7"/><circle cx="34" cy="34" r="28" fill="none" stroke="#FF9800" stroke-width="7" stroke-dasharray="79.2 175.9" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+                  <div class="s3e-ring-val" style="color:#FF9800">45</div>
+                </div>
+                <div class="s3e-name">신경성</div>
+                <div class="s3e-delta" style="color:#FF5252">▼-2</div>
+              </div>
+            </div>
+            <div class="s3e-scroll-hint">← 옆으로 스크롤 →</div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>수평 스크롤 포인트:</strong> 5개 원형 카드를 한 줄로. 스크롤로 탐색. 작은 세로 공간에 최대 정보 표시. 원형 차트+변화량+이름 3요소 압축.</div>
+      </div>
+
+      <!-- F: 대형 숫자 풀블리드 -->
+      <div class="concept-wrap">
+        <div class="concept-badge f">⬛ F. 대형 숫자 풀블리드</div>
+        <div class="phone-frame">
+          <div class="s3f-list">
+            <div class="s3f-row">
+              <div class="s3f-score">75</div>
+              <div class="s3f-right">
+                <div class="s3f-name-row">
+                  <span class="s3f-name">외향성</span>
+                  <span class="s3f-delta" style="color:#00C853">▲ +3</span>
+                </div>
+                <div class="s3f-bar"><div class="s3f-fill" style="width:75%"></div></div>
+              </div>
+            </div>
+            <div class="s3f-row">
+              <div class="s3f-score">60</div>
+              <div class="s3f-right">
+                <div class="s3f-name-row">
+                  <span class="s3f-name">개방성</span>
+                  <span class="s3f-delta" style="color:#FF5252">▼ -3</span>
+                </div>
+                <div class="s3f-bar"><div class="s3f-fill" style="width:60%"></div></div>
+              </div>
+            </div>
+            <div class="s3f-row">
+              <div class="s3f-score">70</div>
+              <div class="s3f-right">
+                <div class="s3f-name-row">
+                  <span class="s3f-name">성실성</span>
+                  <span class="s3f-delta" style="color:#00C853">▲ +2</span>
+                </div>
+                <div class="s3f-bar"><div class="s3f-fill" style="width:70%"></div></div>
+              </div>
+            </div>
+            <div class="s3f-row">
+              <div class="s3f-score">80</div>
+              <div class="s3f-right">
+                <div class="s3f-name-row">
+                  <span class="s3f-name">친화성</span>
+                  <span class="s3f-delta" style="color:#00C853">▲ +5</span>
+                </div>
+                <div class="s3f-bar"><div class="s3f-fill" style="width:80%"></div></div>
+              </div>
+            </div>
+            <div class="s3f-row">
+              <div class="s3f-score" style="color:#FF9800">45</div>
+              <div class="s3f-right">
+                <div class="s3f-name-row">
+                  <span class="s3f-name">신경성</span>
+                  <span class="s3f-delta" style="color:#FF5252">▼ -2</span>
+                </div>
+                <div class="s3f-bar"><div class="s3f-fill" style="width:45%;background:linear-gradient(90deg,#FF9800,#FFD54F)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>풀블리드 포인트:</strong> 점수가 32px 대형 숫자로 좌측 고정. 다크 배경에 흰 텍스트. 숫자만 보고 성향 강도를 즉시 파악. 정보 밀도 최고.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 섹션 4: 레이더 차트 ═══════════════ -->
+<div id="s4" class="section-block">
+  <div class="section-label">섹션 4 — 레이더 차트</div>
+  <div class="concept-wrap" style="max-width:375px;margin:0 auto">
+    <div class="phone-frame">
+      <div class="s4d-grid">
+        <div class="s4d-left">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;text-align:center">레이더 차트</div>
+          <div class="s4d-chart-placeholder">
+            <svg width="110" height="110" viewBox="0 0 220 220">
+              <g transform="translate(110,110)">
+                <polygon points="0,-70 66.6,-21.6 41.1,56.7 -41.1,56.7 -66.6,-21.6" fill="none" stroke="#EDE9F8" stroke-width="1.5"/>
+                <polygon points="0,-56 53.3,-17.3 32.9,45.4 -32.9,45.4 -53.3,-17.3" fill="none" stroke="#EDE9F8" stroke-width="1"/>
+                <polygon points="0,-42 40,-13 24.6,34 -24.6,34 -40,-13" fill="none" stroke="#EDE9F8" stroke-width="1"/>
+                <line x1="0" y1="0" x2="0" y2="-70" stroke="#EDE9F8" stroke-width="1"/>
+                <line x1="0" y1="0" x2="66.6" y2="-21.6" stroke="#EDE9F8" stroke-width="1"/>
+                <line x1="0" y1="0" x2="41.1" y2="56.7" stroke="#EDE9F8" stroke-width="1"/>
+                <line x1="0" y1="0" x2="-41.1" y2="56.7" stroke="#EDE9F8" stroke-width="1"/>
+                <line x1="0" y1="0" x2="-66.6" y2="-21.6" stroke="#EDE9F8" stroke-width="1"/>
+                <polygon points="0,-49 46.6,-15.1 28.8,39.7 -28.8,39.7 -46.6,-15.1" fill="none" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <polygon points="0,-52.5 46.5,-15.1 22.3,39.7 -28.8,39.7 -46.6,-15.1" fill="rgba(122,74,226,.2)" stroke="#7A4AE2" stroke-width="2"/>
+                <circle cx="0" cy="-52.5" r="3" fill="#7A4AE2"/>
+                <circle cx="46.5" cy="-15.1" r="3" fill="#7A4AE2"/>
+                <circle cx="22.3" cy="39.7" r="3" fill="#7A4AE2"/>
+                <circle cx="-28.8" cy="39.7" r="3" fill="#7A4AE2"/>
+                <circle cx="-46.6" cy="-15.1" r="3" fill="#7A4AE2"/>
+                <text x="0" y="-78" text-anchor="middle" font-size="9" fill="#555" font-weight="600">외향성</text>
+                <text x="72" y="-17" text-anchor="start" font-size="9" fill="#555" font-weight="600">개방성</text>
+                <text x="44" y="68" text-anchor="start" font-size="9" fill="#555" font-weight="600">성실성</text>
+                <text x="-44" y="68" text-anchor="end" font-size="9" fill="#555" font-weight="600">친화성</text>
+                <text x="-72" y="-17" text-anchor="end" font-size="9" fill="#555" font-weight="600">감수성</text>
+              </g>
+            </svg>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:6px">
+            <div class="s4d-legend-item"><div style="width:10px;height:3px;background:#7A4AE2;border-radius:1px"></div><span style="font-size:9px;color:#888">이번주</span></div>
+            <div class="s4d-legend-item"><div style="width:10px;height:2px;border-top:2px dashed #AAA"></div><span style="font-size:9px;color:#888">지난주</span></div>
+          </div>
+        </div>
+        <div class="s4d-divider"></div>
+        <div class="s4d-right">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px">점수 상세</div>
+          <div class="s4d-legend-list">
+            <div class="s4d-legend-item">
+              <div class="s4d-legend-dot"></div>
+              <span class="s4d-legend-name">외향성</span>
+              <span class="s4d-legend-val">75</span>
+            </div>
+            <div style="height:3px;background:#EDE9F8;border-radius:2px;margin:-2px 0 4px 14px;overflow:hidden"><div style="width:75%;height:3px;background:#7A4AE2;border-radius:2px"></div></div>
+            <div class="s4d-legend-item">
+              <div class="s4d-legend-dot"></div>
+              <span class="s4d-legend-name">개방성</span>
+              <span class="s4d-legend-val">60</span>
+            </div>
+            <div style="height:3px;background:#EDE9F8;border-radius:2px;margin:-2px 0 4px 14px;overflow:hidden"><div style="width:60%;height:3px;background:#7A4AE2;border-radius:2px"></div></div>
+            <div class="s4d-legend-item">
+              <div class="s4d-legend-dot"></div>
+              <span class="s4d-legend-name">성실성</span>
+              <span class="s4d-legend-val">70</span>
+            </div>
+            <div style="height:3px;background:#EDE9F8;border-radius:2px;margin:-2px 0 4px 14px;overflow:hidden"><div style="width:70%;height:3px;background:#7A4AE2;border-radius:2px"></div></div>
+            <div class="s4d-legend-item">
+              <div class="s4d-legend-dot"></div>
+              <span class="s4d-legend-name">친화성</span>
+              <span class="s4d-legend-val">80</span>
+            </div>
+            <div style="height:3px;background:#EDE9F8;border-radius:2px;margin:-2px 0 4px 14px;overflow:hidden"><div style="width:80%;height:3px;background:#7A4AE2;border-radius:2px"></div></div>
+            <div class="s4d-legend-item">
+              <div class="s4d-legend-dot" style="background:#FF9800"></div>
+              <span class="s4d-legend-name">감수성</span>
+              <span class="s4d-legend-val" style="color:#FF9800">45</span>
+            </div>
+            <div style="height:3px;background:#EDE9F8;border-radius:2px;margin:-2px 0 0 14px;overflow:hidden"><div style="width:45%;height:3px;background:#FF9800;border-radius:2px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ═══════════════ 섹션 5: 키워드 패턴 ═══════════════ -->
+<div id="s5" class="section-block">
+  <div class="section-label">섹션 5 — 키워드 패턴 (태그칩 + 인용 블록)</div>
+  <div class="trio">
+
+    <!-- A: 접근성 -->
+    <div class="concept-wrap">
+      <div class="concept-badge a">♿ A. WCAG 3.0 접근성</div>
+      <div class="phone-frame">
+        <div class="s5a-wrap">
+          <div class="s5a-title" id="kw-title-a">이번 주 나의 키워드</div>
+          <div class="s5a-tags" role="list" aria-labelledby="kw-title-a">
+            <span class="s5a-tag" role="listitem"><span class="tag-icon" aria-hidden="true">💬</span>공감</span>
+            <span class="s5a-tag" role="listitem"><span class="tag-icon" aria-hidden="true">🤝</span>배려</span>
+            <span class="s5a-tag" role="listitem"><span class="tag-icon" aria-hidden="true">✨</span>진솔함</span>
+            <span class="s5a-tag" role="listitem"><span class="tag-icon" aria-hidden="true">🌱</span>성장</span>
+            <span class="s5a-tag" role="listitem"><span class="tag-icon" aria-hidden="true">🎯</span>집중</span>
+          </div>
+          <div class="s5a-quote" role="blockquote" aria-label="이번 주 패턴 요약">
+            <p class="s5a-quote-text">이번 주 당신은 상대방의 감정에 민감하게 반응하며, 깊이 있는 대화를 통해 진정성 있는 연결을 만들어갔어요.</p>
+          </div>
+          <div class="s5a-aria">
+            <strong>접근성:</strong> 태그 목록 role="list"+role="listitem", 인용 role="blockquote"+aria-label, 아이콘+텍스트 병기, 터치 타겟 44px 확보
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 키워드 태그 min-height 44px 터치 타겟, 아이콘+텍스트 병기, role="list" 구조화, 인용 블록 role="blockquote"+aria-label 맥락 제공. 색상 대비 #3a1a7a on #EDE9F8 충족.
+      </div>
+    </div>
+
+    <!-- B: 인터랙션 -->
+    <div class="concept-wrap">
+      <div class="concept-badge b">✨ B. 인터랙션 체험</div>
+      <div class="phone-frame">
+        <div class="s5b-wrap">
+          <div class="s5b-tags">
+            <span class="s5b-tag selected">💬 공감</span>
+            <span class="s5b-tag">🤝 배려</span>
+            <span class="s5b-tag">✨ 진솔함</span>
+            <span class="s5b-tag">🌱 성장</span>
+            <span class="s5b-tag">🎯 집중</span>
+            <span class="s5b-tag">💡 통찰</span>
+          </div>
+          <div class="s5b-quote">
+            <p class="s5b-quote-text">이번 주 당신은 상대방의 감정에 민감하게 반응하며, 깊이 있는 대화를 통해 진정성 있는 연결을 만들어갔어요.</p>
+          </div>
+          <div class="s5b-haptic-note">💥 태그 탭 시 Haptic Selection</div>
+          <div style="font-size:10px;color:#888;margin-top:6px">
+            선택 태그 → 관련 인용문 하이라이트<br>
+            tagPop: scale(0)→(1) 순차 0.05s 간격
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> 태그 tagPop 순차 팝업(0.05s 간격), 탭 시 선택 상태 전환(보라 배경)+Haptic Selection, 인용문 quoteReveal(translateX 슬라이드), 탭 태그에 연동된 텍스트 하이라이트.
+      </div>
+    </div>
+
+    <!-- C: 모던 -->
+    <div class="concept-wrap">
+      <div class="concept-badge c">🎨 C. 모던 디자인</div>
+      <div class="phone-frame">
+        <div class="s5c-wrap">
+          <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">이번 주 키워드</div>
+          <div class="s5c-tags">
+            <span class="s5c-tag highlight">💬 공감</span>
+            <span class="s5c-tag">🤝 배려</span>
+            <span class="s5c-tag highlight">✨ 진솔함</span>
+            <span class="s5c-tag">🌱 성장</span>
+            <span class="s5c-tag">🎯 집중</span>
+            <span class="s5c-tag">💡 통찰</span>
+          </div>
+          <div class="s5c-quote">
+            <div class="s5c-quote-line"></div>
+            <p class="s5c-quote-text">이번 주 당신은 상대방의 감정에 민감하게 반응하며, 깊이 있는 대화를 통해 진정성 있는 연결을 만들어갔어요.</p>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:10px;justify-content:center">
+            <div style="width:4px;height:4px;border-radius:2px;background:#7A4AE2"></div>
+            <div style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+            <div style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> Glassmorphism 태그(blur+반투명 보라), 강조 키워드는 glow shadow, 인용 블록에 그라디언트 구분선 + 대형 따옴표 장식, 다크 배경으로 발광 효과 극대화.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ 레이아웃 탐색 D / E / F ════ -->
+  <div class="layout-row">
+    <div class="layout-row-title">🔲 레이아웃 탐색 — D. 인용+태그 Bento &nbsp;/&nbsp; E. 수평 태그 + 콜랩스 &nbsp;/&nbsp; F. 풀블리드 인용 카드</div>
+    <div class="trio">
+
+      <!-- D: 인용+태그 Bento -->
+      <div class="concept-wrap">
+        <div class="concept-badge d">🔲 D. 인용 + 태그 Bento</div>
+        <div class="phone-frame">
+          <div class="s5d-wrap">
+            <div class="s5d-quote">
+              <div class="s5d-quote-text">이번 주는 공감과 소통으로 가득했어요. 따뜻한 말 한마디가 관계를 더 깊게 만들었어요.</div>
+            </div>
+            <div class="s5d-tag-grid">
+              <div class="s5d-tag">#공감</div>
+              <div class="s5d-tag">#소통</div>
+              <div class="s5d-tag">#배려</div>
+              <div class="s5d-tag">#진솔함</div>
+              <div class="s5d-tag">#따뜻함</div>
+              <div class="s5d-tag">#리더십</div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Bento 포인트:</strong> 인용 블록이 위 전체 폭을 차지하고 태그가 아래 3열 그리드로 정렬. 내러티브와 키워드를 공간으로 위계 분리.</div>
+      </div>
+
+      <!-- E: 수평 태그 + 콜랩스 -->
+      <div class="concept-wrap">
+        <div class="concept-badge e">↔ E. 수평 태그 + 접힘</div>
+        <div class="phone-frame">
+          <div class="s5e-wrap">
+            <div class="s5e-tags">
+              <div class="s5e-tag active">#공감</div>
+              <div class="s5e-tag">#소통</div>
+              <div class="s5e-tag">#배려</div>
+              <div class="s5e-tag">#진솔함</div>
+              <div class="s5e-tag">#따뜻함</div>
+              <div class="s5e-tag">#리더십</div>
+            </div>
+            <div class="s5e-collapse">
+              <div class="s5e-collapse-header">
+                <span class="s5e-collapse-title">이번 주 키워드 인사이트</span>
+                <span class="s5e-collapse-arrow">▼</span>
+              </div>
+              <div class="s5e-collapse-body">
+                이번 주는 공감과 소통으로 가득했어요. 따뜻한 말 한마디가 관계를 더 깊게 만들었고, 자연스러운 대화 흐름이 이어졌어요.
+              </div>
+            </div>
+            <div style="font-size:10px;color:#999;text-align:center;margin-top:8px">탭으로 펼침/접힘 전환</div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>수평 태그 포인트:</strong> 태그를 한 줄 가로 스크롤. 인용문은 기본 접힘(collapsed). 탭 시 펼쳐짐. 태그 선택 시 관련 인사이트 필터링 가능.</div>
+      </div>
+
+      <!-- F: 풀블리드 인용 카드 -->
+      <div class="concept-wrap">
+        <div class="concept-badge f">⬛ F. 풀블리드 인용</div>
+        <div class="phone-frame">
+          <div class="s5f-wrap">
+            <div class="s5f-deco-q">"</div>
+            <div class="s5f-quote">
+              이번 주는 공감과 소통으로<br>가득했어요. 따뜻한 말 한마디가<br>관계를 더 깊게 만들었어요.
+            </div>
+            <div class="s5f-divider"></div>
+            <div class="s5f-tags">
+              <div class="fb-tag">#공감</div>
+              <div class="fb-tag">#소통</div>
+              <div class="fb-tag">#배려</div>
+              <div class="fb-tag">#진솔함</div>
+              <div class="fb-tag">#따뜻함</div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>풀블리드 포인트:</strong> 그라디언트 배경이 전체를 채움. 140px 장식 따옴표. 흰 텍스트 + 구분선 + Glassmorphism 태그. 강렬한 감성 임팩트.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 섹션 6: 인사이트 카드 ═══════════════ -->
+<div id="s6" class="section-block">
+  <div class="section-label">섹션 6 — 인사이트 카드 (SVG 아이콘 + 점수 색상 분기 + 정의/피드백)</div>
+  <div class="trio">
+
+    <!-- A: 접근성 -->
+    <div class="concept-wrap">
+      <div class="concept-badge a">♿ A. WCAG 3.0 접근성</div>
+      <div class="phone-frame">
+        <div class="s6a-wrap">
+          <div class="s6a-card" role="article" aria-label="외향성 인사이트, 점수 75점 (좋음)">
+            <div class="s6a-header">
+              <div class="s6a-icon-box" aria-hidden="true">✨</div>
+              <span class="s6a-card-title">외향성</span>
+              <span class="s6a-score good">
+                <span class="score-bar" aria-hidden="true"></span>
+                75 <span style="font-size:11px;font-weight:500">(좋음)</span>
+              </span>
+            </div>
+            <div class="s6a-def">사교적이고 활발하게 타인과 교류하며 에너지를 얻는 성향. 대화를 주도하고 새로운 관계 형성에 적극적이에요.</div>
+            <div class="s6a-feedback" role="note" aria-label="이번 주 피드백">이번 주는 대화 횟수가 많았고, 먼저 말을 걸며 분위기를 이끌었어요. 이 흐름을 유지해보세요!</div>
+          </div>
+          <div class="s6a-card" role="article" aria-label="신경성 인사이트, 점수 45점 (낮음)">
+            <div class="s6a-header">
+              <div class="s6a-icon-box" aria-hidden="true">🔔</div>
+              <span class="s6a-card-title">신경성</span>
+              <span class="s6a-score low">
+                <span class="score-bar" aria-hidden="true" style="background:#FF5252"></span>
+                45 <span style="font-size:11px;font-weight:500">(낮음)</span>
+              </span>
+            </div>
+            <div class="s6a-def">감정 기복이나 불안 반응의 강도를 나타내는 지표. 낮을수록 안정적이고 차분한 상태를 유지해요.</div>
+            <div class="s6a-feedback" style="border-left-color:#FF5252" role="note">감정적 안정성이 다소 흔들린 주간이에요. 짧은 호흡 명상이나 산책을 권해드려요.</div>
+          </div>
+          <div class="s6a-aria">
+            <strong>접근성:</strong> role="article"+aria-label (점수+상태 포함), 점수 색상+텍스트 이중 표현 ("좋음"/"낮음"), 피드백 role="note"
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> role="article"+aria-label에 점수와 상태("좋음"/"낮음") 포함, 점수 색상+정사각형 배지+텍스트 레이블 3중 상태 표현, 피드백 role="note"로 보조 정보 표기.
+      </div>
+    </div>
+
+    <!-- B: 인터랙션 -->
+    <div class="concept-wrap">
+      <div class="concept-badge b">✨ B. 인터랙션 체험</div>
+      <div class="phone-frame">
+        <div class="s6b-wrap">
+          <div class="s6b-card">
+            <div class="s6b-header">
+              <span class="s6b-icon">✨</span>
+              <span class="s6b-title">외향성</span>
+              <div class="s6b-score-ring good">75</div>
+            </div>
+            <div class="s6b-def">사교적이고 활발하게 타인과 교류하며 에너지를 얻는 성향. 대화를 주도하고 새로운 관계 형성에 적극적이에요.</div>
+            <div class="s6b-feedback">이번 주는 대화 횟수가 많았고, 먼저 말을 걸며 분위기를 이끌었어요!</div>
+            <div class="s6b-expand-hint">
+              <span>자세히 보기</span>
+              <span>↓</span>
+            </div>
+          </div>
+          <div class="s6b-card" style="animation-delay:.25s">
+            <div class="s6b-header">
+              <span class="s6b-icon">🔔</span>
+              <span class="s6b-title">신경성</span>
+              <div class="s6b-score-ring mid">45</div>
+            </div>
+            <div class="s6b-def">감정 기복이나 불안 반응의 강도를 나타내는 지표. 낮을수록 안정적인 상태.</div>
+            <div class="s6b-feedback" style="border-left-color:#FF9800">감정적 안정성이 다소 흔들린 주간이에요. 짧은 명상을 권해드려요.</div>
+            <div class="s6b-haptic">💥 카드 탭 시 Haptic Light</div>
+          </div>
+          <div style="font-size:10px;color:#888;text-align:center">
+            cardFadeIn + 점수 링 countUp 0→75
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> cardFadeIn 순차(0.15s 간격), 점수 링 0→값 countUp, 탭 시 카드 확장(펼침/접힘)+Haptic Light, "자세히 보기" 힌트 화살표, 상태 링에 색상 테두리로 즉각 피드백.
+      </div>
+    </div>
+
+    <!-- C: 모던 -->
+    <div class="concept-wrap">
+      <div class="concept-badge c">🎨 C. 모던 디자인</div>
+      <div class="phone-frame">
+        <div class="s6c-wrap">
+          <div class="s6c-card">
+            <div class="s6c-header">
+              <div class="s6c-icon-ring">✨</div>
+              <span class="s6c-title">외향성</span>
+              <span class="s6c-score-badge good">75</span>
+            </div>
+            <div class="s6c-glow-line"></div>
+            <div class="s6c-def">사교적이고 활발하게 타인과 교류하며 에너지를 얻는 성향. 대화를 주도하고 새로운 관계 형성에 적극적이에요.</div>
+            <div class="s6c-feedback">이번 주는 대화 횟수가 많았고, 먼저 말을 걸며 분위기를 이끌었어요. 이 흐름을 유지해보세요!</div>
+          </div>
+          <div class="s6c-card">
+            <div class="s6c-header">
+              <div class="s6c-icon-ring">🔔</div>
+              <span class="s6c-title">신경성</span>
+              <span class="s6c-score-badge low">45</span>
+            </div>
+            <div class="s6c-glow-line"></div>
+            <div class="s6c-def">감정 기복이나 불안 반응의 강도를 나타내는 지표. 낮을수록 안정적이고 차분한 상태를 유지해요.</div>
+            <div class="s6c-feedback">감정적 안정성이 다소 흔들린 주간이에요. 짧은 호흡 명상이나 산책을 권해드려요.</div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-desc">
+        <strong>핵심 원칙:</strong> Glassmorphism 카드(blur 20px), 아이콘 glow 링, 그라디언트 구분선, 점수 배지를 색상별 반투명 테두리로 처리(green/orange/red), 다크 배경 소프트 섀도우.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ 레이아웃 탐색 D / E / F ════ -->
+  <div class="layout-row">
+    <div class="layout-row-title">🔲 레이아웃 탐색 — D. 컴팩트 Bento &nbsp;/&nbsp; E. 스와이프 캐러셀 &nbsp;/&nbsp; F. 타임라인 플로우</div>
+    <div class="trio">
+
+      <!-- D: 컴팩트 벤토 인사이트 -->
+      <div class="concept-wrap">
+        <div class="concept-badge d">🔲 D. 컴팩트 Bento</div>
+        <div class="phone-frame">
+          <div class="s6d-grid">
+            <!-- 외향성 -->
+            <div class="s6d-cell">
+              <div class="s6d-cell-header">
+                <span class="s6d-icon">✨</span>
+                <span class="s6d-name">외향성</span>
+                <span class="s6d-score good">75</span>
+              </div>
+              <div class="s6d-desc">사교적·대화 주도형. 이번 주 활발히 소통.</div>
+            </div>
+            <!-- 개방성 -->
+            <div class="s6d-cell">
+              <div class="s6d-cell-header">
+                <span class="s6d-icon">🪄</span>
+                <span class="s6d-name">개방성</span>
+                <span class="s6d-score mid">60</span>
+              </div>
+              <div class="s6d-desc">새로운 시도 보통 수준. 탐구 욕구 유지.</div>
+            </div>
+            <!-- 성실성 -->
+            <div class="s6d-cell">
+              <div class="s6d-cell-header">
+                <span class="s6d-icon">👑</span>
+                <span class="s6d-name">성실성</span>
+                <span class="s6d-score good">70</span>
+              </div>
+              <div class="s6d-desc">목표 지향적·계획적. 꾸준한 패턴 유지.</div>
+            </div>
+            <!-- 친화성 - Featured -->
+            <div class="s6d-cell feat">
+              <div class="s6d-feat-score">80</div>
+              <div class="s6d-feat-info">
+                <div class="s6d-feat-name">💜 친화성 — 이번 주 최고 성향</div>
+                <div style="font-size:11px;color:#888;margin-bottom:6px">공감·배려가 가장 두드러진 주간</div>
+                <div class="s6d-feat-bar"><div class="s6d-feat-fill" style="width:80%"></div></div>
+              </div>
+            </div>
+            <!-- 신경성 -->
+            <div class="s6d-cell span2" style="background:#FFF8F0">
+              <div class="s6d-cell-header">
+                <span class="s6d-icon">🔔</span>
+                <span class="s6d-name">신경성</span>
+                <span class="s6d-score low">45</span>
+                <span style="font-size:10px;background:#FFF3E0;color:#FF9800;border-radius:6px;padding:2px 6px;font-weight:600;margin-left:4px">주의</span>
+              </div>
+              <div class="s6d-desc">감정 기복 지표. 이번 주 다소 흔들림. 명상·산책 권장.</div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>Bento 포인트:</strong> 2×2 그리드 + Featured 전폭 셀(최고 성향 강조) + 주의 필요 셀. 카드 크기가 중요도 전달. 5개 인사이트를 한눈에.</div>
+      </div>
+
+      <!-- E: 스와이프 캐러셀 -->
+      <div class="concept-wrap">
+        <div class="concept-badge e">↔ E. 스와이프 캐러셀</div>
+        <div class="phone-frame">
+          <div class="s6e-wrap">
+            <div class="s6e-hint">← 스와이프로 5개 성향 탐색 →</div>
+            <div class="s6e-card">
+              <div class="s6e-card-header">
+                <div class="s6e-card-icon-ring">✨</div>
+                <span class="s6e-card-title">외향성</span>
+                <span class="s6e-score-chip" style="background:#E6F9F0;color:#00C853;border:1.5px solid #00C853">75</span>
+              </div>
+              <div class="s6e-def">사교적이고 활발하게 타인과 교류하며 에너지를 얻는 성향. 대화를 주도하고 새로운 관계를 적극 형성해요.</div>
+              <div class="s6e-feedback">이번 주는 대화 횟수가 많았고, 먼저 말을 걸며 분위기를 이끌었어요. 이 흐름을 유지해보세요!</div>
+              <div class="s6e-nav">
+                <button class="carousel-btn" style="font-size:16px">‹</button>
+                <div class="dots">
+                  <div class="dot active"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+                <button class="carousel-btn" style="font-size:16px">›</button>
+              </div>
+            </div>
+            <div style="font-size:10px;color:#999;text-align:center;margin-top:6px">1 / 5 — 외향성</div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>캐러셀 포인트:</strong> 1개 성향씩 전체 화면 카드로 표시. 좌우 스와이프. 페이지 도트로 위치 인식. 한 번에 한 성향에 집중하는 몰입 UX.</div>
+      </div>
+
+      <!-- F: 타임라인 플로우 -->
+      <div class="concept-wrap">
+        <div class="concept-badge f">⬛ F. 타임라인 플로우</div>
+        <div class="phone-frame">
+          <div class="s6f-timeline">
+            <div class="s6f-item">
+              <div class="s6f-dot"></div>
+              <div class="s6f-line"></div>
+              <div class="s6f-header">
+                <span class="s6f-icon">✨</span>
+                <span class="s6f-name">외향성</span>
+                <span class="s6f-score-tl good">75</span>
+                <span style="font-size:10px;color:#00C853;margin-left:2px">▲+3</span>
+              </div>
+              <div class="s6f-body">이번 주 대화 횟수가 많았고 먼저 말을 걸며 분위기를 이끌었어요.</div>
+            </div>
+            <div class="s6f-item">
+              <div class="s6f-dot"></div>
+              <div class="s6f-line"></div>
+              <div class="s6f-header">
+                <span class="s6f-icon">🪄</span>
+                <span class="s6f-name">개방성</span>
+                <span class="s6f-score-tl mid">60</span>
+                <span style="font-size:10px;color:#FF5252;margin-left:2px">▼-3</span>
+              </div>
+              <div class="s6f-body">새로운 주제에 관심을 가졌지만 탐구 단계에서 머문 경향이 있어요.</div>
+            </div>
+            <div class="s6f-item">
+              <div class="s6f-dot"></div>
+              <div class="s6f-line"></div>
+              <div class="s6f-header">
+                <span class="s6f-icon">💜</span>
+                <span class="s6f-name">친화성</span>
+                <span class="s6f-score-tl good">80</span>
+                <span style="font-size:10px;color:#00C853;margin-left:2px">▲+5</span>
+              </div>
+              <div class="s6f-body">공감과 배려가 가장 두드러진 주간. 관계의 깊이가 성장했어요.</div>
+            </div>
+            <div class="s6f-item">
+              <div class="s6f-dot" style="background:#FF9800;box-shadow:0 0 0 2px #FF9800"></div>
+              <div class="s6f-header">
+                <span class="s6f-icon">🔔</span>
+                <span class="s6f-name">신경성</span>
+                <span class="s6f-score-tl low">45</span>
+                <span style="font-size:10px;color:#FF5252;margin-left:2px">▼-2</span>
+              </div>
+              <div class="s6f-body" style="background:#FFF8F0;border-left:2px solid #FF9800">감정 기복이 다소 증가. 짧은 명상이나 산책을 권해드려요.</div>
+            </div>
+          </div>
+        </div>
+        <div class="concept-desc"><strong>타임라인 포인트:</strong> 세로 타임라인 라인이 성향을 순서로 연결. 각 노드에 점수+변화+피드백. 흐름을 읽듯 스크롤. 서술형 UX 경험.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section-block').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+    btn.setAttribute('aria-selected','false');
+  });
+  document.getElementById(id).classList.add('visible');
+  const idx = ['s1','s2','s3','s4','s5','s6'].indexOf(id);
+  const btns = document.querySelectorAll('.tab-btn');
+  if(btns[idx]){
+    btns[idx].classList.add('active');
+    btns[idx].setAttribute('aria-selected','true');
+  }
+}
+</script>
+</body>
+</html>

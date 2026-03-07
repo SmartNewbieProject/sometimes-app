@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미호 Floating Chip - 캐릭터 배치 아이디어</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0F0F14;
+    color: #fff;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    color: #A892D7;
+    margin-bottom: 8px;
+  }
+  .desc {
+    text-align: center;
+    font-size: 13px;
+    color: #9CA3AF;
+    margin-bottom: 32px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #1A1A24;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid #2A2A3A;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .card-header .tag {
+    background: #7A4AE2;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
+  .card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .phone {
+    width: 280px;
+    height: 200px;
+    background: #111118;
+    border-radius: 16px;
+    margin: 0 auto;
+    position: relative;
+    overflow: visible;
+    border: 1px solid #2A2A3A;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 24px;
+  }
+
+  /* 공통 chip */
+  .chip {
+    display: flex;
+    align-items: center;
+    background: rgba(122, 74, 226, 0.95);
+    border-radius: 20px;
+    padding: 10px 16px 10px 10px;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(122, 74, 226, 0.35);
+    position: relative;
+    width: 260px;
+  }
+  .chip-text { flex: 1; }
+  .chip-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .chip-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 2px;
+  }
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    border-radius: 2px;
+    width: 65%;
+    animation: shrink 3s linear infinite;
+  }
+  @keyframes shrink {
+    0% { width: 100%; }
+    100% { width: 0%; }
+  }
+
+  /* 미호 캐릭터 (이모지 대체) */
+  .miho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .miho-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #E8DEFF, #C4B0F0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  /* ===== A: 좌측 인라인 (크게) ===== */
+  .layout-a .miho-circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* ===== B: 좌측 오버플로 ===== */
+  .layout-b .chip {
+    padding-left: 40px;
+    margin-left: 20px;
+  }
+  .layout-b .miho-overflow {
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #E8DEFF, #C4B0F0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 3px solid rgba(122, 74, 226, 0.95);
+  }
+
+  /* ===== C: 우측 오버플로 ===== */
+  .layout-c .chip {
+    padding-right: 44px;
+    margin-right: 20px;
+  }
+  .layout-c .miho-overflow-right {
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #E8DEFF, #C4B0F0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 3px solid rgba(122, 74, 226, 0.95);
+  }
+
+  /* ===== D: 좌상단 피크 ===== */
+  .layout-d .chip-wrapper {
+    position: relative;
+    margin-top: 24px;
+  }
+  .layout-d .miho-peek {
+    position: absolute;
+    top: -28px;
+    left: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #E8DEFF, #C4B0F0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 2;
+  }
+
+  /* ===== E: 우하단 팝 ===== */
+  .layout-e .chip-wrapper {
+    position: relative;
+  }
+  .layout-e .chip {
+    padding-right: 16px;
+  }
+  .layout-e .miho-pop {
+    position: absolute;
+    bottom: -12px;
+    right: -8px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #E8DEFF, #C4B0F0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 2;
+    border: 3px solid rgba(122, 74, 226, 0.95);
+  }
+
+  /* ===== F: 좌측 하프바디 ===== */
+  .layout-f .chip-wrapper {
+    position: relative;
+    margin-left: 12px;
+  }
+  .layout-f .chip {
+    padding-left: 56px;
+    min-height: 56px;
+  }
+  .layout-f .miho-half {
+    position: absolute;
+    left: -12px;
+    bottom: -6px;
+    width: 60px;
+    height: 72px;
+    border-radius: 12px 12px 8px 8px;
+    background: linear-gradient(180deg, #E8DEFF 0%, #C4B0F0 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 8px;
+    font-size: 32px;
+    z-index: 2;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    clip-path: ellipse(55% 100% at 50% 0%);
+  }
+
+  .pros-cons {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    font-size: 11px;
+  }
+  .pros, .cons {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    line-height: 1.6;
+  }
+  .pros {
+    background: rgba(74, 226, 139, 0.1);
+    color: #4AE28B;
+  }
+  .cons {
+    background: rgba(226, 74, 74, 0.1);
+    color: #E24A4A;
+  }
+  .pros::before { content: "장점 "; font-weight: 700; }
+  .cons::before { content: "단점 "; font-weight: 700; }
+
+  .recommend {
+    margin-top: 28px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(122,74,226,0.15), rgba(122,74,226,0.05));
+    border: 1px solid rgba(122,74,226,0.3);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .recommend h3 {
+    color: #A892D7;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .recommend p {
+    font-size: 12px;
+    color: #9CA3AF;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+  <h1>미호 Floating Chip - 캐릭터 배치 아이디어</h1>
+  <p class="desc">32px 원형 아바타 → 더 크고 존재감 있는 캐릭터 배치 / 외곽선 색상 없음</p>
+
+  <div class="grid">
+
+    <!-- A: 좌측 인라인 (확대) -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">A</span>
+        <h2>좌측 인라인 (44px)</h2>
+      </div>
+      <p class="card-desc">현재 구조 유지, 아바타 32→44px 확대. 외곽선 제거.</p>
+      <div class="phone">
+        <div class="layout-a">
+          <div class="chip">
+            <div class="miho-circle">🦊</div>
+            <div class="chip-text">
+              <div class="chip-title">미호가 추천해요</div>
+              <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+              <div class="progress-track"><div class="progress-bar"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">구조 변경 최소<br>안정적 레이아웃</div>
+        <div class="cons">chip 높이 증가<br>여전히 인라인 느낌</div>
+      </div>
+    </div>
+
+    <!-- B: 좌측 오버플로 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">B</span>
+        <h2>좌측 오버플로 (52px)</h2>
+      </div>
+      <p class="card-desc">캐릭터가 chip 왼쪽 밖으로 삐져나옴. 시선 유도 효과.</p>
+      <div class="phone">
+        <div class="layout-b">
+          <div class="chip">
+            <div class="miho-overflow">🦊</div>
+            <div class="chip-text">
+              <div class="chip-title">미호가 추천해요</div>
+              <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+              <div class="progress-track"><div class="progress-bar"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">캐릭터 존재감 UP<br>시선 유도 강력</div>
+        <div class="cons">좌측 여백 필요<br>잘림 주의 (safe area)</div>
+      </div>
+    </div>
+
+    <!-- C: 우측 오버플로 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">C</span>
+        <h2>우측 오버플로 (52px)</h2>
+      </div>
+      <p class="card-desc">캐릭터가 chip 오른쪽에서 인사. 텍스트 먼저 읽기 유도.</p>
+      <div class="phone">
+        <div class="layout-c">
+          <div class="chip">
+            <div class="chip-text">
+              <div class="chip-title">미호가 추천해요</div>
+              <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+              <div class="progress-track"><div class="progress-bar"></div></div>
+            </div>
+            <div class="miho-overflow-right">🦊</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">텍스트 우선 시선<br>캐릭터 포인트</div>
+        <div class="cons">우측 여백 필요<br>LTR 흐름과 어긋남</div>
+      </div>
+    </div>
+
+    <!-- D: 좌상단 피크 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">D</span>
+        <h2>좌상단 피크 (48px)</h2>
+      </div>
+      <p class="card-desc">캐릭터가 chip 위에 걸터앉은 형태. 말풍선 느낌.</p>
+      <div class="phone">
+        <div class="layout-d">
+          <div class="chip-wrapper">
+            <div class="miho-peek">🦊</div>
+            <div class="chip">
+              <div class="chip-text" style="padding-left: 2px;">
+                <div class="chip-title">미호가 추천해요</div>
+                <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+                <div class="progress-track"><div class="progress-bar"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">말풍선 메타포<br>캐릭터 최고 존재감</div>
+        <div class="cons">상단 공간 차지<br>chip 전체 높이 증가</div>
+      </div>
+    </div>
+
+    <!-- E: 우하단 팝 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">E</span>
+        <h2>우하단 팝 (56px)</h2>
+      </div>
+      <p class="card-desc">캐릭터가 우하단에서 톡 튀어나옴. 기존 모달의 미호 위치 계승.</p>
+      <div class="phone">
+        <div class="layout-e">
+          <div class="chip-wrapper">
+            <div class="chip">
+              <div class="chip-text" style="padding-left: 2px;">
+                <div class="chip-title">미호가 추천해요</div>
+                <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+                <div class="progress-track"><div class="progress-bar"></div></div>
+              </div>
+            </div>
+            <div class="miho-pop">🦊</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">기존 모달 포지션 계승<br>캐릭터 가장 크고 눈에 띔</div>
+        <div class="cons">하단 공간 추가 필요<br>터치 영역 복잡</div>
+      </div>
+    </div>
+
+    <!-- F: 좌측 하프바디 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="tag">F</span>
+        <h2>좌측 하프바디 (60×72)</h2>
+      </div>
+      <p class="card-desc">캐릭터 상반신이 chip 왼쪽에서 솟아오름. 가장 캐릭터성 강조.</p>
+      <div class="phone">
+        <div class="layout-f">
+          <div class="chip-wrapper">
+            <div class="miho-half">🦊</div>
+            <div class="chip">
+              <div class="chip-text">
+                <div class="chip-title">미호가 추천해요</div>
+                <div class="chip-subtitle">뭔가 통할 것 같은 느낌.. ✨</div>
+                <div class="progress-track"><div class="progress-bar"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros">캐릭터성 극대화<br>게임/캐릭터 IP 느낌</div>
+        <div class="cons">구현 복잡도 높음<br>이미지 에셋 필요</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="recommend">
+    <h3>추천: B안 (좌측 오버플로) 또는 E안 (우하단 팝)</h3>
+    <p>
+      <strong>B안</strong> — 구현 간단 + 시선 유도 강력. 좌측에서 삐져나온 캐릭터가 chip을 "말하는" 느낌.<br>
+      <strong>E안</strong> — 기존 모달의 미호 위치를 계승하여 사용자에게 익숙. 캐릭터 크기 가장 크게 가능.
+    </p>
+  </div>
+
+</body>
+</html>

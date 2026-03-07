@@ -1,0 +1,2246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모먼트 리포트 UI 개선 아이디어</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Wanted Sans', 'Wanted Sans Variable', 'Inter', -apple-system, sans-serif;
+  background: #F9FAFB;
+  color: #344054;
+  -webkit-font-smoothing: antialiased;
+}
+.hero {
+  background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+}
+.hero h1 { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.hero .subtitle { color: #98A2B3; font-size: 1rem; }
+
+/* Tabs */
+.tab-nav {
+  background: #fff;
+  border-bottom: 1px solid #E4E7EC;
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0;
+  padding: 1rem 1.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #667085;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: #7A4AE2; }
+.tab-btn.active { color: #7A4AE2; border-bottom-color: #7A4AE2; }
+
+.tab-panel { display: none; padding: 2.5rem 2rem; max-width: 1440px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+
+.section-header { margin-bottom: 2rem; }
+.section-header h2 { font-size: 1.5rem; font-weight: 800; color: #101828; letter-spacing: -0.02em; }
+.section-header p { color: #667085; font-size: 0.95rem; margin-top: 0.4rem; }
+
+/* Idea Grid */
+.idea-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 1100px) { .idea-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 680px) { .idea-grid { grid-template-columns: 1fr; } }
+
+/* Idea Card */
+.idea-card {
+  background: #fff;
+  border: 1px solid #E4E7EC;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.idea-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(122,74,226,0.12); }
+
+.idea-card-header {
+  padding: 1rem 1.25rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #F2F4F7;
+}
+.idea-label {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #7A4AE2, #9B6FF5);
+  color: #fff; font-size: 0.85rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.idea-name { font-size: 0.95rem; font-weight: 700; color: #101828; }
+
+/* Mobile Frame */
+.mobile-frame-wrap {
+  padding: 1.25rem;
+  background: #F9FAFB;
+  display: flex;
+  justify-content: center;
+}
+.mobile-frame {
+  width: 260px;
+  min-height: 420px;
+  border-radius: 28px;
+  border: 3px solid #1D2939;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.mobile-frame::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 5px;
+  background: #1D2939;
+  border-radius: 3px;
+  z-index: 10;
+}
+
+.idea-desc {
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  color: #475467;
+  line-height: 1.65;
+  border-top: 1px solid #F2F4F7;
+}
+.idea-desc strong { color: #7A4AE2; font-weight: 700; }
+
+/* ============================
+   SECTION 1: HERO CARD
+   ============================ */
+
+/* S1-A: Score Ring */
+.s1a-bg {
+  background: linear-gradient(160deg, #0f0520 0%, #3a1a7a 50%, #7A4AE2 100%);
+  height: 100%;
+  min-height: 420px;
+  padding-top: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.s1a-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.15;
+}
+.s1a-particles {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+.s1a-particle {
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.s1a-badge {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.s1a-title { font-size: 1.15rem; font-weight: 800; color: #fff; text-align: center; line-height: 1.3; }
+.s1a-sub { font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-top: 6px; text-align: center; }
+
+/* S1-B: Constellation */
+.s1b-bg {
+  background: linear-gradient(160deg, #0f0520 0%, #3a1a7a 50%, #7A4AE2 100%);
+  height: 420px;
+  padding-top: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.s1b-stars {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+.s1b-star {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+}
+.s1b-star::after {
+  content: '';
+  position: absolute;
+  width: 2px; height: 2px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  top: -6px; left: -6px;
+  box-shadow: 14px 0 0 rgba(255,255,255,0.4), 7px 10px 0 rgba(255,255,255,0.4);
+}
+.s1b-title { font-size: 1.1rem; font-weight: 800; color: #fff; text-align: center; position: relative; z-index:2; }
+.s1b-badge {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  position: relative; z-index:2;
+}
+.s1b-sub { font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-top: 6px; position: relative; z-index:2; }
+
+/* S1-C: Split Layout */
+.s1c-bg {
+  background: linear-gradient(160deg, #0f0520 0%, #3a1a7a 50%, #7A4AE2 100%);
+  height: 420px;
+  padding-top: 20px;
+  display: flex;
+  overflow: hidden;
+}
+.s1c-left {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(122,74,226,0.4) 0%, rgba(15,5,32,0.8) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.s1c-miho {
+  width: 90px; height: 120px;
+  background: linear-gradient(180deg, #9B6FF5 0%, #7A4AE2 100%);
+  border-radius: 45px 45px 30px 30px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+  box-shadow: 0 8px 24px rgba(122,74,226,0.5);
+}
+.s1c-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 12px;
+  gap: 8px;
+}
+.s1c-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.s1c-title { font-size: 0.95rem; font-weight: 800; color: #fff; line-height: 1.3; }
+.s1c-sub { font-size: 0.65rem; color: rgba(255,255,255,0.6); }
+
+/* S1-D: Type animation */
+.s1d-bg {
+  background: linear-gradient(160deg, #0f0520 0%, #3a1a7a 50%, #7A4AE2 100%);
+  height: 420px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.s1d-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.s1d-typing {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+}
+.s1d-cursor {
+  display: inline-block;
+  width: 2px; height: 1.1em;
+  background: #fff;
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.s1d-sub { font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-top: 6px; }
+.s1d-slide {
+  animation: slideUp 0.8s ease-out;
+}
+@keyframes slideUp {
+  from { opacity:0; transform: translateY(30px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* S1-E: Color Theme */
+.s1e-orange {
+  background: linear-gradient(160deg, #1a0800 0%, #7a3010 50%, #E2874A 100%);
+}
+.s1e-green {
+  background: linear-gradient(160deg, #001a0a 0%, #0a5a2a 50%, #12B76A 100%);
+}
+.s1e-bg {
+  height: 420px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  gap: 6px;
+}
+.s1e-theme-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.s1e-dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.6);
+  cursor: pointer;
+}
+.s1e-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.s1e-title { font-size: 1.1rem; font-weight: 800; color: #fff; text-align: center; }
+.s1e-sub { font-size: 0.72rem; color: rgba(255,255,255,0.7); }
+.s1e-label { font-size: 0.68rem; color: rgba(255,255,255,0.5); }
+
+/* ============================
+   SECTION 2: STAT ROWS
+   ============================ */
+.s2-container {
+  background: linear-gradient(180deg, #fff 0%, #EDE9FF 100%);
+  height: 420px;
+  padding: 22px 16px 14px;
+  overflow: hidden;
+}
+.s2-title { font-size: 0.8rem; font-weight: 700; color: #7A4AE2; margin-bottom: 12px; }
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #E4DAFF;
+}
+.stat-icon { font-size: 1rem; width: 22px; text-align: center; }
+.stat-body { flex: 1; }
+.stat-label { font-size: 0.68rem; color: #667085; }
+.stat-bar-wrap { height: 4px; background: #EDE9FF; border-radius: 2px; margin-top: 3px; }
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #7A4AE2, #B692F6);
+}
+.stat-num { font-size: 1.1rem; font-weight: 800; color: #7A4AE2; line-height: 1; }
+
+/* S2-A: Tooltip */
+.s2a-tooltip-wrap { position: relative; }
+.s2a-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1D2939;
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 5px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+.s2a-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1D2939;
+}
+.s2a-active { background: #F5F0FF; border-color: #7A4AE2; }
+
+/* S2-B: Compare overlay */
+.stat-bar-prev {
+  position: absolute;
+  height: 100%;
+  border-radius: 2px;
+  border-right: 2px dashed #A0A0A0;
+  top: 0;
+}
+.stat-bar-rel { position: relative; height: 4px; background: #EDE9FF; border-radius: 2px; margin-top: 3px; }
+
+/* S2-C: Card style icons */
+.s2c-row {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+.s2c-icon-card {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7A4AE2, #9B6FF5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.s2c-body { flex: 1; background: #fff; border-radius: 8px; border: 1px solid #E4DAFF; padding: 5px 8px; }
+.s2c-lbl { font-size: 0.65rem; color: #667085; }
+.s2c-bar { height: 4px; background: #EDE9FF; border-radius: 2px; margin-top: 4px; }
+.s2c-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #7A4AE2, #B692F6); }
+
+/* S2-D: Gauge ring */
+.s2d-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 7px 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #E4DAFF;
+}
+.s2d-ring-wrap { position: relative; width: 36px; height: 36px; }
+.s2d-ring-wrap svg { position: absolute; top: 0; left: 0; }
+.s2d-ring-num {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 0.6rem; font-weight: 800; color: #7A4AE2;
+}
+
+/* S2-E: Rank tag */
+.s2e-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 20px;
+  margin-left: auto;
+}
+.s2e-tag.top { background: #ECFDF3; color: #027A48; }
+.s2e-tag.mid { background: #FFFAEB; color: #B54708; }
+.s2e-tag.low { background: #FEF3F2; color: #B42318; }
+
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>모먼트 리포트 UI 개선 아이디어</h1>
+  <p class="subtitle">2026-03-05 · Sometimes App · 섹션별 5개 아이디어 시각화</p>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)">1. 히어로 카드</button>
+  <button class="tab-btn" onclick="switchTab(1)">2. 성향 스탯</button>
+  <button class="tab-btn" onclick="switchTab(2)">3. 레이더 차트</button>
+  <button class="tab-btn" onclick="switchTab(3)">4. 패턴 인사이트</button>
+  <button class="tab-btn" onclick="switchTab(4)">5. 나의 이야기</button>
+  <button class="tab-btn" onclick="switchTab(5)">6. 성장 제안</button>
+  <button class="tab-btn" onclick="switchTab(6)">7. 페르소나 요약</button>
+</nav>
+
+<!-- ===================== TAB 1: 히어로 카드 ===================== -->
+<div class="tab-panel active" id="tab-0">
+  <div class="section-header">
+    <h2>섹션 1 — 히어로 카드</h2>
+    <p>어두운 그라디언트 배경 + 칭호 텍스트 + glassmorphism 뱃지 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 스코어 링 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">스코어 링</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s1a-bg">
+            <div class="s1a-particles">
+              <div class="s1a-particle" style="top:18%;left:20%;animation-delay:0s;"></div>
+              <div class="s1a-particle" style="top:30%;left:75%;animation-delay:0.8s;"></div>
+              <div class="s1a-particle" style="top:70%;left:40%;animation-delay:1.5s;"></div>
+            </div>
+            <svg class="s1a-ring" width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="110" r="95" fill="none" stroke="white" stroke-width="28"
+                stroke-dasharray="502 598" stroke-linecap="round"
+                transform="rotate(-90 110 110)"/>
+            </svg>
+            <div class="s1a-badge">3주차 리포트</div>
+            <div class="s1a-title">감성 탐험가<br>소울메이트</div>
+            <div class="s1a-sub">종합 점수 · 78점</div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        배경에 종합 점수(예: 78)를 반지름 비율로 하는 <strong>큰 SVG 원호(opacity 0.15)</strong>를 추가. 점수가 높을수록 더 넓게 감싸 직관적으로 성취감 전달.
+      </div>
+    </div>
+
+    <!-- B: 별자리 파티클 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">별자리 파티클</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s1b-bg">
+            <div class="s1b-stars">
+              <!-- SVG constellation -->
+              <svg width="100%" height="100%" style="position:absolute;top:0;left:0;">
+                <line x1="40" y1="60" x2="90" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <line x1="90" y1="90" x2="150" y2="55" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <line x1="150" y1="55" x2="200" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <line x1="90" y1="90" x2="120" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <line x1="120" y1="140" x2="170" y2="160" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="40" cy="60" r="3" fill="white" opacity="0.85"/>
+                <circle cx="90" cy="90" r="4" fill="white" opacity="0.9"/>
+                <circle cx="150" cy="55" r="3" fill="white" opacity="0.8"/>
+                <circle cx="200" cy="100" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="120" cy="140" r="3.5" fill="white" opacity="0.85"/>
+                <circle cx="170" cy="160" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="60" cy="190" r="2" fill="white" opacity="0.5"/>
+                <circle cx="210" cy="200" r="2" fill="white" opacity="0.4"/>
+              </svg>
+            </div>
+            <div class="s1b-badge">3주차 리포트</div>
+            <div class="s1b-title">감성 탐험가<br>소울메이트</div>
+            <div class="s1b-sub">나만의 별자리 성향</div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        기존 점 파티클 3개를 <strong>연결선으로 이어 별자리 모양</strong>으로 변경. 성향 축(5개) 을 별 꼭짓점으로 배치해 숨겨진 레이더 차트 암시 효과.
+      </div>
+    </div>
+
+    <!-- C: 이분할 레이아웃 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">이분할 레이아웃</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s1c-bg">
+            <div class="s1c-left">
+              <div class="s1c-miho">🐰</div>
+            </div>
+            <div class="s1c-right">
+              <div class="s1c-badge">3주차</div>
+              <div class="s1c-title">감성<br>탐험가</div>
+              <div class="s1c-sub">소울메이트</div>
+              <div style="margin-top:8px;">
+                <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);">종합 점수</div>
+                <div style="font-size:1.4rem;font-weight:800;color:#fff;">78</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        <strong>좌: 미호 이미지 크게 / 우: 칭호+뱃지+점수 세로 정렬.</strong> 캐릭터와 텍스트를 분리해 가독성 향상. 미호 이미지가 보조 역할이 아닌 주인공으로 부각.
+      </div>
+    </div>
+
+    <!-- D: 타이핑 이펙트 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">스크롤 페이드인 + 타이핑</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s1d-bg">
+            <div class="s1d-slide">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div class="s1d-badge">3주차 리포트</div>
+                <div class="s1d-typing" id="typing-demo">감성 탐험가<span class="s1d-cursor"></span></div>
+                <div class="s1d-sub">소울메이트 · 78점</div>
+              </div>
+            </div>
+            <div style="margin-top:18px;display:flex;gap:6px;opacity:0.6;">
+              <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:float 2s ease-in-out infinite;"></div>
+              <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:float 2s ease-in-out 0.5s infinite;"></div>
+              <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:float 2s ease-in-out 1s infinite;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        카드가 아래→위 슬라이드 인 후, 칭호 텍스트가 <strong>타이핑 이펙트(커서 깜빡임)</strong>로 등장. 드라마틱한 결과 공개 연출로 몰입감 강화.
+      </div>
+    </div>
+
+    <!-- E: 컬러 테마 커스텀 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">성향별 컬러 테마</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s1e-bg s1e-orange">
+            <div class="s1e-badge">3주차 리포트 · 외향형</div>
+            <div class="s1e-title" style="color:#fff;">에너지 넘치는<br>탐험가</div>
+            <div class="s1e-sub" style="color:rgba(255,255,255,0.7);">외향형 · 78점</div>
+            <div style="margin-top:14px;">
+              <div class="s1e-label" style="color:rgba(255,255,255,0.5);text-align:center;margin-bottom:6px;">테마 선택</div>
+              <div class="s1e-theme-row">
+                <div class="s1e-dot" style="background:linear-gradient(135deg,#7A4AE2,#9B6FF5);"></div>
+                <div class="s1e-dot" style="background:linear-gradient(135deg,#E2874A,#F5B042);border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,0.8);"></div>
+                <div class="s1e-dot" style="background:linear-gradient(135deg,#12B76A,#32D583);"></div>
+                <div class="s1e-dot" style="background:linear-gradient(135deg,#2E90FA,#84CAFF);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        성향에 따라 그라디언트 색상 자동 변경: <strong>외향형=오렌지, 친화형=초록, 성실형=블루, 기본=보라</strong>. 하단 도트로 수동 변경도 가능.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAB 2: 성향 스탯 ===================== -->
+<div class="tab-panel" id="tab-1">
+  <div class="section-header">
+    <h2>섹션 2 — 성향 스탯</h2>
+    <p>큰 숫자 + 아이콘 + 보라 그라디언트 바 5행 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 호버 툴팁 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">탭 툴팁</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s2-container">
+            <div class="s2-title">나의 성향 스탯</div>
+            <div style="position:relative;">
+              <div class="s2a-tooltip">외향성: 다른 사람과 함께할 때 에너지를 얻어요</div>
+              <div class="stat-row s2a-active">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-body">
+                  <div class="stat-label">외향성</div>
+                  <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:78%"></div></div>
+                </div>
+                <div class="stat-num">78</div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">💡</div>
+              <div class="stat-body">
+                <div class="stat-label">개방성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:65%"></div></div>
+              </div>
+              <div class="stat-num">65</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">✅</div>
+              <div class="stat-body">
+                <div class="stat-label">성실성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:82%"></div></div>
+              </div>
+              <div class="stat-num">82</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">❤️</div>
+              <div class="stat-body">
+                <div class="stat-label">친화성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:71%"></div></div>
+              </div>
+              <div class="stat-num">71</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">📍</div>
+              <div class="stat-body">
+                <div class="stat-label">신경성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:45%"></div></div>
+              </div>
+              <div class="stat-num">45</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 행 탭 시 해당 성향 설명이 <strong>말풍선 팝업</strong>으로 표시. 처음 리포트를 받는 사용자가 성향 의미를 즉시 파악 가능.
+      </div>
+    </div>
+
+    <!-- B: 비교 오버레이 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">이전 주차 비교 오버레이</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s2-container">
+            <div class="s2-title">성향 스탯 · 3주차 vs 2주차</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem;color:#7A4AE2;">
+                <div style="width:12px;height:3px;background:#7A4AE2;border-radius:2px;"></div>이번 주
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem;color:#A0A0A0;">
+                <div style="width:12px;height:1px;background:#A0A0A0;border-radius:1px;border-top:1px dashed #A0A0A0;"></div>지난 주
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-body">
+                <div class="stat-label">외향성</div>
+                <div class="stat-bar-rel">
+                  <div class="stat-bar-fill" style="width:78%;position:absolute;height:100%;border-radius:2px;"></div>
+                  <div class="stat-bar-prev" style="width:62%;background:transparent;"></div>
+                </div>
+              </div>
+              <div class="stat-num" style="font-size:0.75rem;">78 <span style="color:#12B76A;font-size:0.6rem;">↑16</span></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">💡</div>
+              <div class="stat-body">
+                <div class="stat-label">개방성</div>
+                <div class="stat-bar-rel">
+                  <div class="stat-bar-fill" style="width:65%;position:absolute;height:100%;border-radius:2px;"></div>
+                  <div class="stat-bar-prev" style="width:70%;background:transparent;border-right-color:#A0A0A0;"></div>
+                </div>
+              </div>
+              <div class="stat-num" style="font-size:0.75rem;">65 <span style="color:#F04438;font-size:0.6rem;">↓5</span></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">✅</div>
+              <div class="stat-body">
+                <div class="stat-label">성실성</div>
+                <div class="stat-bar-rel">
+                  <div class="stat-bar-fill" style="width:82%;position:absolute;height:100%;border-radius:2px;"></div>
+                  <div class="stat-bar-prev" style="width:80%;background:transparent;border-right-color:#A0A0A0;"></div>
+                </div>
+              </div>
+              <div class="stat-num" style="font-size:0.75rem;">82 <span style="color:#12B76A;font-size:0.6rem;">↑2</span></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">❤️</div>
+              <div class="stat-body">
+                <div class="stat-label">친화성</div>
+                <div class="stat-bar-rel">
+                  <div class="stat-bar-fill" style="width:71%;position:absolute;height:100%;border-radius:2px;"></div>
+                  <div class="stat-bar-prev" style="width:68%;background:transparent;border-right-color:#A0A0A0;"></div>
+                </div>
+              </div>
+              <div class="stat-num" style="font-size:0.75rem;">71 <span style="color:#12B76A;font-size:0.6rem;">↑3</span></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">📍</div>
+              <div class="stat-body">
+                <div class="stat-label">신경성</div>
+                <div class="stat-bar-rel">
+                  <div class="stat-bar-fill" style="width:45%;position:absolute;height:100%;border-radius:2px;"></div>
+                  <div class="stat-bar-prev" style="width:52%;background:transparent;border-right-color:#A0A0A0;"></div>
+                </div>
+              </div>
+              <div class="stat-num" style="font-size:0.75rem;">45 <span style="color:#12B76A;font-size:0.6rem;">↓7</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        이전 주차 점수를 <strong>점선 바로 오버레이</strong>하고, 숫자 옆에 증감 화살표 표시. 성장 추이를 한눈에 파악 가능.
+      </div>
+    </div>
+
+    <!-- C: 아이콘 카드 스타일 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">아이콘 카드 분리</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s2-container">
+            <div class="s2-title">나의 성향 스탯</div>
+            <div class="s2c-row">
+              <div class="s2c-icon-card">⭐</div>
+              <div class="s2c-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div class="s2c-lbl">외향성</div>
+                  <div style="font-size:0.9rem;font-weight:800;color:#7A4AE2;">78</div>
+                </div>
+                <div class="s2c-bar"><div class="s2c-fill" style="width:78%"></div></div>
+              </div>
+            </div>
+            <div class="s2c-row">
+              <div class="s2c-icon-card">💡</div>
+              <div class="s2c-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div class="s2c-lbl">개방성</div>
+                  <div style="font-size:0.9rem;font-weight:800;color:#7A4AE2;">65</div>
+                </div>
+                <div class="s2c-bar"><div class="s2c-fill" style="width:65%"></div></div>
+              </div>
+            </div>
+            <div class="s2c-row">
+              <div class="s2c-icon-card">✅</div>
+              <div class="s2c-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div class="s2c-lbl">성실성</div>
+                  <div style="font-size:0.9rem;font-weight:800;color:#7A4AE2;">82</div>
+                </div>
+                <div class="s2c-bar"><div class="s2c-fill" style="width:82%"></div></div>
+              </div>
+            </div>
+            <div class="s2c-row">
+              <div class="s2c-icon-card">❤️</div>
+              <div class="s2c-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div class="s2c-lbl">친화성</div>
+                  <div style="font-size:0.9rem;font-weight:800;color:#7A4AE2;">71</div>
+                </div>
+                <div class="s2c-bar"><div class="s2c-fill" style="width:71%"></div></div>
+              </div>
+            </div>
+            <div class="s2c-row">
+              <div class="s2c-icon-card">📍</div>
+              <div class="s2c-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div class="s2c-lbl">신경성</div>
+                  <div style="font-size:0.9rem;font-weight:800;color:#7A4AE2;">45</div>
+                </div>
+                <div class="s2c-bar"><div class="s2c-fill" style="width:45%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        아이콘을 <strong>32px 그라디언트 카드</strong>로 분리. 시각적 위계가 명확해지고 각 성향이 독립된 항목으로 강조됨.
+      </div>
+    </div>
+
+    <!-- D: 게이지 링 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">점수 게이지 링</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s2-container">
+            <div class="s2-title">나의 성향 스탯</div>
+            <!-- Row with ring gauge -->
+            <div class="s2d-row">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-body">
+                <div class="stat-label">외향성</div>
+              </div>
+              <div class="s2d-ring-wrap">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#EDE9FF" stroke-width="4"/>
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#7A4AE2" stroke-width="4"
+                    stroke-dasharray="63.8 81.7" stroke-linecap="round"
+                    transform="rotate(-90 18 18)"/>
+                </svg>
+                <div class="s2d-ring-num">78</div>
+              </div>
+            </div>
+            <div class="s2d-row">
+              <div class="stat-icon">💡</div>
+              <div class="stat-body"><div class="stat-label">개방성</div></div>
+              <div class="s2d-ring-wrap">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#EDE9FF" stroke-width="4"/>
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#7A4AE2" stroke-width="4"
+                    stroke-dasharray="53.1 81.7" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <div class="s2d-ring-num">65</div>
+              </div>
+            </div>
+            <div class="s2d-row">
+              <div class="stat-icon">✅</div>
+              <div class="stat-body"><div class="stat-label">성실성</div></div>
+              <div class="s2d-ring-wrap">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#EDE9FF" stroke-width="4"/>
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#7A4AE2" stroke-width="4"
+                    stroke-dasharray="67.0 81.7" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <div class="s2d-ring-num">82</div>
+              </div>
+            </div>
+            <div class="s2d-row">
+              <div class="stat-icon">❤️</div>
+              <div class="stat-body"><div class="stat-label">친화성</div></div>
+              <div class="s2d-ring-wrap">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#EDE9FF" stroke-width="4"/>
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#7A4AE2" stroke-width="4"
+                    stroke-dasharray="58.0 81.7" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <div class="s2d-ring-num">71</div>
+              </div>
+            </div>
+            <div class="s2d-row">
+              <div class="stat-icon">📍</div>
+              <div class="stat-body"><div class="stat-label">신경성</div></div>
+              <div class="s2d-ring-wrap">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#EDE9FF" stroke-width="4"/>
+                  <circle cx="18" cy="18" r="13" fill="none" stroke="#7A4AE2" stroke-width="4"
+                    stroke-dasharray="36.8 81.7" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <div class="s2d-ring-num">45</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        숫자 뒤에 <strong>작은 원형 SVG 게이지 링</strong>을 배치. 선형 바 대신 원형으로 표현해 시각적 다양성 확보, 전체 점수 분포 직관적 파악.
+      </div>
+    </div>
+
+    <!-- E: 랭킹 표시 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">상위 N% 랭킹 태그</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div class="s2-container">
+            <div class="s2-title">나의 성향 스탯</div>
+            <div class="stat-row">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-body">
+                <div class="stat-label">외향성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:78%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <div class="stat-num" style="font-size:0.9rem;">78</div>
+                <div class="s2e-tag top">상위 8%</div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">💡</div>
+              <div class="stat-body">
+                <div class="stat-label">개방성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:65%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <div class="stat-num" style="font-size:0.9rem;">65</div>
+                <div class="s2e-tag mid">상위 35%</div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">✅</div>
+              <div class="stat-body">
+                <div class="stat-label">성실성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:82%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <div class="stat-num" style="font-size:0.9rem;">82</div>
+                <div class="s2e-tag top">상위 5%</div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">❤️</div>
+              <div class="stat-body">
+                <div class="stat-label">친화성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:71%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <div class="stat-num" style="font-size:0.9rem;">71</div>
+                <div class="s2e-tag mid">상위 22%</div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon">📍</div>
+              <div class="stat-body">
+                <div class="stat-label">신경성</div>
+                <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:45%"></div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <div class="stat-num" style="font-size:0.9rem;">45</div>
+                <div class="s2e-tag low">하위 40%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        점수 옆에 <strong>상위 N% 태그</strong>를 컬러 코딩(초록/주황/빨강)으로 표시. 절대 점수만으로 알기 어려운 상대적 위치를 즉시 파악 가능.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===================== TAB 3: 레이더 차트 ===================== -->
+<div class="tab-panel" id="tab-2">
+  <div class="section-header">
+    <h2>섹션 3 — 레이더 차트</h2>
+    <p>5각형 SVG 방사형 그래프 + 하단 레전드 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 애니메이션 드로잉 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">애니메이션 드로잉</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:#fff;padding:16px 12px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">성향 레이더</div>
+            <div style="display:flex;justify-content:center;">
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                <!-- grid -->
+                <polygon points="100,20 163,57.5 163,132.5 100,170 37,132.5 37,57.5" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <polygon points="100,40 147,65 147,115 100,140 53,115 53,65" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <polygon points="100,60 131,72.5 131,97.5 100,110 69,97.5 69,72.5" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <!-- axes -->
+                <line x1="100" y1="100" x2="100" y2="20" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="170" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <!-- animated polygon -->
+                <polygon points="100,35 153,68 148,122 100,152 52,118 52,65"
+                  fill="rgba(122,74,226,0.2)" stroke="#7A4AE2" stroke-width="2"
+                  style="animation: radarDraw 1.5s ease-out forwards; transform-origin: 100px 100px;">
+                </polygon>
+                <circle cx="100" cy="35" r="4" fill="#7A4AE2"/>
+                <circle cx="153" cy="68" r="4" fill="#7A4AE2"/>
+                <circle cx="148" cy="122" r="4" fill="#7A4AE2"/>
+                <circle cx="100" cy="152" r="4" fill="#7A4AE2"/>
+                <circle cx="52" cy="118" r="4" fill="#7A4AE2"/>
+                <circle cx="52" cy="65" r="4" fill="#7A4AE2"/>
+                <!-- labels -->
+                <text x="100" y="14" text-anchor="middle" font-size="9" fill="#667085">외향성</text>
+                <text x="172" y="56" text-anchor="start" font-size="9" fill="#667085">개방성</text>
+                <text x="172" y="136" text-anchor="start" font-size="9" fill="#667085">성실성</text>
+                <text x="100" y="184" text-anchor="middle" font-size="9" fill="#667085">친화성</text>
+                <text x="28" y="136" text-anchor="end" font-size="9" fill="#667085">신경성</text>
+              </svg>
+            </div>
+            <style>
+              @keyframes radarDraw {
+                from { transform: scale(0); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+              }
+            </style>
+            <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:8px;font-size:0.7rem;">
+                <span style="width:8px;height:8px;border-radius:50%;background:#7A4AE2;display:inline-block;"></span>
+                <span style="color:#344054;">외향성</span>
+                <div style="flex:1;height:3px;background:#EDE9FF;border-radius:2px;">
+                  <div style="width:78%;height:100%;background:#7A4AE2;border-radius:2px;"></div>
+                </div>
+                <span style="color:#7A4AE2;font-weight:700;">78</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:0.7rem;">
+                <span style="width:8px;height:8px;border-radius:50%;background:#9B6FF5;display:inline-block;"></span>
+                <span style="color:#344054;">개방성</span>
+                <div style="flex:1;height:3px;background:#EDE9FF;border-radius:2px;">
+                  <div style="width:65%;height:100%;background:#9B6FF5;border-radius:2px;"></div>
+                </div>
+                <span style="color:#7A4AE2;font-weight:700;">65</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        차트가 처음 렌더될 때 <strong>중심→외곽으로 scale(0)→scale(1) 애니메이션</strong>으로 그려짐. 결과 공개의 드라마틱한 연출.
+      </div>
+    </div>
+
+    <!-- B: 이전 주 레이어 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">이전 주 오버레이</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:#fff;padding:16px 12px;min-height:420px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;">성향 레이더</div>
+              <div style="display:flex;gap:8px;font-size:0.65rem;">
+                <span style="display:flex;align-items:center;gap:3px;color:#7A4AE2;"><span style="width:10px;height:2px;background:#7A4AE2;display:inline-block;"></span>3주차</span>
+                <span style="display:flex;align-items:center;gap:3px;color:#A0A0A0;"><span style="width:10px;height:1px;border-top:2px dashed #A0A0A0;display:inline-block;"></span>2주차</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;">
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                <polygon points="100,20 163,57.5 163,132.5 100,170 37,132.5 37,57.5" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <polygon points="100,40 147,65 147,115 100,140 53,115 53,65" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <polygon points="100,60 131,72.5 131,97.5 100,110 69,97.5 69,72.5" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="20" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="170" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <!-- prev week dashed -->
+                <polygon points="100,48 145,72 145,118 100,145 55,118 55,72"
+                  fill="rgba(160,160,160,0.1)" stroke="#A0A0A0" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <!-- current week -->
+                <polygon points="100,35 153,68 148,122 100,152 52,118 52,65"
+                  fill="rgba(122,74,226,0.18)" stroke="#7A4AE2" stroke-width="2"/>
+                <circle cx="100" cy="35" r="3.5" fill="#7A4AE2"/>
+                <circle cx="153" cy="68" r="3.5" fill="#7A4AE2"/>
+                <circle cx="148" cy="122" r="3.5" fill="#7A4AE2"/>
+                <circle cx="100" cy="152" r="3.5" fill="#7A4AE2"/>
+                <circle cx="52" cy="118" r="3.5" fill="#7A4AE2"/>
+                <circle cx="52" cy="65" r="3.5" fill="#7A4AE2"/>
+                <text x="100" y="14" text-anchor="middle" font-size="9" fill="#667085">외향성</text>
+                <text x="172" y="56" text-anchor="start" font-size="9" fill="#667085">개방성</text>
+                <text x="172" y="136" text-anchor="start" font-size="9" fill="#667085">성실성</text>
+                <text x="100" y="184" text-anchor="middle" font-size="9" fill="#667085">친화성</text>
+                <text x="28" y="136" text-anchor="end" font-size="9" fill="#667085">신경성</text>
+              </svg>
+            </div>
+            <div style="background:#F9F5FF;border-radius:8px;padding:8px;margin-top:6px;font-size:0.68rem;color:#6941C6;">
+              외향성 +16 성장 · 개방성 -5 소폭 하락
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        같은 차트에 <strong>이전 주 반투명 점선 폴리곤을 오버레이</strong>. 한눈에 성장/퇴보 파악. 하단 요약 텍스트로 주요 변화 강조.
+      </div>
+    </div>
+
+    <!-- C: 탭 영역 인터랙션 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">꼭짓점 탭 인터랙션</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:#fff;padding:16px 12px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">성향 레이더 · 탭해서 확인</div>
+            <div style="display:flex;justify-content:center;position:relative;">
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                <polygon points="100,20 163,57.5 163,132.5 100,170 37,132.5 37,57.5" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <polygon points="100,40 147,65 147,115 100,140 53,115 53,65" fill="none" stroke="#EDE9FF" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="20" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="170" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="132.5" stroke="#E5E5E5" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="57.5" stroke="#E5E5E5" stroke-width="1"/>
+                <polygon points="100,35 153,68 148,122 100,152 52,118 52,65"
+                  fill="rgba(122,74,226,0.18)" stroke="#7A4AE2" stroke-width="2"/>
+                <!-- highlighted vertex -->
+                <circle cx="100" cy="35" r="9" fill="rgba(122,74,226,0.15)" stroke="#7A4AE2" stroke-width="2"/>
+                <circle cx="100" cy="35" r="4" fill="#7A4AE2"/>
+                <circle cx="153" cy="68" r="4" fill="#7A4AE2"/>
+                <circle cx="148" cy="122" r="4" fill="#7A4AE2"/>
+                <circle cx="100" cy="152" r="4" fill="#7A4AE2"/>
+                <circle cx="52" cy="118" r="4" fill="#7A4AE2"/>
+                <circle cx="52" cy="65" r="4" fill="#7A4AE2"/>
+                <text x="100" y="14" text-anchor="middle" font-size="9" fill="#7A4AE2" font-weight="bold">외향성</text>
+                <text x="172" y="56" text-anchor="start" font-size="9" fill="#667085">개방성</text>
+                <text x="172" y="136" text-anchor="start" font-size="9" fill="#667085">성실성</text>
+                <text x="100" y="184" text-anchor="middle" font-size="9" fill="#667085">친화성</text>
+                <text x="28" y="136" text-anchor="end" font-size="9" fill="#667085">신경성</text>
+              </svg>
+            </div>
+            <!-- tooltip card appearing -->
+            <div style="background:#F9F5FF;border:1px solid #D6BBFB;border-radius:10px;padding:10px 12px;margin-top:8px;">
+              <div style="font-size:0.72rem;font-weight:700;color:#6941C6;">⭐ 외향성 · 78점</div>
+              <div style="font-size:0.68rem;color:#667085;margin-top:4px;line-height:1.5;">다른 사람과 함께할 때 에너지를 얻어요. 아래 성향 스탯으로 이동 →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 꼭짓점 탭 시 해당 성향 설명 카드 팝업 + <strong>해당 성향 스탯 행으로 자동 스크롤</strong>. 차트와 스탯 섹션을 연결하는 인터랙티브 탐색 경험.
+      </div>
+    </div>
+
+    <!-- D: 미니 바 차트 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">미니 바 차트 병렬 배치</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:#fff;padding:16px 12px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">성향 분포</div>
+            <div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;height:140px;margin-bottom:12px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:38px;">
+                <div style="font-size:0.65rem;font-weight:700;color:#7A4AE2;">78</div>
+                <div style="width:100%;background:#EDE9FF;border-radius:4px;height:140px;display:flex;align-items:flex-end;">
+                  <div style="width:100%;height:78%;background:linear-gradient(180deg,#9B6FF5,#7A4AE2);border-radius:4px;"></div>
+                </div>
+                <div style="font-size:0.6rem;color:#667085;text-align:center;">외향</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:38px;">
+                <div style="font-size:0.65rem;font-weight:700;color:#7A4AE2;">65</div>
+                <div style="width:100%;background:#EDE9FF;border-radius:4px;height:140px;display:flex;align-items:flex-end;">
+                  <div style="width:100%;height:65%;background:linear-gradient(180deg,#B692F6,#9B6FF5);border-radius:4px;"></div>
+                </div>
+                <div style="font-size:0.6rem;color:#667085;text-align:center;">개방</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:38px;">
+                <div style="font-size:0.65rem;font-weight:700;color:#7A4AE2;">82</div>
+                <div style="width:100%;background:#EDE9FF;border-radius:4px;height:140px;display:flex;align-items:flex-end;">
+                  <div style="width:100%;height:82%;background:linear-gradient(180deg,#9B6FF5,#7A4AE2);border-radius:4px;"></div>
+                </div>
+                <div style="font-size:0.6rem;color:#667085;text-align:center;">성실</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:38px;">
+                <div style="font-size:0.65rem;font-weight:700;color:#7A4AE2;">71</div>
+                <div style="width:100%;background:#EDE9FF;border-radius:4px;height:140px;display:flex;align-items:flex-end;">
+                  <div style="width:100%;height:71%;background:linear-gradient(180deg,#B692F6,#9B6FF5);border-radius:4px;"></div>
+                </div>
+                <div style="font-size:0.6rem;color:#667085;text-align:center;">친화</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:38px;">
+                <div style="font-size:0.65rem;font-weight:700;color:#7A4AE2;">45</div>
+                <div style="width:100%;background:#EDE9FF;border-radius:4px;height:140px;display:flex;align-items:flex-end;">
+                  <div style="width:100%;height:45%;background:linear-gradient(180deg,#D6BBFB,#B692F6);border-radius:4px;"></div>
+                </div>
+                <div style="font-size:0.6rem;color:#667085;text-align:center;">신경</div>
+              </div>
+            </div>
+            <div style="background:#F9F5FF;border-radius:8px;padding:8px 10px;font-size:0.68rem;color:#6941C6;">
+              성실성이 가장 높아요 · 82점으로 상위 5%
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        레이더 대신 <strong>세로 바 차트 5개를 나란히</strong> 배치. 비교하기 쉬운 직관적 형태. 레이더 차트에 익숙하지 않은 사용자에게 적합한 대안.
+      </div>
+    </div>
+
+    <!-- E: 글로우 이펙트 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">글로우 이펙트</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:#0f0520;padding:16px 12px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#B692F6;margin-bottom:10px;">성향 레이더</div>
+            <div style="display:flex;justify-content:center;">
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                <defs>
+                  <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#7A4AE2" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#7A4AE2" stop-opacity="0"/>
+                  </radialGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <polygon points="100,20 163,57.5 163,132.5 100,170 37,132.5 37,57.5" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <polygon points="100,40 147,65 147,115 100,140 53,115 53,65" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <polygon points="100,60 131,72.5 131,97.5 100,110 69,97.5 69,72.5" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="20" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="57.5" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="163" y2="132.5" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="100" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="132.5" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <line x1="100" y1="100" x2="37" y2="57.5" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <!-- glow fill -->
+                <polygon points="100,35 153,68 148,122 100,152 52,118 52,65"
+                  fill="url(#glowGrad)" filter="url(#glow)"/>
+                <!-- solid polygon on top -->
+                <polygon points="100,35 153,68 148,122 100,152 52,118 52,65"
+                  fill="rgba(122,74,226,0.25)" stroke="#B692F6" stroke-width="1.5"/>
+                <circle cx="100" cy="35" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <circle cx="153" cy="68" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <circle cx="148" cy="122" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <circle cx="100" cy="152" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <circle cx="52" cy="118" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <circle cx="52" cy="65" r="4" fill="#B692F6" filter="url(#glow)"/>
+                <text x="100" y="14" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)">외향성</text>
+                <text x="172" y="56" text-anchor="start" font-size="9" fill="rgba(255,255,255,0.7)">개방성</text>
+                <text x="172" y="136" text-anchor="start" font-size="9" fill="rgba(255,255,255,0.7)">성실성</text>
+                <text x="100" y="184" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)">친화성</text>
+                <text x="28" y="136" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.7)">신경성</text>
+              </svg>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;">
+              <span style="background:rgba(122,74,226,0.2);border:1px solid rgba(182,146,246,0.3);border-radius:20px;padding:3px 9px;font-size:0.65rem;color:#B692F6;">⭐ 외향성 78</span>
+              <span style="background:rgba(122,74,226,0.2);border:1px solid rgba(182,146,246,0.3);border-radius:20px;padding:3px 9px;font-size:0.65rem;color:#B692F6;">✅ 성실성 82</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        폴리곤 내부에 <strong>보라 글로우 그라디언트 fill + SVG feGaussianBlur 필터</strong>. 히어로 카드의 어두운 테마를 레이더 차트로 연장해 시각적 통일감.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAB 4: 패턴 인사이트 ===================== -->
+<div class="tab-panel" id="tab-3">
+  <div class="section-header">
+    <h2>섹션 4 — 패턴 인사이트</h2>
+    <p>키워드 뱃지 row + 설명 문장 카드 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 뱃지 클릭 하이라이트 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">뱃지 탭 하이라이트</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">패턴 인사이트</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+              <span style="background:#7A4AE2;color:#fff;border:1px solid #7A4AE2;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:700;cursor:pointer;">적극적 소통</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;">감성적 표현</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;">호기심</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;">계획성</span>
+            </div>
+            <div style="border-left:3px solid #7A4AE2;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.75rem;color:#344054;line-height:1.6;">
+                당신은 <mark style="background:#EDE9FF;color:#7A4AE2;border-radius:3px;padding:1px 4px;font-weight:700;">적극적 소통</mark>을 즐기며, 대화를 주도적으로 이끌어 나가는 경향이 있어요.
+              </div>
+            </div>
+            <div style="border-left:3px solid #D6BBFB;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;opacity:0.5;">
+              <div style="font-size:0.75rem;color:#344054;line-height:1.6;">
+                감성적으로 교류할 때 상대방과 더 깊이 연결되는 느낌을 받아요.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        뱃지 탭 시 해당 키워드가 <strong>본문 텍스트에서 mark 태그로 하이라이트</strong>되고 관련 카드로 스크롤. 키워드와 설명을 연결해 탐색 경험 강화.
+      </div>
+    </div>
+
+    <!-- B: 카테고리 색상 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">카테고리 3색 분류</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:6px;">패턴 인사이트</div>
+            <div style="display:flex;gap:5px;margin-bottom:8px;font-size:0.6rem;">
+              <span style="background:#ECFDF3;color:#027A48;border-radius:4px;padding:2px 6px;font-weight:600;">긍정</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:4px;padding:2px 6px;font-weight:600;">중립</span>
+              <span style="background:#FFFAEB;color:#B54708;border-radius:4px;padding:2px 6px;font-weight:600;">주의</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+              <span style="background:#ECFDF3;color:#027A48;border:1px solid #A9EFC5;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">적극적 소통</span>
+              <span style="background:#ECFDF3;color:#027A48;border:1px solid #A9EFC5;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">감성적 표현</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">호기심</span>
+              <span style="background:#FFFAEB;color:#B54708;border:1px solid #FEC84B;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">변덕스러움</span>
+              <span style="background:#ECFDF3;color:#027A48;border:1px solid #A9EFC5;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">계획성</span>
+            </div>
+            <div style="border-left:3px solid #12B76A;background:#fff;border-radius:0 10px 10px 0;padding:10px;margin-bottom:7px;">
+              <div style="font-size:0.72rem;color:#344054;line-height:1.55;">적극적 소통으로 상대와의 거리를 좁히는 능력이 탁월해요.</div>
+            </div>
+            <div style="border-left:3px solid #F79009;background:#fff;border-radius:0 10px 10px 0;padding:10px;">
+              <div style="font-size:0.72rem;color:#344054;line-height:1.55;">즉흥적 결정이 잦아 상대방을 당황시킬 수 있어요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        뱃지를 <strong>긍정(초록)/중립(보라)/주의(주황) 3색</strong>으로 분류. 설명 카드의 border-left도 동일 색상 매핑. 강점과 개선점을 즉시 구분 가능.
+      </div>
+    </div>
+
+    <!-- C: 인사이트 카드 분리 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">문장별 카드 분리 + 아이콘</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">패턴 인사이트</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#ECFDF3;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">💬</div>
+                <div style="font-size:0.72rem;color:#344054;line-height:1.55;">적극적 소통으로 상대와의 거리를 좁히는 능력이 탁월해요.</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#F9F5FF;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">✨</div>
+                <div style="font-size:0.72rem;color:#344054;line-height:1.55;">감성적으로 교류할 때 상대방과 더 깊이 연결되는 느낌을 받아요.</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#EFF8FF;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">🔍</div>
+                <div style="font-size:0.72rem;color:#344054;line-height:1.55;">새로운 경험에 대한 호기심이 대화를 풍부하게 만들어요.</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#FFFAEB;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">📋</div>
+                <div style="font-size:0.72rem;color:#344054;line-height:1.55;">계획적인 성격 덕분에 약속과 일정을 잘 지켜요.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        긴 문장 덩어리를 <strong>문장마다 별도 카드로 분리</strong>하고 왼쪽에 의미 아이콘 추가. 스캐닝이 쉬워지고 각 인사이트의 중요도가 동등하게 부각됨.
+      </div>
+    </div>
+
+    <!-- D: 접기/펼치기 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">더보기 접기/펼치기</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">패턴 인사이트</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">적극적 소통</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">감성적 표현</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">호기심</span>
+            </div>
+            <div style="border-left:3px solid #7A4AE2;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.75rem;color:#344054;line-height:1.6;">적극적 소통으로 상대와의 거리를 좁히는 능력이 탁월해요.</div>
+            </div>
+            <!-- collapsed content -->
+            <div style="position:relative;">
+              <div style="border-left:3px solid #D6BBFB;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;filter:blur(1.5px);opacity:0.6;pointer-events:none;">
+                <div style="font-size:0.75rem;color:#344054;line-height:1.6;">감성적으로 교류할 때 상대방과 더 깊이 연결되는 느낌을 받아요. 이 점은 매칭 성공률과 관련...</div>
+              </div>
+              <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(180deg,transparent,rgba(237,233,255,0.9));border-radius:0 0 10px 10px;"></div>
+            </div>
+            <button style="width:100%;background:#F9F5FF;border:1px solid #D6BBFB;border-radius:10px;padding:9px;font-size:0.75rem;font-weight:600;color:#7A4AE2;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+              인사이트 더 보기 <span style="font-size:0.8rem;">▼</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        <strong>첫 문장만 노출 후 하단 페이드아웃</strong>으로 내용이 더 있음을 암시. "더 보기" 버튼 탭 시 전체 펼치기. 초기 화면 길이를 단축하는 콘텐츠 밀도 조절.
+      </div>
+    </div>
+
+    <!-- E: AI 표시 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">AI 분석 출처 표시</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;">패턴 인사이트</div>
+              <div style="background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;border-radius:20px;padding:3px 9px;font-size:0.62rem;font-weight:700;display:flex;align-items:center;gap:3px;">✦ AI 분석</div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">적극적 소통</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">감성적 표현</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border:1px solid #D6BBFB;border-radius:20px;padding:4px 10px;font-size:0.68rem;font-weight:600;">계획성</span>
+            </div>
+            <div style="border-left:3px solid #7A4AE2;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;position:relative;">
+              <div style="font-size:0.75rem;color:#344054;line-height:1.6;">적극적 소통으로 상대와의 거리를 좁히는 능력이 탁월해요.</div>
+              <div style="margin-top:6px;font-size:0.62rem;color:#98A2B3;display:flex;align-items:center;gap:3px;">
+                <span>✦</span><span>7개의 대화 패턴 분석 기반</span>
+              </div>
+            </div>
+            <div style="border-left:3px solid #D6BBFB;background:#fff;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.75rem;color:#344054;line-height:1.6;">감성적으로 교류할 때 상대방과 더 깊이 연결되는 느낌을 받아요.</div>
+              <div style="margin-top:6px;font-size:0.62rem;color:#98A2B3;display:flex;align-items:center;gap:3px;">
+                <span>✦</span><span>감정어 빈도 분석 기반</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        우상단 <strong>✦ AI 분석 뱃지</strong> + 각 카드 하단에 "N개의 대화 패턴 분석 기반" 출처 표시. AI 결과에 대한 신뢰도와 투명성 강화.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAB 5: 나의 이야기 ===================== -->
+<div class="tab-panel" id="tab-4">
+  <div class="section-header">
+    <h2>섹션 5 — 나의 이야기</h2>
+    <p>인용구 칩 + 내용 블록 + 감정여정 칩 row 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 타임라인 형태 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">세로 타임라인 연결</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:14px;">나의 이야기</div>
+            <div style="position:relative;padding-left:20px;">
+              <!-- vertical line -->
+              <div style="position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,#7A4AE2,#D6BBFB);"></div>
+              <!-- item 1 -->
+              <div style="position:relative;margin-bottom:14px;">
+                <div style="position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;background:#7A4AE2;border:2px solid #fff;box-shadow:0 0 0 2px #7A4AE2;"></div>
+                <div style="background:#7A4AE2;color:#fff;border-radius:20px;padding:4px 10px;font-size:0.65rem;font-weight:700;display:inline-block;margin-bottom:5px;">첫 만남의 설레임</div>
+                <div style="background:#fff;border-radius:8px;padding:9px 10px;font-size:0.7rem;color:#344054;line-height:1.55;border:1px solid #E4DAFF;">처음 대화를 시작할 때 자연스럽게 상대의 관심사를 파악하려는 모습이 돋보였어요.</div>
+              </div>
+              <!-- item 2 -->
+              <div style="position:relative;margin-bottom:14px;">
+                <div style="position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;background:#9B6FF5;border:2px solid #fff;box-shadow:0 0 0 2px #9B6FF5;"></div>
+                <div style="background:#9B6FF5;color:#fff;border-radius:20px;padding:4px 10px;font-size:0.65rem;font-weight:700;display:inline-block;margin-bottom:5px;">감정의 깊이</div>
+                <div style="background:#fff;border-radius:8px;padding:9px 10px;font-size:0.7rem;color:#344054;line-height:1.55;border:1px solid #E4DAFF;">감성적 교류를 중요하게 여기며 진솔한 감정 표현을 아끼지 않았어요.</div>
+              </div>
+              <!-- item 3 -->
+              <div style="position:relative;">
+                <div style="position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;background:#B692F6;border:2px solid #fff;box-shadow:0 0 0 2px #B692F6;"></div>
+                <div style="background:#B692F6;color:#fff;border-radius:20px;padding:4px 10px;font-size:0.65rem;font-weight:700;display:inline-block;margin-bottom:5px;">성장의 발자국</div>
+                <div style="background:#fff;border-radius:8px;padding:9px 10px;font-size:0.7rem;color:#344054;line-height:1.55;border:1px solid #E4DAFF;">매주 새로운 도전을 통해 자신을 발전시키는 의지가 강하게 느껴졌어요.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        카드들을 <strong>세로 타임라인(점 + 그라디언트 선)</strong>으로 연결. 스토리가 시간순으로 흐르는 내러티브 구조를 시각화해 몰입감 강화.
+      </div>
+    </div>
+
+    <!-- B: 인용구 강조 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">풀사이즈 인용구 블록</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">나의 이야기</div>
+            <!-- big quote block -->
+            <div style="background:linear-gradient(135deg,#F9F5FF,#EDE9FF);border-radius:14px;padding:18px 16px;margin-bottom:12px;position:relative;overflow:hidden;">
+              <div style="position:absolute;top:-10px;left:8px;font-size:4rem;color:#D6BBFB;font-family:Georgia,serif;line-height:1;opacity:0.6;">"</div>
+              <div style="font-size:1rem;font-weight:700;color:#6941C6;line-height:1.5;position:relative;z-index:1;padding-top:8px;">처음 본 사람도 편하게 만드는 따뜻함이 있어요</div>
+              <div style="position:absolute;bottom:-10px;right:8px;font-size:4rem;color:#D6BBFB;font-family:Georgia,serif;line-height:1;opacity:0.6;">"</div>
+            </div>
+            <div style="background:#fff;border-left:3px solid #7A4AE2;border-radius:0 10px 10px 0;padding:10px 12px;margin-bottom:8px;">
+              <div style="font-size:0.72rem;color:#344054;line-height:1.6;">처음 대화를 시작할 때 자연스럽게 상대의 관심사를 파악하려는 모습이 돋보였어요.</div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">😊 설레임</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">💜 따뜻함</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">✨ 기대감</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        인용구를 <strong>폰트 20px + 대형 따옴표 데코로 풀사이즈 블록</strong>으로 전환. 사용자의 핵심 특성을 강렬하게 각인시키는 임팩트 있는 첫 인상 연출.
+      </div>
+    </div>
+
+    <!-- C: 감정 그래프 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">감정여정 꺾은선 그래프</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:6px;">나의 감정 여정</div>
+            <div style="font-size:0.65rem;color:#98A2B3;margin-bottom:10px;">이번 주 감정 흐름</div>
+            <div style="background:#fff;border-radius:12px;border:1px solid #E4DAFF;padding:12px;margin-bottom:10px;">
+              <svg width="100%" height="90" viewBox="0 0 220 90">
+                <defs>
+                  <linearGradient id="emotionGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#7A4AE2" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#7A4AE2" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- grid lines -->
+                <line x1="0" y1="22" x2="220" y2="22" stroke="#EDE9FF" stroke-width="1"/>
+                <line x1="0" y1="45" x2="220" y2="45" stroke="#EDE9FF" stroke-width="1"/>
+                <line x1="0" y1="68" x2="220" y2="68" stroke="#EDE9FF" stroke-width="1"/>
+                <!-- area fill -->
+                <path d="M 10,60 C 40,55 60,20 90,25 C 120,30 140,50 165,35 C 180,28 200,40 210,30 L 210,88 L 10,88 Z"
+                  fill="url(#emotionGrad)"/>
+                <!-- line -->
+                <path d="M 10,60 C 40,55 60,20 90,25 C 120,30 140,50 165,35 C 180,28 200,40 210,30"
+                  fill="none" stroke="#7A4AE2" stroke-width="2" stroke-linecap="round"/>
+                <!-- dots -->
+                <circle cx="10" cy="60" r="4" fill="#7A4AE2"/>
+                <circle cx="90" cy="25" r="4" fill="#7A4AE2"/>
+                <circle cx="165" cy="35" r="4" fill="#7A4AE2"/>
+                <circle cx="210" cy="30" r="4" fill="#7A4AE2"/>
+                <!-- labels -->
+                <text x="10" y="82" font-size="8" fill="#98A2B3" text-anchor="middle">설레임</text>
+                <text x="90" y="18" font-size="8" fill="#7A4AE2" text-anchor="middle" font-weight="bold">흥분</text>
+                <text x="165" y="28" font-size="8" fill="#98A2B3" text-anchor="middle">따뜻함</text>
+                <text x="210" y="22" font-size="8" fill="#98A2B3" text-anchor="middle">기대</text>
+              </svg>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">😊 설레임</span>
+              <span style="background:#7A4AE2;color:#fff;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">🎉 흥분</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">💜 따뜻함</span>
+              <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:4px 9px;font-size:0.65rem;font-weight:600;">✨ 기대감</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        감정 칩을 <strong>꺾은선 영역 그래프로 시각화</strong>. 이번 주 감정이 어떻게 흘렀는지 한눈에 파악. 높은 감정 피크를 강조해 기억에 남는 순간 부각.
+      </div>
+    </div>
+
+    <!-- D: 카드 캐러셀 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">스와이프 카드 캐러셀</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 0 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;padding:0 14px;">나의 이야기</div>
+            <!-- carousel hint -->
+            <div style="padding:0 14px;overflow:hidden;">
+              <div style="display:flex;gap:10px;padding-bottom:4px;">
+                <!-- main card -->
+                <div style="min-width:210px;background:#fff;border-radius:14px;border:1px solid #E4DAFF;padding:14px;box-shadow:0 4px 16px rgba(122,74,226,0.12);">
+                  <div style="background:#7A4AE2;color:#fff;border-radius:20px;padding:4px 10px;font-size:0.65rem;font-weight:700;display:inline-block;margin-bottom:8px;">첫 만남의 설레임</div>
+                  <div style="font-size:0.72rem;color:#344054;line-height:1.6;margin-bottom:8px;">처음 대화를 시작할 때 자연스럽게 상대의 관심사를 파악하려는 모습이 돋보였어요.</div>
+                  <div style="font-style:italic;font-size:0.68rem;color:#7A4AE2;">이 경험이 당신의 적극성을 보여줘요</div>
+                </div>
+                <!-- peeking card -->
+                <div style="min-width:180px;background:#fff;border-radius:14px;border:1px solid #E4DAFF;padding:14px;opacity:0.6;flex-shrink:0;">
+                  <div style="background:#9B6FF5;color:#fff;border-radius:20px;padding:4px 10px;font-size:0.65rem;font-weight:700;display:inline-block;margin-bottom:8px;">감정의 깊이</div>
+                  <div style="font-size:0.72rem;color:#344054;line-height:1.6;">감성적 교류를...</div>
+                </div>
+              </div>
+            </div>
+            <!-- dots -->
+            <div style="display:flex;justify-content:center;gap:5px;margin-top:10px;">
+              <div style="width:20px;height:5px;border-radius:3px;background:#7A4AE2;"></div>
+              <div style="width:5px;height:5px;border-radius:50%;background:#D6BBFB;"></div>
+              <div style="width:5px;height:5px;border-radius:50%;background:#D6BBFB;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        세로 스크롤 대신 <strong>가로 스와이프 카드 캐러셀</strong>로 전환. 오른쪽 카드 피킹으로 다음 스토리 암시. 스와이프 도트 인디케이터로 위치 파악.
+      </div>
+    </div>
+
+    <!-- E: 섹션별 컬러 코딩 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">섹션별 무지개 컬러 코딩</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">나의 이야기</div>
+            <div style="background:#fff;border-left:4px solid #7A4AE2;border-radius:0 12px 12px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.62rem;font-weight:700;color:#7A4AE2;margin-bottom:4px;">첫 만남의 설레임</div>
+              <div style="font-size:0.7rem;color:#344054;line-height:1.55;">처음 대화를 시작할 때 자연스럽게 상대의 관심사를 파악하려는 모습이 돋보였어요.</div>
+            </div>
+            <div style="background:#fff;border-left:4px solid #2E90FA;border-radius:0 12px 12px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.62rem;font-weight:700;color:#2E90FA;margin-bottom:4px;">감정의 깊이</div>
+              <div style="font-size:0.7rem;color:#344054;line-height:1.55;">감성적으로 교류할 때 상대방과 더 깊이 연결되는 느낌을 받아요.</div>
+            </div>
+            <div style="background:#fff;border-left:4px solid #12B76A;border-radius:0 12px 12px 0;padding:12px;margin-bottom:8px;">
+              <div style="font-size:0.62rem;font-weight:700;color:#12B76A;margin-bottom:4px;">성장의 발자국</div>
+              <div style="font-size:0.7rem;color:#344054;line-height:1.55;">매주 새로운 도전을 통해 자신을 발전시키는 의지가 강하게 느껴졌어요.</div>
+            </div>
+            <div style="background:#fff;border-left:4px solid #F79009;border-radius:0 12px 12px 0;padding:12px;">
+              <div style="font-size:0.62rem;font-weight:700;color:#F79009;margin-bottom:4px;">앞으로의 여정</div>
+              <div style="font-size:0.7rem;color:#344054;line-height:1.55;">이런 성향은 깊은 신뢰 관계 형성에 큰 자산이 될 거예요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 스토리 카드에 <strong>고유 왼쪽 border 색상</strong>(보라→파랑→초록→주황)을 부여. 시각적 분리가 명확해지고 스토리 섹션 간 구분이 색으로 즉시 인식됨.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAB 6: 성장 제안 ===================== -->
+<div class="tab-panel" id="tab-5">
+  <div class="section-header">
+    <h2>섹션 6 — 성장 제안</h2>
+    <p>보라 원형 번호 badge + 텍스트 흰 카드 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 체크리스트 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">체크리스트</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;">이번 주 성장 제안</div>
+              <div style="font-size:0.65rem;color:#12B76A;font-weight:600;">1/3 완료</div>
+            </div>
+            <!-- checked item -->
+            <div style="background:#ECFDF3;border:1px solid #A9EFC5;border-radius:10px;padding:11px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;opacity:0.8;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#12B76A;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.7rem;color:#fff;">✓</div>
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;color:#027A48;text-decoration:line-through;margin-bottom:3px;">상대의 말을 끊지 않고 듣기</div>
+                <div style="font-size:0.65rem;color:#12B76A;">완료했어요! 👍</div>
+              </div>
+            </div>
+            <!-- unchecked items -->
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:11px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;border:2px solid #D6BBFB;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;margin-bottom:3px;">하루 한 번 먼저 연락해보기</div>
+                <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;">작은 용기가 큰 변화를 만들어요</div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;border:2px solid #D6BBFB;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;margin-bottom:3px;">감사 메시지 보내기</div>
+                <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;">진심 어린 한 마디가 관계를 단단하게 해요</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 제안에 <strong>체크박스 추가 + 완료 시 취소선 + 초록 배경</strong>으로 변경. 추상적인 제안을 실천 가능한 액션 아이템으로 전환해 완료 동기 부여.
+      </div>
+    </div>
+
+    <!-- B: 난이도 표시 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">난이도 별 표시</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">이번 주 성장 제안</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+                  <div style="font-size:0.72rem;font-weight:700;color:#344054;">상대의 말을 끊지 않고 듣기</div>
+                </div>
+                <div style="font-size:0.7rem;color:#F79009;">⭐</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;">쉬움 · 작은 노력으로 시작해요</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+                  <div style="font-size:0.72rem;font-weight:700;color:#344054;">하루 한 번 먼저 연락해보기</div>
+                </div>
+                <div style="font-size:0.7rem;color:#F79009;">⭐⭐</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;">보통 · 꾸준한 실천이 필요해요</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+                  <div style="font-size:0.72rem;font-weight:700;color:#344054;">취약함을 솔직하게 표현하기</div>
+                </div>
+                <div style="font-size:0.7rem;color:#F79009;">⭐⭐⭐</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;">도전 · 용기가 필요한 한 걸음</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 제안에 <strong>쉬움/보통/도전 별 1~3개 난이도</strong> 표시. 사용자가 자신의 준비 정도에 맞는 제안부터 시작할 수 있도록 선택권 부여.
+      </div>
+    </div>
+
+    <!-- C: 캘린더 연동 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">캘린더 일정 추가</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">이번 주 성장 제안</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;flex:1;">상대의 말을 끊지 않고 듣기</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;margin-bottom:8px;">작은 노력으로 시작해요</div>
+              <button style="margin-left:28px;background:#F9F5FF;border:1px solid #D6BBFB;border-radius:8px;padding:5px 10px;font-size:0.65rem;font-weight:600;color:#7A4AE2;cursor:pointer;display:flex;align-items:center;gap:4px;">
+                📅 일정 추가
+              </button>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;flex:1;">하루 한 번 먼저 연락해보기</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;margin-bottom:8px;">꾸준한 실천이 필요해요</div>
+              <div style="margin-left:28px;background:#ECFDF3;border:1px solid #A9EFC5;border-radius:8px;padding:5px 10px;font-size:0.65rem;font-weight:600;color:#027A48;display:inline-flex;align-items:center;gap:4px;">
+                ✓ 매일 오전 10시 알림 설정됨
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;flex:1;">취약함을 솔직하게 표현하기</div>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;margin-bottom:8px;">용기가 필요한 한 걸음</div>
+              <button style="margin-left:28px;background:#F9F5FF;border:1px solid #D6BBFB;border-radius:8px;padding:5px 10px;font-size:0.65rem;font-weight:600;color:#7A4AE2;cursor:pointer;display:flex;align-items:center;gap:4px;">
+                📅 일정 추가
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        "일정 추가" 버튼으로 <strong>기기 캘린더 앱 또는 앱 내 알림 연동</strong>. 추상적 제안을 구체적 일정으로 전환해 실천율 향상.
+      </div>
+    </div>
+
+    <!-- D: 진행률 링 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">완료 수 원형 프로그레스</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">이번 주 성장 제안</div>
+            <!-- progress summary -->
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:12px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;">
+              <div style="position:relative;width:56px;height:56px;flex-shrink:0;">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle cx="28" cy="28" r="22" fill="none" stroke="#EDE9FF" stroke-width="6"/>
+                  <circle cx="28" cy="28" r="22" fill="none" stroke="#7A4AE2" stroke-width="6"
+                    stroke-dasharray="46.1 138.2" stroke-linecap="round"
+                    transform="rotate(-90 28 28)"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.75rem;font-weight:800;color:#7A4AE2;">1/3</div>
+              </div>
+              <div>
+                <div style="font-size:0.8rem;font-weight:700;color:#344054;">1개 완료</div>
+                <div style="font-size:0.65rem;color:#667085;margin-top:2px;">2개 남았어요. 계속 도전해보세요!</div>
+              </div>
+            </div>
+            <div style="background:#ECFDF3;border:1px solid #A9EFC5;border-radius:10px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;gap:8px;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#12B76A;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;">✓</div>
+              <div style="font-size:0.72rem;font-weight:700;color:#027A48;text-decoration:line-through;">상대의 말을 끊지 않고 듣기</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;gap:8px;">
+              <div style="width:20px;height:20px;border-radius:50%;border:2px solid #D6BBFB;"></div>
+              <div style="font-size:0.72rem;font-weight:700;color:#344054;">하루 한 번 먼저 연락해보기</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:8px;">
+              <div style="width:20px;height:20px;border-radius:50%;border:2px solid #D6BBFB;"></div>
+              <div style="font-size:0.72rem;font-weight:700;color:#344054;">감사 메시지 보내기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        상단에 <strong>원형 프로그레스 링(1/3 등)으로 전체 완료율 요약</strong>. 전체 진행 상황을 한눈에 파악하고 달성에 대한 동기 부여 강화.
+      </div>
+    </div>
+
+    <!-- E: 공유 버튼 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">제안 소셜 공유</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">이번 주 성장 제안</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;flex:1;">상대의 말을 끊지 않고 듣기</div>
+                <button style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:0;color:#98A2B3;">↗</button>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;">작은 노력으로 시작해요</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#344054;flex:1;">하루 한 번 먼저 연락해보기</div>
+                <button style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:0;color:#98A2B3;">↗</button>
+              </div>
+              <div style="font-style:italic;font-size:0.65rem;color:#98A2B3;padding-left:28px;">꾸준한 실천이 필요해요</div>
+            </div>
+            <!-- share sheet preview -->
+            <div style="background:#F9FAFB;border:1px solid #E4E7EC;border-radius:12px;padding:10px 12px;">
+              <div style="font-size:0.65rem;font-weight:600;color:#344054;margin-bottom:8px;">공유하기</div>
+              <div style="display:flex;gap:12px;justify-content:center;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:36px;height:36px;border-radius:10px;background:#03C75A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.75rem;">N</div>
+                  <div style="font-size:0.6rem;color:#667085;">네이버</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:36px;height:36px;border-radius:10px;background:#FEE500;display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-size:0.75rem;">K</div>
+                  <div style="font-size:0.6rem;color:#667085;">카카오</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#405DE6,#5851DB,#833AB4,#C13584,#E1306C,#FD1D1D);display:flex;align-items:center;justify-content:center;font-size:0.85rem;">📷</div>
+                  <div style="font-size:0.6rem;color:#667085;">인스타</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:36px;height:36px;border-radius:10px;background:#E4E7EC;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">🔗</div>
+                  <div style="font-size:0.6rem;color:#667085;">링크</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        각 제안 옆에 <strong>소셜 공유 아이콘(↗)</strong> 추가. 탭 시 카카오/인스타/네이버 공유 시트 등장. 실천 의지를 친구에게 공유해 약속 효과 강화.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAB 7: 페르소나 요약 ===================== -->
+<div class="tab-panel" id="tab-6">
+  <div class="section-header">
+    <h2>섹션 7 — 페르소나 요약</h2>
+    <p>흰 카드 + 보라 텍스트 특성 리스트 구성의 5가지 개선 방향</p>
+  </div>
+  <div class="idea-grid">
+
+    <!-- A: 캐릭터 아바타 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">A</div>
+        <div class="idea-name">성향별 캐릭터 아바타</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">나의 페르소나</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:14px;padding:16px;margin-bottom:10px;text-align:center;">
+              <!-- character avatar -->
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 4px 16px rgba(122,74,226,0.3);">🦋</div>
+              <div style="font-size:1rem;font-weight:800;color:#344054;margin-bottom:4px;">감성 탐험가</div>
+              <div style="font-size:0.7rem;color:#7A4AE2;margin-bottom:10px;">소울메이트 유형</div>
+              <div style="font-size:0.72rem;color:#667085;line-height:1.6;text-align:left;">따뜻한 감성과 탁월한 공감 능력으로 주변 사람들과 깊은 유대를 형성하는 유형이에요.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:8px;background:#F9F5FF;border-radius:8px;padding:7px 10px;">
+                <span style="font-size:0.85rem;">🌟</span>
+                <span style="font-size:0.72rem;color:#6941C6;font-weight:600;">깊은 공감 능력</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:#F9F5FF;border-radius:8px;padding:7px 10px;">
+                <span style="font-size:0.85rem;">💬</span>
+                <span style="font-size:0.72rem;color:#6941C6;font-weight:600;">자연스러운 대화 리드</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:#F9F5FF;border-radius:8px;padding:7px 10px;">
+                <span style="font-size:0.85rem;">🔮</span>
+                <span style="font-size:0.72rem;color:#6941C6;font-weight:600;">직관적 감정 파악</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        성향에 맞는 <strong>동물/사물 이모지 아바타를 원형 보라 배경</strong>으로 강조. 페르소나에 생동감을 부여하고 미호와 함께 2개의 캐릭터가 공존하는 앱 세계관 확장.
+      </div>
+    </div>
+
+    <!-- B: 워드 클라우드 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">B</div>
+        <div class="idea-name">특성 태그 워드클라우드</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:6px;">나의 페르소나</div>
+            <div style="font-size:0.65rem;color:#98A2B3;margin-bottom:14px;">자주 나타나는 특성일수록 크게 표시돼요</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:14px;padding:16px;margin-bottom:10px;text-align:center;line-height:2.2;">
+              <span style="font-size:1.3rem;font-weight:800;color:#7A4AE2;margin:2px;">공감</span>
+              <span style="font-size:0.9rem;font-weight:600;color:#9B6FF5;margin:2px;">탐험</span>
+              <span style="font-size:1.1rem;font-weight:700;color:#6941C6;margin:2px;">소통</span>
+              <span style="font-size:0.75rem;font-weight:500;color:#B692F6;margin:2px;">계획성</span>
+              <span style="font-size:1rem;font-weight:700;color:#7A4AE2;margin:2px;">따뜻함</span>
+              <span style="font-size:0.8rem;font-weight:600;color:#9B6FF5;margin:2px;">호기심</span>
+              <span style="font-size:0.7rem;font-weight:500;color:#B692F6;margin:2px;">배려</span>
+              <span style="font-size:0.9rem;font-weight:600;color:#6941C6;margin:2px;">감성</span>
+              <span style="font-size:1.2rem;font-weight:800;color:#7A4AE2;margin:2px;">적극성</span>
+              <span style="font-size:0.72rem;font-weight:500;color:#B692F6;margin:2px;">세심함</span>
+              <span style="font-size:0.85rem;font-weight:600;color:#9B6FF5;margin:2px;">창의성</span>
+              <span style="font-size:0.68rem;font-weight:500;color:#D6BBFB;margin:2px;">신중함</span>
+            </div>
+            <div style="font-size:0.68rem;color:#98A2B3;text-align:center;">공감, 적극성, 소통이 핵심 특성이에요</div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        특성 태그를 <strong>빈도에 따라 크기 차등 적용한 워드클라우드 스타일</strong>로 배치. 어떤 특성이 가장 강한지 시각적으로 즉시 파악. 보라 계열 농도로 강도 표현.
+      </div>
+    </div>
+
+    <!-- C: 매칭 적합도 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">C</div>
+        <div class="idea-name">매칭 적합도 미니 프로필</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">나의 페르소나</div>
+            <div style="background:#fff;border:1px solid #E4DAFF;border-radius:12px;padding:12px;margin-bottom:10px;">
+              <div style="font-size:0.72rem;color:#344054;line-height:1.6;margin-bottom:8px;">따뜻한 감성과 탁월한 공감 능력으로 깊은 유대를 형성하는 유형이에요.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:3px 8px;font-size:0.62rem;font-weight:600;">공감 능력</span>
+                <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:3px 8px;font-size:0.62rem;font-weight:600;">적극적 소통</span>
+                <span style="background:#F9F5FF;color:#7A4AE2;border-radius:20px;padding:3px 8px;font-size:0.62rem;font-weight:600;">감성적 교류</span>
+              </div>
+            </div>
+            <!-- match section -->
+            <div style="font-size:0.72rem;font-weight:700;color:#344054;margin-bottom:8px;">이런 상대와 잘 맞아요</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2E90FA,#84CAFF);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🌊</div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:700;color:#344054;">차분한 경청자 유형</div>
+                  <div style="font-size:0.6rem;color:#12B76A;font-weight:600;">궁합 94%</div>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #E4DAFF;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#12B76A,#32D583);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🌱</div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:700;color:#344054;">성장 지향 탐험가 유형</div>
+                  <div style="font-size:0.6rem;color:#12B76A;font-weight:600;">궁합 88%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        "이런 상대와 잘 맞아요" 섹션에 <strong>미니 프로필 카드 2~3개와 궁합 % 표시</strong>. 페르소나를 자기 이해를 넘어 매칭 가이드로 확장. 앱 핵심 가치 연결.
+      </div>
+    </div>
+
+    <!-- D: 성향 변화 히스토리 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">D</div>
+        <div class="idea-name">성향 변화 히스토리</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:12px;">나의 페르소나 변화</div>
+            <div style="position:relative;padding-left:18px;">
+              <div style="position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,#D6BBFB,#7A4AE2);"></div>
+              <!-- week 1 -->
+              <div style="position:relative;margin-bottom:12px;">
+                <div style="position:absolute;left:-14px;top:4px;width:8px;height:8px;border-radius:50%;background:#D6BBFB;"></div>
+                <div style="font-size:0.62rem;color:#98A2B3;margin-bottom:2px;">1주차</div>
+                <div style="background:#fff;border:1px solid #E4DAFF;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;">
+                  <div style="font-size:0.68rem;font-weight:600;color:#B692F6;">조심스러운 탐색자</div>
+                  <div style="font-size:0.6rem;color:#98A2B3;">외향성 52</div>
+                </div>
+              </div>
+              <!-- week 2 -->
+              <div style="position:relative;margin-bottom:12px;">
+                <div style="position:absolute;left:-14px;top:4px;width:8px;height:8px;border-radius:50%;background:#9B6FF5;"></div>
+                <div style="font-size:0.62rem;color:#98A2B3;margin-bottom:2px;">2주차</div>
+                <div style="background:#fff;border:1px solid #E4DAFF;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;">
+                  <div style="font-size:0.68rem;font-weight:600;color:#9B6FF5;">따뜻한 연결자</div>
+                  <div style="font-size:0.6rem;color:#98A2B3;">외향성 62</div>
+                </div>
+              </div>
+              <!-- week 3 -->
+              <div style="position:relative;margin-bottom:12px;">
+                <div style="position:absolute;left:-14px;top:4px;width:8px;height:8px;border-radius:50%;background:#7A4AE2;border:2px solid #fff;box-shadow:0 0 0 2px #7A4AE2;"></div>
+                <div style="font-size:0.62rem;color:#7A4AE2;font-weight:600;margin-bottom:2px;">3주차 · 현재</div>
+                <div style="background:#F9F5FF;border:1px solid #7A4AE2;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;">
+                  <div style="font-size:0.68rem;font-weight:700;color:#7A4AE2;">감성 탐험가</div>
+                  <div style="font-size:0.6rem;color:#7A4AE2;font-weight:600;">외향성 78 ↑</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#ECFDF3;border-radius:8px;padding:8px 10px;font-size:0.65rem;color:#027A48;font-weight:600;">
+              3주 동안 외향성이 26점 성장했어요!
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        지난 4주 동안의 <strong>성향 타입 변화를 타임라인으로 시각화</strong>. 단순 현재 스냅샷이 아니라 성장 스토리를 전달. 재방문 동기와 지속 사용 유인 강화.
+      </div>
+    </div>
+
+    <!-- E: SNS 공유 카드 -->
+    <div class="idea-card">
+      <div class="idea-card-header">
+        <div class="idea-label">E</div>
+        <div class="idea-name">SNS 공유 요약 카드</div>
+      </div>
+      <div class="mobile-frame-wrap">
+        <div class="mobile-frame">
+          <div style="background:linear-gradient(180deg,#fff 0%,#EDE9FF 100%);padding:18px 14px;min-height:420px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#7A4AE2;margin-bottom:10px;">나의 페르소나</div>
+            <!-- shareable card preview -->
+            <div style="background:linear-gradient(135deg,#0f0520 0%,#3a1a7a 50%,#7A4AE2 100%);border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;">
+              <!-- decorative stars -->
+              <div style="position:absolute;top:10px;right:12px;font-size:1.2rem;opacity:0.4;">✦</div>
+              <div style="position:absolute;bottom:14px;left:10px;font-size:0.8rem;opacity:0.3;">✦</div>
+              <div style="font-size:0.62rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">나의 모먼트 성향 리포트</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:3px;">감성 탐험가</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.7);margin-bottom:10px;">소울메이트 · 3주차</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;">
+                <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);border-radius:20px;padding:3px 8px;font-size:0.6rem;">공감 78</span>
+                <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);border-radius:20px;padding:3px 8px;font-size:0.6rem;">성실 82</span>
+                <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);border-radius:20px;padding:3px 8px;font-size:0.6rem;">외향 78</span>
+              </div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">sometimes · moment report</div>
+            </div>
+            <button style="width:100%;background:linear-gradient(135deg,#7A4AE2,#9B6FF5);border:none;border-radius:12px;padding:11px;font-size:0.78rem;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+              📤 인스타그램 스토리로 공유
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="idea-desc">
+        <strong>인스타그램 스토리 형식의 공유 카드를 앱 내에서 생성</strong>. 성향 결과를 SNS에 자랑하고 싶은 동기 자연스럽게 유도. 바이럴 마케팅 효과.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tab-panel').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+    if (i === idx) p.style.display = 'block';
+    else p.style.display = 'none';
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Initialize: show only first tab
+document.querySelectorAll('.tab-panel').forEach((p, i) => {
+  p.style.display = i === 0 ? 'block' : 'none';
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toggle Switch Interaction Ideas - Sometimes App</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #7A4AE2;
+    --primary-light: #E2D5FF;
+    --primary-bg: #F7F3FF;
+    --primary-deep: #49386E;
+    --surface: #F8F9FA;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --border: #e4e2e2;
+    --white: #FFFFFF;
+    --red: #F04438;
+    --red-bg: #FEF3F2;
+    --orange: #F79009;
+    --orange-bg: #FFFAEB;
+    --green: #22C55E;
+    --green-bg: #ECFDF5;
+    --switch-on-track: #F3EDFF;
+    --switch-off-track: #E5E0F1;
+    --switch-on-thumb: #7A4AE2;
+    --switch-off-thumb: #B7A8E7;
+  }
+
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: #F0ECF7;
+    padding: 20px 16px 60px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary-deep);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .idea-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .idea-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .idea-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .idea-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .idea-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    padding-left: 32px;
+  }
+  .idea-tags {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding-left: 32px;
+  }
+  .tag {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: var(--primary-bg);
+    color: var(--primary);
+  }
+  .tag.easy { background: var(--green-bg); color: var(--green); }
+  .tag.medium { background: var(--orange-bg); color: var(--orange); }
+  .tag.hard { background: var(--red-bg); color: var(--red); }
+
+  /* --- Phone mockup --- */
+  .phone-mockup {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* --- Shared toggle row --- */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .toggle-row .icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .toggle-row .text-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  .toggle-row .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .toggle-row .desc {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* --- Switch base --- */
+  .switch {
+    width: 52px;
+    height: 28px;
+    border-radius: 14px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.25s;
+    overflow: visible;
+  }
+  .switch.off { background: var(--switch-off-track); }
+  .switch.on { background: var(--switch-on-track); }
+  .switch .thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    position: absolute;
+    top: 3px;
+    transition: left 0.25s cubic-bezier(.4,.0,.2,1), background 0.25s, transform 0.25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 2;
+  }
+  .switch.off .thumb { left: 3px; background: var(--switch-off-thumb); }
+  .switch.on .thumb { left: 27px; background: var(--switch-on-thumb); }
+
+  .row-divider {
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ===== IDEA 1: Toast Snackbar ===== */
+  .toast-area {
+    position: relative;
+    height: 0;
+    overflow: visible;
+  }
+  .toast {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    background: var(--primary-deep);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(.4,.0,.2,1);
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  .toast .toast-icon {
+    font-size: 14px;
+  }
+
+  /* ===== IDEA 2: Inline Status Badge ===== */
+  .inline-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    transition: all 0.3s;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .inline-badge.on {
+    background: var(--primary-bg);
+    color: var(--primary);
+  }
+  .inline-badge.off {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+  .inline-badge.changing {
+    animation: badgePop 0.35s cubic-bezier(.4,.0,.2,1);
+  }
+  @keyframes badgePop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+  }
+
+  /* ===== IDEA 3: Ripple Effect ===== */
+  .switch-ripple-area {
+    position: relative;
+  }
+  .ripple-ring {
+    position: absolute;
+    top: 50%;
+    right: 26px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translate(50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ripple-ring.on { border: 2px solid var(--primary); }
+  .ripple-ring.off { border: 2px solid var(--switch-off-thumb); }
+  .ripple-ring.animate {
+    animation: rippleOut 0.6s ease-out forwards;
+  }
+  @keyframes rippleOut {
+    0% { transform: translate(50%, -50%) scale(0); opacity: 0.7; }
+    100% { transform: translate(50%, -50%) scale(8); opacity: 0; }
+  }
+
+  /* ===== IDEA 4: Confetti Burst ===== */
+  .confetti-container {
+    position: absolute;
+    top: 50%;
+    right: 26px;
+    width: 0;
+    height: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .confetti-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .confetti-particle.burst {
+    animation: confettiBurst 0.7s ease-out forwards;
+  }
+  @keyframes confettiBurst {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: var(--end-pos) scale(0.3); }
+  }
+
+  /* ===== IDEA 5: Row Highlight Flash ===== */
+  .flash-row {
+    position: relative;
+    overflow: hidden;
+  }
+  .flash-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--primary-light);
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 8px;
+    z-index: 0;
+  }
+  .flash-overlay.flash {
+    animation: rowFlash 0.5s ease-out;
+  }
+  @keyframes rowFlash {
+    0% { opacity: 0.5; }
+    100% { opacity: 0; }
+  }
+
+  /* ===== IDEA 6: Sliding Label ===== */
+  .slide-label {
+    position: absolute;
+    top: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.3s;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .slide-label.on {
+    right: 60px;
+    color: var(--primary);
+  }
+  .slide-label.off {
+    right: 60px;
+    color: var(--text-disabled);
+  }
+  .slide-label.show {
+    opacity: 1;
+    right: 64px;
+  }
+  .slide-label.hide {
+    opacity: 0;
+    right: 56px;
+  }
+
+  /* ===== IDEA 7: Icon Morph ===== */
+  .morph-icon {
+    transition: transform 0.4s cubic-bezier(.4,.0,.2,1), background 0.3s;
+  }
+  .morph-icon.active {
+    animation: iconBounce 0.5s cubic-bezier(.4,.0,.2,1);
+  }
+  @keyframes iconBounce {
+    0% { transform: scale(1) rotate(0deg); }
+    30% { transform: scale(0.8) rotate(-15deg); }
+    60% { transform: scale(1.15) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  .morph-icon .emoji-swap {
+    transition: opacity 0.2s;
+  }
+
+  /* ===== IDEA 8: Glow Pulse Ring ===== */
+  .glow-switch {
+    position: relative;
+  }
+  .glow-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .glow-ring.on {
+    box-shadow: 0 0 0 3px rgba(122, 74, 226, 0.3), 0 0 12px rgba(122, 74, 226, 0.2);
+  }
+  .glow-ring.off {
+    box-shadow: 0 0 0 3px rgba(183, 168, 231, 0.3), 0 0 12px rgba(183, 168, 231, 0.2);
+  }
+  .glow-ring.pulse {
+    animation: glowPulse 0.6s ease-out;
+  }
+  @keyframes glowPulse {
+    0% { opacity: 0; transform: scale(0.95); }
+    30% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+
+  /* ===== IDEA 9: Check/X Mark ===== */
+  .check-x-overlay {
+    position: absolute;
+    top: 50%;
+    right: 26px;
+    transform: translate(50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .check-x-overlay.on { background: rgba(122, 74, 226, 0.15); color: var(--primary); }
+  .check-x-overlay.off { background: rgba(240, 68, 56, 0.15); color: var(--red); }
+  .check-x-overlay.show {
+    animation: checkPop 0.5s cubic-bezier(.4,.0,.2,1) forwards;
+  }
+  @keyframes checkPop {
+    0% { opacity: 0; transform: translate(50%, -50%) scale(0.3); }
+    35% { opacity: 1; transform: translate(50%, -50%) scale(1.1); }
+    55% { transform: translate(50%, -50%) scale(0.95); }
+    70% { opacity: 1; transform: translate(50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(50%, -50%) scale(1); }
+  }
+
+  /* ===== IDEA 10: Color Strip ===== */
+  .strip-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .color-strip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    transition: background 0.3s, opacity 0.3s;
+    opacity: 0;
+  }
+  .color-strip.on { background: var(--primary); }
+  .color-strip.off { background: var(--text-disabled); }
+  .color-strip.show {
+    animation: stripSlide 0.4s ease-out forwards;
+  }
+  @keyframes stripSlide {
+    0% { opacity: 0; height: 0; top: 50%; }
+    100% { opacity: 1; height: 100%; top: 0; }
+  }
+
+  .try-hint {
+    font-size: 10px;
+    color: var(--primary);
+    text-align: center;
+    margin-top: 8px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  /* Score bar */
+  .score-section {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 8px;
+    background: var(--surface);
+    border-radius: 8px;
+  }
+  .score-item {
+    flex: 1;
+    text-align: center;
+  }
+  .score-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .score-bar-bg {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--primary);
+  }
+  .score-value {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Toggle Switch Interactions</h1>
+<p class="subtitle">Sometimes App - 마이페이지 설정 스위치 피드백 10가지</p>
+
+<!-- ===== IDEA 1: Toast Snackbar ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">1</div>
+    <div class="idea-title">Toast Snackbar</div>
+  </div>
+  <p class="idea-desc">토글 변경 시 하단에서 슬라이드업되는 토스트로 상태 확인</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">기존 Toast 활용</span>
+  </div>
+  <div class="phone-mockup" id="idea1">
+    <div class="toggle-row">
+      <div class="icon-wrap" style="background:#FEF3F2">🎓</div>
+      <div class="text-wrap">
+        <div class="label">같은 학과 제외</div>
+        <div class="desc">같은 학과 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea1(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+    <div class="toast-area">
+      <div class="toast" id="toast1">
+        <span class="toast-icon"></span>
+        <span class="toast-text"></span>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:90%"></div></div>
+      <div class="score-value">9/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:40%;background:var(--orange)"></div></div>
+      <div class="score-value">4/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+      <div class="score-value">10/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 2: Inline Status Badge ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">2</div>
+    <div class="idea-title">Inline Status Badge</div>
+  </div>
+  <p class="idea-desc">라벨 옆에 ON/OFF 배지가 팝 애니메이션으로 상태 표시</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">공간 효율적</span>
+  </div>
+  <div class="phone-mockup" id="idea2">
+    <div class="toggle-row">
+      <div class="icon-wrap" style="background:#FFFAEB">🏫</div>
+      <div class="text-wrap">
+        <div class="label">같은 학교 제외 <span class="inline-badge off" id="badge2">OFF</span></div>
+        <div class="desc">같은 학교 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea2(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:10%;background:var(--green)"></div></div>
+      <div class="score-value">1/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:90%"></div></div>
+      <div class="score-value">9/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 3: Ripple Effect ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">3</div>
+    <div class="idea-title">Ripple Wave</div>
+  </div>
+  <p class="idea-desc">스위치 중심에서 원형 물결이 퍼져나가는 피드백</p>
+  <div class="idea-tags">
+    <span class="tag medium">구현 중간</span>
+    <span class="tag">Material-like</span>
+  </div>
+  <div class="phone-mockup" id="idea3">
+    <div class="toggle-row switch-ripple-area">
+      <div class="icon-wrap" style="background:#F9F5FF">🔔</div>
+      <div class="text-wrap">
+        <div class="label">푸시 알림</div>
+        <div class="desc">매칭, 좋아요, 메시지 알림</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea3(this)">
+        <div class="thumb"></div>
+      </div>
+      <div class="ripple-ring" id="ripple3"></div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:70%"></div></div>
+      <div class="score-value">7/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:40%"></div></div>
+      <div class="score-value">4/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%;background:var(--green)"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:70%"></div></div>
+      <div class="score-value">7/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 4: Confetti Burst ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">4</div>
+    <div class="idea-title">Confetti Burst</div>
+  </div>
+  <p class="idea-desc">ON 시 스위치에서 컬러풀한 파티클이 터지는 축하 효과</p>
+  <div class="idea-tags">
+    <span class="tag medium">구현 중간</span>
+    <span class="tag">감성적</span>
+    <span class="tag">ON만 적용</span>
+  </div>
+  <div class="phone-mockup" id="idea4">
+    <div class="toggle-row" style="position:relative">
+      <div class="icon-wrap" style="background:#FEF3F2">🎓</div>
+      <div class="text-wrap">
+        <div class="label">같은 학과 제외</div>
+        <div class="desc">같은 학과 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea4(this)" style="position:relative; overflow:visible">
+        <div class="thumb"></div>
+        <div class="confetti-container" id="confetti4"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:90%"></div></div>
+      <div class="score-value">9/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:50%"></div></div>
+      <div class="score-value">5/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:30%;background:var(--green)"></div></div>
+      <div class="score-value">3/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:50%"></div></div>
+      <div class="score-value">5/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 5: Row Highlight Flash ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">5</div>
+    <div class="idea-title">Row Highlight Flash</div>
+  </div>
+  <p class="idea-desc">전체 행이 보라색으로 한번 번쩍이며 변경 확인</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">직관적</span>
+  </div>
+  <div class="phone-mockup" id="idea5">
+    <div class="toggle-row flash-row">
+      <div class="flash-overlay" id="flash5"></div>
+      <div class="icon-wrap" style="background:#FFFAEB">🏫</div>
+      <div class="text-wrap">
+        <div class="label">같은 학교 제외</div>
+        <div class="desc">같은 학교 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea5(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:10%"></div></div>
+      <div class="score-value">1/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:30%;background:var(--green)"></div></div>
+      <div class="score-value">3/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:90%"></div></div>
+      <div class="score-value">9/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 6: Sliding Label ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">6</div>
+    <div class="idea-title">Slide-in Label</div>
+  </div>
+  <p class="idea-desc">스위치 좌측에서 ON/OFF 텍스트가 슬라이드 인/아웃</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">명확한 상태 표시</span>
+  </div>
+  <div class="phone-mockup" id="idea6">
+    <div class="toggle-row" style="position:relative">
+      <div class="icon-wrap" style="background:#F9F5FF">🔔</div>
+      <div class="text-wrap">
+        <div class="label">푸시 알림</div>
+        <div class="desc">매칭, 좋아요, 메시지 알림</div>
+      </div>
+      <div class="slide-label off" id="slideLabel6">OFF</div>
+      <div class="switch off" onclick="toggleIdea6(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:70%"></div></div>
+      <div class="score-value">7/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:10%;background:var(--green)"></div></div>
+      <div class="score-value">1/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 7: Icon Morph ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">7</div>
+    <div class="idea-title">Icon Morph & Bounce</div>
+  </div>
+  <p class="idea-desc">아이콘이 바운스하며 ON/OFF 상태에 맞게 변형</p>
+  <div class="idea-tags">
+    <span class="tag medium">구현 중간</span>
+    <span class="tag">생동감</span>
+  </div>
+  <div class="phone-mockup" id="idea7">
+    <div class="toggle-row">
+      <div class="icon-wrap morph-icon" id="morphIcon7" style="background:#FEF3F2">
+        <span class="emoji-swap">🎓</span>
+      </div>
+      <div class="text-wrap">
+        <div class="label">같은 학과 제외</div>
+        <div class="desc">같은 학과 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea7(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+    <div class="row-divider"></div>
+    <div class="toggle-row">
+      <div class="icon-wrap morph-icon" id="morphIcon7b" style="background:#FFFAEB">
+        <span class="emoji-swap">🏫</span>
+      </div>
+      <div class="text-wrap">
+        <div class="label">같은 학교 제외</div>
+        <div class="desc">같은 학교 학생은 매칭에서 제외</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea7b(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:40%"></div></div>
+      <div class="score-value">4/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%;background:var(--green)"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:60%"></div></div>
+      <div class="score-value">6/10</div>
+    </div>
+  </div>
+  <p class="try-hint">각 스위치를 눌러 아이콘 변화를 확인하세요</p>
+</div>
+
+<!-- ===== IDEA 8: Glow Pulse ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">8</div>
+    <div class="idea-title">Glow Pulse Ring</div>
+  </div>
+  <p class="idea-desc">스위치 주변에 보라색 글로우 링이 펄스처럼 퍼졌다 사라짐</p>
+  <div class="idea-tags">
+    <span class="tag medium">구현 중간</span>
+    <span class="tag">프리미엄 느낌</span>
+  </div>
+  <div class="phone-mockup" id="idea8">
+    <div class="toggle-row">
+      <div class="icon-wrap" style="background:#FFFAEB">🏫</div>
+      <div class="text-wrap">
+        <div class="label">같은 학교 제외</div>
+        <div class="desc">같은 학교 학생은 매칭에서 제외</div>
+      </div>
+      <div class="glow-switch">
+        <div class="glow-ring" id="glow8"></div>
+        <div class="switch off" onclick="toggleIdea8(this)">
+          <div class="thumb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:70%"></div></div>
+      <div class="score-value">7/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:40%"></div></div>
+      <div class="score-value">4/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:10%;background:var(--green)"></div></div>
+      <div class="score-value">1/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 9: Checkmark / X ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">9</div>
+    <div class="idea-title">Checkmark / X Pop</div>
+  </div>
+  <p class="idea-desc">스위치 위에 체크(ON) 또는 X(OFF) 마크가 팝업 후 사라짐</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">명확한 피드백</span>
+  </div>
+  <div class="phone-mockup" id="idea9">
+    <div class="toggle-row" style="position:relative; overflow:visible">
+      <div class="icon-wrap" style="background:#F9F5FF">🔔</div>
+      <div class="text-wrap">
+        <div class="label">푸시 알림</div>
+        <div class="desc">매칭, 좋아요, 메시지 알림</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea9(this)" style="overflow:visible">
+        <div class="thumb"></div>
+      </div>
+      <div class="check-x-overlay" id="checkx9"></div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:90%"></div></div>
+      <div class="score-value">9/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:30%"></div></div>
+      <div class="score-value">3/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:30%;background:var(--green)"></div></div>
+      <div class="score-value">3/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== IDEA 10: Color Strip + Status Text ===== -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="idea-number">10</div>
+    <div class="idea-title">Edge Strip + Desc Change</div>
+  </div>
+  <p class="idea-desc">카드 좌측에 컬러 스트립이 나타나고 설명 텍스트가 상태 반영으로 변경</p>
+  <div class="idea-tags">
+    <span class="tag easy">구현 쉬움</span>
+    <span class="tag">정보 밀도 높음</span>
+  </div>
+  <div class="phone-mockup strip-card" id="idea10">
+    <div class="color-strip" id="strip10"></div>
+    <div class="toggle-row">
+      <div class="icon-wrap" style="background:#FEF3F2">🎓</div>
+      <div class="text-wrap">
+        <div class="label">같은 학과 제외</div>
+        <div class="desc" id="desc10" style="transition: color 0.3s">현재: 같은 학과도 매칭됩니다</div>
+      </div>
+      <div class="switch off" onclick="toggleIdea10(this)">
+        <div class="thumb"></div>
+      </div>
+    </div>
+  </div>
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">시인성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:80%"></div></div>
+      <div class="score-value">8/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">구현 난이도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:20%"></div></div>
+      <div class="score-value">2/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">방해 정도</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:10%;background:var(--green)"></div></div>
+      <div class="score-value">1/10</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">재사용성</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:70%"></div></div>
+      <div class="score-value">7/10</div>
+    </div>
+  </div>
+  <p class="try-hint">스위치를 눌러 확인해보세요</p>
+</div>
+
+<!-- ===== Summary Comparison ===== -->
+<div class="idea-card" style="background: linear-gradient(135deg, #F7F3FF, #FFFFFF)">
+  <div class="idea-header" style="margin-bottom:12px">
+    <div class="idea-number" style="background:var(--primary-deep)">S</div>
+    <div class="idea-title">종합 비교</div>
+  </div>
+  <table style="width:100%; font-size:11px; border-collapse:collapse">
+    <thead>
+      <tr style="border-bottom:2px solid var(--primary-light)">
+        <th style="text-align:left;padding:6px 4px;color:var(--primary)">#</th>
+        <th style="text-align:left;padding:6px 4px;color:var(--primary)">아이디어</th>
+        <th style="text-align:center;padding:6px 4px;color:var(--primary)">시인성</th>
+        <th style="text-align:center;padding:6px 4px;color:var(--primary)">난이도</th>
+        <th style="text-align:center;padding:6px 4px;color:var(--primary)">추천</th>
+      </tr>
+    </thead>
+    <tbody id="summaryTable">
+    </tbody>
+  </table>
+</div>
+
+<script>
+// --- Shared toggle helper ---
+function toggleSwitch(el) {
+  const isOn = el.classList.contains('on');
+  el.classList.toggle('on');
+  el.classList.toggle('off');
+  return !isOn; // returns new state
+}
+
+// --- Idea 1: Toast ---
+let toast1Timer;
+function toggleIdea1(sw) {
+  const isOn = toggleSwitch(sw);
+  const toast = document.getElementById('toast1');
+  clearTimeout(toast1Timer);
+  toast.querySelector('.toast-icon').textContent = isOn ? '✅' : '⛔';
+  toast.querySelector('.toast-text').textContent = isOn ? '같은 학과 제외 ON' : '같은 학과 제외 OFF';
+  toast.style.background = isOn ? '#49386E' : '#4B5563';
+  toast.classList.add('show');
+  toast1Timer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+// --- Idea 2: Inline Badge ---
+function toggleIdea2(sw) {
+  const isOn = toggleSwitch(sw);
+  const badge = document.getElementById('badge2');
+  badge.textContent = isOn ? 'ON' : 'OFF';
+  badge.className = 'inline-badge ' + (isOn ? 'on' : 'off') + ' changing';
+  setTimeout(() => badge.classList.remove('changing'), 350);
+}
+
+// --- Idea 3: Ripple ---
+function toggleIdea3(sw) {
+  const isOn = toggleSwitch(sw);
+  const ripple = document.getElementById('ripple3');
+  ripple.className = 'ripple-ring ' + (isOn ? 'on' : 'off');
+  void ripple.offsetWidth; // reflow
+  ripple.classList.add('animate');
+  setTimeout(() => ripple.classList.remove('animate'), 600);
+}
+
+// --- Idea 4: Confetti ---
+function toggleIdea4(sw) {
+  const isOn = toggleSwitch(sw);
+  if (!isOn) return;
+  const container = document.getElementById('confetti4');
+  container.innerHTML = '';
+  const colors = ['#7A4AE2','#E2D5FF','#F79009','#F04438','#22C55E','#3871FF','#FF6B9D'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-particle';
+    const angle = (i / 12) * Math.PI * 2;
+    const dist = 20 + Math.random() * 25;
+    const x = Math.cos(angle) * dist;
+    const y = Math.sin(angle) * dist;
+    p.style.setProperty('--end-pos', `translate(${x}px, ${y}px)`);
+    p.style.background = colors[i % colors.length];
+    p.style.width = (3 + Math.random() * 4) + 'px';
+    p.style.height = p.style.width;
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+    container.appendChild(p);
+    void p.offsetWidth;
+    p.classList.add('burst');
+  }
+  setTimeout(() => container.innerHTML = '', 800);
+}
+
+// --- Idea 5: Row Flash ---
+function toggleIdea5(sw) {
+  toggleSwitch(sw);
+  const flash = document.getElementById('flash5');
+  flash.classList.remove('flash');
+  void flash.offsetWidth;
+  flash.classList.add('flash');
+}
+
+// --- Idea 6: Slide Label ---
+let slide6Timer;
+function toggleIdea6(sw) {
+  const isOn = toggleSwitch(sw);
+  const label = document.getElementById('slideLabel6');
+  clearTimeout(slide6Timer);
+  label.textContent = isOn ? 'ON' : 'OFF';
+  label.className = 'slide-label ' + (isOn ? 'on' : 'off') + ' show';
+  slide6Timer = setTimeout(() => {
+    label.classList.remove('show');
+    label.classList.add('hide');
+  }, 1200);
+}
+
+// --- Idea 7: Icon Morph ---
+function toggleIdea7(sw) {
+  const isOn = toggleSwitch(sw);
+  const icon = document.getElementById('morphIcon7');
+  icon.classList.remove('active');
+  void icon.offsetWidth;
+  icon.classList.add('active');
+  icon.querySelector('.emoji-swap').textContent = isOn ? '🚫' : '🎓';
+  icon.style.background = isOn ? '#E2D5FF' : '#FEF3F2';
+  setTimeout(() => icon.classList.remove('active'), 500);
+}
+function toggleIdea7b(sw) {
+  const isOn = toggleSwitch(sw);
+  const icon = document.getElementById('morphIcon7b');
+  icon.classList.remove('active');
+  void icon.offsetWidth;
+  icon.classList.add('active');
+  icon.querySelector('.emoji-swap').textContent = isOn ? '🚫' : '🏫';
+  icon.style.background = isOn ? '#E2D5FF' : '#FFFAEB';
+  setTimeout(() => icon.classList.remove('active'), 500);
+}
+
+// --- Idea 8: Glow Pulse ---
+function toggleIdea8(sw) {
+  const isOn = toggleSwitch(sw);
+  const glow = document.getElementById('glow8');
+  glow.className = 'glow-ring ' + (isOn ? 'on' : 'off');
+  void glow.offsetWidth;
+  glow.classList.add('pulse');
+  setTimeout(() => glow.classList.remove('pulse'), 600);
+}
+
+// --- Idea 9: Check/X ---
+function toggleIdea9(sw) {
+  const isOn = toggleSwitch(sw);
+  const el = document.getElementById('checkx9');
+  el.className = 'check-x-overlay ' + (isOn ? 'on' : 'off');
+  el.textContent = isOn ? '✓' : '✕';
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 600);
+}
+
+// --- Idea 10: Strip + Desc ---
+function toggleIdea10(sw) {
+  const isOn = toggleSwitch(sw);
+  const strip = document.getElementById('strip10');
+  const desc = document.getElementById('desc10');
+  strip.className = 'color-strip ' + (isOn ? 'on' : 'off');
+  void strip.offsetWidth;
+  strip.classList.add('show');
+  desc.textContent = isOn ? '현재: 같은 학과는 제외됩니다 ✓' : '현재: 같은 학과도 매칭됩니다';
+  desc.style.color = isOn ? '#7A4AE2' : '#7C7C7C';
+  setTimeout(() => strip.style.opacity = '0', 2000);
+}
+
+// --- Summary table ---
+const ideas = [
+  { n: 1, name: 'Toast Snackbar',       vis: 9, diff: 2, rec: '★★★' },
+  { n: 2, name: 'Inline Status Badge',  vis: 8, diff: 2, rec: '★★★' },
+  { n: 3, name: 'Ripple Wave',          vis: 7, diff: 4, rec: '★★' },
+  { n: 4, name: 'Confetti Burst',       vis: 9, diff: 5, rec: '★★' },
+  { n: 5, name: 'Row Highlight Flash',  vis: 8, diff: 1, rec: '★★★' },
+  { n: 6, name: 'Slide-in Label',       vis: 7, diff: 2, rec: '★★' },
+  { n: 7, name: 'Icon Morph & Bounce',  vis: 8, diff: 4, rec: '★★' },
+  { n: 8, name: 'Glow Pulse Ring',      vis: 7, diff: 4, rec: '★★★' },
+  { n: 9, name: 'Checkmark / X Pop',    vis: 9, diff: 3, rec: '★★★' },
+  { n: 10, name: 'Edge Strip + Desc',   vis: 8, diff: 2, rec: '★★' },
+];
+const tbody = document.getElementById('summaryTable');
+ideas.forEach(i => {
+  const tr = document.createElement('tr');
+  tr.style.borderBottom = '1px solid var(--border)';
+  const rec3 = i.rec === '★★★';
+  tr.innerHTML = `
+    <td style="padding:5px 4px;font-weight:600;color:var(--primary-deep)">${i.n}</td>
+    <td style="padding:5px 4px;font-weight:${rec3?700:400}">${i.name}</td>
+    <td style="text-align:center;padding:5px 4px">${i.vis}/10</td>
+    <td style="text-align:center;padding:5px 4px">${i.diff}/10</td>
+    <td style="text-align:center;padding:5px 4px;color:var(--primary)">${i.rec}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
