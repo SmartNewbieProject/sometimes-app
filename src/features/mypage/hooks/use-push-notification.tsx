@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Linking, Alert, Platform } from 'react-native';
+import { AppState, Linking, Alert, Platform } from 'react-native';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import {
 	getPushNotificationStatus,
 	enablePushNotification,
 	disablePushNotification,
+	checkNotificationPermissionStatus,
 	getNotificationPermissionStatus,
 } from '@/src/shared/libs/notifications';
 import { useTranslation } from 'react-i18next';
@@ -53,12 +54,23 @@ export const usePushNotification = () => {
 
 		try {
 			if (Platform.OS !== 'web') {
-				const permission = await getNotificationPermissionStatus();
+				const existingPermission = await checkNotificationPermissionStatus();
 
-				if (permission !== 'granted') {
-					setIsEnabled(previousValue); // Rollback
+				if (existingPermission === 'denied') {
+					// 이전에 거부한 경우 — iOS는 재요청 불가, 설정 앱으로 안내
+					setIsEnabled(previousValue);
 					openAppSettings();
 					return;
+				}
+
+				if (existingPermission !== 'granted') {
+					// undetermined — 시스템 다이얼로그 표시
+					const permission = await getNotificationPermissionStatus();
+					if (permission !== 'granted') {
+						// 방금 거부한 경우 — 설정 안내 없이 조용히 롤백
+						setIsEnabled(previousValue);
+						return;
+					}
 				}
 			}
 
@@ -147,6 +159,16 @@ export const usePushNotification = () => {
 
 	useEffect(() => {
 		checkStatus();
+	}, [checkStatus]);
+
+	// iOS 설정 앱에서 복귀 시 알림 권한 변경 사항을 반영합니다.
+	useEffect(() => {
+		const subscription = AppState.addEventListener('change', (nextState) => {
+			if (nextState === 'active') {
+				checkStatus();
+			}
+		});
+		return () => subscription.remove();
 	}, [checkStatus]);
 
 	return {

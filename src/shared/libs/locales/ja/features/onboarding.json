@@ -49,6 +49,14 @@
 		"cta": {
 			"headline": "準備はできましたか?\nワクワクが待っています ✨",
 			"subtext": "次のマッチングまであまり時間がありません。\n今すぐプロフィールを完成させましょう!"
+		},
+		"notification": {
+			"headline": "チャットとマッチング結果の\n通知を受け取りますか?",
+			"subtext": "通知を許可すると新しい出会いを\n素早く見つけられます",
+			"notification_chat": "新しいチャットメッセージ",
+			"notification_chat_body": "相手からメッセージが届いています",
+			"notification_match": "新しいマッチング到着",
+			"notification_match_body": "新しい縁がつながりました"
 		}
 	},
 	"navigation": {

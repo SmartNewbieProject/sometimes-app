@@ -49,6 +49,14 @@
 		"cta": {
 			"headline": "준비됐나요?\n설렘이 기다리고 있어요",
 			"subtext": "다음 매칭까지 얼마 남지 않았어요.\n지금 바로 프로필을 완성해보세요!"
+		},
+		"notification": {
+			"headline": "채팅 메시지, 매칭 결과\n알림을 받으시겠습니까?",
+			"subtext": "알림을 허용하면 새로운 인연을\n가장 빠르게 만날 수 있어요",
+			"notification_chat": "새 채팅 메시지",
+			"notification_chat_body": "상대방이 메시지를 보냈어요",
+			"notification_match": "새 매칭 도착",
+			"notification_match_body": "새로운 인연이 연결됐어요"
 		}
 	},
 	"navigation": {

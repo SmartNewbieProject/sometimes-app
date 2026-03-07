@@ -1,8 +1,11 @@
-import { useMyInfoReferrer } from '@/src/features/my-info/hooks';
 import colors from '@/src/shared/constants/colors';
-import { router } from 'expo-router';
+import {
+	checkNotificationPermissionStatus,
+	registerForPushNotificationsAsync,
+} from '@/src/shared/libs/notifications';
+import { router, useNavigation } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { BackHandler, type LayoutChangeEvent, Platform, StyleSheet, View } from 'react-native';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -17,6 +20,7 @@ import { useOnboardingStorage } from '../hooks/use-onboarding-storage';
 import { SlideCta } from './slide-cta';
 import { SlideLikeGuide } from './slide-like-guide';
 import { SlideMatchingTime } from './slide-matching-time';
+import { SlideNotification } from './slide-notification';
 import { SlideWelcome } from './slide-welcome';
 
 const ALL_SLIDES = [
@@ -24,6 +28,7 @@ const ALL_SLIDES = [
 	{ component: SlideMatchingTime, id: 'matchingTime' },
 	{ component: SlideLikeGuide, id: 'likeGuide' },
 	{ component: SlideCta, id: 'cta' },
+	{ component: SlideNotification, id: 'notification' },
 ];
 
 interface OnboardingScreenProps {
@@ -32,11 +37,39 @@ interface OnboardingScreenProps {
 
 export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 	const insets = useSafeAreaInsets();
+	const navigation = useNavigation();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isTransitioning, setIsTransitioning] = useState(false);
 	const [containerWidth, setContainerWidth] = useState(0);
 	const translateX = useSharedValue(0);
 	const { saveOnboardingComplete } = useOnboardingStorage();
+
+	// source=login/signup일 때 뒤로가기(하드웨어/제스처) 인터셉트
+	useEffect(() => {
+		if (source !== 'login' && source !== 'signup') return;
+
+		// iOS 스와이프 제스처 뒤로가기 인터셉트
+		const unsubscribe = navigation.addListener('beforeRemove', (e: { preventDefault: () => void }) => {
+			e.preventDefault();
+			if (source === 'login') {
+				router.replace('/auth/login');
+			}
+			// source=signup: 뒤로가기 차단만 (회원가입 스택으로 돌아가지 않도록)
+		});
+
+		// Android 하드웨어 뒤로가기 인터셉트
+		const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+			if (source === 'login') {
+				router.replace('/auth/login');
+			}
+			return true; // signup/login 모두 차단
+		});
+
+		return () => {
+			unsubscribe();
+			backHandler.remove();
+		};
+	}, [source, navigation]);
 
 	const activeSlides = useMemo(() => {
 		return ALL_SLIDES;
@@ -80,15 +113,23 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 
 	const handleComplete = async () => {
 		await saveOnboardingComplete();
+
 		if (source === 'login') {
 			router.replace('/auth/login');
 			return;
 		}
-		if (source === 'signup') {
-			useMyInfoReferrer.getState().setReferrer('signup');
-			router.replace('/my-info');
-			return;
+
+		// 신규 가입 플로우: 알림 권한 요청 후 홈 이동
+		// - undetermined: OS 팝업 표시 (사용자가 방금 본 notification 슬라이드가 맥락 제공)
+		// - granted: Samsung 선제 팝업 등으로 이미 허용됨, 토큰만 등록
+		// - denied: 무시하고 홈으로 이동 (홈에서 fallback 모달 대신 수락률 낮아 스킵)
+		if (Platform.OS !== 'web') {
+			const status = await checkNotificationPermissionStatus();
+			if (status !== 'denied') {
+				registerForPushNotificationsAsync().catch(() => {});
+			}
 		}
+
 		router.replace('/home');
 	};
 
@@ -98,11 +139,6 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 			return;
 		}
 		await saveOnboardingComplete();
-		if (source === 'signup') {
-			useMyInfoReferrer.getState().setReferrer('signup');
-			router.replace('/my-info');
-			return;
-		}
 		router.replace('/home');
 	};
 
@@ -114,9 +150,9 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 
 			<View style={styles.slidesOuterContainer} onLayout={handleLayout}>
 				<Animated.View style={[styles.slidesContainer, animatedStyle]}>
-					{activeSlides.map(({ component: SlideComponent }, index) => (
+					{activeSlides.map(({ component: SlideComponent, id }, index) => (
 						<View
-							key={index}
+							key={id}
 							style={[styles.slideWrapper, containerWidth > 0 && { width: containerWidth }]}
 						>
 							{Math.abs(index - currentIndex) <= 1 ? (

@@ -19,30 +19,30 @@ export const useNotificationNavigation = () => {
   const handleDeepLink = (deepLink: string) => {
     try {
       const url = new URL(deepLink);
+      // sometimes://chat/roomId → host='chat', pathname='/roomId'
+      const host = url.host;
+      const id = url.pathname.slice(1); // leading slash 제거
 
-      switch (url.pathname) {
-        case '/chat':
-          const roomId = url.pathname.split('/')[2];
-          if (roomId) {
-            navigation.navigate('ChatRoom' as never, { roomId } as never);
+      switch (host) {
+        case 'chat':
+          if (id) {
+            navigation.navigate('ChatRoom' as never, { roomId: id } as never);
           }
           break;
 
-        case '/profile':
-          const userId = url.pathname.split('/')[2];
-          if (userId) {
-            navigation.navigate('ProfileView' as never, { userId } as never);
+        case 'profile':
+          if (id) {
+            navigation.navigate('ProfileView' as never, { userId: id } as never);
           }
           break;
 
-        case '/community':
-          const articleId = url.pathname.split('/')[1];
-          if (articleId) {
-            navigation.navigate('CommunityArticle' as never, { articleId } as never);
+        case 'community':
+          if (id) {
+            navigation.navigate('CommunityArticle' as never, { articleId: id } as never);
           }
           break;
 
-        case '/discover':
+        case 'discover':
           navigation.navigate('Home' as never);
           break;
 

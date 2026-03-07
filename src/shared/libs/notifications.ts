@@ -21,7 +21,7 @@ Notifications.setNotificationHandler({
 	handleNotification: async () => ({
 		shouldShowAlert: true,
 		shouldPlaySound: true,
-		shouldSetBadge: false,
+		shouldSetBadge: true,
 		shouldShowBanner: true,
 		shouldShowList: true,
 	}),
@@ -30,18 +30,26 @@ Notifications.setNotificationHandler({
 /**
  * 알림 데이터 타입 정의
  */
+export const NOTIFICATION_TYPES = [
+	'comment',
+	'like',
+	'general',
+	'match_like',
+	'match_connection',
+	'reply',
+	'comment_like',
+	'chat_message',
+	'chat_room_created',
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
 export interface NotificationData {
-	type:
-		| 'comment'
-		| 'like'
-		| 'general'
-		| 'match_like'
-		| 'match_connection'
-		| 'reply'
-		| 'comment_like';
+	type: NotificationType;
 	articleId?: string;
 	commentId?: string;
 	userId?: string;
+	roomId?: string;
 	title?: string;
 	body?: string;
 	data?: unknown;
@@ -284,20 +292,26 @@ export async function ensurePushTokenRegistered(
 }
 
 /**
- * 알림 권한 상태를 확인합니다.
+ * 알림 권한 현재 상태를 조회합니다. (시스템 다이얼로그 표시 없음)
+ * denied/granted/undetermined 여부를 판단할 때 사용합니다.
  */
-export async function getNotificationPermissionStatus(): Promise<Notifications.PermissionStatus> {
+export async function checkNotificationPermissionStatus(): Promise<Notifications.PermissionStatus> {
 	const { status } = await Notifications.getPermissionsAsync();
 	return status;
 }
 
 /**
- * 알림 권한을 다시 요청합니다.
+ * 알림 권한을 요청합니다.
+ * - undetermined: 시스템 다이얼로그 표시
+ * - granted/denied: 다이얼로그 없이 현재 상태 즉시 반환 (iOS 캐시 문제 방지)
  */
 export async function requestNotificationPermission(): Promise<Notifications.PermissionStatus> {
 	const { status } = await Notifications.requestPermissionsAsync();
 	return status;
 }
+
+/** @deprecated requestNotificationPermission 사용 권장 */
+export const getNotificationPermissionStatus = requestNotificationPermission;
 
 /**
  * 푸시 알림 상태 응답 타입
@@ -396,6 +410,14 @@ export function handleNotificationTap(data: NotificationData, router: Router): v
 			case 'match_like':
 			case 'match_connection':
 				navigateWithDelay('/post-box/liked-me');
+				break;
+			case 'chat_message':
+			case 'chat_room_created':
+				if (data.roomId) {
+					navigateWithDelay(`/chat/${data.roomId}`);
+				} else {
+					navigateWithDelay('/chat');
+				}
 				break;
 			case 'general':
 				navigateWithDelay('/home');

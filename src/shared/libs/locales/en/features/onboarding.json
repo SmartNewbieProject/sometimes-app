@@ -49,6 +49,14 @@
 		"cta": {
 			"headline": "Ready?\nExcitement awaits ✨",
 			"subtext": "Not much time until next matching.\nComplete your profile right now!"
+		},
+		"notification": {
+			"headline": "Enable notifications for\nchat & match alerts?",
+			"subtext": "Allow notifications so you never\nmiss a new connection",
+			"notification_chat": "New chat message",
+			"notification_chat_body": "Someone sent you a message",
+			"notification_match": "New match arrived",
+			"notification_match_body": "A new connection has been made"
 		}
 	},
 	"navigation": {
