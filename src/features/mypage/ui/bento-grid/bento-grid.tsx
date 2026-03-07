@@ -2,16 +2,17 @@ import FavoriteIcon from '@/assets/icons/favorite.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
 import HelpIcon from '@/assets/icons/help.svg';
 import ImproveProfileIcon from '@/assets/icons/improve-profile.svg';
-import SettingIcon from '@/assets/icons/setting.svg';
 import NotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import { useAuth } from '@/src/features/auth';
 import { useContactBlockEnabled } from '@/src/features/contact-block/queries/use-contact-block-enabled';
+import { IdentityStatusCard } from '@/src/features/jp-identity';
 import {
 	getProfileId,
 	getUniversityVerificationStatus,
 } from '@/src/features/university-verification/apis';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { ImageResources } from '@/src/shared/libs';
+import { isJapanese } from '@/src/shared/libs/local';
 import { UniversityName, getUnivLogo } from '@/src/shared/libs/univ';
 import { Text } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
@@ -24,8 +25,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Path, Circle as SvgCircle } from 'react-native-svg';
-import { IdentityStatusCard } from '@/src/features/jp-identity';
-import { isJapanese } from '@/src/shared/libs/local';
 import { ToggleSettingsTile } from './toggle-settings-tile';
 
 const GAP = 10;
@@ -347,39 +346,18 @@ export const BentoGrid = () => {
 			{/* Row 3: Toggle settings */}
 			<ToggleSettingsTile />
 
-			{/* Row 4: 계정 관리 + 1:1 문의하기 */}
-			<View style={styles.row}>
-				<Pressable
-					style={[styles.row4Tile, styles.flex1]}
-					onPress={() => router.push('/setting/account')}
-				>
-					<View style={styles.row4Header}>
-						<View style={[styles.iconCircle, { backgroundColor: semanticColors.surface.surface }]}>
-							<IconWrapper size={14}>
-								<SettingIcon />
-							</IconWrapper>
-						</View>
-						<Text style={styles.row4Label}>{t('features.mypage.bento.account')}</Text>
+			{/* Row 4: 1:1 문의하기 */}
+			<Pressable style={styles.row4Tile} onPress={() => router.push('/support-chat' as never)}>
+				<View style={styles.row4Header}>
+					<View style={[styles.iconCircle, { backgroundColor: semanticColors.surface.secondary }]}>
+						<IconWrapper size={14}>
+							<HelpIcon />
+						</IconWrapper>
 					</View>
-					<Text style={styles.row4Desc}>{t('features.mypage.bento.account_desc')}</Text>
-				</Pressable>
-				<Pressable
-					style={[styles.row4Tile, styles.flex1]}
-					onPress={() => router.push('/support-chat' as never)}
-				>
-					<View style={styles.row4Header}>
-						<View
-							style={[styles.iconCircle, { backgroundColor: semanticColors.surface.secondary }]}
-						>
-							<IconWrapper size={14}>
-								<HelpIcon />
-							</IconWrapper>
-						</View>
-						<Text style={styles.row4Label}>{t('features.mypage.bento.support')}</Text>
-					</View>
-					<Text style={styles.row4Desc}>{t('features.mypage.bento.support_desc')}</Text>
-				</Pressable>
-			</View>
+					<Text style={styles.row4Label}>{t('features.mypage.bento.support')}</Text>
+				</View>
+				<Text style={styles.row4Desc}>{t('features.mypage.bento.support_desc')}</Text>
+			</Pressable>
 
 			{/* Row 5: My 활동 (4항목 아이콘 바) */}
 			<Text style={styles.sectionTitle}>{t('features.mypage.my_activity.title')}</Text>

@@ -112,11 +112,10 @@ export function usePhotoManagement() {
 			await refetch();
 			emitToast('사진이 교체되었습니다. 관리자 승인 후 반영됩니다');
 		} catch (error: any) {
-			if (handleProfileImageError(error, showModal, t)) {
+			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			const errorMessage = error?.message || 'hooks.사진_교체에_실패했습니다';
-			emitToast(errorMessage);
+			emitToast(error?.response?.data?.error || '사진 교체에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}
@@ -135,14 +134,10 @@ export function usePhotoManagement() {
 
 			emitToast('사진이 추가되었습니다. 관리자 승인 후 반영됩니다');
 		} catch (error: any) {
-			if (handleProfileImageError(error, showModal, t)) {
+			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			if (error?.response?.status === 409) {
-				emitToast('해당 슬롯에 이미 승인된 사진이 있습니다. 교체 기능을 사용하세요');
-			} else {
-				emitToast('사진 추가에 실패했습니다');
-			}
+			emitToast(error?.response?.data?.error || '사진 추가에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}
@@ -199,15 +194,10 @@ export function usePhotoManagement() {
 				},
 			});
 		} catch (error: any) {
-			if (handleProfileImageError(error, showModal, t)) {
+			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			if (error?.errorCode === 'MAX_RETRY_EXCEEDED') {
-				emitToast('최대 재심사 횟수를 초과했습니다. 고객센터에 문의하세요');
-			} else {
-				const errorMessage = error?.message || 'hooks.사진_재업로드에_실패했습니다';
-				emitToast(errorMessage);
-			}
+			emitToast(error?.response?.data?.error || '사진 재업로드에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}

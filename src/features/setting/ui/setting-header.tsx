@@ -22,7 +22,7 @@ function SettingHeader() {
             if (path === "/setting") {
               router.navigate("/my");
             } else {
-              router.navigate("/setting");
+              router.back();
             }
           }}
           style={styles.arrowContainer}

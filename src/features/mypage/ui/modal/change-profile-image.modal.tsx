@@ -7,6 +7,7 @@ import Layout from '@/src/features/layout';
 import { DefaultLayout } from '@/src/features/layout/ui';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { GuideView, guideHeight, useOverlay } from '@/src/shared/hooks/use-overlay';
+import { useToast } from '@/src/shared/hooks/use-toast';
 
 import { ImageSelector, Text } from '@/src/shared/ui';
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,6 +35,7 @@ const { height } = Dimensions.get('window');
 
 export const ChangeProfileImageModal = ({ onCloseModal }: ChangeProfileImageModalProps) => {
 	const { hideModal, showErrorModal, showModal } = useModal();
+	const { emitToast } = useToast();
 	const insets = useSafeAreaInsets();
 	const { profileDetails } = useAuth();
 	const queryClient = useQueryClient();
@@ -141,7 +143,7 @@ export const ChangeProfileImageModal = ({ onCloseModal }: ChangeProfileImageModa
 			}, 100);
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (error: any) {
-			if (handleProfileImageError(error, showModal, t)) {
+			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
 			showErrorModal(

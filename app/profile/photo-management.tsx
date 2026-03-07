@@ -24,6 +24,7 @@ export default function PhotoManagementPage() {
   const { profileDetails } = useAuth();
   const {
     slots,
+    photos,
     approvedPhotos,
     isLoading,
     handleChangePhoto,
@@ -158,7 +159,7 @@ export default function PhotoManagementPage() {
         </View>
 
         <OppositeGenderPreview
-          uploadedCount={approvedPhotos.length}
+          uploadedCount={photos.length}
           userGender={profileDetails?.gender}
         />
       </ScrollView>

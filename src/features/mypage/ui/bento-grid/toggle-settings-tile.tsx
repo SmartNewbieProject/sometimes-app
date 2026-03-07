@@ -184,7 +184,11 @@ function AnimatedNotifCard({
 	children,
 }: { index: number; isFaded: boolean; started: boolean; children: React.ReactNode }) {
 	const animStyle = useNativeNotifAnim?.(index, isFaded, started);
-	return <ReanimatedView style={animStyle}>{children}</ReanimatedView>;
+	const AnimatedView = ReanimatedView;
+	if (!AnimatedView || !animStyle) {
+		return <>{children}</>;
+	}
+	return <AnimatedView style={animStyle}>{children}</AnimatedView>;
 }
 
 const CONFETTI_COLORS = [
@@ -199,7 +203,11 @@ const CONFETTI_COLORS = [
 
 function AnimatedBadge({ value, children }: { value: boolean; children: React.ReactNode }) {
 	const animStyle = useNativeBadgePop?.(value);
-	return <ReanimatedView style={animStyle}>{children}</ReanimatedView>;
+	const AnimatedView = ReanimatedView;
+	if (!AnimatedView || !animStyle) {
+		return <>{children}</>;
+	}
+	return <AnimatedView style={animStyle}>{children}</AnimatedView>;
 }
 
 function StatusBadge({ value }: { value: boolean }) {
@@ -331,17 +339,17 @@ export const ToggleSettingsTile = () => {
 	const [pushConfetti, setPushConfetti] = useState(0);
 
 	const handleToggleDept = (val: boolean) => {
-		toggleAvoidDepartment(val);
+		toggleAvoidDepartment();
 		if (val) setDeptConfetti(Date.now());
 	};
 
 	const handleToggleUni = (val: boolean) => {
-		toggleAvoidUniversity(val);
+		toggleAvoidUniversity();
 		if (val) setUniConfetti(Date.now());
 	};
 
 	const handleTogglePush = (val: boolean) => {
-		togglePush(val);
+		togglePush();
 		if (val) setPushConfetti(Date.now());
 	};
 
@@ -450,9 +458,9 @@ export const ToggleSettingsTile = () => {
 				</View>
 				<View style={styles.textWrap}>
 					<View style={styles.labelRow}>
-						<Text style={[styles.label, hasMissed && styles.labelOff]}>
-							{t('features.mypage.notification.push_notification')}
-						</Text>
+							<Text style={[styles.label, ...(hasMissed ? [styles.labelOff] : [])]}>
+								{t('features.mypage.notification.push_notification')}
+							</Text>
 						<StatusBadge value={!pushOff} />
 						{hasMissed && (
 							<View style={styles.missedBadge}>

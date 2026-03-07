@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Text, Button, Input } from '@/src/shared/ui';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { Button, Input, Text } from '@/src/shared/ui';
 import { Ionicons } from '@expo/vector-icons';
+import type React from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface MaskedContact {
 	id: string;
@@ -36,42 +37,46 @@ const maskPhoneNumber = (phone: string): string => {
 	return phone.replace(/(\d{2})(\d+)(\d{2})/, '$1XX-XX$3');
 };
 
-const ContactItem: React.FC<{
+interface ContactItemProps {
 	contact: MaskedContact;
 	isSelected: boolean;
 	onToggle: (id: string) => void;
-}> = ({ contact, isSelected, onToggle }) => (
-	<TouchableOpacity
-		style={styles.contactItem}
-		onPress={() => onToggle(contact.id)}
-		activeOpacity={0.7}
-	>
-		<View style={styles.leftContent}>
-			<Ionicons
-				name={isSelected ? 'checkbox' : 'square-outline'}
-				size={24}
-				color={isSelected ? colors.primaryPurple : colors.lightGray}
-			/>
-			<View style={styles.avatarContainer}>
-				<Image
-					source={require('@/src/assets/images/contact-block/contact_icon.png')}
-					style={styles.avatarImage}
-					resizeMode="contain"
+}
+
+const ContactItem = memo(function ContactItem({ contact, isSelected, onToggle }: ContactItemProps) {
+	return (
+		<TouchableOpacity
+			style={styles.contactItem}
+			onPress={() => onToggle(contact.id)}
+			activeOpacity={0.7}
+		>
+			<View style={styles.leftContent}>
+				<Ionicons
+					name={isSelected ? 'checkbox' : 'square-outline'}
+					size={24}
+					color={isSelected ? colors.primaryPurple : colors.lightGray}
 				/>
-			</View>
-			<View style={styles.contactInfo}>
-				{contact.name && (
-					<Text size="md" weight="semibold" textColor="black">
-						{contact.name}
+				<View style={styles.avatarContainer}>
+					<Image
+						source={require('@/src/assets/images/contact-block/contact_icon.png')}
+						style={styles.avatarImage}
+						resizeMode="contain"
+					/>
+				</View>
+				<View style={styles.contactInfo}>
+					{contact.name && (
+						<Text size="md" weight="semibold" textColor="black">
+							{contact.name}
+						</Text>
+					)}
+					<Text size="sm" textColor="gray">
+						{contact.maskedPhone}
 					</Text>
-				)}
-				<Text size="sm" textColor="gray">
-					{contact.maskedPhone}
-				</Text>
+				</View>
 			</View>
-		</View>
-	</TouchableOpacity>
-);
+		</TouchableOpacity>
+	);
+});
 
 export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 	contacts,
@@ -107,15 +112,28 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 		);
 	}, [maskedContacts, searchQuery]);
 
-	const toggleSelection = (id: string) => {
-		const newSelected = new Set(selectedIds);
-		if (newSelected.has(id)) {
-			newSelected.delete(id);
-		} else {
-			newSelected.add(id);
-		}
-		setSelectedIds(newSelected);
-	};
+	const toggleSelection = useCallback((id: string) => {
+		setSelectedIds((prevSelected) => {
+			const nextSelected = new Set(prevSelected);
+			if (nextSelected.has(id)) {
+				nextSelected.delete(id);
+			} else {
+				nextSelected.add(id);
+			}
+			return nextSelected;
+		});
+	}, []);
+
+	const renderContactItem = useCallback(
+		({ item }: { item: MaskedContact }) => (
+			<ContactItem
+				contact={item}
+				isSelected={selectedIds.has(item.id)}
+				onToggle={toggleSelection}
+			/>
+		),
+		[selectedIds, toggleSelection],
+	);
 
 	const handleSelectAll = () => {
 		const allFilteredIds = filteredContacts.map((c) => c.id);
@@ -125,10 +143,14 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 
 		if (allFilteredSelected) {
 			// Deselect all visible
-			allFilteredIds.forEach((id) => newSelected.delete(id));
+			for (const id of allFilteredIds) {
+				newSelected.delete(id);
+			}
 		} else {
 			// Select all visible
-			allFilteredIds.forEach((id) => newSelected.add(id));
+			for (const id of allFilteredIds) {
+				newSelected.add(id);
+			}
 		}
 		setSelectedIds(newSelected);
 	};
@@ -138,8 +160,7 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 	};
 
 	const isAllFilteredSelected =
-		filteredContacts.length > 0 &&
-		filteredContacts.every((c) => selectedIds.has(c.id));
+		filteredContacts.length > 0 && filteredContacts.every((c) => selectedIds.has(c.id));
 
 	return (
 		<View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
@@ -176,22 +197,18 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 			<FlatList
 				data={filteredContacts}
 				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
-					<ContactItem
-						contact={item}
-						isSelected={selectedIds.has(item.id)}
-						onToggle={toggleSelection}
-					/>
-				)}
+				renderItem={renderContactItem}
 				style={styles.list}
 				contentContainerStyle={styles.listContent}
 				showsVerticalScrollIndicator={false}
+				initialNumToRender={12}
+				maxToRenderPerBatch={12}
+				windowSize={7}
+				removeClippedSubviews
 				ListEmptyComponent={
 					<View style={styles.emptyContainer}>
 						<Text size="md" textColor="gray" style={styles.emptyText}>
-							{searchQuery
-								? '검색 결과가 없어요.'
-								: '연락처에서 썸타임 회원을 찾지 못했어요.'}
+							{searchQuery ? '검색 결과가 없어요.' : '연락처에서 썸타임 회원을 찾지 못했어요.'}
 						</Text>
 					</View>
 				}
@@ -213,9 +230,7 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 					onPress={handleConfirm}
 					disabled={isLoading}
 				>
-					{isLoading
-					? t('features.contact-block.ui.설정_중')
-					: `${selectedIds.size}명 차단하기`}
+					{isLoading ? t('features.contact-block.ui.설정_중') : `${selectedIds.size}명 차단하기`}
 				</Button>
 
 				<Button
