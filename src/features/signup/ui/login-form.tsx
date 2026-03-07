@@ -6,7 +6,6 @@ import {
 } from '@/src/shared/constants/mixpanel-events';
 import { useMixpanel } from '@/src/shared/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useToast } from '@/src/shared/hooks/use-toast';
 import { env } from '@/src/shared/libs/env';
 import { isJapanese } from '@/src/shared/libs/local';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -32,6 +31,7 @@ import { PrivacyNotice } from '../../auth/ui/privacy-notice';
 import { checkPhoneNumberBlacklist } from '../apis';
 import useSignupProgress from '../hooks/use-signup-progress';
 import AppleLoginButton from './apple-login-button';
+import { RollingHookMessage } from './rolling-hook-message';
 import { SignupFastBadge } from './signup-fast-badge';
 import { SocialLoginIcons } from './social-login-icons';
 import UniversityLogos from './university-logos';
@@ -55,7 +55,7 @@ export function LoginFormContent() {
 	return (
 		<View style={loginFormStyles.container}>
 			<View style={loginFormStyles.universityLogos}>
-				<UniversityLogos logoSize={64} country={country} />
+				<UniversityLogos country={country} />
 			</View>
 			<View style={loginFormStyles.slideToAboutWrapper}>
 				<SlideToAbout onAction={() => router.push('/onboarding?source=login')} />
@@ -140,16 +140,6 @@ function JpLoginForm() {
 function KrLoginForm() {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { emitToast } = useToast();
-
-	useEffect(() => {
-		const passIcon = (
-			<View style={passCircleStyles.circle}>
-				<RNText style={passCircleStyles.text}>PASS</RNText>
-			</View>
-		);
-		emitToast(t('features.signup.ui.login_form.pass_migration_notice'), passIcon, 5000);
-	}, []);
 
 	const isIOS = Platform.OS === 'ios';
 
@@ -163,7 +153,7 @@ function KrLoginForm() {
 				<SlideToAbout onAction={() => router.push('/onboarding?source=login')} />
 			</View>
 
-			<SignupFastBadge />
+			<SignupFastBadge style={{ position: 'absolute', top: -52 }} />
 
 			<View style={loginFormStyles.buttonsContainer}>
 				<View style={loginFormStyles.buttonWrapper}>
@@ -201,11 +191,11 @@ const loginFormStyles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	universityLogos: {
-		marginBottom: 24,
+		marginBottom: 12,
 	},
 	slideToAboutWrapper: {
 		width: 330,
-		marginBottom: 24,
+		marginBottom: 12,
 	},
 	buttonsContainer: {
 		width: '100%',
@@ -214,6 +204,12 @@ const loginFormStyles = StyleSheet.create({
 	},
 	buttonWrapper: {
 		marginBottom: 15,
+		alignItems: 'center',
+	},
+	kakaoCaption: {
+		marginTop: 6,
+		color: '#997700',
+		textAlign: 'center',
 	},
 	dividerContainer: {
 		flexDirection: 'row',
@@ -238,25 +234,9 @@ const loginFormStyles = StyleSheet.create({
 	privacyNotice: {
 		width: '100%',
 		paddingHorizontal: 24,
-		marginTop: 32,
-		paddingTop: 24,
-		marginBottom: 8,
-	},
-});
-
-const passCircleStyles = StyleSheet.create({
-	circle: {
-		width: 48,
-		height: 48,
-		borderRadius: 24,
-		backgroundColor: '#FF3A4A',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	text: {
-		color: '#FFFFFF',
-		fontSize: 12,
-		fontWeight: '800',
+		marginTop: 12,
+		paddingTop: 8,
+		marginBottom: 4,
 	},
 });
 
@@ -798,31 +778,14 @@ const devLoginStyles = StyleSheet.create({
 
 function KrLoginFormButtons() {
 	const { t } = useTranslation();
-	const { emitToast } = useToast();
 	const isIOS = Platform.OS === 'ios';
-
-	useEffect(() => {
-		const passIcon = (
-			<View style={passCircleStyles.circle}>
-				<RNText style={passCircleStyles.text}>PASS</RNText>
-			</View>
-		);
-		emitToast(t('features.signup.ui.login_form.pass_migration_notice'), passIcon, 5000);
-	}, []);
 
 	return (
 		<View style={loginFormStyles.container}>
-			<SignupFastBadge />
+			<RollingHookMessage />
 			<View style={loginFormStyles.buttonsContainer}>
-				<View style={loginFormStyles.buttonWrapper}>
-					<KakaoLoginComponent />
-				</View>
-				{__DEV__ && (
-					<View style={loginFormStyles.buttonWrapper}>
-						<DevLoginButton />
-					</View>
-				)}
 				<Show when={isIOS}>
+					<SocialLoginIcons />
 					<View style={loginFormStyles.dividerContainer}>
 						<View style={loginFormStyles.dividerLine} />
 						<Text size="sm" style={loginFormStyles.dividerText}>
@@ -830,8 +793,18 @@ function KrLoginFormButtons() {
 						</Text>
 						<View style={loginFormStyles.dividerLine} />
 					</View>
-					<SocialLoginIcons />
 				</Show>
+				{__DEV__ && (
+					<View style={loginFormStyles.buttonWrapper}>
+						<DevLoginButton />
+					</View>
+				)}
+				<View style={loginFormStyles.buttonWrapper}>
+					<KakaoLoginComponent />
+					<Text size="12" weight="medium" style={loginFormStyles.kakaoCaption}>
+						{t('features.signup.ui.login_form.fast_signup_badge')}
+					</Text>
+				</View>
 			</View>
 			<View style={loginFormStyles.privacyNotice}>
 				<PrivacyNotice />

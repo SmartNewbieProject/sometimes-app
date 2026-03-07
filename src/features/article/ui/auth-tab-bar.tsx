@@ -26,15 +26,15 @@ export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 	};
 
 	return (
-		<View style={[styles.container, { paddingBottom: Math.max(insets.bottom - 24, 0) }]}>
+		<View style={[styles.container, { top: insets.top + 144 }]}>
 			<Pressable
-				style={[styles.tab, activeTab === 'login' && styles.activeTab]}
+				style={[styles.tab, activeTab === 'login' ? styles.activeTab : styles.inactiveTab]}
 				onPress={() => handleTabChange('login')}
 			>
 				<Ionicons
 					name={activeTab === 'login' ? 'person' : 'person-outline'}
-					size={22}
-					color={activeTab === 'login' ? colors.brand.primary : colors.text.muted}
+					size={18}
+					color={activeTab === 'login' ? '#FFFFFF' : colors.text.muted}
 				/>
 				<Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>
 					{t('features.auth.auth_tab_bar.login')}
@@ -42,15 +42,15 @@ export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 			</Pressable>
 
 			<Pressable
-				style={[styles.tab, activeTab === 'story' && styles.activeTab]}
+				style={[styles.tab, styles.storyTab, activeTab === 'story' ? styles.activeTab : styles.inactiveTab, { marginTop: 6 }]}
 				onPress={() => handleTabChange('story')}
 			>
 				<Ionicons
 					name={activeTab === 'story' ? 'book' : 'book-outline'}
-					size={22}
-					color={activeTab === 'story' ? colors.brand.primary : colors.text.muted}
+					size={18}
+					color={activeTab === 'story' ? '#FFFFFF' : colors.text.muted}
 				/>
-				<Text style={[styles.tabText, activeTab === 'story' && styles.activeTabText]}>
+				<Text style={[styles.tabText, activeTab === 'story' && styles.activeTabText]} numberOfLines={2}>
 					{t('features.auth.auth_tab_bar.story')}
 				</Text>
 			</Pressable>
@@ -60,29 +60,44 @@ export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 
 const styles = StyleSheet.create({
 	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: colors.surface.background,
-		borderTopWidth: 1,
-		borderTopColor: colors.border.smooth,
-		paddingTop: 8,
+		position: 'absolute',
+		right: 0,
+		flexDirection: 'column',
+		alignItems: 'flex-end',
 	},
 	tab: {
-		flex: 1,
+		width: 56,
+		paddingVertical: 10,
+		paddingLeft: 10,
+		paddingRight: 12,
+		borderTopLeftRadius: 14,
+		borderBottomLeftRadius: 14,
 		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 8,
-		marginBottom: 4,
 		gap: 4,
+		shadowColor: '#000',
+		shadowOffset: { width: -2, height: 2 },
+		shadowOpacity: 0.12,
+		shadowRadius: 6,
+		elevation: 4,
 	},
-	activeTab: {},
+	storyTab: {
+		width: 76,
+		paddingVertical: 14,
+	},
+	activeTab: {
+		backgroundColor: colors.brand.primary,
+	},
+	inactiveTab: {
+		backgroundColor: 'rgba(255, 255, 255, 0.92)',
+	},
 	tabText: {
-		fontSize: 11,
+		fontSize: 9,
 		color: colors.text.muted,
 		fontWeight: '500',
+		textAlign: 'center',
 	},
 	activeTabText: {
-		color: colors.brand.primary,
+		color: '#FFFFFF',
 		fontWeight: '600',
 	},
 });

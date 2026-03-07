@@ -87,6 +87,20 @@
 		"title_2": "どう思いますか？",
 		"loading": "選好を読み込んでいます"
 	},
+	"military": {
+		"tooltip_0_title": "除隊済みの方がいいです",
+		"tooltip_0_desc_1": "兵役を終えた人を好みます",
+		"tooltip_0_desc_2": "責任感と成熟さを大切にしています",
+		"tooltip_0_desc_3": "軍隊経験のある方の方が合いそうです",
+		"tooltip_1_title": "こだわりません",
+		"tooltip_1_desc_1": "兵役の有無は重要な基準ではありません",
+		"tooltip_1_desc_2": "除隊済みでも未除隊でも構いません",
+		"tooltip_1_desc_3": "他の価値観や性格の方が大事です",
+		"tooltip_2_title": "未除隊でも大丈夫です",
+		"tooltip_2_desc_1": "兵役の有無にこだわりません",
+		"tooltip_2_desc_2": "様々な事情で未除隊の場合もあると思います",
+		"tooltip_2_desc_3": "個人の状況を理解し、尊重します"
+	},
 	"tattoo": {
 		"no_tattoo": "タトゥーなし",
 		"dont_care": "こだわらない",

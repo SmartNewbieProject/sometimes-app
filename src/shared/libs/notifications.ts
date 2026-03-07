@@ -1,11 +1,12 @@
 import i18n from '@/src/shared/libs/i18n';
-import messaging from '@react-native-firebase/messaging';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import type { Router } from 'expo-router';
 import { Platform } from 'react-native';
 import axiosClient from './axios';
+
+const isExpoGo = Constants.appOwnership === 'expo';
 
 // 상수 정의
 const NOTIFICATION_CHANNELS = {
@@ -161,9 +162,10 @@ async function registerPushToken(pushToken: string): Promise<void> {
  * FCM 토큰을 획득하여 백엔드에 등록하고, OTA 업데이트 토픽을 구독합니다.
  */
 export async function registerFcmTokenAsync(): Promise<void> {
-	if (!Device.isDevice || Platform.OS === 'web') return;
+	if (isExpoGo || !Device.isDevice || Platform.OS === 'web') return;
 
 	try {
+		const messaging = require('@react-native-firebase/messaging').default;
 		const fcmToken = await messaging().getToken();
 		if (!fcmToken) return;
 

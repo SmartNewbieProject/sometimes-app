@@ -9,10 +9,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedKeyboard,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
 interface SomemateInputProps {
@@ -22,13 +19,7 @@ interface SomemateInputProps {
 export function SomemateInput({ onSend }: SomemateInputProps) {
   const { t } = useTranslation();
   const [chat, setChat] = useState("");
-
-  const keyboard = useAnimatedKeyboard();
-
-  const animatedKeyboardStyles = useAnimatedStyle(() => ({
-    paddingBottom:
-      Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
-  }));
+  const insets = useSafeAreaInsets();
 
   const handleSend = useCallback(async () => {
     if (chat === "") {
@@ -44,8 +35,8 @@ export function SomemateInput({ onSend }: SomemateInputProps) {
   }, [chat, onSend]);
 
   return (
-    <Animated.View
-      style={[styles.container, animatedKeyboardStyles]}
+    <View
+      style={[styles.container, { paddingBottom: Math.max(insets.bottom, 12) }]}
     >
       <View style={styles.inputContainer}>
         <TextInput
@@ -65,7 +56,7 @@ export function SomemateInput({ onSend }: SomemateInputProps) {
           <View style={{ width: 32, height: 32 }} />
         )}
       </View>
-    </Animated.View>
+    </View>
   );
 }
 

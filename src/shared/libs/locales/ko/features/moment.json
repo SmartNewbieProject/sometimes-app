@@ -71,6 +71,17 @@
 		"blocked_messages": {
 			"no_question": "오늘은 질문이 없습니다. 내일 다시 방문해주세요.",
 			"not_allowed": "오늘의 질문에 답변할 수 없습니다. 내일 다시 시도해주세요."
+		},
+		"challenge_card": {
+			"weekly_challenge": "이번 주 챌린지",
+			"progress_label": "{{answered}}/{{total}} 완료",
+			"go_answer": "답변하러 가기",
+			"today_done": "오늘 답변 완료!",
+			"come_tomorrow": "내일 또 도전해요",
+			"completed_title": "이번 주 챌린지 완주!",
+			"completed_subtitle": "5개 질문 모두 답변했어요",
+			"completed_reward": "보상 젬 획득!",
+			"waiting": "다음 질문 대기 중"
 		}
 	},
 	"question_detail": {

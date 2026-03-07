@@ -1,5 +1,5 @@
-import colors from '@/src/shared/constants/colors';
 import { Text } from '@/src/shared/ui';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Easing, StyleSheet, View, type ViewStyle } from 'react-native';
@@ -69,17 +69,22 @@ export function SignupFastBadge({ message, direction = 'down', style }: SignupFa
 			]}
 		>
 			{isReverse && <View style={getTailStyle()} />}
-			<View style={styles.badge}>
-				<Text size="sm" weight="medium" textColor="purple">
+			<LinearGradient
+				colors={['#FFFBCC', '#FEE500']}
+				start={{ x: 0, y: 0 }}
+				end={{ x: 1, y: 0 }}
+				style={styles.badge}
+			>
+				<Text size="sm" weight="semibold" style={styles.badgeText}>
 					{displayMessage}
 				</Text>
-			</View>
+			</LinearGradient>
 			{!isReverse && <View style={getTailStyle()} />}
 		</Animated.View>
 	);
 }
 
-const tailColor = `${colors.brand.primary}80`;
+const tailColor = '#FEE500';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -88,12 +93,18 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	badge: {
-		borderWidth: 1,
-		borderColor: tailColor,
 		borderRadius: 20,
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		backgroundColor: 'transparent',
+		paddingHorizontal: 18,
+		paddingVertical: 9,
+		shadowColor: '#FEE500',
+		shadowOffset: { width: 0, height: 3 },
+		shadowOpacity: 0.45,
+		shadowRadius: 8,
+		elevation: 5,
+	},
+	badgeText: {
+		color: '#1A1A1A',
+		fontWeight: '700',
 	},
 	tailDown: {
 		width: 0,

@@ -7,7 +7,7 @@ import { Text } from '@/src/shared/ui/text';
 import { Image } from 'expo-image';
 import { router, usePathname } from 'expo-router';
 import React, { type ReactNode, useCallback } from 'react';
-import { Text as RNText, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text as RNText, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CommunitySelected from '@/assets/icons/nav/community-selected.svg';
@@ -137,7 +137,7 @@ export function BottomNavigation() {
 		[incrementNavClickCount, showPromptForNavClick],
 	);
 	return (
-		<View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
+		<View style={[styles.container, { paddingBottom: insets.bottom + (Platform.OS === 'android' ? 24 : 16) }]}>
 			<View style={styles.navContainer}>
 				{navigationItems
 					.filter((item) => item.name !== 'moment' || canAccessMoment)

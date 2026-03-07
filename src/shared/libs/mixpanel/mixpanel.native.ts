@@ -4,8 +4,10 @@
  */
 
 import { Mixpanel } from 'mixpanel-react-native';
-import { MPSessionReplay, MPSessionReplayConfig, MPSessionReplayMask } from '@mixpanel/react-native-session-replay';
+import Constants from 'expo-constants';
 import type { MixpanelAdapter } from './types';
+
+const isExpoGo = Constants.appOwnership === 'expo';
 
 class MixpanelNative implements MixpanelAdapter {
   private initialized = false;
@@ -18,18 +20,22 @@ class MixpanelNative implements MixpanelAdapter {
       this.initialized = true;
       console.log('[Mixpanel Native] Initialized successfully');
 
-      // Session Replay 초기화 (fire-and-forget)
-      const config = new MPSessionReplayConfig({
-        wifiOnly: false,
-        autoStartRecording: true,
-        recordingSessionsPercent: 100,
-        autoMaskedViews: [MPSessionReplayMask.Text, MPSessionReplayMask.Image],
-        flushInterval: 10,
-        enableLogging: false,
-      });
-      MPSessionReplay.initialize(token, 'anonymous', config)
-        .then(() => console.log('[Mixpanel Session Replay] Initialized successfully'))
-        .catch((error: unknown) => console.warn('[Mixpanel Session Replay] Init failed:', error));
+      // Session Replay 초기화 (fire-and-forget) — Expo Go에서는 스킵
+      if (!isExpoGo) {
+        const { MPSessionReplay, MPSessionReplayConfig, MPSessionReplayMask } =
+          require('@mixpanel/react-native-session-replay');
+        const config = new MPSessionReplayConfig({
+          wifiOnly: false,
+          autoStartRecording: true,
+          recordingSessionsPercent: 100,
+          autoMaskedViews: [MPSessionReplayMask.Text, MPSessionReplayMask.Image],
+          flushInterval: 10,
+          enableLogging: false,
+        });
+        MPSessionReplay.initialize(token, 'anonymous', config)
+          .then(() => console.log('[Mixpanel Session Replay] Initialized successfully'))
+          .catch((error: unknown) => console.warn('[Mixpanel Session Replay] Init failed:', error));
+      }
     } catch (error) {
       console.error('[Mixpanel Native] Initialization error:', error);
     }
@@ -86,10 +92,13 @@ class MixpanelNative implements MixpanelAdapter {
       console.log('[Mixpanel Native] Identifying user:', userId);
       this.mixpanel.identify(userId);
 
-      // Session Replay 사용자 연동
-      MPSessionReplay.identify(userId).catch((error: unknown) =>
-        console.warn('[Mixpanel Session Replay] Identify failed:', error),
-      );
+      // Session Replay 사용자 연동 — Expo Go에서는 스킵
+      if (!isExpoGo) {
+        const { MPSessionReplay } = require('@mixpanel/react-native-session-replay');
+        MPSessionReplay.identify(userId).catch((error: unknown) =>
+          console.warn('[Mixpanel Session Replay] Identify failed:', error),
+        );
+      }
     } catch (error) {
       console.error('[Mixpanel Native] Identify error:', {
         userId,

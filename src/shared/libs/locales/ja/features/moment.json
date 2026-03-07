@@ -71,6 +71,17 @@
 		"blocked_messages": {
 			"no_question": "今日は質問がありません。明日また来てください。",
 			"not_allowed": "今日の質問に回答できません。明日もう一度お試しください。"
+		},
+		"challenge_card": {
+			"weekly_challenge": "今週のチャレンジ",
+			"progress_label": "{{answered}}/{{total}} 完了",
+			"go_answer": "回答しに行く",
+			"today_done": "今日の回答完了！",
+			"come_tomorrow": "また明日チャレンジしてね",
+			"completed_title": "今週のチャレンジ完走！",
+			"completed_subtitle": "5つの質問すべてに答えました",
+			"completed_reward": "報酬ジェム獲得！",
+			"waiting": "次の質問を待っています"
 		}
 	},
 	"question_detail": {

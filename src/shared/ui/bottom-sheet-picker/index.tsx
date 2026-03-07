@@ -20,6 +20,7 @@ import Animated, {
 	Easing,
 	cancelAnimation,
 	runOnJS,
+	useAnimatedKeyboard,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
@@ -468,12 +469,19 @@ function NativeBottomSheetPicker({
 		[onSelect, handleClose],
 	);
 
+	const keyboard = useAnimatedKeyboard();
+
 	const backdropStyle = useAnimatedStyle(() => ({
 		opacity: backdropOpacity.value,
 	}));
 
+	const containerStyle = useAnimatedStyle(() => ({
+		paddingBottom: keyboard.height.value,
+	}));
+
 	const sheetStyle = useAnimatedStyle(() => ({
 		transform: [{ translateY: translateY.value }],
+		height: Math.max(300, SHEET_HEIGHT - keyboard.height.value),
 	}));
 
 	const renderItem = useCallback(
@@ -533,7 +541,7 @@ function NativeBottomSheetPicker({
 			onRequestClose={handleClose}
 			statusBarTranslucent
 		>
-			<View style={styles.container}>
+			<Animated.View style={[styles.container, containerStyle]}>
 				<TouchableWithoutFeedback onPress={handleClose}>
 					<Animated.View style={[styles.backdrop, backdropStyle]} />
 				</TouchableWithoutFeedback>
@@ -659,7 +667,7 @@ function NativeBottomSheetPicker({
 						</>
 					)}
 				</Animated.View>
-			</View>
+			</Animated.View>
 		</Modal>
 	);
 }
@@ -681,7 +689,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
 	sheet: {
-		height: SHEET_HEIGHT,
+		maxHeight: SHEET_HEIGHT,
 		backgroundColor: semanticColors.surface.background,
 		borderTopLeftRadius: 24,
 		borderTopRightRadius: 24,

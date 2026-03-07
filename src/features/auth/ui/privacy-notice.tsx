@@ -1,7 +1,7 @@
 import colors from "@constants/colors";
 import { Text } from "@/src/shared/ui/text";
 import { useState } from "react";
-import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Linking, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppleReviewModal } from "./apple-review-modal";
 import { useTranslation } from "react-i18next";
 import { isJapanese } from "@/src/shared/libs/local";
@@ -23,32 +23,27 @@ export const PrivacyNotice = () => {
   if (isJP) {
     return (
       <View style={styles.container}>
-        <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
+        <Text size="12" weight="normal" style={styles.noticeText}>
           {t("features.auth.ui.privacy_notice.notice_prefix")}
         </Text>
-
         <View style={styles.linksRow}>
           <TouchableOpacity onPress={() => Linking.openURL(JP_LEGAL_LINKS.termsOfService)}>
-            <Text style={[styles.link, styles.linkSpacing]}>
-              {t("jp_legal.terms_of_service")}
-            </Text>
+            <Text style={styles.link}>{t("jp_legal.terms_of_service")}</Text>
           </TouchableOpacity>
-
+          <Text style={styles.separator}>·</Text>
           <TouchableOpacity onPress={() => Linking.openURL(JP_LEGAL_LINKS.privacyCollection)}>
-            <Text style={styles.link}>
-              {t("jp_legal.privacy_collection")}
-            </Text>
+            <Text style={styles.link}>{t("jp_legal.privacy_collection")}</Text>
           </TouchableOpacity>
         </View>
-        <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
+        <Text size="12" weight="normal" style={styles.noticeText}>
           {t("features.auth.ui.privacy_notice.notice_suffix")}
         </Text>
 
-        <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-          <Text style={[styles.link, styles.businessLink]}>
-            Log in with Review Account
-          </Text>
-        </TouchableOpacity>
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity style={styles.reviewButton} onPress={() => setIsModalVisible(true)}>
+            <Text style={styles.link}>Log in with Review Account</Text>
+          </TouchableOpacity>
+        )}
         <AppleReviewModal
           isVisible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
@@ -59,41 +54,41 @@ export const PrivacyNotice = () => {
 
   return (
     <View style={styles.container}>
-      <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
+      <Text size="12" weight="normal" style={styles.noticeText}>
         {t("features.auth.ui.privacy_notice.notice_prefix")}
       </Text>
-
       <View style={styles.linksRow}>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_LINK)}>
-          <Text style={[styles.link, styles.linkSpacing]}>
+          <Text style={styles.link}>
             {t("features.auth.ui.privacy_notice.privacy_terms")}
           </Text>
         </TouchableOpacity>
-
+        <Text style={styles.separator}>·</Text>
         <TouchableOpacity onPress={() => Linking.openURL(SERVICE_LINK)}>
-          <Text style={[styles.link, styles.linkSpacing]}>
+          <Text style={styles.link}>
             {t("features.auth.ui.privacy_notice.service_terms")}
           </Text>
         </TouchableOpacity>
+        <Text style={styles.separator}>·</Text>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_LINK)}>
           <Text style={styles.link}>
             {t("features.auth.ui.privacy_notice.collection_agreement")}
           </Text>
         </TouchableOpacity>
       </View>
-      <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
-        {t("features.auth.ui.privacy_notice.notice_suffix")}
-      </Text>
+      <View style={styles.bottomRow}>
+        <Text size="12" weight="normal" style={styles.noticeText}>
+          {t("features.auth.ui.privacy_notice.notice_suffix")}{" "}
+        </Text>
+        <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
+          <Text style={styles.link}>
+            {t("features.auth.ui.privacy_notice.business_info")}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
-        <Text style={[styles.link, styles.businessLink]}>
-          {t("features.auth.ui.privacy_notice.business_info")}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-        <Text style={[styles.link, styles.businessLink]}>
-          Log in with Review Account
-        </Text>
+      <TouchableOpacity style={styles.reviewButton} onPress={() => setIsModalVisible(true)}>
+        <Text style={styles.link}>Log in with Review Account</Text>
       </TouchableOpacity>
       <AppleReviewModal
         isVisible={isModalVisible}
@@ -108,8 +103,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '100%',
     alignItems: 'center',
+    gap: 4,
   },
   noticeText: {
+    color: colors.text.mutedAccessible,
     textAlign: 'center',
   },
   linksRow: {
@@ -117,6 +114,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexWrap: 'wrap',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
+  separator: {
+    fontSize: 12,
+    color: colors.text.mutedAccessible,
+    marginHorizontal: 4,
   },
   link: {
     textDecorationLine: "underline",
@@ -126,13 +134,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: 'center',
   },
-  linkSpacing: {
-    marginRight: 2,
-  },
-  businessLink: {
-    marginTop: 10,
-  },
-  accessibleText: {
-    color: colors.text.mutedAccessible,
+  reviewButton: {
+    marginTop: 4,
   },
 });

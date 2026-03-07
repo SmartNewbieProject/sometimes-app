@@ -4,7 +4,7 @@ import {
 	registerForPushNotificationsAsync,
 } from '@/src/shared/libs/notifications';
 import { router, useNavigation } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, type LayoutChangeEvent, Platform, StyleSheet, View } from 'react-native';
 import Animated, {
 	useSharedValue,
@@ -43,19 +43,24 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 	const [containerWidth, setContainerWidth] = useState(0);
 	const translateX = useSharedValue(0);
 	const { saveOnboardingComplete } = useOnboardingStorage();
+	const beforeRemoveUnsubRef = useRef<(() => void) | null>(null);
 
 	// source=login/signup일 때 뒤로가기(하드웨어/제스처) 인터셉트
 	useEffect(() => {
 		if (source !== 'login' && source !== 'signup') return;
 
 		// iOS 스와이프 제스처 뒤로가기 인터셉트
+		// unsubscribe를 먼저 호출 후 navigate해야 무한루프 방지
 		const unsubscribe = navigation.addListener('beforeRemove', (e: { preventDefault: () => void }) => {
 			e.preventDefault();
 			if (source === 'login') {
+				unsubscribe();
+				beforeRemoveUnsubRef.current = null;
 				router.replace('/auth/login');
 			}
 			// source=signup: 뒤로가기 차단만 (회원가입 스택으로 돌아가지 않도록)
 		});
+		beforeRemoveUnsubRef.current = unsubscribe;
 
 		// Android 하드웨어 뒤로가기 인터셉트
 		const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -67,13 +72,17 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 
 		return () => {
 			unsubscribe();
+			beforeRemoveUnsubRef.current = null;
 			backHandler.remove();
 		};
 	}, [source, navigation]);
 
 	const activeSlides = useMemo(() => {
-		return ALL_SLIDES;
-	}, []);
+		const hideNotification = Platform.OS === 'web' || source === 'login';
+		return hideNotification
+			? ALL_SLIDES.filter((s) => s.id !== 'notification')
+			: ALL_SLIDES;
+	}, [source]);
 
 	const totalSlides = activeSlides.length;
 
@@ -89,12 +98,14 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 	};
 
 	const goToNextSlide = useCallback(() => {
-		if (isTransitioning || containerWidth === 0) return;
+		if (isTransitioning) return;
 
 		if (currentIndex === totalSlides - 1) {
 			handleComplete();
 			return;
 		}
+
+		if (containerWidth === 0) return;
 
 		setIsTransitioning(true);
 		const nextIndex = currentIndex + 1;
@@ -112,6 +123,7 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 	}, [currentIndex, isTransitioning, translateX, containerWidth, totalSlides]);
 
 	const handleComplete = async () => {
+		console.log('[Onboarding] handleComplete called, source:', source);
 		await saveOnboardingComplete();
 
 		if (source === 'login') {
@@ -130,7 +142,17 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 			}
 		}
 
-		router.replace('/home');
+		// signup 뒤로가기 차단 리스너 해제 후 홈 이동 (해제 안 하면 replace가 beforeRemove에 막힘)
+		if (beforeRemoveUnsubRef.current) {
+			beforeRemoveUnsubRef.current();
+			beforeRemoveUnsubRef.current = null;
+		}
+
+		if (Platform.OS === 'web') {
+			window.location.replace('/home');
+		} else {
+			router.replace('/home');
+		}
 	};
 
 	const handleSkip = async () => {

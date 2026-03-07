@@ -7,7 +7,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Linking,
 } from "react-native";
 import { router } from "expo-router";
@@ -22,11 +21,7 @@ import { useCardNewsHighlights, useCardNewsInfiniteList } from "../queries";
 import type { CardNewsHighlight, CardNewsListItem } from "../types";
 import { useTranslation } from "react-i18next";
 
-type Props = {
-  onNavigateToNotice?: () => void;
-};
-
-export function CardNewsHome({ onNavigateToNotice }: Props) {
+export function CardNewsHome() {
   const { t } = useTranslation();
   const analytics = useCardNewsAnalytics();
   const { data: highlights } = useCardNewsHighlights();
@@ -96,24 +91,6 @@ export function CardNewsHome({ onNavigateToNotice }: Props) {
         </View>
       </TouchableOpacity>
 
-      {onNavigateToNotice && (
-        <TouchableOpacity
-          style={styles.noticeLink}
-          onPress={onNavigateToNotice}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={require("@/assets/images/loudspeaker.png")}
-            style={styles.noticeLinkIcon}
-          />
-          <Text style={styles.noticeLinkText}>{t("features.card-news.home.notice_link")}</Text>
-          <View style={styles.mlAuto}>
-            <IconWrapper>
-              <VectorIcon width={9} height={12} color="black" />
-            </IconWrapper>
-          </View>
-        </TouchableOpacity>
-      )}
     </>
   );
 
@@ -155,25 +132,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "400",
     color: semanticColors.text.secondary,
-  },
-  noticeLink: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: semanticColors.surface.background,
-    marginHorizontal: 16,
-    marginBottom: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    gap: 8,
-  },
-  noticeLinkIcon: {
-    width: 16,
-    height: 16,
-  },
-  noticeLinkText: {
-    fontSize: 14,
-    color: semanticColors.text.primary,
   },
   mlAuto: {
     marginLeft: "auto",

@@ -91,6 +91,17 @@
 	"my_moment": {
 		"question_card": {
 			"go_to_answer_hint": "Tap to answer today's question"
+		},
+		"challenge_card": {
+			"weekly_challenge": "Weekly Challenge",
+			"progress_label": "{{answered}}/{{total}} completed",
+			"go_answer": "Answer Now",
+			"today_done": "Today's answer done!",
+			"come_tomorrow": "Come back tomorrow",
+			"completed_title": "Weekly Challenge Complete!",
+			"completed_subtitle": "You answered all 5 questions",
+			"completed_reward": "Reward gems earned!",
+			"waiting": "Waiting for next question"
 		}
 	},
 	"question_detail": {

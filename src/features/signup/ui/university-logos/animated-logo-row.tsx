@@ -108,7 +108,7 @@ export default function AnimatedLogoRow({
 					</Animated.View>
 				</View>
 
-				<View testID="logo-row-2" style={[styles.row, { height: logoWithMargin, marginTop: 12 }]}>
+				<View testID="logo-row-2" style={[styles.row, { height: logoWithMargin, marginTop: 6 }]}>
 					<Animated.View
 						style={[
 							styles.animatedRow,
@@ -144,8 +144,9 @@ const styles = StyleSheet.create({
 	container: {
 		width: '100%',
 		position: 'relative',
-		minHeight: 180,
-		paddingVertical: 16,
+		minHeight: 0,
+		paddingVertical: 8,
+		marginTop: Platform.OS === 'android' ? 48 : 0,
 	},
 	rowsContainer: {
 		width: '100%',

@@ -69,7 +69,12 @@ export default function Logo() {
 					accessibilityLabel={t('ui.썸타임_로고')}
 					accessibilityRole="image"
 				>
-					<BigTitle width={309} height={41} aria-label={t('ui.썸타임')} role="img" />
+					<BigTitle
+						width={Platform.OS === 'web' ? 309 : 297}
+						height={Platform.OS === 'web' ? 41 : 39}
+						aria-label={t('ui.썸타임')}
+						role="img"
+					/>
 				</Animated.View>
 			</Pressable>
 			<View style={logoStyles.taglineWrapper}>

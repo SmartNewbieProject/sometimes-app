@@ -19,42 +19,27 @@ function UniversityCard({
 	isSelected: boolean;
 }) {
 	const [logoError, setLogoError] = useState(false);
+	const [isPressed, setIsPressed] = useState(false);
 	const scale = useRef(new Animated.Value(1)).current;
-	const bgColor = useRef(new Animated.Value(0)).current;
 
 	const onPressIn = () => {
-		Animated.parallel([
-			Animated.spring(scale, {
-				toValue: 0.97,
-				useNativeDriver: true,
-			}),
-			Animated.timing(bgColor, {
-				toValue: 1,
-				duration: 150,
-				useNativeDriver: false,
-			}),
-		]).start();
+		setIsPressed(true);
+		Animated.spring(scale, {
+			toValue: 0.97,
+			useNativeDriver: true,
+		}).start();
 	};
 
 	const onPressOut = () => {
-		Animated.parallel([
-			Animated.spring(scale, {
-				toValue: 1,
-				friction: 3,
-				useNativeDriver: true,
-			}),
-			Animated.timing(bgColor, {
-				toValue: 0,
-				duration: 150,
-				useNativeDriver: false,
-			}),
-		]).start();
+		setIsPressed(false);
+		Animated.spring(scale, {
+			toValue: 1,
+			friction: 3,
+			useNativeDriver: true,
+		}).start();
 	};
 
-	const interpolatedBg = bgColor.interpolate({
-		inputRange: [0, 1],
-		outputRange: ['#FFFFFF', '#E6DBFF'],
-	});
+	const backgroundColor = isSelected || isPressed ? '#E6DBFF' : '#FFFFFF';
 
 	return (
 		<Pressable
@@ -67,7 +52,7 @@ function UniversityCard({
 				style={[
 					styles.container,
 					{
-						backgroundColor: isSelected ? '#E6DBFF' : interpolatedBg,
+						backgroundColor,
 						borderColor: isSelected ? semanticColors.brand.primary : semanticColors.border.default,
 						transform: [{ scale }],
 					},

@@ -2,15 +2,18 @@
 // Reinstall @react-native-firebase/analytics when the package supports New Architecture (TurboModules)
 // Tracking issue: https://github.com/invertase/react-native-firebase/discussions/6200
 
-import firebase from '@react-native-firebase/app';
+import Constants from 'expo-constants';
 
 const ANALYTICS_DISABLED_WARNING = '[Firebase Analytics] Temporarily disabled for New Architecture compatibility';
+const isExpoGo = Constants.appOwnership === 'expo';
 
 /**
  * Firebase 연결 상태 확인
  */
 export async function checkFirebaseConnection(): Promise<boolean> {
+  if (isExpoGo) return false;
   try {
+    const firebase = require('@react-native-firebase/app').default;
     const app = firebase.app();
     console.log('Firebase 앱 초기화됨:', app.name);
     console.log(ANALYTICS_DISABLED_WARNING);
@@ -25,7 +28,9 @@ export async function checkFirebaseConnection(): Promise<boolean> {
  * Firebase 설정 정보 출력
  */
 export function logFirebaseConfig() {
+  if (isExpoGo) return;
   try {
+    const firebase = require('@react-native-firebase/app').default;
     const app = firebase.app();
     console.log('=== Firebase 설정 정보 ===');
     console.log('앱 이름:', app.name);

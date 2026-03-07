@@ -1,194 +1,146 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
-import { useTranslation } from "react-i18next";
-import { GuideSection } from "./ui/guide-section";
-import { QuestionCard } from "./ui/question-card/index";
-import { RecentMoment } from "./ui/recent-moment";
-import { HistorySection } from "./ui/history-section";
-import colors from "@/src/shared/constants/colors";
-import { useDailyQuestionQuery, useProgressStatusQuery } from "../../queries";
-import type { UserProgressStatus } from "../../apis";
-import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
-import { devLogWithTag } from "@/src/shared/utils";
+import colors from '@/src/shared/constants/colors';
+import type React from 'react';
+import { useEffect } from 'react';
+import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { useMomentAnalytics } from '../../hooks/use-moment-analytics';
+import { useDailyQuestionQuery, useProgressStatusQuery } from '../../queries';
+import { ChallengeCard } from './ui/challenge-card/index';
+import { GuideSection } from './ui/guide-section';
+import { HistorySection } from './ui/history-section';
+import { RecentMoment } from './ui/recent-moment';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 interface MyMomentPageProps {
-  onBackPress?: () => void;
+	onBackPress?: () => void;
 }
 
 export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
-  const { t } = useTranslation();
-  const { data: dailyQuestion, isLoading: questionLoading, error: questionError } = useDailyQuestionQuery();
-  const { data: progressStatus } = useProgressStatusQuery();
-  const { trackMyMomentView, trackQuestionCardView, trackGuideRewardView } = useMomentAnalytics();
+	const {
+		data: dailyQuestion,
+		isLoading: questionLoading,
+		error: questionError,
+	} = useDailyQuestionQuery();
+	const { data: progressStatus } = useProgressStatusQuery();
+	const { trackMyMomentView, trackGuideRewardView } = useMomentAnalytics();
 
-  useEffect(() => {
-    if (!questionLoading && progressStatus) {
-      const hasDailyQuestion = !!dailyQuestion?.question;
-      const isResponded = !progressStatus.canProceed && progressStatus.hasTodayAnswer;
-      trackMyMomentView({
-        source: 'navigation',
-        has_daily_question: hasDailyQuestion,
-        is_responded: isResponded,
-        is_blocked: !progressStatus.canProceed && !progressStatus.hasTodayAnswer,
-      });
+	useEffect(() => {
+		if (!questionLoading && progressStatus) {
+			const hasDailyQuestion = !!dailyQuestion?.question;
+			const isResponded = !progressStatus.canProceed && progressStatus.hasTodayAnswer;
+			trackMyMomentView({
+				source: 'navigation',
+				has_daily_question: hasDailyQuestion,
+				is_responded: isResponded,
+				is_blocked: !progressStatus.canProceed && !progressStatus.hasTodayAnswer,
+			});
 
-      if (isResponded) {
-        trackGuideRewardView({ reward_type: 'gem' });
-      }
-    }
-  }, [questionLoading, progressStatus, dailyQuestion]);
+			if (isResponded) {
+				trackGuideRewardView({ reward_type: 'gem' });
+			}
+		}
+	}, [questionLoading, progressStatus, dailyQuestion]);
 
-  // 응답 여부 확인 - 새로운 API 필드 기반으로 분기
-  const getQuestionCardState = () => {
-    if (!progressStatus) {
-      return { responded: false, blocked: false, blockedReason: null, blockedMessage: null };
-    }
+	const isCompleted = (progressStatus?.answeredThisWeek ?? 0) >= 5;
 
-    // 로깅 추가 for debugging
-    devLogWithTag('My Moment', 'Progress status:', progressStatus);
+	if (questionLoading) {
+		return (
+			<View style={styles.container}>
+				<View style={styles.loadingContainer}>
+					<ActivityIndicator size="large" color={colors.primaryPurple} />
+				</View>
+			</View>
+		);
+	}
 
-    // 답변 가능 여부 확인 (canProceed를 최우선으로 확인)
-    // canProceed가 false일 때만 hasTodayAnswer를 확인하여 "답변 완료" 상태로 표시
-    if (!progressStatus.canProceed) {
-      devLogWithTag('My Moment', 'Cannot proceed - checking');
+	if (questionError) {
+		return (
+			<View style={styles.container}>
+				<View style={styles.errorContainer}>
+					<Image
+						source={require('@/assets/images/moment/paw-prints-top.webp')}
+						style={styles.pawPrints}
+						resizeMode="contain"
+					/>
+					<Image
+						source={require('@/assets/images/moment/my-moment-bg.webp')}
+						style={styles.background}
+						resizeMode="stretch"
+					/>
+					<GuideSection />
+					<ChallengeCard
+						answeredThisWeek={0}
+						dayOfWeek={1}
+						canProceed={false}
+						hasTodayAnswer={false}
+					/>
+					<RecentMoment />
+					<HistorySection />
+				</View>
+			</View>
+		);
+	}
 
-      // 답변을 완료했는데 진행이 불가능한 경우 (오늘 답변 완료)
-      if (progressStatus.hasTodayAnswer) {
-        devLogWithTag('My Moment', 'Already answered today');
-        return {
-          responded: true,
-          blocked: false,
-          blockedReason: null,
-          blockedMessage: null
-        };
-      }
-
-      // 데일리 질문이 없어서 진행 불가능한 경우
-      if (!progressStatus.hasDailyQuestion) {
-        devLogWithTag('My Moment', 'No daily question');
-        return {
-          responded: false,
-          blocked: true,
-          blockedReason: "no_question",
-          blockedMessage: t('features.moment.my_moment.blocked_messages.no_question')
-        };
-      }
-
-      // 기타 진행 불가능 사유
-      return {
-        responded: false,
-        blocked: true,
-        blockedReason: "not_allowed",
-        blockedMessage: t('features.moment.my_moment.blocked_messages.not_allowed')
-      };
-    }
-
-    // canProceed가 true인 경우: 답변 가능 상태 (hasTodayAnswer와 관계없이)
-    devLogWithTag('My Moment', 'Can proceed');
-    return { responded: false, blocked: false, blockedReason: null, blockedMessage: null };
-  };
-
-  const questionCardState = getQuestionCardState();
-  devLogWithTag('My Moment', 'Question card state:', questionCardState);
-
-  if (questionLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
-        </View>
-      </View>
-    );
-  }
-
-  if (questionError) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Image
-            source={require("@/assets/images/moment/paw-prints-top.webp")}
-            style={styles.pawPrints}
-            resizeMode="contain"
-          />
-          <Image
-            source={require("@/assets/images/moment/my-moment-bg.webp")}
-            style={styles.background}
-            resizeMode="stretch"
-          />
-          <GuideSection />
-          <QuestionCard responded={false} />
-          <RecentMoment />
-          <HistorySection />
-        </View>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Image
-          source={require("@/assets/images/moment/paw-prints-top.webp")}
-          style={styles.pawPrints}
-          resizeMode="contain"
-        />
-        <Image
-          source={require("@/assets/images/moment/my-moment-bg.webp")}
-          style={styles.background}
-          resizeMode="stretch"
-        />
-        <GuideSection responded={questionCardState.responded} />
-        <QuestionCard
-            responded={questionCardState.responded}
-            blocked={questionCardState.blocked}
-            blockedReason={questionCardState.blockedReason}
-            blockedMessage={questionCardState.blockedMessage}
-          />
-        <RecentMoment />
-        <HistorySection />
-      </ScrollView>
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+				<Image
+					source={require('@/assets/images/moment/paw-prints-top.webp')}
+					style={styles.pawPrints}
+					resizeMode="contain"
+				/>
+				<Image
+					source={require('@/assets/images/moment/my-moment-bg.webp')}
+					style={styles.background}
+					resizeMode="stretch"
+				/>
+				<GuideSection responded={isCompleted} />
+				<ChallengeCard
+					answeredThisWeek={progressStatus?.answeredThisWeek ?? 0}
+					dayOfWeek={progressStatus?.dayOfWeek ?? 1}
+					canProceed={progressStatus?.canProceed ?? false}
+					hasTodayAnswer={progressStatus?.hasTodayAnswer ?? false}
+				/>
+				<RecentMoment />
+				<HistorySection />
+			</ScrollView>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.momentBackground,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorContainer: {
-    flex: 1,
-  },
-  pawPrints: {
-    position: "absolute",
-    top: 0,
-    left: 20,
-    width: 120,
-    height: 100,
-    zIndex: 0, // Above background color, below content? Or just decoration.
-    opacity: 0.6,
-  },
-  background: {
-    position: "absolute",
-    top: 70, // Moved down as requested
-    left: 0,
-    right: 0,
-    width: "100%",
-    height: width * 1.2,
-    zIndex: 0,
-  },
-  scrollContent: {
-    paddingTop: 40,
-    paddingBottom: 100,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: colors.momentBackground,
+	},
+	loadingContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	errorContainer: {
+		flex: 1,
+	},
+	pawPrints: {
+		position: 'absolute',
+		top: 0,
+		left: 20,
+		width: 120,
+		height: 100,
+		zIndex: 0, // Above background color, below content? Or just decoration.
+		opacity: 0.6,
+	},
+	background: {
+		position: 'absolute',
+		top: 70, // Moved down as requested
+		left: 0,
+		right: 0,
+		width: '100%',
+		height: width * 1.2,
+		zIndex: 0,
+	},
+	scrollContent: {
+		paddingTop: 40,
+		paddingBottom: 100,
+	},
 });

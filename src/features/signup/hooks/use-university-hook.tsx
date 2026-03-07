@@ -18,13 +18,14 @@ const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } = S
 function useUniversityHook() {
 	const { updateForm, form: userForm, regions } = useSignupProgress();
 	const [searchText, setSearchText] = useState(userForm.universitySearchText || '');
-	const debouncedSearchText = useDebounce(searchText, 1500);
+	const debouncedSearchText = useDebounce(searchText, 500);
 	const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityId);
 	const params = useLocalSearchParams();
 	const hasProcessedPassInfo = useRef(false);
 	const [trigger, setTrigger] = useState(false);
 	const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } = useSignupProgress();
 	const [isFocused, setIsFocused] = useState(false);
+	const isInputFocusedRef = useRef(false);
 
 	// 현재 로케일에 따른 국가 코드
 	const locale = i18n.language || 'ko';
@@ -35,15 +36,6 @@ function useUniversityHook() {
 		queryFn: () => getTopUniversities(country),
 	});
 
-	useEffect(() => {
-		console.log('[University] 국가:', country);
-		if (topUnivs) {
-			console.log('[University] Top API 응답:', topUnivs.length, '개');
-			console.log('[University] 첫 번째 대학 원본:', topUnivs[0]);
-		} else {
-			console.log('[University] Top API 응답 없음');
-		}
-	}, [topUnivs, country]);
 
 	const { data: searchResults, isLoading: isSearching } = useQuery({
 		queryKey: ['universities', 'search', debouncedSearchText, country],
@@ -58,40 +50,18 @@ function useUniversityHook() {
 	const isActuallySearching = isDebouncing || isSearching;
 
 	const univs = useMemo(() => {
-		const mapped = rawUnivs?.map((item) => ({
+		return rawUnivs?.map((item) => ({
 			...item,
 			logoUrl: getSmartUnivLogoUrl(item.code, country),
 			universityType: item.foundation,
 			area: getRegionsByRegionCode(item.region),
 		}));
-		console.log('[University] 매핑된 대학 수:', mapped?.length);
-		console.log('[University] 첫 번째 대학:', mapped?.[0]);
-		return mapped;
 	}, [rawUnivs, country]);
 
 	const filteredUniv = useMemo(() => {
-		if (!univs) {
-			console.log('[University] univs가 없음');
-			return [];
-		}
-		// 현재 언어에 맞는 locale로 정렬
+		if (!univs) return [];
 		const locale = i18n.language || 'ko';
-		console.log('[University] 정렬 locale:', locale);
-		const sorted = [...univs].sort((a, b) => a.name.localeCompare(b.name, locale));
-		console.log('[University] 정렬된 대학 수:', sorted.length);
-		console.log(
-			'[University] 처음 3개:',
-			sorted.slice(0, 3).map((u) => u.name),
-		);
-		console.log(
-			'[University] trigger:',
-			trigger,
-			'isLoading:',
-			isLoading,
-			'isSearching:',
-			isActuallySearching,
-		);
-		return sorted;
+		return [...univs].sort((a, b) => a.name.localeCompare(b.name, locale));
 	}, [univs]);
 
 	const titleOpacity = useSharedValue(0);
@@ -113,15 +83,12 @@ function useUniversityHook() {
 	}));
 
 	const handleFocus = () => {
+		isInputFocusedRef.current = true;
 		if (!isFocused) {
 			setTrigger(true);
 			setIsFocused(true);
 			updateShowHeader(true);
-
 			titleOpacity.value = withTiming(0, { duration: 0 });
-			containerTranslateY.value = withTiming(0, { duration: 350 });
-			listOpacity.value = withTiming(1, { duration: 350 });
-			listTranslateY.value = withTiming(0, { duration: 350 });
 		}
 	};
 
@@ -134,7 +101,7 @@ function useUniversityHook() {
 			updateShowHeader(false);
 
 			titleOpacity.value = withTiming(1, { duration: 0 });
-			containerTranslateY.value = withTiming(150, { duration: 0 });
+			containerTranslateY.value = withTiming(0, { duration: 0 });
 			listOpacity.value = withTiming(0, { duration: 0 });
 			listTranslateY.value = withTiming(50, { duration: 0 });
 		} else {
@@ -152,6 +119,7 @@ function useUniversityHook() {
 	);
 
 	const handleBlur = () => {
+		isInputFocusedRef.current = false;
 		setIsFocused(false);
 	};
 
@@ -179,13 +147,26 @@ function useUniversityHook() {
 		fallback();
 	};
 
+	// trigger 변경 후 컴포넌트 마운트 완료 시점에 애니메이션 시작 (Android 호환)
+	useEffect(() => {
+		if (trigger) {
+			listOpacity.value = 0;
+			listTranslateY.value = 50;
+			listOpacity.value = withTiming(1, { duration: 300 });
+			listTranslateY.value = withTiming(0, { duration: 300 });
+		} else {
+			listOpacity.value = 0;
+			listTranslateY.value = 50;
+		}
+	}, [trigger]);
+
 	useEffect(() => {
 		updateShowHeader(false);
 		setIsFocused(false);
 		setTrigger(false);
 
 		titleOpacity.value = 1;
-		containerTranslateY.value = 150;
+		containerTranslateY.value = 0;
 		listOpacity.value = 0;
 		listTranslateY.value = 50;
 	}, []);
@@ -193,12 +174,17 @@ function useUniversityHook() {
 	// 페이지가 포커스될 때 초기 상태 복원 (로고 표시 + 애니메이션 값 리셋)
 	useFocusEffect(
 		useCallback(() => {
+			// Android에서 키보드 열릴 때 네비게이션 focus 이벤트가 재발행될 수 있음
+			// 입력창이 포커스된 상태면 리셋하지 않음
+			if (isInputFocusedRef.current) {
+				return;
+			}
 			setTrigger(false);
 			setIsFocused(false);
 			updateShowHeader(false);
 
 			titleOpacity.value = 1;
-			containerTranslateY.value = 150;
+			containerTranslateY.value = 0;
 			listOpacity.value = 0;
 			listTranslateY.value = 50;
 		}, []),

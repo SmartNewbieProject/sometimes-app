@@ -171,19 +171,9 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 							isArticleAuthor={isArticleAuthor}
 							updatedAt={
 								isStaffComment ? undefined : (
-									<View style={styles.metaRow}>
-										<Text size={'sm'} textColor="pale-purple">
-											{dayUtils.formatRelativeTime(comment.updatedAt)}
-										</Text>
-										{comment.likeCount > 0 && (
-											<View style={styles.likeCountRow}>
-												<AreaFillHeart width={14} height={14} />
-												<Text size={'sm'} textColor="pale-purple">
-													{comment.likeCount}
-												</Text>
-											</View>
-										)}
-									</View>
+									<Text size={'sm'} textColor="pale-purple">
+										{dayUtils.formatRelativeTime(comment.updatedAt)}
+									</Text>
 								)
 							}
 							hideUniv
@@ -364,16 +354,6 @@ const styles = StyleSheet.create({
 	},
 	staffTimestampContainer: {
 		marginTop: 8,
-	},
-	metaRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 8,
-	},
-	likeCountRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 4,
 	},
 	actionButtonsContainer: {
 		position: 'absolute',

@@ -10,7 +10,7 @@ import Animated, {
 	withSpring,
 } from 'react-native-reanimated';
 
-const SPRING_CONFIG = { damping: 15, stiffness: 150 };
+const SPRING_CONFIG = { damping: 18, stiffness: 180 };
 
 function Toast() {
 	const { toast, icon, dismissToast } = useToast();
@@ -24,7 +24,7 @@ function Toast() {
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		transform: [
-			{ translateY: withSpring(isVisible.value ? 0 : 100, SPRING_CONFIG) },
+			{ translateY: withSpring(isVisible.value ? 0 : -80, SPRING_CONFIG) },
 		],
 		opacity: withSpring(isVisible.value ? 1 : 0, SPRING_CONFIG),
 	}));
@@ -33,7 +33,7 @@ function Toast() {
 		<Animated.View
 			style={[
 				styles.toastContainer,
-				{ bottom: insets.bottom + 65 },
+				{ top: insets.top + 8 },
 				animatedStyle,
 			]}
 			pointerEvents={toast ? 'auto' : 'none'}
@@ -46,7 +46,7 @@ function Toast() {
 				<Show when={!!icon}>
 					<View>{icon}</View>
 				</Show>
-				<Text style={[styles.toastText, !icon && styles.toastTextCenter]}>
+				<Text style={[styles.toastText, !icon && styles.toastTextCenter]} numberOfLines={1}>
 					{toast}
 				</Text>
 			</TouchableOpacity>
@@ -58,30 +58,29 @@ const styles = StyleSheet.create({
 	toastContainer: {
 		position: 'absolute',
 		width: '100%',
-		paddingHorizontal: 16,
+		paddingHorizontal: 12,
 		justifyContent: 'center',
 		flexDirection: 'row',
 	},
 	toast: {
-		minHeight: 46,
-		borderRadius: 15,
+		borderRadius: 12,
 		backgroundColor: '#1D2939',
-		paddingVertical: 11,
-		paddingHorizontal: 16,
+		paddingVertical: 8,
+		paddingHorizontal: 14,
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 12,
+		gap: 10,
+		alignSelf: 'center',
 		width: '100%',
 	},
 	toastText: {
-		flex: 1,
-		fontSize: 20,
-		lineHeight: 24,
+		fontSize: 13,
+		lineHeight: 18,
 		color: semanticColors.text.inverse,
+		flexShrink: 1,
 	},
 	toastTextCenter: {
 		textAlign: 'center',
-		paddingHorizontal: 54,
 	},
 });
 
