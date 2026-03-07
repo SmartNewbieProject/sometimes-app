@@ -25,6 +25,15 @@ class QueryCacheManager {
 		);
 
 		this.addSubscription(
+			chatEventBus.on('IMAGE_OPTIMISTIC_ADDED').subscribe(({ payload }) => {
+				this.addOptimisticMessageToCache(
+					payload.optimisticMessage.chatRoomId,
+					payload.optimisticMessage,
+				);
+			}),
+		);
+
+		this.addSubscription(
 			chatEventBus.on('MESSAGE_SEND_SUCCESS').subscribe(({ payload }) => {
 				this.replaceMessageInCache(
 					payload.serverMessage.chatRoomId,
@@ -133,10 +142,6 @@ class QueryCacheManager {
 				};
 			},
 		);
-
-		this.queryClient?.invalidateQueries({
-			queryKey: ['chat-list', chatRoomId],
-		});
 	}
 
 	private replaceMessageInCache(chatRoomId: string, tempId: string, serverMessage: Chat) {
@@ -293,9 +298,6 @@ class QueryCacheManager {
 				};
 			},
 		);
-		this.queryClient?.invalidateQueries({
-			queryKey: ['chat-list', chatRoomId],
-		});
 
 		if (!chatRoomId || !message) {
 			devWarn('Invalid chat message received');
@@ -434,10 +436,6 @@ class QueryCacheManager {
 				};
 			},
 		);
-
-		this.queryClient?.invalidateQueries({
-			queryKey: ['chat-list', chatRoomId],
-		});
 	}
 
 	cleanup() {
