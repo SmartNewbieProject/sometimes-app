@@ -130,7 +130,7 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 
 			const newSocket = io(`${wsUrl}/support-chat`, {
 				auth: { token: `Bearer ${accessToken.replace(/"/g, '')}` },
-				transports: ['websocket'],
+				transports: ['polling', 'websocket'],
 				reconnection: true,
 				reconnectionAttempts: 5,
 				reconnectionDelay: 1000,

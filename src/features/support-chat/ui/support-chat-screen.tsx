@@ -77,7 +77,7 @@ function SupportChatScreen() {
 				flatListRef.current?.scrollToEnd({ animated: true });
 			}, 100);
 		}
-	}, [messages.length, streaming.text]);
+	}, [messages.length, streaming.isStreaming]);
 
 	const handleSend = useCallback(
 		(content: string) => {
@@ -164,7 +164,7 @@ function SupportChatScreen() {
 
 	const keyExtractor = useCallback((item: MessageType) => item.id, []);
 
-	const renderEmptyState = () => {
+	const renderEmptyState = useCallback(() => {
 		if (isLoading) {
 			return (
 				<View style={styles.emptyContainer}>
@@ -188,12 +188,40 @@ function SupportChatScreen() {
 				<Text style={styles.emptyDescription}>{t('features.support-chat.empty.description')}</Text>
 			</View>
 		);
-	};
+	}, [error, isLoading, t]);
+
+	const handleContentSizeChange = useCallback(() => {
+		if (messages.length > 0 || streaming.isStreaming) {
+			flatListRef.current?.scrollToEnd({ animated: false });
+		}
+	}, [messages.length, streaming.isStreaming]);
 
 	const listHeaderComponent = useMemo(() => {
 		if (!status) return null;
 		return <SupportChatStatusBanner status={status} hasUserMessage={hasUserMessage} />;
 	}, [status, hasUserMessage]);
+
+	const listFooterComponent = useMemo(
+		() => (
+			<>
+				{streaming.isStreaming && (
+					<SupportChatMessage
+						content={streaming.text}
+						senderType="bot"
+						createdAt={new Date().toISOString()}
+						isStreaming
+					/>
+				)}
+				{isTyping && status && !streaming.isStreaming ? <TypingIndicator status={status} /> : null}
+			</>
+		),
+		[isTyping, status, streaming.isStreaming, streaming.text],
+	);
+
+	const listContentContainerStyle = useMemo(
+		() => [styles.messageList, messages.length === 0 && styles.emptyList],
+		[messages.length],
+	);
 
 	return (
 		<KeyboardAvoidingView
@@ -231,31 +259,16 @@ function SupportChatScreen() {
 				data={messages}
 				renderItem={renderMessage}
 				keyExtractor={keyExtractor}
-				contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
+				contentContainerStyle={listContentContainerStyle}
 				ListHeaderComponent={listHeaderComponent}
 				ListEmptyComponent={renderEmptyState}
-				ListFooterComponent={
-					<>
-						{streaming.isStreaming && (
-							<SupportChatMessage
-								content={streaming.text}
-								senderType="bot"
-								createdAt={new Date().toISOString()}
-								isStreaming
-							/>
-						)}
-						{isTyping && status && !streaming.isStreaming ? (
-							<TypingIndicator status={status} />
-						) : null}
-					</>
-				}
+				ListFooterComponent={listFooterComponent}
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
-				onContentSizeChange={() => {
-					if (messages.length > 0 || streaming.isStreaming) {
-						flatListRef.current?.scrollToEnd({ animated: false });
-					}
-				}}
+				onContentSizeChange={handleContentSizeChange}
+				initialNumToRender={12}
+				maxToRenderPerBatch={8}
+				windowSize={7}
 			/>
 
 			<SupportChatInput

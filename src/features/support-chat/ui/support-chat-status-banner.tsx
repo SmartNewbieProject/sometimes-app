@@ -109,9 +109,9 @@ function SupportChatStatusBanner({ status, hasUserMessage = false }: SupportChat
 							<Text
 								style={[
 									styles.stepLabel,
-									step.state === 'done' && styles.stepLabelDone,
-									step.state === 'active' && styles.stepLabelActive,
-									step.state === 'pending' && styles.stepLabelPending,
+									...(step.state === 'done' ? [styles.stepLabelDone] : []),
+									...(step.state === 'active' ? [styles.stepLabelActive] : []),
+									...(step.state === 'pending' ? [styles.stepLabelPending] : []),
 								]}
 								numberOfLines={1}
 							>

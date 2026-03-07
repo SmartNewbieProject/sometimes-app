@@ -18,9 +18,12 @@ function SupportChatInput({ onSend, onTyping, disabled = false }: SupportChatInp
 	const [message, setMessage] = useState('');
 	const keyboard = useAnimatedKeyboard();
 
-	const animatedKeyboardStyles = useAnimatedStyle(() => ({
-		paddingBottom: Platform.OS === 'android' && keyboard.height.value > 0 ? 16 : 0,
-	}));
+	const animatedKeyboardStyles = useAnimatedStyle(() => {
+		if (Platform.OS === 'android' && keyboard.height.value > 0) {
+			return { paddingBottom: 16 };
+		}
+		return {};
+	});
 
 	const handleChangeText = useCallback(
 		(text: string) => {
