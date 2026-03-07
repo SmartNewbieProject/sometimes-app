@@ -19,7 +19,8 @@
 			"reveal_button": "프로필 열기",
 			"reveal_cost": "{{cost}} 젬",
 			"like_button": "좋아요 보내기",
-			"liked_label": "좋아요 완료"
+			"liked_label": "좋아요 완료",
+			"expired_badge": "열람 기간 만료"
 		},
 		"anchor_text": "나를 본 사람"
 	},

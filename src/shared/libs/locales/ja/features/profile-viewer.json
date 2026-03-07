@@ -19,7 +19,8 @@
 			"reveal_button": "プロフィールを開く",
 			"reveal_cost": "{{cost}} ジェム",
 			"like_button": "いいねを送る",
-			"liked_label": "いいね済み"
+			"liked_label": "いいね済み",
+			"expired_badge": "閲覧期間終了"
 		},
 		"anchor_text": "私を見た人"
 	},

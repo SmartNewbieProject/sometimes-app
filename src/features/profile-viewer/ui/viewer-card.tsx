@@ -149,6 +149,15 @@ export const ViewerCard = ({
 					</View>
 				)}
 
+				{/* 열람 기간 만료 뱃지 */}
+				{item.isLocked && (
+					<View style={styles.expiredBadge}>
+						<Text size="10" weight="bold" textColor="inverse">
+							{t(PROFILE_VIEWER_KEYS.viewedMeCardExpiredBadge)}
+						</Text>
+					</View>
+				)}
+
 				<View style={[styles.cardContainer, { width: size, height: size }]}>
 					<View style={styles.infoContainer}>
 						<Text textColor="white" weight="semibold" size="20">
@@ -169,7 +178,7 @@ export const ViewerCard = ({
 						</View>
 					</View>
 
-					<View style={styles.actionButtonContainer}>
+					{!item.isLocked && <View style={styles.actionButtonContainer}>
 						<View style={styles.topSpacer}>
 							<View style={styles.topSpacerInner} />
 						</View>
@@ -205,7 +214,7 @@ export const ViewerCard = ({
 						<View style={styles.bottomContainer}>
 							<View style={styles.bottomSpacerInner} />
 						</View>
-					</View>
+					</View>}
 
 					<LinearGradient
 						colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']}
@@ -230,6 +239,16 @@ const styles = StyleSheet.create({
 		top: 10,
 		left: 10,
 		backgroundColor: semanticColors.brand.primary,
+		paddingHorizontal: 8,
+		paddingVertical: 4,
+		borderRadius: 6,
+		zIndex: 20,
+	},
+	expiredBadge: {
+		position: 'absolute',
+		top: 10,
+		left: 10,
+		backgroundColor: '#8A8A8A',
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		borderRadius: 6,

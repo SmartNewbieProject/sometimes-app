@@ -41,7 +41,7 @@ function NoneLikeBanner() {
       </View>
     );
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <Text style={styles.text}>{t("features.like.ui.none_like_banner.nothing_like")}</Text>
       <Pressable
         style={styles.container}

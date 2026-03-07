@@ -44,10 +44,10 @@ export default function PartnerDetailScreen() {
 	const { id: matchId, redirectTo } = useLocalSearchParams<{ id: string; redirectTo?: string }>();
 
 	const handleBack = () => {
-		if (redirectTo) {
-			router.replace(decodeURIComponent(redirectTo) as Href);
+		if (router.canGoBack()) {
+			router.back();
 		} else {
-			router.replace('/matching-history');
+			router.replace((redirectTo ? decodeURIComponent(redirectTo) : '/matching-history') as Href);
 		}
 	};
 	const { data: partner, isLoading } = useMatchPartnerQuery(matchId);

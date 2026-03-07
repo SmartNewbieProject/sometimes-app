@@ -57,6 +57,9 @@ export const PROFILE_VIEWER_KEYS = {
 	interactionStatusILiked: 'features.profile-viewer.interaction_status.i_liked',
 	interactionStatusTheyLiked: 'features.profile-viewer.interaction_status.they_liked',
 	interactionStatusMutual: 'features.profile-viewer.interaction_status.mutual',
+
+	// viewed_me.card
+	viewedMeCardExpiredBadge: 'features.profile-viewer.viewed_me.card.expired_badge',
 } as const;
 
 export type ProfileViewerKey = (typeof PROFILE_VIEWER_KEYS)[keyof typeof PROFILE_VIEWER_KEYS];

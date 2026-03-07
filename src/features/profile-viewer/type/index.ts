@@ -47,6 +47,12 @@ export interface ProfileViewerItem {
 	viewerId?: string;
 	profile?: ProfileViewerProfile;
 	matchId?: string;
+
+	// Expiry fields
+	isRevealExpired: boolean;
+	isLocked: boolean;
+	revealExpiredAt: string | null;
+	viewExpiredAt: string | null;
 }
 
 // API Request/Response types
