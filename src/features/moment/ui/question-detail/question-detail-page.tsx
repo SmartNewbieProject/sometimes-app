@@ -335,11 +335,12 @@ export const QuestionDetailPage = () => {
 	}, [step]);
 
 	return (
-		<SafeAreaView style={styles.safeArea}>
-			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				style={styles.container}
-			>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+			style={styles.keyboardAvoidingView}
+			keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+		>
+			<SafeAreaView style={styles.safeArea}>
 				<Stack.Screen
 					options={{
 						headerTitle: t('features.moment.question_detail.header_title'),
@@ -507,12 +508,16 @@ export const QuestionDetailPage = () => {
 						)}
 					</View>
 				)}
-			</KeyboardAvoidingView>
-		</SafeAreaView>
+			</SafeAreaView>
+		</KeyboardAvoidingView>
 	);
 };
 
 const styles = StyleSheet.create({
+	keyboardAvoidingView: {
+		flex: 1,
+		backgroundColor: colors.momentBackground,
+	},
 	safeArea: {
 		flex: 1,
 		backgroundColor: colors.momentBackground,

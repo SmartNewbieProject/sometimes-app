@@ -6,6 +6,7 @@ import { Check, Loader2, Sparkles } from 'lucide-react-native';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { answerInputStyles } from './envelope.styles';
 
 interface AnswerInputProps {
@@ -34,6 +35,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
 	onSubmit,
 }) => {
 	const { t } = useTranslation();
+	const insets = useSafeAreaInsets();
 	const isTextValid = textAnswer.trim().length > 0;
 	const isOptionValid = selectedOption !== null;
 	const isValid = questionType === 'text' ? isTextValid : isOptionValid;
@@ -76,7 +78,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
 				textAlignVertical="top"
 				underlineColorAndroid="transparent"
 				maxLength={500}
-				scrollEnabled={false}
+				scrollEnabled={true}
 				accessibilityLabel={t('features.moment.question_detail.answer_input.placeholder')}
 				accessibilityHint={t('features.moment.question_detail.answer_input.writing_count', {
 					count: 500,
@@ -194,7 +196,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
 
 			{questionType === 'text' ? renderTextInput() : renderOptionInput()}
 
-			<View style={answerInputStyles.submitButton}>
+			<View style={[answerInputStyles.submitButton, { marginBottom: insets.bottom || 16 }]}>
 				<Button
 					onPress={onSubmit}
 					disabled={!isValid || isSending}

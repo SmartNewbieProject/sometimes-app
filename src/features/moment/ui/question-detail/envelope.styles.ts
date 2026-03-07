@@ -347,7 +347,6 @@ export const answerInputStyles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 24,
     backgroundColor: colors.white,
-    marginBottom: 36,
   },
 });
 
