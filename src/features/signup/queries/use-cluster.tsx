@@ -16,7 +16,7 @@ export function useClusterQuery(regionCode: string) {
 
 	const universities = data?.universities?.map((item) => ({
 		...item,
-		logoUrl: getSmartUnivLogoUrl(item.code, country),
+		logoUrl: item.logoFile ?? getSmartUnivLogoUrl(item.code, country),
 		universityType: item.foundation,
 	}));
 

@@ -116,6 +116,7 @@ export interface ClusterUniversity {
 	code: string;
 	region: string;
 	foundation: string;
+	logoFile?: string;
 }
 
 export interface ClusterResponse {
