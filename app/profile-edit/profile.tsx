@@ -17,7 +17,6 @@ import ProfileSmoking from '@/src/features/profile-edit/ui/profile/profile-smoki
 import ProfileTattoo from '@/src/features/profile-edit/ui/profile/profile-tattoo';
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { tryCatch } from '@/src/shared/libs';
 import { Button } from '@/src/shared/ui';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -34,12 +33,11 @@ function ProfileContent() {
 	const { updateForm, ...form } = useMyInfoForm();
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
-	const { isLoading, updateMbti, isUpdating } = useMbti();
+	const { updateMbtiAsync } = useMbti();
 
 	const { profileDetails } = useAuth();
 	const [formSubmitLoading, setFormSubmitLoading] = useState(false);
 	const { showErrorModal, showModal } = useModal();
-	const { showLoading, hideLoading } = useGlobalLoading();
 	const { data: preferenceSelfFromAPI = [] } = usePreferenceSelfQuery();
 
 	// profileDetails.characteristics와 preferences를 합침 (백엔드 버그 대응)
@@ -213,8 +211,9 @@ function ProfileContent() {
 	]);
 
 	const onFinish = async () => {
+		if (formSubmitLoading) return;
+
 		setFormSubmitLoading(true);
-		showLoading();
 		await tryCatch(
 			async () => {
 				const emptyFields = [];
@@ -239,7 +238,6 @@ function ProfileContent() {
 					throw new Error(message);
 				}
 
-				console.log('submitform', form);
 				await savePreferences({
 					datingStyleIds: form.datingStyleIds,
 					interestIds: form.interestIds,
@@ -251,7 +249,9 @@ function ProfileContent() {
 
 					mbti: form.mbti as string,
 				});
-				updateMbti(form.mbti as string);
+				if (profileDetails?.mbti !== form.mbti) {
+					await updateMbtiAsync(form.mbti as string);
+				}
 
 				// 프로필 데이터 다시 불러오기
 				await queryClient.invalidateQueries({
@@ -271,7 +271,6 @@ function ProfileContent() {
 				updateForm('init', false);
 
 				setFormSubmitLoading(false);
-				hideLoading();
 
 				showModal({
 					title: t('apps.profile_edit.ui.success_modal.title'),
@@ -302,10 +301,13 @@ function ProfileContent() {
 					err?.message || err?.error || t('features.profile-edit.errors.save_failed');
 				showErrorModal(errorMessage, 'error');
 				setFormSubmitLoading(false);
-				hideLoading();
 			},
 		);
 	};
+
+	if (formSubmitLoading) {
+		return <PageLoading />;
+	}
 
 	const handleSliderTouchStart = useCallback(() => {
 		setScrollEnabled(false);
@@ -328,25 +330,13 @@ function ProfileContent() {
 				<ProfileInterest />
 				<ProfilePersonality />
 				<ProfileDatingStyle />
-				{profileDetails?.gender === 'MALE' && i18n.language !== 'ja' && (
-					<ProfileMilitary
-						onSliderTouchStart={handleSliderTouchStart}
-						onSliderTouchEnd={handleSliderTouchEnd}
-					/>
-				)}
-				<ProfileDrinking
-					onSliderTouchStart={handleSliderTouchStart}
-					onSliderTouchEnd={handleSliderTouchEnd}
-				/>
-				<ProfileSmoking
-					onSliderTouchStart={handleSliderTouchStart}
-					onSliderTouchEnd={handleSliderTouchEnd}
-				/>
-				<ProfileTattoo
-					onSliderTouchStart={handleSliderTouchStart}
-					onSliderTouchEnd={handleSliderTouchEnd}
-				/>
-			</ScrollView>
+					{profileDetails?.gender === 'MALE' && i18n.language !== 'ja' && (
+						<ProfileMilitary />
+					)}
+					<ProfileDrinking />
+					<ProfileSmoking />
+					<ProfileTattoo />
+				</ScrollView>
 			<View
 				style={{
 					position: 'absolute',
@@ -360,7 +350,12 @@ function ProfileContent() {
 					paddingTop: 15,
 				}}
 			>
-				<Button disabled={disabled} onPress={onFinish} rounded="lg" styles={{ width: '100%' }}>
+				<Button
+					disabled={disabled || formSubmitLoading}
+					onPress={onFinish}
+					rounded="lg"
+					styles={{ width: '100%' }}
+				>
 					{t('apps.profile_edit.ui.save_button')}
 				</Button>
 			</View>

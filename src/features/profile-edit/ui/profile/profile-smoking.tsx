@@ -9,12 +9,7 @@ const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-interface ProfileSmokingProps {
-  onSliderTouchStart?: () => void;
-  onSliderTouchEnd?: () => void;
-}
-
-function ProfileSmoking({ onSliderTouchStart, onSliderTouchEnd }: ProfileSmokingProps) {
+function ProfileSmoking() {
   const { t } = useTranslation();
   const { updateForm, smoking } = useMyInfoForm();
 
@@ -68,8 +63,6 @@ function ProfileSmoking({ onSliderTouchStart, onSliderTouchEnd }: ProfileSmoking
         middleLabelLeft={-10}
         tooltips={tooltips}
         showTooltip={true}
-        onSliderTouchStart={onSliderTouchStart}
-        onSliderTouchEnd={onSliderTouchEnd}
       />
     </FormSection>
   );

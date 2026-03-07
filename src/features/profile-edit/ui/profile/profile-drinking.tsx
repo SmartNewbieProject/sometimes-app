@@ -9,12 +9,7 @@ const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-interface ProfileDrinkingProps {
-  onSliderTouchStart?: () => void;
-  onSliderTouchEnd?: () => void;
-}
-
-function ProfileDrinking({ onSliderTouchStart, onSliderTouchEnd }: ProfileDrinkingProps) {
+function ProfileDrinking() {
   const { drinking, updateForm } = useMyInfoForm();
   const { t } = useTranslation();
 
@@ -98,8 +93,6 @@ function ProfileDrinking({ onSliderTouchStart, onSliderTouchEnd }: ProfileDrinki
         lastLabelLeft={-50}
         tooltips={tooltips}
         showTooltip={true}
-        onSliderTouchStart={onSliderTouchStart}
-        onSliderTouchEnd={onSliderTouchEnd}
         mapOption={mapOption}
       />
     </FormSection>

@@ -7,7 +7,9 @@ import {
   StyleSheet,
   type StyleProp,
   type ViewStyle,
- type LayoutChangeEvent, View } from "react-native";
+  type LayoutChangeEvent,
+  View,
+} from "react-native";
 
 import React, {
   useState,
@@ -38,10 +40,7 @@ interface StepSliderProps {
   middleLabelLeft?: number;
   onChange?: (value: number) => void;
   style?: StyleProp<ViewStyle>;
-  showSelectedValue?: boolean;
   touchAreaHeight?: number;
-  onTouchStart?: () => void;
-  onTouchEnd?: () => void;
 }
 
 export function StepSlider({
@@ -58,8 +57,6 @@ export function StepSlider({
   showMiddle = true,
   style,
   touchAreaHeight = 48,
-  onTouchStart,
-  onTouchEnd,
 }: StepSliderProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [draggingValue, setDraggingValue] = useState<number | null>(
@@ -67,8 +64,10 @@ export function StepSlider({
   );
   const [isDragging, setIsDragging] = useState(false);
 
+  // [5] sliderX를 비동기 measure 대신 ref로 관리, handleDragStart 시점에 동기 계산
   const [sliderWidth, setSliderWidth] = useState(0);
-  const [sliderX, setSliderX] = useState(0);
+  const sliderWidthRef = useRef(0);
+  const sliderXRef = useRef(0);
   const sliderRef = useRef<View>(null);
 
   const isControlled = controlledValue !== undefined;
@@ -107,35 +106,38 @@ export function StepSlider({
     [snapToStep, isControlled, onChange]
   );
 
+  // [5] measure 결과를 ref에 저장 — state 업데이트 없으므로 panResponder 재생성 없음
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
-    setSliderWidth(Platform.OS === "web" ? width - 10 : width);
+    const adjusted = Platform.OS === "web" ? width - 10 : width;
+    setSliderWidth(adjusted);
+    sliderWidthRef.current = adjusted;
 
     if (sliderRef.current) {
-      sliderRef.current.measure((x, y, width, height, pageX, pageY) => {
-        setSliderX(pageX);
+      sliderRef.current.measure((x, y, w, h, pageX) => {
+        sliderXRef.current = pageX;
       });
     }
   }, []);
 
+  // [5] sliderX를 ref에서 읽도록 변경 — sliderWidth/sliderX 의존성 제거
   const calculateValueFromTouch = useCallback(
     (pageX: number) => {
-      if (!sliderWidth || !sliderX) return null;
+      if (!sliderWidthRef.current || !sliderXRef.current) return null;
 
-      const relativeX = pageX - sliderX;
-      const clampedX = Math.max(0, Math.min(sliderWidth, relativeX));
-      const percentage = clampedX / sliderWidth;
+      const relativeX = pageX - sliderXRef.current;
+      const clampedX = Math.max(0, Math.min(sliderWidthRef.current, relativeX));
+      const percentage = clampedX / sliderWidthRef.current;
       const rawValue = min + percentage * (max - min);
 
       return rawValue;
     },
-    [sliderWidth, sliderX, min, max]
+    [min, max]
   );
 
   const handleDragStart = useCallback(
     (event: GestureResponderEvent) => {
-      onTouchStart?.();
-      const pageX = event.nativeEvent.pageX;
+      const { pageX } = event.nativeEvent;
       const newValue = calculateValueFromTouch(pageX);
 
       if (newValue !== null) {
@@ -144,18 +146,20 @@ export function StepSlider({
         handleValueChange(newValue);
       }
     },
-    [calculateValueFromTouch, handleValueChange, onTouchStart]
+    [calculateValueFromTouch, handleValueChange]
   );
 
+  // [2] 드래그 중에도 handleValueChange 호출 → tooltip 실시간 갱신
   const throttledDragMove = useMemo(() => {
     return throttle((pageX: number) => {
       const newValue = calculateValueFromTouch(pageX);
 
       if (newValue !== null) {
         setDraggingValue(newValue);
+        handleValueChange(newValue);
       }
     }, 16);
-  }, [calculateValueFromTouch]);
+  }, [calculateValueFromTouch, handleValueChange]);
 
   const handleDragMove = useCallback(
     (event: GestureResponderEvent) => {
@@ -174,36 +178,36 @@ export function StepSlider({
     }
     setIsDragging(false);
     setDraggingValue(null);
-    onTouchEnd?.();
-  }, [draggingValue, handleValueChange, throttledDragMove, onTouchEnd]);
+  }, [draggingValue, handleValueChange, throttledDragMove]);
 
+  // [5] sliderWidth/sliderX 의존성 제거 → panResponder 불필요한 재생성 방지
   const panResponder = useMemo(() => {
-    if (!sliderWidth || !sliderX) return null;
-
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => false, // [3] Start 단계에서는 캡처 안 함
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+      },
       onMoveShouldSetPanResponderCapture: (_, gestureState) => {
-        // 터치 시작부터 적극적으로 제스처를 캡처하여 스크롤 방지
-        // 수평 이동이 감지되거나, 초기 터치 시점에는 무조건 캡처
-        const hasHorizontalMovement = Math.abs(gestureState.dx) > 2;
-        const hasMinimalMovement = Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
-        return hasHorizontalMovement || hasMinimalMovement;
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5;
       },
       onPanResponderGrant: handleDragStart,
       onPanResponderMove: handleDragMove,
       onPanResponderRelease: handleDragEnd,
       onPanResponderTerminate: handleDragEnd,
-      onPanResponderTerminationRequest: () => false,
+      onPanResponderTerminationRequest: () => true,
     });
-  }, [sliderWidth, sliderX, handleDragStart, handleDragMove, handleDragEnd]);
+  }, [handleDragStart, handleDragMove, handleDragEnd]);
 
   useEffect(() => {
     return () => {
       throttledDragMove.cancel();
     };
   }, [throttledDragMove]);
+
+  // [1] 접근성: 현재 선택된 옵션 라벨
+  const currentOption = options?.[value - min];
+  const accessibilityLabel = currentOption?.label ?? String(value);
 
   return (
     <View style={[styles.container, style]}>
@@ -253,7 +257,12 @@ export function StepSlider({
           <View
             ref={sliderRef}
             onLayout={handleLayout}
-            {...(panResponder?.panHandlers ?? {})}
+            {...panResponder.panHandlers}
+            accessible={true}
+            accessibilityRole="adjustable"
+            accessibilityLabel={accessibilityLabel}
+            accessibilityValue={{ min, max, now: snapToStep(value) }}
+            accessibilityHint="좌우로 밀어서 값을 변경하세요"
             style={[styles.touchArea, { height: touchAreaHeight }]}
           >
             {/* 실제 슬라이더 트랙 */}
@@ -276,7 +285,6 @@ export function StepSlider({
                       style={[
                         styles.stepDot,
                         {
-                          top: Platform.OS === "web" ? 11 : 9,
                           left: left,
                         },
                       ]}
@@ -286,18 +294,19 @@ export function StepSlider({
               ) : (
                 <></>
               )}
-              {/* Thumb */}
-              <View
-                style={[
-                  styles.thumbContainer,
-                  {
-                    left: `${percentage}%`,
-                    transform: [{ translateX: -16 }],
-                  },
-                ]}
-              >
-                <View style={styles.thumb} />
-              </View>
+            </View>
+            {/* Thumb — track 바깥에 배치해 track의 overflow 클리핑 방지 */}
+            <View
+              style={[
+                styles.thumbContainer,
+                {
+                  left: `${percentage}%`,
+                  transform: [{ translateX: -16 }, { translateY: -16 }],
+                  top: "50%",
+                },
+              ]}
+            >
+              <View style={styles.thumb} />
             </View>
           </View>
         </View>
@@ -352,23 +361,21 @@ const styles = StyleSheet.create({
   stepDot: {
     position: "absolute",
     zIndex: 10,
+    top: 1, // (trackHeight - dotHeight) / 2 = (12 - 10) / 2 = 1
     width: 10,
     height: 10,
     backgroundColor: semanticColors.surface.other,
     borderRadius: 9999,
-    marginTop: -10,
     alignItems: "center",
     justifyContent: "center",
   },
   thumbContainer: {
     position: "absolute",
     zIndex: 30,
-    top: 0,
     width: 32,
     height: 32,
     backgroundColor: semanticColors.brand.primary,
     borderRadius: 9999,
-    marginTop: -10,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -9,12 +9,7 @@ const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-interface ProfileTattooProps {
-  onSliderTouchStart?: () => void;
-  onSliderTouchEnd?: () => void;
-}
-
-function ProfileTattoo({ onSliderTouchStart, onSliderTouchEnd }: ProfileTattooProps) {
+function ProfileTattoo() {
   const { t } = useTranslation();
   const { updateForm, tattoo } = useMyInfoForm();
 
@@ -76,8 +71,6 @@ function ProfileTattoo({ onSliderTouchStart, onSliderTouchEnd }: ProfileTattooPr
         tooltips={tooltips}
         showTooltip={true}
         autoSetInitialValue={true}
-        onSliderTouchStart={onSliderTouchStart}
-        onSliderTouchEnd={onSliderTouchEnd}
       />
     </FormSection>
   );

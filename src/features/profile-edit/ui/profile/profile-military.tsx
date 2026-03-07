@@ -9,12 +9,7 @@ const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
-interface ProfileMilitaryProps {
-  onSliderTouchStart?: () => void;
-  onSliderTouchEnd?: () => void;
-}
-
-function ProfileMilitary({ onSliderTouchStart, onSliderTouchEnd }: ProfileMilitaryProps) {
+function ProfileMilitary() {
   const { updateForm, militaryStatus } = useMyInfoForm();
   const { t } = useTranslation();
 
@@ -43,8 +38,6 @@ function ProfileMilitary({ onSliderTouchStart, onSliderTouchEnd }: ProfileMilita
         isLoading={optionsLoading}
         loadingTitle={t("features.profile-edit.ui.profile.military.loading")}
         middleLabelLeft={-10}
-        onSliderTouchStart={onSliderTouchStart}
-        onSliderTouchEnd={onSliderTouchEnd}
       />
     </FormSection>
   );

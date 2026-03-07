@@ -14,7 +14,7 @@ import InterestTattoo from '@/src/features/profile-edit/ui/interest/interest-tat
 
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
+import PageLoading from '@/src/features/loading/ui/page';
 import { tryCatch } from '@/src/shared/libs';
 import { Button } from '@/src/shared/ui';
 import { useRouter } from 'expo-router';
@@ -37,7 +37,6 @@ function InterestSection() {
 	const [formSubmitLoading, setFormSubmitLoading] = useState(false);
 	const [isInitialized, setIsInitialized] = useState(false);
 	const { showErrorModal, showModal } = useModal();
-	const { showLoading, hideLoading } = useGlobalLoading();
 
 	const hasChanges = useInterestForm((state) => {
 		const { initialSnapshot } = state;
@@ -152,8 +151,9 @@ function InterestSection() {
 	}, []);
 
 	const onFinish = async () => {
+		if (formSubmitLoading) return;
+
 		setFormSubmitLoading(true);
-		showLoading();
 		await tryCatch(
 			async () => {
 				if (!form.age || typeof form.age !== 'string') {
@@ -199,7 +199,6 @@ function InterestSection() {
 				setIsInitialized(false);
 
 				setFormSubmitLoading(false);
-				hideLoading();
 
 				showModal({
 					title: t('apps.profile_edit.ui.success_modal.title'),
@@ -230,13 +229,16 @@ function InterestSection() {
 					err?.message || err?.error || t('apps.profile_edit.errors.preference_save_failed');
 				showErrorModal(errorMessage, 'error');
 				setFormSubmitLoading(false);
-				hideLoading();
 			},
 		);
 	};
 
 	if (!profileDetails) {
 		return null;
+	}
+
+	if (formSubmitLoading) {
+		return <PageLoading />;
 	}
 
 	return (

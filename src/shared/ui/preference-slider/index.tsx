@@ -23,8 +23,7 @@ interface PreferenceSliderProps {
   tooltips?: TooltipData[];
   showTooltip?: boolean;
   autoSetInitialValue?: boolean;
-  onSliderTouchStart?: () => void;
-  onSliderTouchEnd?: () => void;
+  defaultIndex?: number;
   mapOption?: (option: PreferenceOption) => { label: string; value: string };
 }
 
@@ -41,8 +40,7 @@ export function PreferenceSlider({
   tooltips,
   showTooltip = false,
   autoSetInitialValue = true,
-  onSliderTouchStart,
-  onSliderTouchEnd,
+  defaultIndex = 0,
   mapOption,
 }: PreferenceSliderProps) {
   const defaultMapOption = (option: PreferenceOption) => ({
@@ -55,8 +53,8 @@ export function PreferenceSlider({
 
   const index = preferences?.options.findIndex(
     (item) => item.id === value?.id
-  );
-  const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  ) ?? -1;
+  const currentIndex = index !== -1 ? index : defaultIndex;
 
   useEffect(() => {
     if (isLoading || !autoSetInitialValue) return;
@@ -80,15 +78,12 @@ export function PreferenceSlider({
             max={(preferences?.options.length ?? 1) - 1}
             step={1}
             showMiddle={showMiddle}
-            key={`slider-${currentIndex || "none"}`}
             defaultValue={currentIndex}
             value={currentIndex}
             onChange={handleChange}
             lastLabelLeft={lastLabelLeft}
             firstLabelLeft={firstLabelLeft}
             middleLabelLeft={middleLabelLeft}
-            onTouchStart={onSliderTouchStart}
-            onTouchEnd={onSliderTouchEnd}
             options={options}
           />
         </Loading.Lottie>
