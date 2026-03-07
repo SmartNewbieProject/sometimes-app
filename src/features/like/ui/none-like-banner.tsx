@@ -46,7 +46,7 @@ function NoneLikeBanner() {
       <Pressable
         style={styles.container}
         onPress={() => {
-          router.push("/post-box/i-liked");
+          router.push("/post-box/liked-me");
         }}
       >
         <LinearGradient
