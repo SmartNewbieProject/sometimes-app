@@ -1,6 +1,6 @@
 import {axiosClient} from "@/src/shared/libs";
 import type {Preferences, SelectedPreferences} from "../../my-info/api";
-import type { BannerPosition, BannerResponse } from "../types";
+import type { BannerPosition, BannerResponse, PublicReviewType, PublicReviewsResponse } from "../types";
 
 interface TotalMatchCountResponse {
   count: number;
@@ -56,6 +56,9 @@ export const checkBusan = (): Promise<boolean> =>
 export const getBanners = (position: BannerPosition): Promise<BannerResponse[]> =>
     axiosClient.get('/banners', { params: { position } });
 
+export const getPublicReviews = (type?: PublicReviewType, limit = 20): Promise<PublicReviewsResponse> =>
+    axiosClient.get('/public-reviews', { params: { ...(type && { type }), limit } });
+
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;
   checkPreferenceFill: () => Promise<CheckPreferenceFillResponse>;
@@ -66,6 +69,7 @@ type HomeApiService = {
   updateUniversity: (body: UniversityUpdateRequest) => Promise<void>;
   checkBusan: () => Promise<boolean>;
   getBanners: (position: BannerPosition) => Promise<BannerResponse[]>;
+  getPublicReviews: (type?: PublicReviewType, limit?: number) => Promise<PublicReviewsResponse>;
 };
 
 const apis: HomeApiService = {
@@ -78,6 +82,7 @@ const apis: HomeApiService = {
   updateUniversity,
   checkBusan,
   getBanners,
+  getPublicReviews,
 };
 
 export default apis;

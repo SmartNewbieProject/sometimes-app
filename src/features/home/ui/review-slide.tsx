@@ -1,19 +1,81 @@
-import { UniversityName, getUnivLogo } from "@/src/shared/libs";
+import { Image } from "expo-image";
 import Slide from "@/src/widgets/slide";
 import { Text } from "@shared/ui";
-import { Image, StyleSheet, View } from "react-native";
-import i18n from "@/src/shared/libs/i18n";
+import { StyleSheet, View } from "react-native";
 import colors from "@/src/shared/constants/colors";
+import { usePublicReviewsQuery } from "../queries";
+import type { PublicReview, PublicReviewSource } from "../types";
 
-type Review = {
-  name: string;
-  universityName: UniversityName;
-  universityImageUrl: string;
-  content: string;
-  date: string;
+const formatDate = (iso: string) => {
+  const d = new Date(iso);
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yy}.${mm}.${dd}`;
+};
+
+const sourceLabel: Record<PublicReviewSource, string> = {
+  APP_STORE: "App Store",
+  PLAY_STORE: "Google Play",
+  HOT: "인기게시글",
+  COMMUNITY: "커뮤니티",
+};
+
+const ReviewCard = ({ review }: { review: PublicReview }) => {
+  const { author } = review;
+  const logoUri = author?.university?.logoFile ?? null;
+
+  return (
+    <View style={styles.reviewCard}>
+      <View style={styles.headerRow}>
+        {logoUri ? (
+          <Image source={{ uri: logoUri }} style={styles.universityImage} contentFit="contain" />
+        ) : null}
+        <View style={styles.userInfo}>
+          <Text size="md" weight="semibold" textColor="black">
+            {author?.nickname ?? "익명"}
+          </Text>
+          {author?.university?.name ? (
+            <Text size="sm" weight="light" textColor="black">
+              {author.university.name}
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.metaInfo}>
+          <Text size="sm" style={styles.sourceText}>
+            {sourceLabel[review.source]}
+          </Text>
+          {review.rating != null ? (
+            <Text size="sm" style={styles.ratingText}>
+              {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+            </Text>
+          ) : null}
+        </View>
+      </View>
+
+      <View style={styles.contentSection}>
+        {review.title ? (
+          <Text size="sm" weight="semibold" textColor="black" numberOfLines={1}>
+            {review.title}
+          </Text>
+        ) : null}
+        <Text size="sm" textColor="black" numberOfLines={5}>
+          {review.body}
+        </Text>
+        <Text size="sm" style={styles.dateText}>
+          {formatDate(review.createdAt)}
+        </Text>
+      </View>
+    </View>
+  );
 };
 
 export const ReviewSlide = () => {
+  const { data } = usePublicReviewsQuery();
+  const reviews = data?.items;
+
+  if (!reviews || reviews.length === 0) return null;
+
   return (
     <Slide
       autoPlayInterval={6000}
@@ -22,32 +84,7 @@ export const ReviewSlide = () => {
       indicatorContainerStyle={styles.indicatorContainer}
     >
       {reviews.map((review) => (
-        <View key={review.name} style={styles.reviewCard}>
-          <View style={styles.headerRow}>
-            <Image
-              source={{ uri: review.universityImageUrl }}
-              style={styles.universityImage}
-            />
-            <View style={styles.userInfo}>
-              <Text size="md" weight="semibold" textColor="black">
-                {review.name}
-              </Text>
-              <Text size="md" weight="light" textColor="black">
-                {review.universityName}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.contentSection}>
-            <Text size="sm" textColor="black">
-              {review.content}
-            </Text>
-
-            <Text size="sm" style={styles.dateText}>
-              {review.date}
-            </Text>
-          </View>
-        </View>
+        <ReviewCard key={review.id} review={review} />
       ))}
     </Slide>
   );
@@ -64,75 +101,45 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 8,
     width: "100%",
+    height: 160,
+    overflow: "hidden",
     backgroundColor: colors.moreLightPurple,
     padding: 10,
     borderRadius: 12,
   },
   headerRow: {
     flexDirection: "row",
+    alignItems: "flex-end",
     gap: 8,
   },
   universityImage: {
-    width: 60,
-    height: 60,
+    width: 48,
+    height: 48,
   },
   userInfo: {
     flexDirection: "column",
-    alignSelf: "flex-end",
-    gap: 4,
+    flex: 1,
+    gap: 2,
+  },
+  metaInfo: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: 2,
+  },
+  sourceText: {
+    color: "#888888",
+  },
+  ratingText: {
+    color: "#FFB800",
+    letterSpacing: 1,
   },
   contentSection: {
     marginHorizontal: 8,
-    marginTop: 8,
     flexDirection: "column",
-    marginLeft: 8,
+    gap: 4,
   },
   dateText: {
     color: "#6F6F6F",
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: 4,
   },
 });
-
-const reviews: Review[] = [
-  {
-    name: i18n.t("features.home.ui.review_slide.anonymous"),
-    universityName: UniversityName.동아대학교,
-    universityImageUrl: getUnivLogo(UniversityName.동아대학교),
-    content:
-      i18n.t("features.home.ui.review_slide.review_1"),
-    date: "25.08.10",
-  },
-  {
-    name: i18n.t("features.home.ui.review_slide.anonymous"),
-    universityName: UniversityName.건양대학교,
-    universityImageUrl: getUnivLogo(UniversityName.건양대학교),
-    content:
-      i18n.t("features.home.ui.review_slide.review_2"),
-    date: "25.08.09",
-  },
-  {
-    name: i18n.t("features.home.ui.review_slide.anonymous"),
-    universityName: UniversityName.경성대학교,
-    universityImageUrl: getUnivLogo(UniversityName.경성대학교),
-    content:
-            i18n.t("features.home.ui.review_slide.review_3"),
-    date: "25.08.08",
-  },
-  {
-    name: i18n.t("features.home.ui.review_slide.anonymous"),
-    universityName: UniversityName.한밭대학교,
-    universityImageUrl: getUnivLogo(UniversityName.한밭대학교),
-    content:
-            i18n.t("features.home.ui.review_slide.review_4"),
-    date: "25.08.07",
-  },
-  {
-    name: i18n.t("features.home.ui.review_slide.anonymous"),
-    universityName: UniversityName.경성대학교,
-    universityImageUrl: getUnivLogo(UniversityName.경성대학교),
-    content:
-      i18n.t("features.home.ui.review_slide.review_5"),
-    date: "25.08.09",
-  },
-];

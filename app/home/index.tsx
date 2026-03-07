@@ -33,7 +33,7 @@ import { ImageResources, storage } from '@/src/shared/libs';
 import { sendHeartbeat } from '@/src/shared/libs/heartbeat';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ensurePushTokenRegistered, registerFcmTokenAsync } from '@/src/shared/libs/notifications';
-import { AnnounceCard, BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
+import { BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
 import type { ProfileImage } from '@/src/types/user';
 import { useAuth } from '@features/auth';
 import Event from '@features/event';
@@ -42,7 +42,6 @@ import Home from '@features/home';
 import IdleMatchTimer from '@features/idle-match-timer';
 import { useQueryClient } from '@tanstack/react-query';
 import { ImageResource } from '@ui/image-resource';
-import Constants from 'expo-constants';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -104,8 +103,7 @@ const HomeScreen = () => {
 
 	const hasCharacteristics = preferencesSelf && preferencesSelf.length > 0;
 	const hasPreferences = isPreferenceFill;
-	const showPreferenceGuide = !hasCharacteristics || !hasPreferences;
-	const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApproved;
+const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApproved;
 
 	// const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
 	// const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
@@ -281,7 +279,7 @@ const HomeScreen = () => {
 				<View style={{ paddingBottom: 4, marginTop: 2 }}>
 					<BannerSlide />
 				</View>
-				<View style={{ marginTop: 20 }}>
+				<View style={{ marginTop: 8 }}>
 					{collapse ? (
 						<LikeCollapse collapse={collapse.data} type={collapse.type} />
 					) : (
@@ -296,18 +294,7 @@ const HomeScreen = () => {
 					</View>
 				</Show>
 
-				<View style={styles.feedbackSection}>
-					<Show when={showPreferenceGuide}>
-						<AnnounceCard
-							emoji={ImageResources.DETAILS}
-							emojiSize={{ width: 31, height: 28 }}
-							text={t('apps.home.announce_card_text')}
-							onPress={() => router.navigate('/interest')}
-						/>
-					</Show>
-				</View>
-
-				{renderMatchingSection()}
+	{renderMatchingSection()}
 				<View style={{ marginTop: 20 }}>
 					<HistoryCollapse />
 				</View>
@@ -318,10 +305,8 @@ const HomeScreen = () => {
 				<LatestPostsCarousel />
 				<Feedback.WallaFeedbackBanner />
 
-				<BusinessInfo />
-
-				<View style={styles.versionContainer}>
-					<Text style={styles.versionText}>v{Constants.expoConfig?.version}</Text>
+				<View style={{ marginTop: 'auto' }}>
+					<BusinessInfo />
 				</View>
 			</ScrollView>
 
@@ -383,21 +368,7 @@ const styles = StyleSheet.create({
 	profilePhotoSection: {
 		marginTop: 14,
 	},
-	feedbackSection: {
-		marginTop: 18,
-		flexDirection: 'column',
-		gap: 6,
-	},
-	versionContainer: {
-		alignItems: 'center',
-		paddingVertical: 16,
-		marginTop: 8,
-	},
-	versionText: {
-		fontSize: 12,
-		color: '#9CA3AF',
-		fontWeight: '400',
-	},
+
 });
 
 export default HomeScreen;

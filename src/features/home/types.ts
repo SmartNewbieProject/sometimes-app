@@ -47,3 +47,29 @@ export interface ImageSlideProps {
 export interface HeaderProps {
   title?: string;
 }
+
+export type PublicReviewSource = 'APP_STORE' | 'PLAY_STORE' | 'HOT' | 'COMMUNITY';
+export type PublicReviewType = 'app' | 'community';
+
+export interface PublicReviewAuthor {
+  nickname: string;
+  university: {
+    name: string;
+    logoFile: string | null;
+  } | null;
+}
+
+export interface PublicReview {
+  id: string;
+  source: PublicReviewSource;
+  rating: number | null;
+  title: string | null;
+  body: string;
+  author: PublicReviewAuthor | null;
+  featuredAt: string;
+  createdAt: string;
+}
+
+export interface PublicReviewsResponse {
+  items: PublicReview[];
+}
