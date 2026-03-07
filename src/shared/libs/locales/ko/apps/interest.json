@@ -67,7 +67,7 @@
 		"title_1": "당신이 원하는",
 		"title_2": "이상형의 성격은 어떤가요?",
 		"loading": "성격 유형을 불러오고 있어요",
-		"next_none": "최대 3개 선택 가능"
+		"next_none": "최대 3개 선택"
 	},
 	"smoke": {
 		"tooltip_0_title": "비흡연자였으면 좋겠어요",
@@ -89,6 +89,7 @@
 	},
 	"tattoo": {
 		"no_tattoo": "문신 없음",
+		"dont_care": "상관 없음",
 		"small_tattoo": "작은 문신",
 		"has_tattoo": "문신 O",
 		"tooltip_0_title": "문신 X",

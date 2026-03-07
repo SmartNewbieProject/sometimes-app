@@ -6,6 +6,7 @@ import type { Preferences } from '@/src/features/my-info/api';
 import { Properties, savePreferences } from '@/src/features/my-info/services';
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { tryCatch } from '@/src/shared/libs';
 import Tooltip from '@/src/shared/ui/tooltip';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -41,31 +42,11 @@ export default function TattooSelectionScreen() {
 
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.TATTOO) ?? preferencesArray[0];
-	const index = preferences?.options.findIndex((item) => item.id === tattoo?.id);
+	const index = preferences?.options.findIndex((item) => item.id === tattoo?.id) ?? -1;
 
-	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const currentIndex = index !== -1 ? index : 0;
 
-	const tooltips =
-		preferences?.options.map((_, idx) => {
-			const titleKey = `apps.my-info.tattoo.tooltip_${idx}_title`;
-			const title = t(titleKey, { defaultValue: t('apps.my-info.tattoo.tooltip_0_title') });
-
-			const descriptions: string[] = [];
-			let descIdx = 1;
-			while (true) {
-				const descKey = `apps.my-info.tattoo.tooltip_${idx}_desc_${descIdx}`;
-				const desc = t(descKey, { defaultValue: '' });
-				if (!desc) break;
-				descriptions.push(desc);
-				descIdx++;
-			}
-
-			return {
-				title,
-				description:
-					descriptions.length > 0 ? descriptions : [t('apps.my-info.tattoo.tooltip_0_desc_1')],
-			};
-		}) ?? [];
+	const tooltips = usePreferenceTooltips('apps.my-info.tattoo', preferences?.options.length ?? 0);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!tattoo && preferences.options[currentIndex]) {

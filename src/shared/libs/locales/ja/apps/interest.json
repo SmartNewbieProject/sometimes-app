@@ -67,7 +67,7 @@
 		"title_1": "あなたが求める",
 		"title_2": "好みの性格はどんなタイプですか？",
 		"loading": "性格タイプを読み込んでいます",
-		"next_none": "最大3つまで選択可能"
+		"next_none": "最大3つ選択"
 	},
 	"smoke": {
 		"tooltip_0_title": "非喫煙者がいいです",
@@ -89,6 +89,7 @@
 	},
 	"tattoo": {
 		"no_tattoo": "タトゥーなし",
+		"dont_care": "こだわらない",
 		"small_tattoo": "小さいタトゥー",
 		"has_tattoo": "タトゥーあり",
 		"tooltip_0_title": "タトゥーがない人がいいです",

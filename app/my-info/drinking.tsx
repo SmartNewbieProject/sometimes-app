@@ -4,6 +4,7 @@ import Loading from '@/src/features/loading';
 import MyInfo from '@/src/features/my-info';
 import type { Preferences } from '@/src/features/my-info/api';
 import Tooltip from '@/src/shared/ui/tooltip';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import Interest from '@features/interest';
 import Layout from '@features/layout';
@@ -44,31 +45,11 @@ export default function DrinkingSelectionScreen() {
 		options: preferences?.options.filter((opt) => opt.key && !opt.key.startsWith('PREFER_')) ?? [],
 	};
 
-	const index = filteredPreferences?.options.findIndex((item) => item.id === drinking?.id);
+	const index = filteredPreferences?.options.findIndex((item) => item.id === drinking?.id) ?? -1;
 
-	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const currentIndex = index !== -1 ? index : 2;
 
-	const tooltips =
-		filteredPreferences?.options.map((_, idx) => {
-			const titleKey = `apps.my-info.drinking.tooltip_${idx}_title`;
-			const title = t(titleKey, { defaultValue: t('apps.my-info.drinking.tooltip_0_title') });
-
-			const descriptions: string[] = [];
-			let descIdx = 1;
-			while (true) {
-				const descKey = `apps.my-info.drinking.tooltip_${idx}_desc_${descIdx}`;
-				const desc = t(descKey, { defaultValue: '' });
-				if (!desc) break;
-				descriptions.push(desc);
-				descIdx++;
-			}
-
-			return {
-				title,
-				description:
-					descriptions.length > 0 ? descriptions : [t('apps.my-info.drinking.tooltip_0_desc_1')],
-			};
-		}) ?? [];
+	const tooltips = usePreferenceTooltips('apps.my-info.drinking', filteredPreferences?.options.length ?? 0);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!drinking && filteredPreferences.options[currentIndex]) {

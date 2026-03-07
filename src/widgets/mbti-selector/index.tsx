@@ -227,12 +227,13 @@ export function MbtiSelector({
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: "100%",
   },
   scrollContent: {
     paddingHorizontal: 32,
-    gap: 24,
-    paddingVertical: 16,
+    gap: 16,
+    paddingVertical: 8,
   },
   mbtiRow: {
     flexDirection: "row",

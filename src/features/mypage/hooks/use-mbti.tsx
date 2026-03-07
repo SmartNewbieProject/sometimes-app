@@ -27,6 +27,7 @@ export function useMbti() {
     isLoading,
     isError,
     updateMbti: mutation.mutate,
+    updateMbtiAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     updateError: mutation.isError,
   };

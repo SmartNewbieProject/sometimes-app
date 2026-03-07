@@ -3,6 +3,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import MyInfo from '@/src/features/my-info';
 import type { Preferences } from '@/src/features/my-info/api';
 import Tooltip from '@/src/shared/ui/tooltip';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 import Layout from '@features/layout';
@@ -36,31 +37,11 @@ export default function SmokingSelectionScreen() {
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.SMOKING) ?? preferencesArray[0];
 
-	const index = preferences?.options.findIndex((item) => item.id === smoking?.id);
+	const index = preferences?.options.findIndex((item) => item.id === smoking?.id) ?? -1;
 
-	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const currentIndex = index !== -1 ? index : 0;
 
-	const tooltips =
-		preferences?.options.map((_, idx) => {
-			const titleKey = `apps.my-info.smoking.tooltip_${idx}_title`;
-			const title = t(titleKey, { defaultValue: t('apps.my-info.smoking.tooltip_0_title') });
-
-			const descriptions: string[] = [];
-			let descIdx = 1;
-			while (true) {
-				const descKey = `apps.my-info.smoking.tooltip_${idx}_desc_${descIdx}`;
-				const desc = t(descKey, { defaultValue: '' });
-				if (!desc) break;
-				descriptions.push(desc);
-				descIdx++;
-			}
-
-			return {
-				title,
-				description:
-					descriptions.length > 0 ? descriptions : [t('apps.my-info.smoking.tooltip_0_desc_1')],
-			};
-		}) ?? [];
+	const tooltips = usePreferenceTooltips('apps.my-info.smoking', preferences?.options.length ?? 0);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!smoking && preferences.options[currentIndex]) {

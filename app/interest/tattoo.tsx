@@ -5,6 +5,7 @@ import { Properties, savePreferences } from '@/src/features/interest/services';
 import Loading from '@/src/features/loading';
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { tryCatch } from '@/src/shared/libs';
 import Tooltip from '@/src/shared/ui/tooltip';
 import { Selector } from '@/src/widgets/selector';
@@ -42,31 +43,11 @@ export default function TattooSelectionScreen() {
 
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.TATTOO) ?? preferencesArray[0];
-	const index = preferences?.options.findIndex((item) => item.id === tattoo?.id);
+	const index = preferences?.options.findIndex((item) => item.id === tattoo?.id) ?? -1;
 
-	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const currentIndex = index !== -1 ? index : 1;
 
-	const tooltips =
-		preferences?.options.map((_, idx) => {
-			const titleKey = `apps.interest.tattoo.tooltip_${idx}_title`;
-			const title = t(titleKey, { defaultValue: t('apps.interest.tattoo.tooltip_0_title') });
-
-			const descriptions: string[] = [];
-			let descIdx = 1;
-			while (true) {
-				const descKey = `apps.interest.tattoo.tooltip_${idx}_desc_${descIdx}`;
-				const desc = t(descKey, { defaultValue: '' });
-				if (!desc) break;
-				descriptions.push(desc);
-				descIdx++;
-			}
-
-			return {
-				title,
-				description:
-					descriptions.length > 0 ? descriptions : [t('apps.interest.tattoo.tooltip_0_desc_1')],
-			};
-		}) ?? [];
+	const tooltips = usePreferenceTooltips('apps.interest.tattoo', preferences?.options.length ?? 0);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!tattoo && preferences.options[currentIndex]) {
@@ -189,7 +170,7 @@ export default function TattooSelectionScreen() {
 								preferences?.options.map((option, idx) => {
 									// 백엔드 key → 번역 key 매핑
 									const keyMapping: Record<string, string> = {
-										NONE: 'no_tattoo',
+										NONE: 'dont_care',
 										NONE_STRICT: 'no_tattoo',
 										SMALL: 'small_tattoo',
 										SMALL_TATTOO: 'small_tattoo',
@@ -199,9 +180,10 @@ export default function TattooSelectionScreen() {
 										EXIST: 'has_tattoo',
 										EXISTS: 'has_tattoo',
 										OK: 'has_tattoo',
+										OKAY: 'has_tattoo',
 										TATTOO: 'has_tattoo',
-										DONT_CARE: 'small_tattoo',
-										NO_MATTER: 'small_tattoo',
+										DONT_CARE: 'dont_care',
+										NO_MATTER: 'dont_care',
 									};
 
 									// displayName fallback (한국어/일본어)

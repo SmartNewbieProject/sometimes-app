@@ -2,6 +2,7 @@ import type { Preferences } from '@/src/features/interest/api';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Loading from '@/src/features/loading';
 import Tooltip from '@/src/shared/ui/tooltip';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { PreferenceOption } from '@/src/types/user';
 import { Selector } from '@/src/widgets/selector';
 import { useTranslation } from 'react-i18next';
@@ -37,31 +38,11 @@ export default function SmokingSelectionScreen() {
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.SMOKING) ?? preferencesArray[0];
 
-	const index = preferences?.options.findIndex((item) => item.id === smoking?.id);
+	const index = preferences?.options.findIndex((item) => item.id === smoking?.id) ?? -1;
 
-	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const currentIndex = index !== -1 ? index : 1;
 
-	const tooltips =
-		preferences?.options.map((_, idx) => {
-			const titleKey = `apps.interest.smoke.tooltip_${idx}_title`;
-			const title = t(titleKey, { defaultValue: t('apps.interest.smoke.tooltip_0_title') });
-
-			const descriptions: string[] = [];
-			let descIdx = 1;
-			while (true) {
-				const descKey = `apps.interest.smoke.tooltip_${idx}_desc_${descIdx}`;
-				const desc = t(descKey, { defaultValue: '' });
-				if (!desc) break;
-				descriptions.push(desc);
-				descIdx++;
-			}
-
-			return {
-				title,
-				description:
-					descriptions.length > 0 ? descriptions : [t('apps.interest.smoke.tooltip_0_desc_1')],
-			};
-		}) ?? [];
+	const tooltips = usePreferenceTooltips('apps.interest.smoke', preferences?.options.length ?? 0);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!smoking && preferences.options[currentIndex]) {

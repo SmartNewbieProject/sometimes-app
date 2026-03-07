@@ -76,11 +76,10 @@ const styles = StyleSheet.create({
   },
   bar: {
     marginHorizontal: 32,
-
     height: 0.5,
     backgroundColor: semanticColors.surface.background,
-    marginTop: 39,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 16,
   },
 });
 
