@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <path fill="currentColor" d="M30 2L34 2L34 30L62 30L62 34L34 34L34 62L30 62L30 34L2 34L2 30L30 30Z" />
+  <circle fill="currentColor" cx="50" cy="10" r="3" />
+  <circle fill="currentColor" cx="10" cy="50" r="3" />
+  <circle fill="currentColor" cx="55" cy="55" r="2" />
+</svg>
