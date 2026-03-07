@@ -33,20 +33,29 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
 
 function Lockariant({ item }: ChatRoomCardProps) {
 	const { t } = useTranslation();
-	const { handleRemove, handleUnlock } = useChatLock(item.id);
+	const { handleRemove, handleUnlock, isEntering, isLeaving } = useChatLock(item.id);
+	const isPending = isEntering || isLeaving;
 
 	return (
 		<View style={{ flex: 1, marginBottom: 8 }}>
 			<RenderContent item={item} />
-			<View style={styles.blurContainer}>
+			<View style={[styles.blurContainer, isPending && styles.pendingOverlay]}>
 				<View style={styles.lockIconContainer}>
 					<LockChatIcon />
 				</View>
 
-				<Pressable onPress={handleRemove} style={styles.removeButton}>
+				<Pressable
+					disabled={isPending}
+					onPress={handleRemove}
+					style={[styles.removeButton, isPending && styles.pendingButton]}
+				>
 					<Text style={styles.removeButtonText}>{t('features.chat.ui.chat_room_card.delete')}</Text>
 				</Pressable>
-				<Pressable onPress={handleUnlock} style={styles.approveButton}>
+				<Pressable
+					disabled={isPending}
+					onPress={handleUnlock}
+					style={[styles.approveButton, isPending && styles.pendingButton]}
+				>
 					<Text style={styles.approveButtonText}>
 						{t('features.chat.ui.chat_room_card.accept')}
 					</Text>
@@ -298,6 +307,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 		paddingHorizontal: 16,
 	},
+	pendingOverlay: {
+		opacity: 0.9,
+	},
 	removeButton: {
 		paddingVertical: 10,
 		paddingHorizontal: 14,
@@ -309,6 +321,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 14,
 		borderRadius: 14,
 		backgroundColor: semanticColors.brand.primary,
+	},
+	pendingButton: {
+		opacity: 0.6,
 	},
 	removeButtonText: {
 		color: semanticColors.text.disabled,

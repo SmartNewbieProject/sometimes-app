@@ -22,6 +22,7 @@ export interface ChatRoomDetail {
 	partnerId: string;
 	roomActivation: boolean;
 	createdAt: string;
+	paymentConfirm?: boolean;
 	hasLeft?: boolean;
 	snooze: boolean;
 	canRefund: boolean;
@@ -48,11 +49,12 @@ export interface ChatRoomList {
 	id: string;
 	unreadCount: number;
 	matchId: string;
-	matchStatus: 'OPEN' | 'CLOSED' | 'PENDING';
+	matchStatus: 'OPEN' | 'CLOSED' | 'PENDING' | 'REJECTED' | 'IN_CHAT';
 	nickName: string;
 	recentMessage: string;
 	profileImages: string;
 	recentDate: string;
+	roomActivation?: boolean;
 	paymentConfirm: boolean;
 	canRefund: boolean;
 }

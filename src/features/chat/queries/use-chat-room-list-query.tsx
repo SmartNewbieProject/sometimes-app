@@ -9,9 +9,9 @@ export const useChatRoomListQuery = () => {
 		queryKey: ['chat-room'],
 		queryFn: getChatRooms,
 		enabled: isAuthorized,
-		staleTime: 0,
-		refetchOnMount: 'always',
-		refetchOnWindowFocus: true,
+		staleTime: 60 * 1000,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
 		initialPageParam: undefined,
 		getNextPageParam: (lastPage) => {
 			if (lastPage.hasMore) {

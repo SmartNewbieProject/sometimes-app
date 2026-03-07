@@ -1,19 +1,22 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { Text } from '@/src/shared/ui';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { leaveChatRoom } from '../apis';
 import { chatLeaveErrorHandlers } from '../services/chat-leave-error-handler';
+import { removeChatRoomFromCache } from '../utils/chat-cache';
 
 function useLeaveChatRoom() {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { showErrorModal, showModal, hideModal } = useModal();
 	return useMutation({
 		mutationFn: leaveChatRoom,
-		onSuccess: () => {
+		onSuccess: (_, variables) => {
+			removeChatRoomFromCache(queryClient, variables.chatRoomId);
 			showModal({
 				title: t('common.안내'),
 				children: <Text textColor="black">채팅방을 나갔습니다.</Text>,

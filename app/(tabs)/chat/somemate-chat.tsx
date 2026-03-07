@@ -59,8 +59,9 @@ export default function SomemateChatScreen() {
   const [localMessages, setLocalMessages] = useState<AiChatMessage[]>([]);
   const streamingContentRef = useRef<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamingTrigger, setStreamingTrigger] = useState(0);
+  const [streamingContent, setStreamingContent] = useState("");
   const flatListRef = useRef<FlatList>(null);
+  const isAtBottomRef = useRef(true);
 
   const allMessages = messagesData?.messages || [];
   const displayMessages = useMemo(() => {
@@ -105,7 +106,7 @@ export default function SomemateChatScreen() {
         { content: message },
         (chunk) => {
           streamingContentRef.current += chunk;
-          setStreamingTrigger(prev => prev + 1);
+          setStreamingContent(streamingContentRef.current);
         }
       );
 
@@ -114,6 +115,7 @@ export default function SomemateChatScreen() {
 
       setIsStreaming(false);
       streamingContentRef.current = "";
+      setStreamingContent("");
       setLocalMessages([]);
 
       queryClient.invalidateQueries({
@@ -126,6 +128,7 @@ export default function SomemateChatScreen() {
     } catch (error: any) {
       setIsStreaming(false);
       streamingContentRef.current = "";
+      setStreamingContent("");
       setLocalMessages([]);
 
       showModal({
@@ -293,14 +296,14 @@ export default function SomemateChatScreen() {
       ...displayMessages.map((msg: AiChatMessage) => ({ type: "message" as const, message: msg })),
     ];
 
-    if (isStreaming && streamingContentRef.current) {
+    if (isStreaming && streamingContent) {
       items.push({
         type: "message" as const,
         message: {
           id: "streaming-message",
           sessionId: sessionId || "",
           role: "assistant" as const,
-          content: streamingContentRef.current,
+          content: streamingContent,
           createdAt: new Date(),
         } as AiChatMessage
       });
@@ -313,17 +316,16 @@ export default function SomemateChatScreen() {
     items.push({ type: "spacer", id: "bottom" });
 
     return items;
-  }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingTrigger]);
+  }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingContent]);
 
-  // 메시지가 추가되거나 스트리밍 중일 때 자동으로 맨 아래로 스크롤
+  // 새 메시지 아이템이 추가될 때(길이 변화) 하단으로 스크롤
+  const prevListLengthRef = useRef(0);
   useEffect(() => {
-    if (listData.length > 0) {
-      // 약간의 딜레이를 주어 렌더링 후 스크롤
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+    if (listData.length > prevListLengthRef.current) {
+      flatListRef.current?.scrollToEnd({ animated: true });
     }
-  }, [listData.length, streamingTrigger]);
+    prevListLengthRef.current = listData.length;
+  }, [listData.length]);
 
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === "spacer") {
@@ -474,6 +476,17 @@ export default function SomemateChatScreen() {
                 gap: 10,
               }}
               keyboardShouldPersistTaps="handled"
+              scrollEventThrottle={100}
+              onScroll={(event) => {
+                const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+                isAtBottomRef.current =
+                  contentOffset.y + layoutMeasurement.height >= contentSize.height - 80;
+              }}
+              onContentSizeChange={() => {
+                if (isAtBottomRef.current) {
+                  flatListRef.current?.scrollToEnd({ animated: false });
+                }
+              }}
             />
 
             <SomemateInput onSend={handleSend} />

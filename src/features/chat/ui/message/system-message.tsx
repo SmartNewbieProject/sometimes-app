@@ -1,17 +1,8 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { Chat } from '../../types/chat';
 
 const SystemMessage = ({ item }: { item: Chat }) => {
-	const queryClient = useQueryClient();
-	const { id } = useLocalSearchParams<{ id: string }>();
-
-	useEffect(() => {
-		queryClient.refetchQueries({ queryKey: ['chat-detail', id] });
-	}, []);
 	return (
 		<View style={styles.dateDividerContainer}>
 			<Text style={[styles.dateText, { fontSize: 14 }]}>안내</Text>

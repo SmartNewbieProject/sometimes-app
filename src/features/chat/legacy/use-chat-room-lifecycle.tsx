@@ -30,7 +30,12 @@ export const useChatRoomLifecycle = ({
 		actionsRef.current.joinRoom(chatRoomId);
 		hasJoinedRef.current = true;
 
+		const interval = setInterval(() => {
+			actionsRef.current.roomHeartbeat(chatRoomId);
+		}, 15_000);
+
 		return () => {
+			clearInterval(interval);
 			actionsRef.current.leaveRoom(chatRoomId);
 			disconnectRef.current();
 			hasJoinedRef.current = false;

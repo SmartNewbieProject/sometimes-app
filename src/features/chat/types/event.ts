@@ -1,4 +1,4 @@
-import type { Chat, UploadImageOptions } from './chat';
+import type { Chat, ChatRoomList, UploadImageOptions } from './chat';
 import type { SendMessageOptions } from './socket-payload.interface';
 
 export type ChatDomainEvent =
@@ -43,9 +43,30 @@ export type ChatDomainEvent =
 	| { type: 'MESSAGE_UPDATED'; payload: { id: string; mediaUrl: string } }
 	| { type: 'MESSAGES_READ_REQUESTED'; payload: { chatRoomId: string } }
 	// 채팅방 관련
+	| {
+			type: 'CHAT_ROOM_CREATED';
+			payload: {
+				chatRoomId: string;
+				matchId: string;
+				timestamp?: string;
+				chatRoom?: ChatRoomList;
+			};
+	  }
+	| {
+			type: 'CHAT_ROOM_META_UPDATED';
+			payload: {
+				chatRoomId: string;
+				hasLeft?: boolean;
+				roomActivation?: boolean;
+				canRefund?: boolean;
+				paymentConfirm?: boolean;
+				refundedGems?: number;
+				totalGems?: number;
+			};
+	  }
 	| { type: 'CHAT_ROOM_JOINED'; payload: { chatRoomId: string } }
 	| { type: 'CHAT_ROOM_LEFT'; payload: { chatRoomId: string } }
-	| { type: 'MESSAGES_READ'; payload: { chatRoomId: string } }
+	| { type: 'MESSAGES_READ'; payload: { chatRoomId: string; readerId: string } }
 	| { type: 'CHAT_ROOM_MARKED_AS_READ'; payload: { chatRoomId: string } }
 
 	// 타이핑 상태
@@ -112,6 +133,8 @@ export type ImageUploadEvents = Extract<
 
 export type ChatRoomEvents = Extract<
 	ChatDomainEvent,
+	| { type: 'CHAT_ROOM_CREATED' }
+	| { type: 'CHAT_ROOM_META_UPDATED' }
 	| { type: 'CHAT_ROOM_JOINED' }
 	| { type: 'CHAT_ROOM_LEFT' }
 	| { type: 'MESSAGES_READ' }

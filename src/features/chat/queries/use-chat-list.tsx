@@ -8,8 +8,9 @@ function useChatList(chatRoomId: string) {
 		queryKey: ['chat-list', chatRoomId],
 		queryFn: ({ pageParam }: { pageParam?: string }) => getChatList({ pageParam, chatRoomId }),
 		enabled: !!chatRoomId,
-		staleTime: 0,
-		refetchOnMount: 'always',
+		staleTime: 60 * 1000,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
 		initialPageParam: undefined,
 		getNextPageParam: (lastPage) => {
 			if (lastPage.hasMore) {

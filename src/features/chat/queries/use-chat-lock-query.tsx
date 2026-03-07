@@ -7,18 +7,30 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { enterChatRoom } from '../apis';
 import { chatEnterErrorHandlers } from '../services/chat-enter-error-handler';
+import { updateChatRoomDetailCache, updateChatRoomListCache, updateGemCache } from '../utils/chat-cache';
 
-function useChatRockQuery(chatRoomId: string) {
+function useChatRockQuery(chatRoomId: string, gemCost = 0) {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { showModal, showErrorModal, hideModal } = useModal();
 	return useMutation({
 		mutationFn: () => enterChatRoom({ chatRoomId }),
 		onSuccess: async () => {
-			await Promise.all([
-				queryClient.invalidateQueries({ queryKey: ['gem', 'current'] }),
-				queryClient.invalidateQueries({ queryKey: ['chat-room'] }),
-			]);
+			if (gemCost > 0) {
+				updateGemCache(queryClient, (oldGem) => ({
+					...oldGem,
+					totalGem: Math.max(0, oldGem.totalGem - gemCost),
+				}));
+			}
+
+			updateChatRoomListCache(queryClient, chatRoomId, (room) => ({
+				...room,
+				paymentConfirm: true,
+			}));
+			updateChatRoomDetailCache(queryClient, chatRoomId, (detail) => ({
+				...detail,
+				paymentConfirm: true,
+			}));
 			router.push(`/chat/${chatRoomId}`);
 		},
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>

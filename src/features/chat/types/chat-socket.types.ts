@@ -1,4 +1,4 @@
-import type { Chat } from './chat';
+import type { Chat, ChatRoomList } from './chat';
 import type {
 	CreateChatRoomPayload,
 	GetChatHistoryPayload,
@@ -35,6 +35,16 @@ export interface ChatServerToClientEvents {
 		chatRoomId: string;
 		matchId: string;
 		timestamp?: string;
+		chatRoom?: ChatRoomList;
+	}) => void;
+	chatRoomMetaUpdated: (payload: {
+		chatRoomId: string;
+		hasLeft?: boolean;
+		roomActivation?: boolean;
+		canRefund?: boolean;
+		paymentConfirm?: boolean;
+		refundedGems?: number;
+		totalGems?: number;
 	}) => void;
 
 	chatHistory: (payload: { chatRoomId: string; messages: ChatMessage[] }) => void;
@@ -70,4 +80,5 @@ export interface ChatClientToServerEvents {
 	) => void;
 	remoteMessage: (payload: RemoteMessagePayload) => void;
 	readMessages: (payload: ReadMessagesPayload) => void;
+	roomHeartbeat: (payload: { chatRoomId: string }) => void;
 }

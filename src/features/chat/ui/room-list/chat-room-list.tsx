@@ -1,23 +1,21 @@
 import useLiked from '@/src/features/like/hooks/use-liked';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { Show } from '@/src/shared/ui';
 import { Image } from 'expo-image';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	ActivityIndicator,
-	type NativeScrollEvent,
-	type NativeSyntheticEvent,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { ActivityIndicator, SectionList, StyleSheet, Text, View } from 'react-native';
 import useChatRoomList from '../../hooks/use-chat-room-list';
-
+import type { ChatRoomList as ChatRoomListItem } from '../../types/chat';
 import ChatSearch from '../chat-search';
 import ChatLikeCollapse from './chat-like-collapse';
 import ChatRoomCard from './chat-room-card';
+
+interface ChatRoomSection {
+	key: 'lock' | 'open';
+	title: string;
+	titleStyle: 'lock' | 'open';
+	data: ChatRoomListItem[];
+}
 
 function ChatRoomList() {
 	const { t } = useTranslation();
@@ -30,104 +28,161 @@ function ChatRoomList() {
 
 	const openChatRooms = data.open;
 	const lockChatRooms = data.lock;
-
 	const isFetchingRef = useRef(false);
-	const lastTriggerPosition = useRef(0);
+	const canTriggerEndReachedRef = useRef(false);
 
-	const handleScroll = useCallback(
-		(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-			const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-			const currentPosition = contentOffset.y;
-			const isNearBottom = layoutMeasurement.height + currentPosition >= contentSize.height - 200;
+	const sections = useMemo<ChatRoomSection[]>(() => {
+		const nextSections: ChatRoomSection[] = [];
 
-			if (
-				isNearBottom &&
-				hasNextPage &&
-				!isFetchingNextPage &&
-				!isFetchingRef.current &&
-				currentPosition > lastTriggerPosition.current
-			) {
-				isFetchingRef.current = true;
-				lastTriggerPosition.current = currentPosition;
+		if (lockChatRooms.length > 0) {
+			nextSections.push({
+				key: 'lock',
+				title: t('features.chat.ui.chat_room_list.new_match_notice'),
+				titleStyle: 'lock',
+				data: lockChatRooms,
+			});
+		}
 
-				fetchNextPage().finally(() => {
-					isFetchingRef.current = false;
-				});
-			}
-		},
-		[hasNextPage, isFetchingNextPage, fetchNextPage],
+		if (openChatRooms.length > 0) {
+			nextSections.push({
+				key: 'open',
+				title: t('features.chat.ui.chat_room_list.recent_chat'),
+				titleStyle: 'open',
+				data: openChatRooms,
+			});
+		}
+
+		return nextSections;
+	}, [lockChatRooms, openChatRooms, t]);
+
+	const handleEndReached = useCallback(() => {
+		if (
+			!canTriggerEndReachedRef.current ||
+			!hasNextPage ||
+			isFetchingNextPage ||
+			isFetchingRef.current
+		) {
+			return;
+		}
+
+		canTriggerEndReachedRef.current = false;
+		isFetchingRef.current = true;
+		fetchNextPage().finally(() => {
+			isFetchingRef.current = false;
+		});
+	}, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+	const handleScrollBegin = useCallback(() => {
+		canTriggerEndReachedRef.current = true;
+	}, []);
+
+	const renderHeader = useCallback(
+		() => (
+			<>
+				{collapse && <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />}
+				<View style={styles.headerSpacer} />
+				<ChatSearch keyword={keyword} setKeyword={setKeyword} />
+			</>
+		),
+		[collapse, keyword],
 	);
 
-	return (
-		<ScrollView onScroll={handleScroll} scrollEventThrottle={400}>
-			{collapse && <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />}
-			<View style={{ height: 18 }} />
-			<ChatSearch keyword={keyword} setKeyword={setKeyword} />
+	const renderSectionHeader = useCallback(
+		({ section }: { section: ChatRoomSection }) => (
+			<Text style={section.titleStyle === 'lock' ? styles.lockTitleText : styles.openTitleText}>
+				{section.title}
+			</Text>
+		),
+		[],
+	);
 
-			<Show when={isLoading}>
+	const renderItem = useCallback(
+		({ item }: { item: ChatRoomListItem }) => <ChatRoomCard item={item} />,
+		[],
+	);
+
+	const renderEmpty = useCallback(() => {
+		if (isLoading) {
+			return (
 				<View style={styles.loadingContainer}>
 					<ActivityIndicator size="large" color={semanticColors.brand.primary} />
 				</View>
-			</Show>
+			);
+		}
 
-			<Show when={!isLoading && openChatRooms.length === 0 && lockChatRooms.length === 0}>
-				<View
-					style={{
-						flex: 1,
-						justifyContent: 'center',
-						alignItems: 'center',
-						marginTop: 36,
-					}}
-				>
-					<Image
-						style={{ width: 216, height: 216, marginBottom: 20 }}
-						source={require('@assets/images/no-chat-miho.webp')}
-					/>
-					<Text style={styles.infoText}>{t('features.chat.ui.chat_room_list.no_chat_title')}</Text>
-					<Text style={styles.infoText}>
-						{t('features.chat.ui.chat_room_list.no_chat_subtitle')}
-					</Text>
-				</View>
-			</Show>
-			<Show when={!isLoading && lockChatRooms.length > 0}>
-				<View style={styles.lockContainer}>
-					<Text style={styles.lockTitleText}>
-						{t('features.chat.ui.chat_room_list.new_match_notice')}
-					</Text>
-					{lockChatRooms.map((item) => (
-						<ChatRoomCard key={item.id} item={item} />
-					))}
-				</View>
-			</Show>
-			<Show when={!isLoading && openChatRooms.length > 0}>
-				<View style={styles.openContainer}>
-					<Text style={styles.openTitleText}>
-						{t('features.chat.ui.chat_room_list.recent_chat')}
-					</Text>
-					{openChatRooms.map((item) => (
-						<ChatRoomCard key={item.id} item={item} />
-					))}
-				</View>
-			</Show>
-			<Show when={isFetchingNextPage}>
-				<View style={styles.fetchingMoreContainer}>
-					<ActivityIndicator size="small" color={semanticColors.brand.primary} />
-				</View>
-			</Show>
-		</ScrollView>
+		return (
+			<View style={styles.emptyContainer}>
+				<Image style={styles.emptyImage} source={require('@assets/images/no-chat-miho.webp')} />
+				<Text style={styles.infoText}>{t('features.chat.ui.chat_room_list.no_chat_title')}</Text>
+				<Text style={styles.infoText}>{t('features.chat.ui.chat_room_list.no_chat_subtitle')}</Text>
+			</View>
+		);
+	}, [isLoading, t]);
+
+	const renderFooter = useCallback(() => {
+		if (!isFetchingNextPage) {
+			return <View style={styles.footerSpacer} />;
+		}
+
+		return (
+			<View style={styles.fetchingMoreContainer}>
+				<ActivityIndicator size="small" color={semanticColors.brand.primary} />
+			</View>
+		);
+	}, [isFetchingNextPage]);
+
+	return (
+		<SectionList
+			sections={sections}
+			keyExtractor={(item) => item.id}
+			renderItem={renderItem}
+			renderSectionHeader={renderSectionHeader}
+			ListHeaderComponent={renderHeader}
+			ListEmptyComponent={renderEmpty}
+			ListFooterComponent={renderFooter}
+			onEndReached={handleEndReached}
+			onEndReachedThreshold={0.4}
+			onMomentumScrollBegin={handleScrollBegin}
+			onScrollBeginDrag={handleScrollBegin}
+			stickySectionHeadersEnabled={false}
+			contentContainerStyle={styles.contentContainer}
+			initialNumToRender={8}
+			windowSize={7}
+			showsVerticalScrollIndicator={false}
+		/>
 	);
 }
 
 const styles = StyleSheet.create({
+	contentContainer: {
+		paddingBottom: 20,
+	},
+	headerSpacer: {
+		height: 18,
+	},
 	loadingContainer: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingVertical: 100,
 	},
+	emptyContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 36,
+	},
+	emptyImage: {
+		width: 216,
+		height: 216,
+		marginBottom: 20,
+	},
 	fetchingMoreContainer: {
 		paddingVertical: 20,
 		alignItems: 'center',
+	},
+	footerSpacer: {
+		height: 20,
 	},
 	infoText: {
 		color: semanticColors.text.disabled,
@@ -140,12 +195,8 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		fontWeight: 600,
 		paddingHorizontal: 16,
-
 		lineHeight: 18,
 		fontFamily: 'Pretendard-SemiBold',
-	},
-	lockContainer: {
-		gap: 4,
 		marginTop: 14,
 	},
 	openTitleText: {
@@ -155,9 +206,6 @@ const styles = StyleSheet.create({
 		fontWeight: 600,
 		lineHeight: 18,
 		fontFamily: 'Pretendard-SemiBold',
-	},
-	openContainer: {
-		gap: 4,
 		marginTop: 14,
 	},
 });

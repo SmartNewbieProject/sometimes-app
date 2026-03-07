@@ -1,8 +1,8 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { FlatList, Keyboard, View } from 'react-native';
 
+import { useAuth } from '../../auth';
 import useChatList from '../queries/use-chat-list';
 import { chatEventBus } from '../services/chat-event-bus';
 
@@ -25,7 +25,7 @@ interface ChatListProps {
 const ChatList = ({ setPhotoClicked, roomDetail }: ChatListProps) => {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { t } = useTranslation();
-	const queryClient = useQueryClient();
+	const { my } = useAuth();
 
 	const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useChatList(id);
 
@@ -85,17 +85,26 @@ const ChatList = ({ setPhotoClicked, roomDetail }: ChatListProps) => {
 		return items;
 	}, [chatList, t]);
 
-	const latestSystemMessageId = useMemo(() => {
-		return chatList.find((chat) => chat.senderId === 'system')?.id;
-	}, [chatList]);
-
 	useEffect(() => {
-		if (!id || !latestSystemMessageId) {
+		if (!id || !my?.id) {
 			return;
 		}
 
-		void queryClient.refetchQueries({ queryKey: ['chat-detail', id] });
-	}, [id, latestSystemMessageId, queryClient]);
+		const subscription = chatEventBus.on('MESSAGE_RECEIVED').subscribe(({ payload }) => {
+			if (
+				payload.chatRoomId === id &&
+				payload.senderId !== my.id &&
+				payload.senderId !== 'system'
+			) {
+				chatEventBus.emit({
+					type: 'MESSAGES_READ_REQUESTED',
+					payload: { chatRoomId: id },
+				});
+			}
+		});
+
+		return () => subscription.unsubscribe();
+	}, [id, my?.id]);
 
 	const renderItem = useCallback(
 		({ item }: { item: ChatListItem }) => {

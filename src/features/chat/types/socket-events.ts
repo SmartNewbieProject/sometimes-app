@@ -1,10 +1,11 @@
-import type { Chat } from './chat';
+import type { Chat, ChatRoomList } from './chat';
 
 export type ChatSocketEventName =
 	| 'connected'
 	| 'error'
 	| 'newMessage'
 	| 'chatRoomCreated'
+	| 'chatRoomMetaUpdated'
 	| 'chatHistory'
 	| 'chatRoomLeft'
 	| 'userTyping'
@@ -21,6 +22,16 @@ export interface ChatSocketEventPayloads {
 		chatRoomId: string;
 		matchId: string;
 		timestamp?: string;
+		chatRoom?: ChatRoomList;
+	};
+	chatRoomMetaUpdated: {
+		chatRoomId: string;
+		hasLeft?: boolean;
+		roomActivation?: boolean;
+		canRefund?: boolean;
+		paymentConfirm?: boolean;
+		refundedGems?: number;
+		totalGems?: number;
 	};
 	chatHistory: {
 		chatRoomId: string;

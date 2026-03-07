@@ -26,11 +26,6 @@ export function Header() {
 		});
 		mutate.mutate(
 			{ snooze: !data?.snooze, chatRoomId: id },
-			{
-				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['chat-detail', id] });
-				},
-			},
 		);
 	};
 

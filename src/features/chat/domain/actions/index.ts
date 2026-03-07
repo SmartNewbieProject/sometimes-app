@@ -7,3 +7,4 @@ export * from './upload-image';
 export * from './read-messages';
 export * from './join-room';
 export * from './leave-room';
+export * from './room-heartbeat';

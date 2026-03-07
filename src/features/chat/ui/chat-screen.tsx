@@ -2,8 +2,7 @@ import { useAuth } from '@/src/features/auth';
 import { useChatActivityReviewTrigger } from '@/src/features/in-app-review';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
-import { useQueryClient } from '@tanstack/react-query';
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, View } from 'react-native';
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
@@ -25,22 +24,12 @@ function ChatScreen() {
 	const insets = useSafeAreaInsets();
 	const [isPhotoClicked, setPhotoClicked] = useState(false);
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const queryClient = useQueryClient();
 	const messageCountBeforeSendRef = useRef(0);
 	const chatStartTimeRef = useRef<number>(Date.now());
 	const lastPartnerMessageTimeRef = useRef<number | null>(null);
 	const partnerResponseTrackedRef = useRef(false);
 	const { my } = useAuth();
 	const { chatEvents, matchingEfficiencyEvents } = useMixpanel();
-
-	useFocusEffect(
-		useCallback(() => {
-			if (id) {
-				queryClient.invalidateQueries({ queryKey: ['chat-list', id] });
-				queryClient.invalidateQueries({ queryKey: ['chat-detail', id] });
-			}
-		}, [id, queryClient]),
-	);
 
 	const { data, isLoading } = useChatList(id);
 	const { data: chatRoomDetail } = useChatRoomDetail(id);
@@ -205,7 +194,7 @@ function ChatScreen() {
 						<ChatGuideBanner />
 					</>
 				)}
-				<ChatList setPhotoClicked={setPhotoClicked} />
+				<ChatList roomDetail={chatRoomDetail} setPhotoClicked={setPhotoClicked} />
 
 				{Platform.OS === 'web' ? (
 					<WebChatInput />

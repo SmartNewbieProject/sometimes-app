@@ -4,7 +4,6 @@ import { devLogWithTag } from '@/src/shared/utils';
 import { isHeicBase64 } from '@/src/shared/utils/image';
 import BulbIcon from '@assets/icons/bulb.svg';
 import SendChatIcon from '@assets/icons/send-chat.svg';
-import { useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { useLocalSearchParams } from 'expo-router';
@@ -25,7 +24,6 @@ function WebChatInput() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [chat, setChat] = useState('');
 	const { data: roomDetail, isError } = useChatRoomDetail(id);
-	const queryClient = useQueryClient();
 	const { my: user } = useAuth();
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const cloneRef = useRef<HTMLTextAreaElement>(null);
@@ -216,7 +214,6 @@ function WebChatInput() {
 					},
 				});
 			}
-			queryClient.refetchQueries({ queryKey: ['chat-list', id] });
 		}
 		return null;
 	};

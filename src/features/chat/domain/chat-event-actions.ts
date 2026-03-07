@@ -14,6 +14,7 @@ import {
 	leaveChatRoomAction,
 	leaveRoomAction,
 	readMessagesAction,
+	roomHeartbeatAction,
 	sendMessageAction,
 	stopTypingAction,
 	typingAction,
@@ -34,6 +35,7 @@ export type ChatEventActions = {
 	leaveChatRoom: (chatRoomId: string) => void;
 	joinRoom: (chatRoomId: string) => void;
 	leaveRoom: (chatRoomId: string) => void;
+	roomHeartbeat: (chatRoomId: string) => void;
 	typing: (to: string, chatRoomId: string) => void;
 	stopTyping: (to: string, chatRoomId: string) => void;
 	uploadImage: (payload: {
@@ -52,6 +54,7 @@ export const createChatEventActions = (getSocket: () => ChatSocket): ChatEventAc
 	leaveChatRoom: (chatRoomId) => leaveChatRoomAction(getSocket(), chatRoomId),
 	joinRoom: (chatRoomId) => joinRoomAction(getSocket(), chatRoomId),
 	leaveRoom: (chatRoomId) => leaveRoomAction(getSocket(), chatRoomId),
+	roomHeartbeat: (chatRoomId) => roomHeartbeatAction(getSocket(), chatRoomId),
 	typing: (to, chatRoomId) => typingAction(getSocket(), to, chatRoomId),
 	stopTyping: (to, chatRoomId) => stopTypingAction(getSocket(), to, chatRoomId),
 	uploadImage: async (payload) => uploadImageAction(getSocket(), payload),

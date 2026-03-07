@@ -14,10 +14,16 @@ function useChatLock(chatRoomId: string) {
 	const { showModal } = useModal();
 	const { profileDetails } = useAuth();
 	const { featureCosts } = useFeatureCost();
-	const { mutate: enterMutate } = useChatRockQuery(chatRoomId);
-	const { mutate: leaveMutate } = useLeaveChatRoom();
+	const chatStartCost = profileDetails?.gender === 'MALE' ? (featureCosts?.CHAT_START ?? 0) : 0;
+	const { mutateAsync: enterMutateAsync, isPending: isEntering } = useChatRockQuery(
+		chatRoomId,
+		chatStartCost,
+	);
+	const { mutateAsync: leaveMutateAsync, isPending: isLeaving } = useLeaveChatRoom();
 
 	const handleUnlock = () => {
+		if (isEntering || isLeaving) return;
+
 		showModal({
 			showLogo: true,
 			customTitle: (
@@ -54,7 +60,10 @@ function useChatLock(chatRoomId: string) {
 			),
 			primaryButton: {
 				text: t(CHAT_KEYS.hooksYesTry),
-				onClick: () => enterMutate(),
+				onClick: async () => {
+					if (isEntering) return;
+					await enterMutateAsync();
+				},
 			},
 			secondaryButton: {
 				text: t(CHAT_KEYS.hooksNo),
@@ -64,6 +73,8 @@ function useChatLock(chatRoomId: string) {
 	};
 
 	const handleRemove = () => {
+		if (isEntering || isLeaving) return;
+
 		showModal({
 			showLogo: true,
 			customTitle: (
@@ -99,7 +110,10 @@ function useChatLock(chatRoomId: string) {
 			},
 			secondaryButton: {
 				text: t(CHAT_KEYS.hooksDelete),
-				onClick: () => leaveMutate({ chatRoomId }),
+				onClick: async () => {
+					if (isLeaving) return;
+					await leaveMutateAsync({ chatRoomId });
+				},
 			},
 			reverse: true,
 		});
@@ -108,6 +122,8 @@ function useChatLock(chatRoomId: string) {
 	return {
 		handleUnlock,
 		handleRemove,
+		isEntering,
+		isLeaving,
 	};
 }
 

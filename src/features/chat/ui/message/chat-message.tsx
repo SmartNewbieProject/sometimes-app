@@ -1,11 +1,8 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import ReadCheckIcon from '@assets/icons/read-check.svg';
-import UnreadCheckIcon from '@assets/icons/unread-check.svg';
 import { Link } from 'expo-router';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import useChatRoomDetail from '../../queries/use-chat-room-detail';
 import { chatEventBus } from '../../services/chat-event-bus';
 import type { Chat } from '../../types/chat';
 import { formatToAmPm } from '../../utils/time';
@@ -14,26 +11,27 @@ import ChatProfileImage from './chat-profile-image';
 
 interface ChatMessageProps {
 	item: Chat;
+	matchId?: string;
+	partnerId?: string;
 	profileImage: string;
 }
 
-function ChatMessage({ item, profileImage }: ChatMessageProps) {
+function ChatMessage({ item, matchId, partnerId, profileImage }: ChatMessageProps) {
 	const { t } = useTranslation();
-	const { data } = useChatRoomDetail(item.chatRoomId);
 	const isSending = item.sendingStatus === 'sending';
 	const isFailed = item.sendingStatus === 'failed';
 
 	const handleRetry = useCallback(() => {
-		if (!isFailed || !data?.partnerId) return;
+		if (!isFailed || !partnerId) return;
 
 		chatEventBus.emit({
 			type: 'MESSAGE_RETRY_REQUESTED',
 			payload: {
 				message: item,
-				to: data.partnerId,
+				to: partnerId,
 			},
 		});
-	}, [isFailed, item, data?.partnerId]);
+	}, [isFailed, item, partnerId]);
 
 	return (
 		<View
@@ -45,7 +43,7 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
 			]}
 		>
 			{!item.isMe && (
-				<Link href={`/partner/view/${data?.matchId}`}>
+				<Link href={`/partner/view/${matchId}`}>
 					<ChatProfileImage imageUri={profileImage} size={32} />
 				</Link>
 			)}

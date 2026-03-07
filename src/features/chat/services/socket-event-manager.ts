@@ -767,12 +767,20 @@ class SocketConnectionManager {
 			chatEventBus.emit({ type: 'MESSAGE_RECEIVED', payload: chat });
 		});
 
-		this.socket?.on('readMessages', (chatRoomId) => {
-			chatEventBus.emit({ type: 'MESSAGES_READ', payload: chatRoomId });
+		this.socket?.on('messagesRead', (payload) => {
+			chatEventBus.emit({ type: 'MESSAGES_READ', payload });
 		});
 
 		this.socket?.on('messageUpdated', (payload) => {
 			chatEventBus.emit({ type: 'IMAGE_UPLOAD_STATUS_CHANGED', payload });
+		});
+
+		this.socket?.on('chatRoomCreated', (payload) => {
+			chatEventBus.emit({ type: 'CHAT_ROOM_CREATED', payload });
+		});
+
+		this.socket?.on('chatRoomMetaUpdated', (payload) => {
+			chatEventBus.emit({ type: 'CHAT_ROOM_META_UPDATED', payload });
 		});
 	}
 

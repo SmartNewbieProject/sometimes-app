@@ -1,5 +1,7 @@
 import { env } from '@/src/shared/libs/env';
+import { devLogWithTag } from '@/src/shared/utils';
 import NetInfo from '@react-native-community/netinfo';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import { useAuth } from '../../auth';
@@ -12,9 +14,14 @@ export const GlobalChatProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
+	const log = useCallback((...args: unknown[]) => {
+		devLogWithTag('GlobalChatProvider', ...args);
+	}, []);
 	const { accessToken, tokenLoading } = useAuth();
+	const queryClient = useQueryClient();
 	const isModuleInitialized = useRef(false);
 	const reconnectAttempts = useRef(0);
+	const hasConnectedOnce = useRef(false);
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const backgroundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const backgroundStartTime = useRef<number | null>(null);
@@ -25,19 +32,22 @@ export const GlobalChatProvider = ({
 	const BACKGROUND_DISCONNECT_DELAY = 30000;
 
 	// 지수 백오프 계산: 2초 → 4초 → 8초 → 16초 (최대 30초)
-	const calculateBackoffDelay = useCallback((attempts: number): number => {
-		const baseDelay = 2000; // 2초
-		const maxDelay = 30000; // 30초
-		const delay = Math.min(baseDelay * Math.pow(2, attempts), maxDelay);
-		console.log(`[GlobalChatProvider] Backoff delay: ${delay}ms (attempt ${attempts + 1})`);
-		return delay;
-	}, []);
+	const calculateBackoffDelay = useCallback(
+		(attempts: number): number => {
+			const baseDelay = 2000; // 2초
+			const maxDelay = 30000; // 30초
+			const delay = Math.min(baseDelay * 2 ** attempts, maxDelay);
+			log(`Backoff delay: ${delay}ms (attempt ${attempts + 1})`);
+			return delay;
+		},
+		[log],
+	);
 
 	// 소켓 연결 시도 함수
 	const attemptConnection = useCallback(
 		(token: string, reason: string) => {
-			console.log(`[GlobalChatProvider] Attempting connection (${reason})...`);
-			console.log('[GlobalChatProvider] Current socket state:', {
+			log(`Attempting connection (${reason})...`);
+			log('Current socket state:', {
 				isConnected: socketConnectionManager.isConnected,
 				isModuleInitialized: socketConnectionManager.isModuleInitialized,
 				networkAvailable: isNetworkAvailable,
@@ -45,18 +55,18 @@ export const GlobalChatProvider = ({
 
 			// 네트워크가 없으면 건너뛰기
 			if (!isNetworkAvailable) {
-				console.log('[GlobalChatProvider] Network unavailable, skipping connection...');
+				log('Network unavailable, skipping connection...');
 				return;
 			}
 
 			// 이미 연결되어 있으면 건너뛰기
 			if (socketConnectionManager.isConnected) {
-				console.log('[GlobalChatProvider] Socket already connected, skipping...');
+				log('Socket already connected, skipping...');
 				reconnectAttempts.current = 0; // 연결 성공 시 재시도 카운터 리셋
 				return;
 			}
 
-			console.log('[GlobalChatProvider] Emitting CONNECTION_REQUESTED event...');
+			log('Emitting CONNECTION_REQUESTED event...');
 			chatEventBus.emit({
 				type: 'CONNECTION_REQUESTED',
 				payload: {
@@ -65,59 +75,59 @@ export const GlobalChatProvider = ({
 				},
 			});
 		},
-		[isNetworkAvailable],
+		[isNetworkAvailable, log],
 	);
 
 	// 모듈 초기화 (한 번만)
 	useEffect(() => {
 		if (isModuleInitialized.current) {
-			console.log('[GlobalChatProvider] Modules already initialized, skipping...');
+			log('Modules already initialized, skipping...');
 			return;
 		}
 
-		console.log('[GlobalChatProvider] Initializing chat modules...');
+		log('Initializing chat modules...');
 		initializeChatModules();
 		isModuleInitialized.current = true;
 
 		return () => {
-			console.log('[GlobalChatProvider] Cleaning up chat modules...');
+			log('Cleaning up chat modules...');
 			cleanupChatModules();
 			isModuleInitialized.current = false;
 		};
-	}, []);
+	}, [log]);
 
 	// 토큰 로드 완료 시 초기 연결
 	useEffect(() => {
-		console.log('[GlobalChatProvider] Auth state changed:', {
+		log('Auth state changed:', {
 			tokenLoading,
 			hasToken: !!accessToken,
 			isModuleInitialized: socketConnectionManager.isModuleInitialized,
 		});
 
 		if (tokenLoading) {
-			console.log('[GlobalChatProvider] Token still loading, waiting...');
+			log('Token still loading, waiting...');
 			return;
 		}
 
 		if (!accessToken) {
-			console.log('[GlobalChatProvider] No accessToken after loading, skipping socket connection');
+			log('No accessToken after loading, skipping socket connection');
 			return;
 		}
 
 		if (!socketConnectionManager.isModuleInitialized) {
-			console.log('[GlobalChatProvider] Chat modules not initialized yet, waiting...');
+			log('Chat modules not initialized yet, waiting...');
 			return;
 		}
 
 		attemptConnection(accessToken, 'initial auth');
-	}, [accessToken, tokenLoading, attemptConnection]);
+	}, [accessToken, tokenLoading, attemptConnection, log]);
 
 	// 네트워크 상태 감지
 	useEffect(() => {
-		console.log('[GlobalChatProvider] Setting up network state listener...');
+		log('Setting up network state listener...');
 
 		const unsubscribe = NetInfo.addEventListener((state) => {
-			console.log('[GlobalChatProvider] Network state changed:', {
+			log('Network state changed:', {
 				isConnected: state.isConnected,
 				isInternetReachable: state.isInternetReachable,
 				type: state.type,
@@ -133,7 +143,7 @@ export const GlobalChatProvider = ({
 				accessToken &&
 				!tokenLoading
 			) {
-				console.log('[GlobalChatProvider] Network restored, attempting immediate reconnect...');
+				log('Network restored, attempting immediate reconnect...');
 				reconnectAttempts.current = 0; // 네트워크 복구 시 카운터 리셋
 
 				// 기존 타임아웃 취소
@@ -149,17 +159,17 @@ export const GlobalChatProvider = ({
 		return () => {
 			unsubscribe();
 		};
-	}, [accessToken, tokenLoading, attemptConnection]);
+	}, [accessToken, tokenLoading, attemptConnection, log]);
 
 	// AppState 감지: 백그라운드 진입 시 30초 후 disconnect, 포그라운드 복귀 시 재연결
 	useEffect(() => {
-		console.log('[GlobalChatProvider] Setting up AppState listener...');
+		log('Setting up AppState listener...');
 
 		const handleAppStateChange = (nextAppState: AppStateStatus) => {
 			const previousState = appStateRef.current;
 			appStateRef.current = nextAppState;
 
-			console.log(`[GlobalChatProvider] AppState changed: ${previousState} -> ${nextAppState}`);
+			log(`AppState changed: ${previousState} -> ${nextAppState}`);
 
 			// 앱 이벤트 emit
 			chatEventBus.emit({
@@ -169,7 +179,7 @@ export const GlobalChatProvider = ({
 
 			// 백그라운드로 진입
 			if (nextAppState === 'background' && previousState === 'active') {
-				console.log('[GlobalChatProvider] App entering background, starting disconnect timer...');
+				log('App entering background, starting disconnect timer...');
 				backgroundStartTime.current = Date.now();
 
 				// 기존 백그라운드 타임아웃 취소
@@ -179,7 +189,7 @@ export const GlobalChatProvider = ({
 
 				// 30초 후 소켓 연결 해제
 				backgroundTimeoutRef.current = setTimeout(() => {
-					console.log('[GlobalChatProvider] Background timeout reached, disconnecting socket...');
+					log('Background timeout reached, disconnecting socket...');
 					chatEventBus.emit({
 						type: 'SOCKET_DISCONNECTED',
 						payload: { reason: 'app_background_timeout' },
@@ -190,19 +200,19 @@ export const GlobalChatProvider = ({
 
 			// 포그라운드로 복귀
 			if (nextAppState === 'active' && previousState !== 'active') {
-				console.log('[GlobalChatProvider] App returning to foreground...');
+				log('App returning to foreground...');
 
 				// 백그라운드 타임아웃 취소
 				if (backgroundTimeoutRef.current) {
 					clearTimeout(backgroundTimeoutRef.current);
 					backgroundTimeoutRef.current = null;
-					console.log('[GlobalChatProvider] Background disconnect timer cancelled');
+					log('Background disconnect timer cancelled');
 				}
 
 				// 백그라운드 체류 시간 로그
 				if (backgroundStartTime.current) {
 					const duration = Date.now() - backgroundStartTime.current;
-					console.log(`[GlobalChatProvider] Background duration: ${duration}ms`);
+					log(`Background duration: ${duration}ms`);
 					backgroundStartTime.current = null;
 				}
 
@@ -217,12 +227,10 @@ export const GlobalChatProvider = ({
 					isNetworkAvailable
 				) {
 					if (!socketConnectionManager.isConnected) {
-						console.log(
-							'[GlobalChatProvider] Socket disconnected while in background, reconnecting...',
-						);
+						log('Socket disconnected while in background, reconnecting...');
 						attemptConnection(accessToken, 'foreground resume');
 					} else {
-						console.log('[GlobalChatProvider] Socket still connected after foreground resume');
+						log('Socket still connected after foreground resume');
 					}
 				}
 			}
@@ -238,16 +246,16 @@ export const GlobalChatProvider = ({
 				backgroundTimeoutRef.current = null;
 			}
 		};
-	}, [accessToken, tokenLoading, attemptConnection, isNetworkAvailable]);
+	}, [accessToken, tokenLoading, attemptConnection, isNetworkAvailable, log]);
 
 	// 소켓 연결 끊김 감지 및 자동 재연결 (지수 백오프 적용)
 	useEffect(() => {
-		console.log('[GlobalChatProvider] Setting up socket disconnect listener...');
+		log('Setting up socket disconnect listener...');
 
 		const unsubscribeDisconnect = chatEventBus
 			.on('SOCKET_DISCONNECTED')
 			.subscribe(({ payload }) => {
-				console.log('[GlobalChatProvider] Socket disconnected:', payload.reason);
+				log('Socket disconnected:', payload.reason);
 
 				// Socket.IO 내장 재연결이 처리하는 일반적인 disconnect는 개입하지 않음
 				// 특정 상황에서만 GlobalChatProvider가 직접 재연결 시도:
@@ -264,9 +272,7 @@ export const GlobalChatProvider = ({
 					payload.reason && manualReconnectReasons.includes(payload.reason);
 
 				if (!shouldManualReconnect) {
-					console.log(
-						'[GlobalChatProvider] Delegating reconnection to Socket.IO internal mechanism',
-					);
+					log('Delegating reconnection to Socket.IO internal mechanism');
 					return;
 				}
 
@@ -278,9 +284,7 @@ export const GlobalChatProvider = ({
 					isNetworkAvailable
 				) {
 					const delay = calculateBackoffDelay(reconnectAttempts.current);
-					console.log(
-						`[GlobalChatProvider] Manual reconnect needed (${payload.reason}), scheduling in ${delay}ms...`,
-					);
+					log(`Manual reconnect needed (${payload.reason}), scheduling in ${delay}ms...`);
 
 					// 기존 타임아웃 취소
 					if (reconnectTimeoutRef.current) {
@@ -293,7 +297,7 @@ export const GlobalChatProvider = ({
 						reconnectTimeoutRef.current = null;
 					}, delay);
 				} else {
-					console.log('[GlobalChatProvider] Skipping manual reconnect:', {
+					log('Skipping manual reconnect:', {
 						hasToken: !!accessToken,
 						tokenLoading,
 						isModuleInitialized: socketConnectionManager.isModuleInitialized,
@@ -303,8 +307,26 @@ export const GlobalChatProvider = ({
 			});
 
 		const unsubscribeConnected = chatEventBus.on('SOCKET_CONNECTED').subscribe(() => {
-			console.log('[GlobalChatProvider] Socket connected successfully');
+			log('Socket connected successfully');
 			reconnectAttempts.current = 0; // 연결 성공 시 재시도 카운터 리셋
+
+			const isReconnect = hasConnectedOnce.current;
+			hasConnectedOnce.current = true;
+
+			if (isReconnect) {
+				log('Resyncing active chat queries after reconnect...');
+				void queryClient.invalidateQueries({
+					queryKey: ['chat-room'],
+					refetchType: 'active',
+				});
+				void queryClient.invalidateQueries({
+					predicate: (query) => {
+						const key = query.queryKey[0];
+						return key === 'chat-list' || key === 'chat-detail';
+					},
+					refetchType: 'active',
+				});
+			}
 
 			// 기존 타임아웃 취소
 			if (reconnectTimeoutRef.current) {
@@ -314,7 +336,7 @@ export const GlobalChatProvider = ({
 		});
 
 		const unsubscribeTokenUpdated = chatEventBus.on('TOKEN_UPDATED').subscribe(({ payload }) => {
-			console.log('[GlobalChatProvider] Token updated, attempting connection...');
+			log('Token updated, attempting connection...');
 			if (payload.token && socketConnectionManager.isModuleInitialized && isNetworkAvailable) {
 				reconnectAttempts.current = 0;
 				attemptConnection(payload.token, 'token updated after login');
@@ -324,7 +346,7 @@ export const GlobalChatProvider = ({
 		const unsubscribeReconnectFailed = chatEventBus
 			.on('SOCKET_RECONNECT_FAILED')
 			.subscribe(({ payload }) => {
-				console.log('[GlobalChatProvider] Socket reconnect failed:', payload.error);
+				log('Socket reconnect failed:', payload.error);
 
 				// 최대 재연결 실패 시 지수 백오프로 재시도
 				if (
@@ -334,7 +356,7 @@ export const GlobalChatProvider = ({
 					isNetworkAvailable
 				) {
 					const delay = calculateBackoffDelay(reconnectAttempts.current);
-					console.log(`[GlobalChatProvider] Scheduling reconnect after failure in ${delay}ms...`);
+					log(`Scheduling reconnect after failure in ${delay}ms...`);
 
 					// 기존 타임아웃 취소
 					if (reconnectTimeoutRef.current) {
@@ -353,7 +375,7 @@ export const GlobalChatProvider = ({
 		const unsubscribeConnectionNeeded = chatEventBus
 			.on('SOCKET_CONNECTION_NEEDED')
 			.subscribe(() => {
-				console.log('[GlobalChatProvider] Socket connection needed (socket is null)');
+				log('Socket connection needed (socket is null)');
 
 				if (
 					accessToken &&
@@ -368,11 +390,11 @@ export const GlobalChatProvider = ({
 					}
 
 					// 즉시 새 연결 시도 (백오프 없이)
-					console.log('[GlobalChatProvider] Immediately attempting new connection...');
+					log('Immediately attempting new connection...');
 					reconnectAttempts.current = 0; // 새 연결 시도 시 카운터 리셋
 					attemptConnection(accessToken, 'socket was null - creating new connection');
 				} else {
-					console.log('[GlobalChatProvider] Cannot create new connection:', {
+					log('Cannot create new connection:', {
 						hasToken: !!accessToken,
 						tokenLoading,
 						isModuleInitialized: socketConnectionManager.isModuleInitialized,
@@ -394,7 +416,15 @@ export const GlobalChatProvider = ({
 				reconnectTimeoutRef.current = null;
 			}
 		};
-	}, [accessToken, tokenLoading, attemptConnection, calculateBackoffDelay, isNetworkAvailable]);
+	}, [
+		accessToken,
+		tokenLoading,
+		attemptConnection,
+		calculateBackoffDelay,
+		isNetworkAvailable,
+		log,
+		queryClient,
+	]);
 
 	return <>{children}</>;
 };
