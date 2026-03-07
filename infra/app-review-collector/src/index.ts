@@ -2,6 +2,7 @@ import type { ScheduledEvent } from 'aws-lambda';
 import { loadConfig } from './config.js';
 import { collectAppStoreReviews } from './collectors/app-store.js';
 import { collectPlayStoreReviews } from './collectors/play-store.js';
+import { collectPlayStoreScraperReviews } from './collectors/play-store-scraper.js';
 import { saveNewReviews } from './storage/dynamodb.js';
 import { notifySlack } from './notifier/slack.js';
 
@@ -13,15 +14,17 @@ export async function handler(event: ScheduledEvent): Promise<void> {
 
   console.log(`Mode: ${config.migrationMode ? 'MIGRATION' : 'NORMAL'}, maxPages: ${maxPages}`);
 
-  // Collect reviews from both stores in parallel
-  const [appStoreReviews, playStoreReviews] = await Promise.allSettled([
+  // Collect reviews from all sources in parallel
+  const [appStoreReviews, playStoreReviews, playStoreScraperReviews] = await Promise.allSettled([
     collectAppStoreReviews(config, maxPages),
     collectPlayStoreReviews(config, maxPages),
+    collectPlayStoreScraperReviews(config),
   ]);
 
   const allReviews = [
     ...(appStoreReviews.status === 'fulfilled' ? appStoreReviews.value : []),
     ...(playStoreReviews.status === 'fulfilled' ? playStoreReviews.value : []),
+    ...(playStoreScraperReviews.status === 'fulfilled' ? playStoreScraperReviews.value : []),
   ];
 
   if (appStoreReviews.status === 'rejected') {
@@ -29,6 +32,9 @@ export async function handler(event: ScheduledEvent): Promise<void> {
   }
   if (playStoreReviews.status === 'rejected') {
     console.error('Play Store collection failed:', playStoreReviews.reason);
+  }
+  if (playStoreScraperReviews.status === 'rejected') {
+    console.error('Play Store Scraper collection failed:', playStoreScraperReviews.reason);
   }
 
   console.log(`Total collected: ${allReviews.length} reviews`);

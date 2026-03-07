@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "google-auth-library": "^9.14.0",
+    "google-play-scraper": "^10.1.2",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
