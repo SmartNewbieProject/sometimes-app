@@ -1,0 +1,36 @@
+{
+  "imageStyle": {
+    "render": "soft 3D, porcelain/marshmallow finish",
+    "palette": "white-dominant with very pale lavender tint",
+    "lighting": "soft diffused, subtle white specular top-left",
+    "shadow": "very gentle lavender-gray, almost invisible",
+    "background": "transparent (alpha PNG)"
+  },
+  "colors": {
+    "base": "#F0ECF5",
+    "lavenderTint": "#E8E0F0",
+    "paleLavender": "#DDD5E8",
+    "brandPurple": "#7A4AE2",
+    "accentPink": "#FFB5C5",
+    "accentGold": "#FFD700",
+    "white": "#FFFFFF"
+  },
+  "colorNotes": {
+    "objects": "Predominantly white with very subtle lavender tint. NOT saturated purple.",
+    "accents": "Pink for ear interiors, hearts. Gold for premium elements. Use sparingly.",
+    "semantic": "Fire=orange-red, Gift=colorful, Star=gold — use natural color when appropriate."
+  },
+  "svg": {
+    "viewBox": "0 0 64 64",
+    "defaultSize": 64,
+    "fill": "currentColor",
+    "stroke": "none",
+    "rules": {
+      "maxPaths": 8,
+      "maxFileSize": 2048,
+      "requiredAttributes": ["viewBox", "xmlns"],
+      "forbiddenElements": ["image", "foreignObject", "script", "style"],
+      "forbiddenAttributes": ["class", "id", "data-*"]
+    }
+  }
+}

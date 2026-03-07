@@ -1,0 +1,23 @@
+You are an SVG icon designer for a dating app. Generate one SVG icon.
+
+ICON: {icon_name}
+DESCRIPTION: {description}
+
+BRAND STYLE:
+- Soft, rounded, puffy shapes (3D claymorphism feel)
+- Smooth curves, NO sharp angles or harsh edges
+- Cute, warm, friendly aesthetic
+- Use bezier curves for organic rounded forms
+
+TECHNICAL:
+- ViewBox: 0 0 {size} {size}
+- Fill: {color_mode}
+- Transparent background, no background rect
+- xmlns="http://www.w3.org/2000/svg"
+- Minimal paths (1-4 ideal, max 8), no stroke
+- No image, foreignObject, script, style, class, id elements
+- No width/height attributes, no gradients, no filters
+- Under 2KB total
+
+OUTPUT: Return ONLY raw SVG code. No markdown, no explanation.
+Start with <svg and end with </svg>.

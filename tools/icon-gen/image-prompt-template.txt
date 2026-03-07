@@ -1,0 +1,14 @@
+A single {icon_name} icon in soft 3D render style. {description}.
+
+Style rules:
+- Smooth porcelain or marshmallow-like matte surface with a gentle glossy highlight
+- Rounded, puffy, inflated shapes — soft and plump like a ceramic toy
+- Very soft diffused lighting, subtle white specular highlight on top-left
+- Extremely gentle shadow beneath, almost invisible, light lavender-gray tone
+- Color: predominantly WHITE and VERY PALE LAVENDER (#F0ECF5 ~ #E8E0F0), NOT saturated purple
+- Only use hints of soft lavender tint, keep overall tone very light and airy
+- If the object has a natural color (fire=orange, gift=colorful), use that color but keep the soft 3D render quality
+- Transparent PNG background (alpha channel)
+- Single centered object, no text, no labels, no scattered decorations, no ground plane
+- Cute, gentle, warm, minimal, suitable as a mobile dating app UI icon
+- Square composition, object fills roughly 70-80% of the frame
