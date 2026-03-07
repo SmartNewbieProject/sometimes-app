@@ -7,14 +7,25 @@ import { Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 type ArticleWriteHeaderProps = {
 	onConfirm: () => void;
 	mode: 'create' | 'update';
+	disabled?: boolean;
+	confirmLabel?: string;
 };
 
-export const ArticleWriteHeader = ({ onConfirm, mode }: ArticleWriteHeaderProps) => {
+export const ArticleWriteHeader = ({
+	onConfirm,
+	mode,
+	disabled = false,
+	confirmLabel,
+}: ArticleWriteHeaderProps) => {
 	const { t } = useTranslation();
 	return (
 		<Header.Container>
 			<Header.LeftContent>
-				<Pressable onPress={() => router.push('/community')} style={headerStyles.backButton}>
+				<Pressable
+					disabled={disabled}
+					onPress={() => router.push('/community')}
+					style={[headerStyles.backButton, disabled && headerStyles.disabledButton]}
+				>
 					<ChevronLeftIcon width={24} height={24} />
 				</Pressable>
 			</Header.LeftContent>
@@ -28,9 +39,10 @@ export const ArticleWriteHeader = ({ onConfirm, mode }: ArticleWriteHeaderProps)
 			</Header.CenterContent>
 
 			<Header.RightContent>
-				<TouchableOpacity onPress={onConfirm}>
+				<TouchableOpacity disabled={disabled} onPress={onConfirm}>
 					<Text textColor={'black'} weight={'bold'}>
-						{t('features.community.ui.article_write_screen.header.complete_button')}
+						{confirmLabel ??
+							t('features.community.ui.article_write_screen.header.complete_button')}
 					</Text>
 				</TouchableOpacity>
 			</Header.RightContent>
@@ -42,5 +54,8 @@ const headerStyles = StyleSheet.create({
 	backButton: {
 		padding: 8,
 		marginLeft: -8,
+	},
+	disabledButton: {
+		opacity: 0.5,
 	},
 });

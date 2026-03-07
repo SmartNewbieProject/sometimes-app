@@ -40,6 +40,8 @@ import { devLogWithTag } from '@/src/shared/utils';
 import PhotoSlider from '@/src/widgets/slide/photo-slider';
 import { useForm } from 'react-hook-form';
 
+type ReplyTarget = { id: string; authorName: string; content: string } | null;
+
 export const ArticleDetail = ({ article }: { article: Article }) => {
 	const insets = useSafeAreaInsets();
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -47,7 +49,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 	const [checked, setChecked] = useState(true);
 	const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 	const [editingContent, setEditingContent] = useState<string>('');
-	const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
+	const [replyTarget, setReplyTarget] = useState<ReplyTarget>(null);
 	const form = useForm<CommentForm>({
 		defaultValues: {
 			content: editingCommentId ? editingContent : '',
@@ -88,7 +90,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 			{
 				content: data.content,
 				anonymous: checked,
-				parentId: replyingToCommentId || undefined,
+				parentId: replyTarget?.id || undefined,
 			},
 			{
 				onSuccess: () => {
@@ -97,7 +99,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 						anonymous: true,
 					});
 					setEditingContent('');
-					setReplyingToCommentId(null);
+					setReplyTarget(null);
 					Keyboard.dismiss();
 				},
 			},
@@ -119,7 +121,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 		if (comment) {
 			setEditingCommentId(id);
 			setEditingContent(comment.content);
-			setReplyingToCommentId(null);
+			setReplyTarget(null);
 			form.reset({
 				content: comment.content,
 				anonymous: true,
@@ -155,7 +157,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 	const handleCancelEdit = () => {
 		setEditingCommentId(null);
 		setEditingContent('');
-		setReplyingToCommentId(null);
+		setReplyTarget(null);
 		form.reset({
 			content: '',
 			anonymous: true,
@@ -235,15 +237,16 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 		deleteCommentMutation.mutate(commentId);
 	};
 
-	const handleReply = (parentId: string) => {
-		setReplyingToCommentId(parentId);
+	const handleReply = (parentId: string, comment: Comment) => {
+		setReplyTarget({ id: parentId, authorName: comment.author.name, content: comment.content });
 		setEditingCommentId(null);
 		setEditingContent('');
 		form.reset({ content: '', anonymous: true });
+		form.setFocus('content');
 	};
 
 	const handleCancelReply = () => {
-		setReplyingToCommentId(null);
+		setReplyTarget(null);
 		form.reset({ content: '', anonymous: true });
 	};
 
@@ -458,7 +461,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 						form={form}
 						handleSubmitUpdate={handleSubmitUpdate}
 						handleSubmit={handleSubmit}
-						replyingToCommentId={replyingToCommentId}
+						replyTarget={replyTarget}
 						handleCancelReply={handleCancelReply}
 					/>
 				</View>

@@ -7,7 +7,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -26,8 +26,11 @@ export default function CommunityUpdateScreen() {
   const { article, isLoading, status, isFetched } = useArticleDetailsQuery(id);
   const form = useArticleWriteForm({});
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = form.handleSubmit(async (data) => {
+    if (isSubmitting) return;
+
     if (data.title.length < 3 || data.content.length < 3) {
       showModal({
         title: t("apps.community.update.too_short_title"),
@@ -60,39 +63,54 @@ export default function CommunityUpdateScreen() {
       return;
     }
 
-    await tryCatch(async () => {
-      const newImages =
-        data.images?.filter(
-          (img) => !data.originalImages?.some((orig) => orig.imageUrl === img)
-        ) || [];
+    setIsSubmitting(true);
 
-      await articles.patchArticle(id, {
-        content: data.content,
-        title: data.title,
-        images: newImages,
-        deleteImageIds: data.deleteImageIds,
-      });
-      await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.articles.detail(id),
-      });
-      showModal({
-        title: t("success"),
-        children: (
-          <View style={styles.modalContent}>
-            <Text textColor="black" size="sm">
-              {t("apps.community.update.modal_success_desc_1")}
-            </Text>
-            <Text textColor="black" size="sm">
-              {t("apps.community.update.modal_success_desc_2")}
-            </Text>
-          </View>
-        ),
-        primaryButton: {
-          text: t("apps.community.update.modal_confirm_move"),
-          onClick: () => router.push(`/community/${id}`),
-        },
-      });
-    });
+    await tryCatch(
+      async () => {
+        const newImages =
+          data.images?.filter(
+            (img) => !data.originalImages?.some((orig) => orig.imageUrl === img)
+          ) || [];
+
+        await articles.patchArticle(id, {
+          content: data.content,
+          title: data.title,
+          images: newImages,
+          deleteImageIds: data.deleteImageIds,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.articles.detail(id),
+        });
+        setIsSubmitting(false);
+        showModal({
+          title: t("success"),
+          children: (
+            <View style={styles.modalContent}>
+              <Text textColor="black" size="sm">
+                {t("apps.community.update.modal_success_desc_1")}
+              </Text>
+              <Text textColor="black" size="sm">
+                {t("apps.community.update.modal_success_desc_2")}
+              </Text>
+            </View>
+          ),
+          primaryButton: {
+            text: t("apps.community.update.modal_confirm_move"),
+            onClick: () => router.push(`/community/${id}`),
+          },
+        });
+      },
+      (error) => {
+        setIsSubmitting(false);
+        const errorMessage =
+          (error as any)?.error || t("apps.community.write.modal_fail_desc_default");
+        showModal({
+          title: t("apps.community.write.modal_fail_title"),
+          children: <Text textColor="black">{errorMessage}</Text>,
+          primaryButton: { text: t("confirm"), onClick: () => {} },
+        });
+      }
+    );
   });
 
   useEffect(() => {
@@ -112,11 +130,15 @@ export default function CommunityUpdateScreen() {
     return <Loading.Page title={t("apps.community.update.loading")} />;
   }
 
+  if (isSubmitting) {
+    return <Loading.Page />;
+  }
+
   return (
     <ArticleWriteFormProvider form={form}>
       <DefaultLayout style={styles.container}>
         <PalePurpleGradient />
-        <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
+        <ArtcileWriter.Header disabled={isSubmitting} mode="update" onConfirm={onSubmit} />
         <ArtcileWriter.Form mode="update" />
         <ArtcileWriter.Nav mode="update" />
       </DefaultLayout>

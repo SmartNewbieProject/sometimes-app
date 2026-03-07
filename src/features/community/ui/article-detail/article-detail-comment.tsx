@@ -1,3 +1,4 @@
+import AreaDisabledHeart from '@/assets/icons/area-disabled-heart.svg';
 import AreaFillHeart from '@/assets/icons/area-fill-heart.svg';
 import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
@@ -29,7 +30,7 @@ interface ArticleDetailCommentProps {
 	isEditing?: boolean;
 	onDelete: (id: string) => void;
 	onUpdate: (id: string) => void;
-	onReply?: (parentId: string) => void;
+	onReply?: (parentId: string, comment: Comment) => void;
 	onLike: (commentId: string) => void;
 	isReply?: boolean;
 	rootParentId?: string;
@@ -88,10 +89,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 				{comment.isLiked ? (
 					<AreaFillHeart width={18} height={18} />
 				) : (
-					<Image
-						source={require('@/assets/icons/heart.png')}
-						style={{ width: 18, height: 16, tintColor: '#676767' }}
-					/>
+					<AreaDisabledHeart width={18} height={18} />
 				)}
 				{comment.likeCount > 0 && <Text style={styles.actionCountText}>{comment.likeCount}</Text>}
 			</TouchableOpacity>
@@ -109,7 +107,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 			<Show when={!isAuthor && !!onReply}>
 				<TouchableOpacity
 					style={styles.actionButton}
-					onPress={() => onReply?.(rootParentId || comment.id)}
+					onPress={() => onReply?.(rootParentId || comment.id, comment)}
 				>
 					<Image
 						source={require('@/assets/icons/engagement.png')}

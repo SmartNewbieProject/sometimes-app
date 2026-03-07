@@ -397,10 +397,12 @@ const formStyles = StyleSheet.create({
 	imagesContainer: {
 		width: '100%',
 		marginTop: 8,
+		paddingTop: 8,
 	},
 	imagesRow: {
 		flexDirection: 'row',
 		gap: 8,
+		paddingRight: 8,
 	},
 	imageWrapper: {
 		position: 'relative',

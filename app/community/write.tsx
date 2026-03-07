@@ -2,6 +2,7 @@
 import Community from "@/src/features/community";
 import type { ArticleRequestType } from "@/src/features/community/types";
 import { DefaultLayout } from "@/src/features/layout/ui";
+import Loading from "@/src/features/loading";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -27,6 +28,7 @@ export default function CommunityWriteScreen() {
   const { showModal } = useModal();
   const { communityEngagementEvents, communityEvents } = useMixpanel();
   const [initialEventAttempt, setInitialEventAttempt] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { category: initCategory } = useLocalSearchParams<{
     category: string;
@@ -54,6 +56,8 @@ export default function CommunityWriteScreen() {
   }, []);
 
   const onSubmitForm = form.handleSubmit(async (data) => {
+    if (isSubmitting) return;
+
     if (data.title.length < 3 || data.content.length < 3) {
       showModal({
         title: t("apps.community.write.modal_short_title"),
@@ -83,7 +87,8 @@ export default function CommunityWriteScreen() {
       return;
     }
 
-    
+    setIsSubmitting(true);
+
     await tryCatch(
       async () => {
         const { originalImages, deleteImageIds, ...articleData } = data;
@@ -106,15 +111,18 @@ export default function CommunityWriteScreen() {
             const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
             const actuallyReceivedReward = eventDetails.currentAttempt > initialEventAttempt;
 
+            setIsSubmitting(false);
             if (actuallyReceivedReward) {
               router.push("/community?refresh=true&receivedGemReward=true");
             } else {
               router.push("/community?refresh=true");
             }
           } catch (error) {
+            setIsSubmitting(false);
             router.push("/community?refresh=true");
           }
         } else {
+          setIsSubmitting(false);
           router.push("/community?refresh=true");
         }
 
@@ -130,6 +138,7 @@ export default function CommunityWriteScreen() {
         });
       },
       (error) => {
+        setIsSubmitting(false);
         const errorMessage =
           (error as any)?.error ||  t("apps.community.write.modal_fail_desc_default");
         showModal({
@@ -141,10 +150,14 @@ export default function CommunityWriteScreen() {
     );
   });
 
+  if (isSubmitting) {
+    return <Loading.Page />;
+  }
+
   return (
     <ArticleWriteFormProvider form={form}>
       <DefaultLayout style={styles.container}>
-        <ArtcileWriter.Header onConfirm={onSubmitForm} mode="create" />
+        <ArtcileWriter.Header disabled={isSubmitting} onConfirm={onSubmitForm} mode="create" />
 
         <View style={styles.spacer} />
 

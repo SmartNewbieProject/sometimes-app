@@ -1,4 +1,5 @@
 import SendIcon from '@/assets/icons/send.svg';
+import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import i18n from '@/src/shared/libs/i18n';
 import { Check, Text } from '@/src/shared/ui';
@@ -20,7 +21,7 @@ interface InputFormProps {
 	form: UseFormReturn<CommentForm>;
 	handleSubmitUpdate: () => void;
 	handleSubmit: (data: { content: string }) => void;
-	replyingToCommentId?: string | null;
+	replyTarget?: { id: string; authorName: string; content: string } | null;
 	handleCancelReply?: () => void;
 }
 
@@ -34,7 +35,7 @@ export const InputForm = ({
 	form,
 	handleSubmitUpdate,
 	handleSubmit,
-	replyingToCommentId,
+	replyTarget,
 	handleCancelReply,
 }: InputFormProps) => {
 	const { t } = useTranslation();
@@ -54,16 +55,20 @@ export const InputForm = ({
 					</TouchableOpacity>
 				</View>
 			)}
-			{!editingCommentId && replyingToCommentId && (
-				<View style={styles.editingBanner}>
-					<Text size="sm" textColor="accent">
-						{t('features.community.ui.comment.input_form.replying_comment')}
-					</Text>
+			{!editingCommentId && replyTarget && (
+				<View style={styles.replyQuoteCard}>
+					<View style={styles.replyQuoteLeft} />
+					<View style={styles.replyQuoteBody}>
+						<Text style={styles.replyQuoteAuthor} numberOfLines={1}>
+							{replyTarget.authorName}{t('features.community.ui.comment.input_form.reply_to_suffix')}
+						</Text>
+						<Text style={styles.replyQuoteContent} numberOfLines={2}>
+							{replyTarget.content}
+						</Text>
+					</View>
 					{handleCancelReply && (
-						<TouchableOpacity onPress={handleCancelReply}>
-							<Text size="sm" textColor="accent">
-								{t('cancel')}
-							</Text>
+						<TouchableOpacity onPress={handleCancelReply} style={styles.replyQuoteClose}>
+							<Text style={styles.replyQuoteCloseText}>×</Text>
 						</TouchableOpacity>
 					)}
 				</View>
@@ -162,6 +167,44 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 		marginBottom: 8,
 		borderRadius: 8,
+	},
+	replyQuoteCard: {
+		flexDirection: 'row',
+		alignItems: 'stretch',
+		backgroundColor: colors.moreLightPurple,
+		borderRadius: 10,
+		marginBottom: 8,
+		overflow: 'hidden',
+		elevation: 0,
+	},
+	replyQuoteLeft: {
+		width: 3,
+		backgroundColor: '#7A4AE2',
+		alignSelf: 'stretch',
+	},
+	replyQuoteBody: {
+		flex: 1,
+		paddingHorizontal: 10,
+		paddingVertical: 8,
+	},
+	replyQuoteAuthor: {
+		fontSize: 13,
+		fontWeight: '700' as any,
+		color: '#7A4AE2',
+		marginBottom: 2,
+	},
+	replyQuoteContent: {
+		fontSize: 12,
+		color: semanticColors.text.secondary,
+	},
+	replyQuoteClose: {
+		paddingHorizontal: 14,
+		paddingVertical: 14,
+		justifyContent: 'flex-start',
+	},
+	replyQuoteCloseText: {
+		fontSize: 14,
+		color: semanticColors.text.secondary,
 	},
 	inputContainer: {
 		flexDirection: 'row',

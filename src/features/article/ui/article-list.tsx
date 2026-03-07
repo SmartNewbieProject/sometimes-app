@@ -1,5 +1,6 @@
 import colors from '@/src/shared/constants/colors';
-import React from 'react';
+import type React from 'react';
+import { useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useArticles } from '../queries';
 import type { ArticleCategory, ArticleListItem } from '../types';
@@ -15,33 +16,43 @@ export const ArticleList = ({ category, ListHeaderComponent }: ArticleListProps)
 		category,
 	});
 
-	const handleEndReached = () => {
+	const handleEndReached = useCallback(() => {
 		if (hasNextPage && !isLoadingMore) {
 			loadMore();
 		}
-	};
+	}, [hasNextPage, isLoadingMore, loadMore]);
 
-	const renderItem = ({ item }: { item: ArticleListItem }) => (
-		<ArticleListItemCard article={item} />
+	const renderItem = useCallback(
+		({ item }: { item: ArticleListItem }) => <ArticleListItemCard article={item} />,
+		[],
 	);
 
-	const renderFooter = () => {
+	const keyExtractor = useCallback((item: ArticleListItem) => item.id, []);
+
+	const renderFooter = useCallback(() => {
 		if (!isLoadingMore) return null;
 		return (
 			<View style={styles.footer}>
 				<ActivityIndicator size="small" color={colors.brand.primary} />
 			</View>
 		);
-	};
+	}, [isLoadingMore]);
 
-	const renderEmpty = () => {
+	const renderEmpty = useCallback(() => {
 		if (isLoading) return null;
 		return (
 			<View style={styles.empty}>
 				<Text style={styles.emptyText}>아직 등록된 글이 없어요</Text>
 			</View>
 		);
-	};
+	}, [isLoading]);
+
+	const refreshControl = useMemo(
+		() => (
+			<RefreshControl refreshing={false} onRefresh={refresh} tintColor={colors.brand.primary} />
+		),
+		[refresh],
+	);
 
 	if (isLoading) {
 		return (
@@ -55,7 +66,7 @@ export const ArticleList = ({ category, ListHeaderComponent }: ArticleListProps)
 		<FlatList
 			data={articles}
 			renderItem={renderItem}
-			keyExtractor={(item) => item.id}
+			keyExtractor={keyExtractor}
 			contentContainerStyle={styles.list}
 			showsVerticalScrollIndicator={false}
 			onEndReached={handleEndReached}
@@ -63,9 +74,11 @@ export const ArticleList = ({ category, ListHeaderComponent }: ArticleListProps)
 			ListHeaderComponent={ListHeaderComponent}
 			ListFooterComponent={renderFooter}
 			ListEmptyComponent={renderEmpty}
-			refreshControl={
-				<RefreshControl refreshing={false} onRefresh={refresh} tintColor={colors.brand.primary} />
-			}
+			refreshControl={refreshControl}
+			initialNumToRender={8}
+			maxToRenderPerBatch={8}
+			windowSize={7}
+			removeClippedSubviews
 		/>
 	);
 };

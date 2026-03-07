@@ -18,17 +18,20 @@ export const ArticleWriteNav = ({ mode }: { mode: 'create' | 'update' }) => {
 	};
 
 	return (
-		<View style={[navStyles.container, { paddingBottom: insets.bottom }]}>
-			<View style={navStyles.innerRow}>
-				{mode === 'create' && (
-					<Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous}>
-						<Text style={navStyles.anonymousText}>
-							{t('features.community.ui.article_write_screen.nav.anonymous')}
-						</Text>
-					</Check.Box>
-				)}
+		<>
+			<View style={navStyles.container}>
+				<View style={navStyles.innerRow}>
+					{mode === 'create' && (
+						<Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous}>
+							<Text style={navStyles.anonymousText}>
+								{t('features.community.ui.article_write_screen.nav.anonymous')}
+							</Text>
+						</Check.Box>
+					)}
+				</View>
 			</View>
-		</View>
+			<View style={[navStyles.safeAreaFill, { height: insets.bottom }]} />
+		</>
 	);
 };
 
@@ -52,5 +55,8 @@ const navStyles = StyleSheet.create({
 		fontSize: 15,
 		color: semanticColors.text.primary,
 		fontWeight: '500',
+	},
+	safeAreaFill: {
+		backgroundColor: semanticColors.surface.background,
 	},
 });

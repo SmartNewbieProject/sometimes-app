@@ -146,6 +146,7 @@
 				"comment_edit_reply_mode_comment": "수정 모드 또는 대댓글 작성 모드 표시",
 				"editing_comment": "댓글 수정 중...",
 				"replying_comment": "답글 작성 중...",
+				"reply_to_suffix": "님에게 답글",
 				"anonymous": "익명",
 				"comment_placeholder": "댓글을 입력하세요",
 				"cancel": "취소"

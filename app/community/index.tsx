@@ -14,21 +14,21 @@ import { ArticleSkeleton } from '@/src/features/loading/skeleton/article-skeleto
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { ImageResources } from '@/src/shared/libs';
 import {
 	BottomNavigation,
 	Header,
 	HeaderWithNotification,
-	ImageResource,
 	Text,
 } from '@/src/shared/ui';
 import { SometimeArticleList } from '@/src/widgets/sometime-article';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { type NavigationState, type SceneRendererProps, TabView } from 'react-native-tab-view';
+
+const communityLogo = require('@/assets/images/community-logo.png');
 
 type CategoryRoute = { key: string; title: string; isHome?: boolean; isSometimeStory?: boolean };
 
@@ -48,7 +48,6 @@ export default function CommunityScreen() {
 	const [hasShownGemReward, setHasShownGemReward] = useState(false);
 	const { communityEvents } = useMixpanel();
 	const { showPromptForCommunity } = useAppInstallPrompt();
-	const hasShownInstallPromptRef = useRef(false);
 
 	useEffect(() => {
 		if (receivedGemReward === 'true' && !hasShownGemReward) {
@@ -147,15 +146,13 @@ export default function CommunityScreen() {
 		communityEvents.trackFeedViewed(entryPoint, feedType);
 	}, [categoryCode, isNotice, shouldRefresh, communityEvents]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 시 1회만 실행
 	useEffect(() => {
-		if (!hasShownInstallPromptRef.current) {
-			hasShownInstallPromptRef.current = true;
-			const timer = setTimeout(() => {
-				showPromptForCommunity();
-			}, 1000);
-			return () => clearTimeout(timer);
-		}
-	}, [showPromptForCommunity]);
+		const timer = setTimeout(() => {
+			showPromptForCommunity();
+		}, 1000);
+		return () => clearTimeout(timer);
+	}, []);
 
 	const hasRoutes = routes.length > 0;
 
@@ -265,7 +262,7 @@ const ListHeaderComponent = () => {
 		<View style={{ backgroundColor: semanticColors.surface.background }}>
 			<HeaderWithNotification
 				centerContent={
-					<ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
+					<Image source={communityLogo} style={{ width: 152, height: 18 }} resizeMode="contain" />
 				}
 				showBackButton={false}
 			/>

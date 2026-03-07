@@ -148,6 +148,7 @@
 				"comment_edit_reply_mode_comment": "編集モードまたは返信作成モード表示",
 				"editing_comment": "コメントを編集中...",
 				"replying_comment": "返信を作成中...",
+				"reply_to_suffix": "さんへの返信",
 				"anonymous": "匿名",
 				"comment_placeholder": "コメントを入力してください",
 				"cancel": "戻る"
