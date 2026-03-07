@@ -116,13 +116,12 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flexDirection: "row",
-    paddingHorizontal: 15,
     width: "100%",
-    gap: 15,
-    justifyContent: "space-between",
     alignItems: "center",
   },
   text: {
+    flex: 1,
+    textAlign: "center",
     fontSize: 14,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,

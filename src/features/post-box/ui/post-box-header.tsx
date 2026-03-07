@@ -16,7 +16,7 @@ function PostBoxHeaders() {
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            router.navigate("/home");
+            router.back();
           }}
           style={styles.arrowContainer}
         >

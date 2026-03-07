@@ -3,23 +3,18 @@ import useLikedMeQuery from '@/src/features/like/queries/use-liked-me-query';
 import Loading from '@/src/features/loading';
 import NotSome from '@/src/features/post-box/ui/not-some';
 import PostBoxCard from '@/src/features/post-box/ui/post-box-card';
-import colors from '@/src/shared/constants/colors';
+import { usePostBoxFilter } from '@/src/features/post-box/post-box-filter-context';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { PROFILE_VIEWER_KEYS } from '@/src/shared/libs/locales/keys';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { Text } from '@/src/shared/ui';
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 function LikedMe() {
 	const { t } = useTranslation();
-	const [filter, setFilter] = useState<'LATEST' | 'LETTER'>('LATEST');
+	const { filter } = usePostBoxFilter();
 	const hasLetter = filter === 'LETTER' ? true : undefined;
 
 	const { data: likedMeList, isLoading } = useLikedMeQuery(hasLetter);
@@ -61,10 +56,6 @@ function LikedMe() {
 		};
 	}, []);
 
-	const handleViewedMePress = () => {
-		router.push('/viewed-me');
-	};
-
 	const renderList = () => {
 		if (sortedList?.length === 0) {
 			return <NotSome type="likedMe" />;
@@ -91,47 +82,6 @@ function LikedMe() {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.filterContainer}>
-				<View style={styles.filterChips}>
-					<Pressable
-						style={[styles.filterChip, filter === 'LATEST' && styles.filterChipActive]}
-						onPress={() => setFilter('LATEST')}
-					>
-						<Text
-							size="13"
-							weight={filter === 'LATEST' ? 'medium' : 'regular'}
-							style={{
-								color: filter === 'LATEST' ? colors.primaryPurple : '#9CA3AF',
-							}}
-						>
-							{t('features.post-box.ui.filter.latest')}
-						</Text>
-					</Pressable>
-					<Pressable
-						style={[styles.filterChip, filter === 'LETTER' && styles.filterChipActive]}
-						onPress={() => setFilter('LETTER')}
-					>
-						<Text
-							size="13"
-							weight={filter === 'LETTER' ? 'medium' : 'regular'}
-							style={{
-								color: filter === 'LETTER' ? colors.primaryPurple : '#9CA3AF',
-							}}
-						>
-							{t('features.post-box.ui.filter.letter_first')}
-						</Text>
-					</Pressable>
-				</View>
-
-				{/* 나를 본 사람 앵커 */}
-				<Pressable style={styles.viewerAnchor} onPress={handleViewedMePress}>
-					<Text size="13" weight="medium" textColor="purple">
-						{t(PROFILE_VIEWER_KEYS.viewedMeAnchorText)}
-					</Text>
-					<Feather name="chevron-right" size={16} color={semanticColors.brand.primary} />
-				</Pressable>
-			</View>
-
 			<Loading.Lottie title={t('apps.postBox.liked_me_loading')} loading={isLoading}>
 				{renderList()}
 			</Loading.Lottie>
@@ -143,34 +93,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		minHeight: 400,
-	},
-	filterContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingHorizontal: 20,
-		paddingVertical: 12,
-	},
-	filterChips: {
-		flexDirection: 'row',
-		gap: 8,
-	},
-	filterChip: {
-		paddingHorizontal: 12,
-		paddingVertical: 6,
-		borderRadius: 15,
-		borderWidth: 1,
-		borderColor: '#E5E7EB',
-		backgroundColor: '#FFFFFF',
-	},
-	filterChipActive: {
-		borderColor: colors.primaryPurple,
-		backgroundColor: '#F3F0FF',
-	},
-	viewerAnchor: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 2,
 	},
 	scrollView: {
 		flex: 1,

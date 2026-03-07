@@ -397,6 +397,8 @@ export function LikedMeOpenButton({
 	const { profileDetails } = useAuth();
 
 	const handleCreateChat = () => {
+		if (mutation.isPending) return;
+
 		showModal({
 			showLogo: true,
 
@@ -434,8 +436,9 @@ export function LikedMeOpenButton({
 			),
 			primaryButton: {
 				text: t('features.post-box.ui.card.buttons.yes_try'),
-				onClick: () => {
-					mutation.mutateAsync({ matchId, matchLikeId: likeId });
+				onClick: async () => {
+					if (mutation.isPending) return;
+					await mutation.mutateAsync({ matchId, matchLikeId: likeId });
 				},
 			},
 			secondaryButton: {
@@ -447,6 +450,7 @@ export function LikedMeOpenButton({
 	return (
 		<View style={styles.buttonContainer}>
 			<Button
+				disabled={mutation.isPending}
 				onPress={handleCreateChat}
 				variant="primary"
 				size="md"
@@ -454,7 +458,9 @@ export function LikedMeOpenButton({
 				styles={[styles.chatButton, { height }]}
 				prefix={<ChatIcon width={20} height={20} />}
 			>
-				{t('features.post-box.ui.card.buttons.start_chat')}
+				{mutation.isPending
+					? `${t('features.post-box.ui.card.buttons.start_chat')}...`
+					: t('features.post-box.ui.card.buttons.start_chat')}
 			</Button>
 		</View>
 	);
