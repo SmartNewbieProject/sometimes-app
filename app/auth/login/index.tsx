@@ -54,22 +54,27 @@ export default function LoginScreen() {
 	return (
 		<View style={styles.container}>
 			<LinearGradient colors={['#FFFFFF', '#F5F1FF']} style={styles.gradientContainer}>
-				<ScrollView
-					style={styles.scrollView}
-					contentContainerStyle={styles.scrollContent}
-					showsVerticalScrollIndicator={false}
-					bounces={false}
-				>
-					<View style={[styles.contentWrapper, { paddingTop: insets.top }]}>
-						<View style={styles.logoSection}>
-							<Signup.Logo />
+				<View style={styles.innerContainer}>
+					<ScrollView
+						style={styles.scrollView}
+						contentContainerStyle={styles.scrollContent}
+						showsVerticalScrollIndicator={false}
+						bounces={false}
+					>
+						<View style={[styles.contentWrapper, { paddingTop: insets.top }]}>
+							<View style={styles.logoSection}>
+								<Signup.Logo />
+							</View>
+							<View style={styles.mainContent}>
+								<Signup.LoginFormContent />
+							</View>
 						</View>
+					</ScrollView>
 
-						<View style={styles.mainContent}>
-							<Signup.LoginForm />
-						</View>
+					<View style={[styles.bottomFixed, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
+						<Signup.LoginFormButtons />
 					</View>
-				</ScrollView>
+				</View>
 			</LinearGradient>
 			<AuthTabBar activeTab="login" onTabChange={handleTabChange} />
 		</View>
@@ -82,6 +87,9 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFFFFF',
 	},
 	gradientContainer: {
+		flex: 1,
+	},
+	innerContainer: {
 		flex: 1,
 	},
 	scrollView: {
@@ -103,5 +111,12 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 		marginTop: 4,
+	},
+	bottomFixed: {
+		backgroundColor: '#FFFFFF',
+		borderTopWidth: 1,
+		borderTopColor: '#F0EDF8',
+		paddingTop: 16,
+		alignItems: 'center',
 	},
 });

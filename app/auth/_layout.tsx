@@ -9,6 +9,7 @@ export default function AuthLayout() {
           name="signup"
           options={{
             headerShown: false,
+            gestureEnabled: false,
             contentStyle: {
               backgroundColor: "transparent",
             },

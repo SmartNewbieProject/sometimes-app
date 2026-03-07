@@ -41,6 +41,7 @@ export default function AppleUserInfoPage() {
 	const [phone, setPhone] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [certInfoLoaded, setCertInfoLoaded] = useState(false);
 
 	useEffect(() => {
 		updateShowHeader(true);
@@ -52,18 +53,30 @@ export default function AppleUserInfoPage() {
 				const certInfoStr = await AsyncStorage.getItem('signup_certification_info');
 				if (certInfoStr) {
 					const certInfo = JSON.parse(certInfoStr);
+					if (!certInfo.appleId) {
+						// Apple OAuth 없이 비정상 진입 → 로그인으로 즉시 이동
+						router.replace('/auth/login');
+						return;
+					}
 					updateForm({
 						loginType: certInfo.loginType,
 						appleId: certInfo.appleId,
 					});
+				} else {
+					// 인증 정보 자체가 없음 → 비정상 진입
+					router.replace('/auth/login');
+					return;
 				}
 			} catch (err) {
 				console.error('Failed to load certification info:', err);
+				router.replace('/auth/login');
+				return;
 			}
+			setCertInfoLoaded(true);
 		};
 
 		loadCertificationInfo();
-	}, [updateForm]);
+	}, [updateForm, router]);
 
 	useEffect(() => {
 		let appleName = null;
@@ -180,10 +193,10 @@ export default function AppleUserInfoPage() {
 	};
 
 	const handleBack = () => {
-		router.back();
+		router.replace('/auth/login');
 	};
 
-	if (fullNameLoading) {
+	if (fullNameLoading || !certInfoLoaded) {
 		return null;
 	}
 

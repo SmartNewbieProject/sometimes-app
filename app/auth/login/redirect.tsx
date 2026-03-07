@@ -99,10 +99,29 @@ function KakaoLoginRedirect() {
 								return;
 							}
 						}
+						// 필수 정보(gender, birthday) 누락 체크
+						const cert = result.certificationInfo;
+						const missingFields = [
+							!cert?.gender && 'gender',
+							!cert?.birthday && 'birthday',
+						].filter(Boolean);
+
+						if (missingFields.length > 0) {
+							showModal({
+								title: t('common.알림'),
+								children: t('features.signup.ui.login_form.consent_required_message'),
+								primaryButton: {
+									text: t('common.확인'),
+									onClick: () => {},
+								},
+							});
+							return;
+						}
+
 						// 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
 						await AsyncStorage.setItem(
 							'signup_certification_info',
-							JSON.stringify(result.certificationInfo),
+							JSON.stringify({ ...result.certificationInfo, loginType: 'kakao' }),
 						);
 
 						router.replace('/auth/signup/university');

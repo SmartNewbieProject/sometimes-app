@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
+	AppState,
 	Platform,
 	Pressable,
 	Text as RNText,
@@ -45,6 +46,30 @@ export default function LoginForm() {
 		return <JpLoginForm />;
 	}
 	return <KrLoginForm />;
+}
+
+/** 상단 콘텐츠 (ScrollView 안에 렌더링) — KR/JP 공통 구조 */
+export function LoginFormContent() {
+	const router = useRouter();
+	const country = isJapanese() ? 'jp' : 'kr';
+	return (
+		<View style={loginFormStyles.container}>
+			<View style={loginFormStyles.universityLogos}>
+				<UniversityLogos logoSize={64} country={country} />
+			</View>
+			<View style={loginFormStyles.slideToAboutWrapper}>
+				<SlideToAbout onAction={() => router.push('/onboarding?source=login')} />
+			</View>
+		</View>
+	);
+}
+
+/** 하단 CTA 버튼 (fixed bottom에 렌더링) */
+export function LoginFormButtons() {
+	if (isJapanese()) {
+		return <JpLoginFormButtons />;
+	}
+	return <KrLoginFormButtons />;
 }
 
 /**
@@ -172,7 +197,6 @@ function KrLoginForm() {
 
 const loginFormStyles = StyleSheet.create({
 	container: {
-		flex: 1,
 		flexDirection: 'column',
 		alignItems: 'center',
 	},
@@ -214,7 +238,7 @@ const loginFormStyles = StyleSheet.create({
 	privacyNotice: {
 		width: '100%',
 		paddingHorizontal: 24,
-		marginTop: 'auto',
+		marginTop: 32,
 		paddingTop: 24,
 		marginBottom: 8,
 	},
@@ -246,7 +270,25 @@ function KakaoLoginComponent() {
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
 	const authStartTimeRef = useRef<number | null>(null);
+	const isKakaoLoginPendingRef = useRef(false);
+	const isCancelledRef = useRef(false);
+	const appStateRef = useRef(AppState.currentState);
 	const { setAuthMethod } = useSignupProgress();
+
+	// 카카오 인증 중 앱이 백그라운드로 갔다가 복귀하면 로딩 상태를 즉시 해제
+	useEffect(() => {
+		const subscription = AppState.addEventListener('change', (nextState) => {
+			const prevState = appStateRef.current;
+			appStateRef.current = nextState;
+
+			if (prevState === 'background' && nextState === 'active' && isKakaoLoginPendingRef.current) {
+				isCancelledRef.current = true;
+				isKakaoLoginPendingRef.current = false;
+				setIsLoading(false);
+			}
+		});
+		return () => subscription.remove();
+	}, []);
 
 	const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
 	const redirectUri = env.KAKAO_REDIRECT_URI;
@@ -293,14 +335,68 @@ function KakaoLoginComponent() {
 	const handleNativeKakaoLogin = async () => {
 		const loginStartTime = Date.now();
 		authStartTimeRef.current = loginStartTime;
+		isCancelledRef.current = false;
+		isKakaoLoginPendingRef.current = true;
 
 		try {
 			setIsLoading(true);
 			devLogWithTag('Kakao Login', '1. SDK 호출');
 
-			// 카카오 네이티브 SDK로 로그인 (카카오톡 앱)
-			// 필수 정보 누락 시 requestAdditionalConsent()에서 재동의 처리
-			const result = await KakaoLogin.login();
+			// ── 1단계: 카카오 SDK 호출 (SDK 에러 별도 처리) ──────────────────
+			// eslint-disable-next-line prefer-const
+			let result!: KakaoLogin.KakaoLoginToken;
+			try {
+				result = await KakaoLogin.login();
+			} catch (sdkError: unknown) {
+				if (isUserCancellation(sdkError)) {
+					const timeSpentSeconds = authStartTimeRef.current
+						? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+						: undefined;
+					authStartTimeRef.current = null;
+					authEvents.trackLoginAbandoned(AUTH_METHODS.KAKAO, LOGIN_ABANDONED_STEPS.USER_CANCELLED, {
+						timeSpentSeconds,
+					});
+					return;
+				}
+
+				const sdkErrorObj = sdkError as { code?: string; errorCode?: string; message?: string };
+				const sdkCode = sdkErrorObj?.code || sdkErrorObj?.errorCode || 'UNKNOWN';
+				const sdkMessage = sdkError instanceof Error ? sdkError.message : String(sdkError);
+
+				console.error('===== 카카오 SDK 에러 =====');
+				console.error(JSON.stringify({ code: sdkCode, message: sdkMessage }, null, 2));
+				console.error('==========================');
+
+				authStartTimeRef.current = null;
+				authEvents.trackLoginFailed('kakao', sdkCode);
+				mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_VERIFICATION_ERROR, {
+					auth_method: AUTH_METHODS.KAKAO,
+					error_type: 'kakao_sdk_error',
+					error_code: sdkCode,
+					error_message: sdkMessage,
+					platform: Platform.OS,
+					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+				});
+
+				showModal({
+					title: t('features.signup.ui.login_form.login_failed_title'),
+					children: `카카오 인증에 실패했습니다.\n(${sdkCode}: ${sdkMessage})`,
+					primaryButton: {
+						text: t('retry'),
+						onClick: () => handleNativeKakaoLogin(),
+					},
+					secondaryButton: {
+						text: t('close'),
+						onClick: () => {},
+					},
+				});
+				return;
+			}
+			// ─────────────────────────────────────────────────────────────────
+
+			// 앱 복귀로 인해 취소 처리된 경우 이후 플로우 생략
+			if (isCancelledRef.current) return;
+
 			devLogWithTag('Kakao Login', '2. SDK 응답 받음', {
 				hasAccessToken: !!result.accessToken,
 			});
@@ -532,6 +628,7 @@ function KakaoLoginComponent() {
 					: undefined,
 			});
 		} finally {
+			isKakaoLoginPendingRef.current = false;
 			setIsLoading(false);
 		}
 	};
@@ -696,3 +793,97 @@ const devLoginStyles = StyleSheet.create({
 		fontWeight: '600',
 	},
 });
+
+// ─── 분리된 Content/Buttons 컴포넌트 ─────────────────────────────────────────
+
+function KrLoginFormButtons() {
+	const { t } = useTranslation();
+	const { emitToast } = useToast();
+	const isIOS = Platform.OS === 'ios';
+
+	useEffect(() => {
+		const passIcon = (
+			<View style={passCircleStyles.circle}>
+				<RNText style={passCircleStyles.text}>PASS</RNText>
+			</View>
+		);
+		emitToast(t('features.signup.ui.login_form.pass_migration_notice'), passIcon, 5000);
+	}, []);
+
+	return (
+		<View style={loginFormStyles.container}>
+			<SignupFastBadge />
+			<View style={loginFormStyles.buttonsContainer}>
+				<View style={loginFormStyles.buttonWrapper}>
+					<KakaoLoginComponent />
+				</View>
+				{__DEV__ && (
+					<View style={loginFormStyles.buttonWrapper}>
+						<DevLoginButton />
+					</View>
+				)}
+				<Show when={isIOS}>
+					<View style={loginFormStyles.dividerContainer}>
+						<View style={loginFormStyles.dividerLine} />
+						<Text size="sm" style={loginFormStyles.dividerText}>
+							{t('features.signup.ui.login_form.divider_or')}
+						</Text>
+						<View style={loginFormStyles.dividerLine} />
+					</View>
+					<SocialLoginIcons />
+				</Show>
+			</View>
+			<View style={loginFormStyles.privacyNotice}>
+				<PrivacyNotice />
+			</View>
+		</View>
+	);
+}
+
+function JpLoginFormButtons() {
+	const { t } = useTranslation();
+	const router = useRouter();
+
+	const handleSmsAuth = () => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+			auth_method: 'sms',
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+		router.push('/auth/jp-sms');
+	};
+
+	return (
+		<View style={loginFormStyles.container}>
+			<View style={loginFormStyles.buttonsContainer}>
+				<View style={loginFormStyles.buttonWrapper}>
+					<Button
+						variant="primary"
+						size="lg"
+						rounded="full"
+						onPress={handleSmsAuth}
+						styles={{
+							width: 330,
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
+					>
+						<Text
+							textColor="white"
+							size="18"
+							weight="semibold"
+							style={{ lineHeight: 40, textAlign: 'center' }}
+						>
+							{t('features.jp-auth.login_button')}
+						</Text>
+					</Button>
+				</View>
+				<View>
+					<AppleLoginButton />
+				</View>
+			</View>
+			<View style={loginFormStyles.privacyNotice}>
+				<PrivacyNotice />
+			</View>
+		</View>
+	);
+}
