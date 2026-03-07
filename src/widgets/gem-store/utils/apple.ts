@@ -140,8 +140,8 @@ export const getPriceAndDiscount = (
 		gem_1: { price: 1000, discountRate: 0 },
 		gem_5: { price: 5000, discountRate: 0 },
 		gem_25: { price: 25000, discountRate: 0 },
-		gem_50: { price: 45000, discountRate: 10 },
-		gem_100: { price: 80000, discountRate: 20 },
+		gem_50: { price: 50000, discountRate: 10 },
+		gem_100: { price: 100000, discountRate: 20 },
 
 		// 레거시
 		gem_15: { price: 11000, discountRate: 21 },

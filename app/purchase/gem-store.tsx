@@ -87,6 +87,7 @@ export default function GemStoreScreen() {
       productCount,
       onError,
       showSuccessModal: true,
+      onSuccess: () => {/* 구슬 스토어에 머무름 */},
     });
     setPaymentId(createUniqueId());
   };
@@ -137,6 +138,7 @@ export default function GemStoreScreen() {
         orderName={t("apps.purchase.gem_store.gem")}
         totalAmount={totalPrice ?? 0}
         productName={t("apps.purchase.gem_store.gem")}
+        customData={{ returnPath: '/purchase/gem-store' }}
         onError={onError}
         onComplete={(result: unknown) =>
           onCompletePayment(result as PaymentResponse)

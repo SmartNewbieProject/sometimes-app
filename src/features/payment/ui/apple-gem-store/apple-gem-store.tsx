@@ -235,7 +235,7 @@ function AppleGemStore() {
 		}
 	};
 
-	const isProductsLoading = isLoadingServer || !products || products?.length === 0;
+	const isProductsLoading = isLoadingServer || fetchState !== 'done';
 
 	useEffect(() => {
 		if (isProductsLoading) {

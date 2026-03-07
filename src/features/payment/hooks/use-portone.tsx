@@ -156,7 +156,7 @@ export function usePortone(): UsePortone {
               ),
               primaryButton: {
                 text: t("features.payment.ui.payment_modal.confirm_redirect_button"),
-                onClick: () => router.push("/home"),
+                onClick: () => onSuccess ? onSuccess() : router.push("/home"),
               },
               secondaryButton: {
                 text: t("features.payment.ui.payment_modal.browse_more_button"),
@@ -183,13 +183,11 @@ export function usePortone(): UsePortone {
               ),
               primaryButton: {
                 text: t("features.payment.ui.payment_modal.go_home_button"),
-                onClick: () => router.push("/home"),
+                onClick: () => onSuccess ? onSuccess() : router.push("/home"),
               },
             });
           }
         }
-
-        onSuccess?.();
       } catch (error) {
         console.error("결제 처리 오류:", error);
         showErrorModal(

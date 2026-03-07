@@ -78,8 +78,14 @@ export const AppleFirstSaleCard = ({
   if (!gemProducts || gemProducts.length === 0) return null;
   if (!gemProducts[0]) return null;
 
+  const handlePurchase = () => {
+    paymentEvents.trackItemSelected('gem_10', 10);
+    setEventType(EventType.FIRST_SALE_10);
+    onOpenPurchase(gemProducts[0].id);
+  };
+
   return (
-    <GlowingCard>
+    <GlowingCard onPress={handlePurchase}>
       <View style={styles.headerRow}>
         <Text textColor="black" weight="bold" size="20" style={styles.fontSize20}>
           {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
@@ -119,11 +125,7 @@ export const AppleFirstSaleCard = ({
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
             serverGemProducts={serverGemProducts}
-            onOpenPurchase={() => {
-              paymentEvents.trackItemSelected('gem_10', 10);
-              setEventType(EventType.FIRST_SALE_10);
-              onOpenPurchase(gemProducts[0].id);
-            }}
+            onOpenPurchase={handlePurchase}
             hot={false}
           />
         </Show>

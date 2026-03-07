@@ -15,12 +15,14 @@ export default function PaymentComplete() {
 
   useEffect(() => {
     const processPaymentComplete = async () => {
+      const paymentInfo = customData ? JSON.parse(customData as string) : null;
+      const returnPath: string = paymentInfo?.returnPath ?? '/home';
+
       try {
-        const paymentInfo = customData ? JSON.parse(customData as string) : null;
         console.log({ paymentInfo });
-        
+
         await handlePaymentComplete(
-          { 
+          {
             txId: txId as string,
             paymentId: paymentId as string,
             transactionType: 'PAYMENT',
@@ -30,15 +32,16 @@ export default function PaymentComplete() {
             gem: paymentInfo?.gemCount ? {
               count: paymentInfo.gemCount,
             } : undefined,
+            onSuccess: () => router.replace(returnPath as any),
             onError: (error) => {
               console.error("Payment error:", error);
-              router.push('/home');
-            }
+              router.replace(returnPath as any);
+            },
           }
         );
       } catch (error) {
         console.error("Payment error:", error);
-        router.push('/home');
+        router.replace(returnPath as any);
       }
     };
 
