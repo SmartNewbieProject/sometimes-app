@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>무료 보상 어뷰징 차단 UX — Sometimes App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Wanted Sans', 'Wanted Sans Variable', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      background: #FFFFFF;
+      color: #344054;
+      padding: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1D2939 0%, #1a1040 40%, #0c1a2e 100%);
+      border-radius: 0 0 24px 24px;
+      padding: 3.5rem 3rem 3rem;
+      margin: 0 -0.01px 2.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .hero .subtitle {
+      color: #98A2B3;
+      font-size: 1.05rem;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    .content { padding: 0 2.5rem 3rem; }
+
+    .stats { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.35rem 1.75rem; text-align: center; min-width: 148px; flex: 1; max-width: 220px;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .stat-card .num { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; color: #101828; }
+    .stat-card .label { font-size: 0.9rem; color: #667085; margin-top: 0.3rem; font-weight: 500; }
+    .stat-card.blue   .num { color: #2E90FA; }
+    .stat-card.green  .num { color: #12B76A; }
+    .stat-card.purple .num { color: #7F56D9; }
+    .stat-card.orange .num { color: #F79009; }
+    .stat-card.red    .num { color: #F04438; }
+    .stat-card.cyan   .num { color: #0BA5EC; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-size: 1.35rem; font-weight: 700; margin-bottom: 1.15rem; color: #101828;
+      padding-bottom: 0.65rem; border-bottom: 2px solid #F2F4F7; letter-spacing: -0.01em;
+    }
+    .section h2 .accent {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: #7F56D9; margin-right: 0.6rem; vertical-align: middle;
+    }
+    .section h2.green  .accent { background: #12B76A; }
+    .section h2.blue   .accent { background: #2E90FA; }
+    .section h2.purple .accent { background: #7F56D9; }
+    .section h2.orange .accent { background: #F79009; }
+    .section h2.red    .accent { background: #F04438; }
+    .section h2.cyan   .accent { background: #0BA5EC; }
+
+    .flow {
+      display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
+      padding: 1.5rem; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 12px;
+    }
+    .flow-step {
+      background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 10px;
+      padding: 1rem 1.25rem; min-width: 140px; text-align: center;
+      transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+    }
+    .flow-step:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1), 0 2px 4px -2px rgba(16,24,40,0.06); transform: translateY(-1px); }
+    .flow-step .title { font-weight: 600; font-size: 0.95rem; color: #101828; }
+    .flow-step .desc  { font-size: 0.85rem; color: #667085; margin-top: 0.3rem; line-height: 1.4; }
+    .flow-arrow { color: #D0D5DD; font-size: 1.5rem; font-weight: bold; }
+    .flow-step.green  { border-color: #32D583; background: #ECFDF3; }
+    .flow-step.green  .title { color: #027A48; }
+    .flow-step.orange { border-color: #FDB022; background: #FFFAEB; }
+    .flow-step.orange .title { color: #B54708; }
+    .flow-step.red    { border-color: #FDA29B; background: #FEF3F2; }
+    .flow-step.red    .title { color: #B42318; }
+    .flow-step.purple { border-color: #B692F6; background: #F9F5FF; }
+    .flow-step.purple .title { color: #6941C6; }
+    .flow-step.blue   { border-color: #84CAFF; background: #EFF8FF; }
+    .flow-step.blue   .title { color: #175CD3; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .card h3 { font-size: 1.1rem; font-weight: 600; color: #101828; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .file-list { list-style: none; }
+    .file-list li {
+      padding: 0.55rem 0; font-size: 0.95rem; color: #344054;
+      border-bottom: 1px solid #F2F4F7; display: flex; justify-content: space-between; align-items: center;
+    }
+    .file-list li:last-child { border-bottom: none; }
+    .file-path { color: #6941C6; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace; font-size: 0.88rem; }
+    .badge { font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 9999px; font-weight: 600; }
+    .badge.new  { background: #ECFDF3; color: #027A48; }
+    .badge.mod  { background: #FFFAEB; color: #B54708; }
+    .badge.del  { background: #FEF3F2; color: #B42318; }
+    .badge.idea { background: #F9F5FF; color: #6941C6; }
+
+    .api-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .api-table th {
+      background: #F9FAFB; padding: 0.9rem 1.25rem; text-align: left;
+      font-size: 0.85rem; font-weight: 600; color: #667085;
+      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #E4E7EC;
+    }
+    .api-table td { padding: 0.85rem 1.25rem; font-size: 0.95rem; color: #344054; border-top: 1px solid #F2F4F7; }
+    .api-table tr:hover td { background: #F9FAFB; }
+    .api-table .group-row { background: #F9F5FF; }
+    .api-table .group-row td { color: #6941C6; font-weight: 700; font-size: 0.9rem; border-top-color: #E4E7EC; }
+    .method {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace; font-weight: 700; font-size: 0.78rem;
+      padding: 0.22rem 0.6rem; border-radius: 6px; display: inline-block; min-width: 62px; text-align: center;
+    }
+    .method.get    { background: #ECFDF3; color: #027A48; }
+    .method.post   { background: #EFF8FF; color: #175CD3; }
+    .method.put    { background: #FFFAEB; color: #B54708; }
+    .method.patch  { background: #FFFAEB; color: #B54708; }
+    .method.delete { background: #FEF3F2; color: #B42318; }
+
+    .db-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .db-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; padding: 1.4rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+    }
+    .db-card h4 { font-size: 1rem; color: #6941C6; margin-bottom: 0.65rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .db-cols { font-size: 0.88rem; color: #667085; line-height: 1.85; font-family: 'JetBrains Mono', monospace; }
+    .db-cols .pk  { color: #B54708; font-weight: 600; }
+    .db-cols .fk  { color: #175CD3; font-weight: 600; }
+    .db-cols .col { color: #344054; }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .feature-card {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px; padding: 1.5rem;
+      text-align: center; box-shadow: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
+      transition: all 0.2s ease;
+    }
+    .feature-card:hover { box-shadow: 0 12px 16px -4px rgba(16,24,40,0.08), 0 4px 6px -2px rgba(16,24,40,0.03); transform: translateY(-2px); }
+    .feature-card h3 { font-size: 1.2rem; font-weight: 700; color: #101828; margin-bottom: 0.5rem; }
+    .feature-card .tag { display: inline-block; padding: 0.22rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.6rem; }
+    .feature-card .desc { font-size: 0.92rem; color: #667085; line-height: 1.6; }
+
+    .review-item {
+      background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 12px;
+      padding: 1.25rem 1.4rem; margin-bottom: 0.85rem; border-left: 4px solid #E4E7EC;
+      box-shadow: 0 1px 2px rgba(16,24,40,0.05); transition: all 0.2s ease;
+    }
+    .review-item:hover { box-shadow: 0 4px 8px -2px rgba(16,24,40,0.1), 0 2px 4px -2px rgba(16,24,40,0.06); }
+    .review-item.fixed    { border-left-color: #12B76A; }
+    .review-item.open     { border-left-color: #F79009; }
+    .review-item.critical { border-left-color: #F04438; }
+    .review-item .ri-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .review-item .ri-title { font-weight: 700; font-size: 1.05rem; color: #101828; }
+    .review-item .ri-tag { font-size: 0.8rem; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 600; }
+    .review-item .ri-tag.fixed    { background: #ECFDF3; color: #027A48; }
+    .review-item .ri-tag.open     { background: #FFFAEB; color: #B54708; }
+    .review-item .ri-tag.critical { background: #FEF3F2; color: #B42318; }
+    .review-item .ri-desc { font-size: 0.95rem; color: #667085; line-height: 1.6; margin-top: 0.2rem; }
+    .review-item code { background: #F2F4F7; padding: 0.15rem 0.5rem; border-radius: 5px; font-size: 0.88rem; color: #344054; font-family: 'JetBrains Mono', monospace; }
+
+    .timeline { position: relative; padding-left: 2.5rem; }
+    .timeline::before { content: ''; position: absolute; left: 0.85rem; top: 0; bottom: 0; width: 2px; background: #E4E7EC; }
+    .tl-item { position: relative; margin-bottom: 2rem; }
+    .tl-item::before {
+      content: ''; position: absolute; left: -1.95rem; top: 0.35rem;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #D0D5DD; border: 3px solid #FFFFFF; box-shadow: 0 0 0 2px #E4E7EC;
+    }
+    .tl-item.done::before { background: #12B76A; box-shadow: 0 0 0 2px #D1FADF; }
+    .tl-item .tl-title { font-weight: 700; font-size: 1.05rem; color: #101828; }
+    .tl-item .tl-desc { font-size: 0.95rem; color: #667085; margin-top: 0.3rem; line-height: 1.55; }
+    .tl-item .tl-date { font-size: 0.82rem; color: #98A2B3; font-weight: 500; margin-bottom: 0.15rem; }
+
+    /* Reward map */
+    .reward-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .reward-card {
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+      border-radius: 12px;
+      padding: 1.2rem 1.3rem;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.08);
+      transition: all 0.2s ease;
+    }
+    .reward-card:hover { box-shadow: 0 8px 16px -4px rgba(16,24,40,0.08); transform: translateY(-2px); }
+    .reward-card .rk-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #6941C6;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .reward-card .rk-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #101828;
+      margin-bottom: 0.4rem;
+    }
+    .reward-card .rk-touch {
+      font-size: 0.88rem;
+      color: #667085;
+      line-height: 1.5;
+    }
+    .reward-card .rk-badge {
+      display: inline-block;
+      margin-top: 0.55rem;
+      font-size: 0.78rem;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .rk-badge.ui   { background: #EFF8FF; color: #175CD3; }
+    .rk-badge.hook { background: #F9F5FF; color: #6941C6; }
+    .rk-badge.both { background: #ECFDF3; color: #027A48; }
+
+    /* graceful note */
+    .graceful-box {
+      background: #F9F5FF;
+      border: 1px solid #D6BBFB;
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #344054;
+      line-height: 1.7;
+    }
+    .graceful-box strong { color: #6941C6; }
+
+    @media (max-width: 768px) {
+      body { font-size: 15px; }
+      .hero { padding: 2.5rem 1.5rem 2rem; border-radius: 0 0 16px 16px; }
+      .hero h1 { font-size: 1.75rem; }
+      .content { padding: 0 1rem 2rem; }
+      .stat-card { min-width: 120px; }
+      .stat-card .num { font-size: 2rem; }
+      .feature-grid, .card-grid, .db-grid, .reward-map { grid-template-columns: 1fr; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Header -->
+  <div class="hero">
+    <h1>무료 보상 어뷰징 차단 UX</h1>
+    <p class="subtitle">2026-03-04 · Sometimes App · feat: free-reward abuse prevention</p>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content">
+
+    <!-- 1. Stats Bar -->
+    <div class="stats">
+      <div class="stat-card green"><div class="num">4</div><div class="label">신규 파일</div></div>
+      <div class="stat-card orange"><div class="num">7</div><div class="label">수정 파일</div></div>
+      <div class="stat-card blue"><div class="num">3</div><div class="label">번역 파일</div></div>
+      <div class="stat-card purple"><div class="num">1</div><div class="label">통합 API 엔드포인트</div></div>
+      <div class="stat-card cyan"><div class="num">5</div><div class="label">차단 대상 보상</div></div>
+    </div>
+
+    <!-- 2. Flow Diagram -->
+    <div class="section">
+      <h2><span class="accent"></span>어뷰징 차단 흐름</h2>
+      <div class="flow">
+        <div class="flow-step blue">
+          <div class="title">앱 시작</div>
+          <div class="desc">유저 로그인 완료 감지</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step purple">
+          <div class="title">1회 상태 조회</div>
+          <div class="desc">GET /v1/event/free-rewards/status<br>staleTime: Infinity</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step">
+          <div class="title">React Query 캐시</div>
+          <div class="desc">isRewardEligible(key)<br>헬퍼로 각 보상 체크</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step orange">
+          <div class="title">eligible = false</div>
+          <div class="desc">UI 비활성화<br>모달/프롬프트 미표시</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step green">
+          <div class="title">보상 수령 성공</div>
+          <div class="desc">invalidateFreeRewardStatus()<br>캐시 갱신</div>
+        </div>
+      </div>
+      <div class="graceful-box">
+        <strong>Graceful Degradation</strong> &mdash; API 호출 실패 또는 데이터 미수신 시 <code style="background:#EDE9FE;color:#5B21B6;padding:0.15rem 0.4rem;border-radius:4px;font-size:0.87rem;">isRewardEligible()</code>이 <strong>true</strong> 를 반환하여 기존 동작을 그대로 유지합니다. 서버 장애가 유저 경험 저하로 이어지지 않습니다.
+      </div>
+    </div>
+
+    <!-- 3. File Map -->
+    <div class="section">
+      <h2 class="green"><span class="accent"></span>파일 맵</h2>
+      <div class="card-grid">
+        <!-- 신규 모듈 -->
+        <div class="card">
+          <h3>신규 모듈 — src/features/free-reward/</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">free-reward/types.ts</span>
+              <span class="badge new">new</span>
+            </li>
+            <li>
+              <span class="file-path">free-reward/api.ts</span>
+              <span class="badge new">new</span>
+            </li>
+            <li>
+              <span class="file-path">free-reward/hooks/use-free-reward-status.ts</span>
+              <span class="badge new">new</span>
+            </li>
+            <li>
+              <span class="file-path">free-reward/index.ts</span>
+              <span class="badge new">new</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 상점 / 결제 -->
+        <div class="card">
+          <h3>상점 / 결제 레이어</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">payment/hooks/use-gem-missions.ts</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">payment/ui/gem-store/gem-mission-section.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 이벤트 / 보상 모달 -->
+        <div class="card">
+          <h3>이벤트 / 보상 모달</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">welcome-reward/hooks/use-welcome-reward.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">event/hooks/use-university-certification-prompt.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">event/hooks/use-community-event.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 홈 / 프로모션 UI -->
+        <div class="card">
+          <h3>홈 / 프로모션 UI</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">home/ui/instagram-verification-card.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">event/ui/promotion/promotion-invite-code.tsx</span>
+              <span class="badge mod">mod</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 번역 -->
+        <div class="card">
+          <h3>다국어 번역 (i18n)</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">locales/ko/features/payment.json</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">locales/en/features/payment.json</span>
+              <span class="badge mod">mod</span>
+            </li>
+            <li>
+              <span class="file-path">locales/ja/features/payment.json</span>
+              <span class="badge mod">mod</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. API Endpoints -->
+    <div class="section">
+      <h2 class="blue"><span class="accent"></span>API 엔드포인트</h2>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="3">FreeReward — 무료 보상 어뷰징 차단</td></tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td>/v1/event/free-rewards/status</td>
+            <td>5가지 무료 보상 수령 가능 여부 일괄 조회 (staleTime: Infinity)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. 보상 키 매핑 -->
+    <div class="section">
+      <h2 class="purple"><span class="accent"></span>보상 키 &amp; 차단 범위</h2>
+      <div class="reward-map">
+        <div class="reward-card">
+          <div class="rk-key">welcomeReward</div>
+          <div class="rk-name">웰컴 보상</div>
+          <div class="rk-touch">앱 최초 가입 시 지급되는 구슬 보상</div>
+          <span class="rk-badge hook">hook 차단</span>
+        </div>
+        <div class="reward-card">
+          <div class="rk-key">instagramRegistration</div>
+          <div class="rk-name">인스타 인증</div>
+          <div class="rk-touch">홈 카드 disabled + opacity:0.5 + "수령 완료" 뱃지</div>
+          <span class="rk-badge both">UI + hook</span>
+        </div>
+        <div class="reward-card">
+          <div class="rk-key">universityVerification</div>
+          <div class="rk-name">대학교 인증</div>
+          <div class="rk-touch">인증 프롬프트 미표시 (연도 기반 재인증 로직 유지)</div>
+          <span class="rk-badge hook">hook 차단</span>
+        </div>
+        <div class="reward-card">
+          <div class="rk-key">referralInvitee</div>
+          <div class="rk-name">추천 초대 코드</div>
+          <div class="rk-touch">코드 공유 기능 유지, "이미 보상을 받았습니다" 뱃지만 추가</div>
+          <span class="rk-badge ui">UI 표시</span>
+        </div>
+        <div class="reward-card">
+          <div class="rk-key">communityFirstPost</div>
+          <div class="rk-name">커뮤니티 첫 글</div>
+          <div class="rk-touch">이벤트 프롬프트 미표시, 수령 후 invalidate 호출</div>
+          <span class="rk-badge hook">hook 차단</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 타입 정의 -->
+    <div class="section">
+      <h2 class="cyan"><span class="accent"></span>핵심 타입 구조</h2>
+      <div class="db-grid">
+        <div class="db-card">
+          <h4>RewardKey</h4>
+          <div class="db-cols">
+            <span class="col">'welcomeReward'</span><br>
+            <span class="col">'instagramRegistration'</span><br>
+            <span class="col">'universityVerification'</span><br>
+            <span class="col">'referralInvitee'</span><br>
+            <span class="col">'communityFirstPost'</span>
+          </div>
+        </div>
+        <div class="db-card">
+          <h4>RewardEligibility</h4>
+          <div class="db-cols">
+            <span class="pk">eligible</span> boolean<br>
+            <span class="fk">reason</span> 'ALREADY_RECEIVED'<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 'ALREADY_PARTICIPATED'<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| null<br>
+            <span class="col">gemsAmount</span> number
+          </div>
+        </div>
+        <div class="db-card">
+          <h4>FreeRewardStatusResponse</h4>
+          <div class="db-cols">
+            <span class="fk">rewards</span> Record&lt;<br>
+            &nbsp;&nbsp;RewardKey,<br>
+            &nbsp;&nbsp;RewardEligibility<br>
+            &gt;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. UX 변경 사항 (Review Items) -->
+    <div class="section">
+      <h2 class="orange"><span class="accent"></span>UX 변경 상세</h2>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">상점 미션 완료 상태 UI 개선</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>gem-mission-section.tsx</code> — 완료 버튼 보라색 배경 제거, 그레이아웃(<code>#E5E7EB</code>) 적용.
+          미션 아이템 전체에 <code>opacity: 0.5</code> 추가로 수령 완료 상태를 시각적으로 구분.
+          버튼 텍스트: "수령 완료" (i18n 키: <code>gem_mission.status.received</code>)
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">상점 미션 로직 — eligible=false 시 강제 completed</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>use-gem-missions.ts</code> — <code>determineMissionStatus()</code>에 <code>isEligible</code> 파라미터 추가.
+          <code>eligible=false</code>이면 서버 응답과 무관하게 무조건 <code>'completed'</code> 반환.
+          instagram / community / university 3개 미션에 각각 RewardKey 매핑 완료.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">웰컴 보상 모달 — 수령 후 재표시 차단</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>use-welcome-reward.tsx</code> — <code>eligible=false</code>이면 <code>shouldShowReward = false</code>로 모달 미표시.
+          수령 성공 콜백에서 <code>invalidateFreeRewardStatus()</code> 호출로 즉시 캐시 갱신.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">인스타그램 카드 — 터치 비활성화 + 수령 완료 뱃지</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>instagram-verification-card.tsx</code> — <code>eligible=false</code>이면 카드 전체 <code>disabled</code> + <code>opacity:0.5</code>.
+          기존 보상 뱃지를 "수령 완료" 그레이 뱃지로 교체. <code>onPress</code> 터치 이벤트 완전 비활성화.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">추천 초대 코드 — 코드 공유 유지, 안내 뱃지 추가</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>promotion-invite-code.tsx</code> — 초대 코드 공유 기능 자체는 유지 (추천인 초대는 계속 가능).
+          <code>eligible=false</code>이면 코드 아래 "이미 보상을 받았습니다" 그레이 뱃지만 노출.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">대학교 인증 프롬프트 — 기존 재인증 로직 유지</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>use-university-certification-prompt.tsx</code> — <code>eligible=false</code>이면 프롬프트 미표시.
+          기존 연도 기반 재인증 체크 로직은 그대로 유지. 두 조건이 AND로 동작.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">커뮤니티 첫 글 이벤트 — 수령 후 invalidate</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          <code>use-community-event.tsx</code> — <code>eligible=false</code>이면 이벤트 프롬프트 미표시.
+          보상 수령 후 <code>invalidateFreeRewardStatus()</code> 호출로 캐시 즉시 무효화.
+        </div>
+      </div>
+
+      <div class="review-item fixed">
+        <div class="ri-header">
+          <span class="ri-title">3개국 번역 추가 (ko / en / ja)</span>
+          <span class="ri-tag fixed">DONE</span>
+        </div>
+        <div class="ri-desc">
+          i18n 키 <code>features.payment.ui.gem_mission.status.received</code> 추가.
+          한국어: "수령 완료" / 영어: "Received" / 일본어: "受取済み"
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. 아키텍처 핵심 설계 -->
+    <div class="section">
+      <h2 class="purple"><span class="accent"></span>아키텍처 핵심 설계</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="tag" style="background:#ECFDF3;color:#027A48">성능</span>
+          <h3>1회 Fetch</h3>
+          <div class="desc"><code style="background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem;">staleTime: Infinity</code> 설정으로 앱 생애 주기 내 단 1회만 API 호출. 보상 수령 시에만 수동 invalidate로 재조회.</div>
+        </div>
+        <div class="feature-card">
+          <span class="tag" style="background:#EFF8FF;color:#175CD3">안정성</span>
+          <h3>Graceful Degradation</h3>
+          <div class="desc">API 실패 / 데이터 없음 시 <code style="background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem;">isRewardEligible()</code>이 <strong>true</strong> 반환. 서버 오류가 유저 경험 방해 없음.</div>
+        </div>
+        <div class="feature-card">
+          <span class="tag" style="background:#F9F5FF;color:#6941C6">통합</span>
+          <h3>단일 API</h3>
+          <div class="desc">5가지 보상 상태를 GET 1회로 일괄 조회. 기존 개별 API 호출은 하위 호환 유지. 추후 보상 키 추가 시 타입만 확장.</div>
+        </div>
+        <div class="feature-card">
+          <span class="tag" style="background:#FFFAEB;color:#B54708">확장성</span>
+          <h3>Barrel Export</h3>
+          <div class="desc"><code style="background:#F2F4F7;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem;">free-reward/index.ts</code> 배럴 익스포트로 타입, API, 훅을 단일 진입점에서 임포트 가능.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. 재사용 컴포넌트 -->
+    <div class="section">
+      <h2 class="cyan"><span class="accent"></span>재사용 구성요소</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>기존 인프라 활용</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">@shared/libs — axiosClient</span>
+              <span class="badge mod">reused</span>
+            </li>
+            <li>
+              <span class="file-path">@tanstack/react-query — useQuery, useQueryClient</span>
+              <span class="badge mod">reused</span>
+            </li>
+            <li>
+              <span class="file-path">features/auth/hooks/use-auth — isAuthorized</span>
+              <span class="badge mod">reused</span>
+            </li>
+            <li>
+              <span class="file-path">i18next — 기존 번역 파일 구조 확장</span>
+              <span class="badge mod">reused</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>신규 훅 — 소비처</h3>
+          <ul class="file-list">
+            <li>
+              <span class="file-path">useFreeRewardStatus()</span>
+              <span class="badge new">5곳</span>
+            </li>
+            <li>
+              <span class="file-path">useInvalidateFreeRewardStatus()</span>
+              <span class="badge new">2곳</span>
+            </li>
+            <li>
+              <span class="file-path">isRewardEligible(key)</span>
+              <span class="badge new">5곳</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
