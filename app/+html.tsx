@@ -8,7 +8,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
 
         {/* SEO Meta Tags - 대학생 소개팅/연애 키워드 최적화 */}
@@ -113,8 +113,14 @@ export default function Root({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               /* Critical CSS for FCP */
-              html, body { margin: 0; padding: 0; background-color: #FFFFFF; }
+              html, body { margin: 0; padding: 0; background-color: #FFFFFF; height: 100%; }
               body { font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+
+              /* iOS Safari safe area support (viewport-fit=cover 적용 시 필수) */
+              #root {
+                min-height: 100dvh;
+                min-height: -webkit-fill-available;
+              }
 
               /* Loading skeleton placeholder */
               .loading-skeleton {

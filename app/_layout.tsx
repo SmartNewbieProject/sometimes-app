@@ -1,47 +1,51 @@
 import '@/src/features/logger/service/patch';
+import { isRunningInExpoGo } from 'expo';
+import * as Application from 'expo-application';
 import { useFonts } from 'expo-font';
 import {
 	Slot,
 	router,
 	useLocalSearchParams,
-	usePathname,
 	useNavigationContainerRef,
+	usePathname,
 } from 'expo-router';
-import { isRunningInExpoGo } from 'expo';
-import * as Application from 'expo-application';
 import * as SplashScreen from 'expo-splash-screen';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Platform, View, StyleSheet } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, AppState, Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 import 'react-native-reanimated';
-import { type NotificationData, handleNotificationTap } from '@/src/shared/libs/notifications';
-import { initializeKakaoSDK, getKeyHashAndroid } from '@react-native-kakao/core';
+import {
+	NOTIFICATION_TYPES,
+	type NotificationData,
+	handleNotificationTap,
+} from '@/src/shared/libs/notifications';
+import { getKeyHashAndroid, initializeKakaoSDK } from '@react-native-kakao/core';
 import * as Notifications from 'expo-notifications';
 
-import { I18nextProvider } from 'react-i18next';
-import i18n from '@/src/shared/libs/i18n';
 import { getCountryFromLocale } from '@/src/shared/libs/country-detector';
+import i18n from '@/src/shared/libs/i18n';
+import { getUserLanguage } from '@/src/shared/libs/local';
+import { I18nextProvider } from 'react-i18next';
 
 import { GlobalChatProvider } from '@/src/features/chat/providers/global-chat-provider';
 import { ChatActivityTracker } from '@/src/features/chat/ui/chat-activity-tracker';
 import LoggerContainer from '@/src/features/logger/ui/logger-container';
-import { PortoneProvider } from '@/src/features/payment/hooks/PortoneProvider';
 import { VersionUpdateChecker } from '@/src/features/version-update';
+import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
+import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
+import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
+import { ServerMaintenanceListener } from '@/src/shared/components/server-maintenance-listener';
+import { SessionTracker } from '@/src/shared/components/session-tracker';
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useAtt } from '@/src/shared/hooks';
 import { useStorage } from '@/src/shared/hooks/use-storage';
-import { AnalyticsProvider, ModalProvider, PortalProvider } from '@/src/shared/providers';
-import Toast from '@/src/shared/ui/toast';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SessionTracker } from '@/src/shared/components/session-tracker';
-import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
-import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
-import { ServerMaintenanceListener } from '@/src/shared/components/server-maintenance-listener';
-import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
+import { AnalyticsProvider, ModalProvider, PortalProvider } from '@/src/shared/providers';
 import { GlobalLoadingOverlay } from '@/src/shared/ui/global-loading-overlay';
+import Toast from '@/src/shared/ui/toast';
 import * as Sentry from '@sentry/react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 let navigationIntegration: ReturnType<typeof Sentry.reactNavigationIntegration> | null = null;
 
@@ -70,8 +74,56 @@ if (Platform.OS !== 'web') {
 		.catch((e) => console.log('[Splash] prevent ERR', e));
 }
 
-const MIN_SPLASH_MS = 2000;
+const MIN_SPLASH_MS = 300;
 const START_AT = Date.now();
+
+const PRETENDARD_REGULAR = require('../assets/fonts/Pretendard-Regular.otf');
+const PRETENDARD_MEDIUM = require('../assets/fonts/Pretendard-Medium.otf');
+const PRETENDARD_SEMIBOLD = require('../assets/fonts/Pretendard-SemiBold.otf');
+const PRETENDARD_BOLD = require('../assets/fonts/Pretendard-Bold.otf');
+const PRETENDARD_EXTRABOLD = require('../assets/fonts/Pretendard-ExtraBold.otf');
+const MPLUS_REGULAR = require('../assets/fonts/MPLUS1p-Regular.ttf');
+const MPLUS_MEDIUM = require('../assets/fonts/MPLUS1p-Medium.ttf');
+const MPLUS_BOLD = require('../assets/fonts/MPLUS1p-Bold.ttf');
+const RUBIK_REGULAR = require('../assets/fonts/Rubik-Regular.ttf');
+const RUBIK_BOLD = require('../assets/fonts/Rubik-Bold.ttf');
+
+const KOREAN_NATIVE_FONTS = {
+	Pretendard: PRETENDARD_REGULAR,
+	'Pretendard-Thin': PRETENDARD_REGULAR,
+	'Pretendard-ExtraLight': PRETENDARD_REGULAR,
+	'Pretendard-Light': PRETENDARD_REGULAR,
+	'Pretendard-Regular': PRETENDARD_REGULAR,
+	'Pretendard-Medium': PRETENDARD_MEDIUM,
+	'Pretendard-SemiBold': PRETENDARD_SEMIBOLD,
+	'Pretendard-Bold': PRETENDARD_BOLD,
+	'Pretendard-ExtraBold': PRETENDARD_EXTRABOLD,
+	'Pretendard-Black': PRETENDARD_EXTRABOLD,
+	Rubik: RUBIK_REGULAR,
+	'Rubik-Bold': RUBIK_BOLD,
+};
+
+const JAPANESE_NATIVE_FONTS = {
+	Pretendard: MPLUS_REGULAR,
+	'Pretendard-Thin': MPLUS_REGULAR,
+	'Pretendard-ExtraLight': MPLUS_REGULAR,
+	'Pretendard-Light': MPLUS_REGULAR,
+	'Pretendard-Regular': MPLUS_REGULAR,
+	'Pretendard-Medium': MPLUS_MEDIUM,
+	'Pretendard-SemiBold': MPLUS_BOLD,
+	'Pretendard-Bold': MPLUS_BOLD,
+	'Pretendard-ExtraBold': MPLUS_BOLD,
+	'Pretendard-Black': MPLUS_BOLD,
+	'MPLUS1p-Thin': MPLUS_REGULAR,
+	'MPLUS1p-Light': MPLUS_REGULAR,
+	'MPLUS1p-Regular': MPLUS_REGULAR,
+	'MPLUS1p-Medium': MPLUS_MEDIUM,
+	'MPLUS1p-Bold': MPLUS_BOLD,
+	'MPLUS1p-ExtraBold': MPLUS_BOLD,
+	'MPLUS1p-Black': MPLUS_BOLD,
+	Rubik: RUBIK_REGULAR,
+	'Rubik-Bold': RUBIK_BOLD,
+};
 
 export default Sentry.wrap(function RootLayout() {
 	const navigationRef = useNavigationContainerRef();
@@ -88,7 +140,6 @@ export default Sentry.wrap(function RootLayout() {
 	const processedNotificationIds = useRef<Set<string>>(new Set());
 
 	const [coldStartProcessed, setColdStartProcessed] = useState(false);
-	const [sdkInitialized, setSdkInitialized] = useState(false);
 
 	useEffect(() => {
 		const SDK_INIT_TIMEOUT_MS = 10000;
@@ -136,8 +187,6 @@ export default Sentry.wrap(function RootLayout() {
 					}
 				}
 
-				await new Promise((resolve) => setTimeout(resolve, 100));
-
 				const mixpanelToken = env.MIXPANEL_TOKEN;
 				if (mixpanelToken && !__DEV__) {
 					try {
@@ -154,47 +203,23 @@ export default Sentry.wrap(function RootLayout() {
 					console.log('[SDK Init] Mixpanel disabled in development mode');
 				}
 
-				await new Promise((resolve) => setTimeout(resolve, 100));
-
-				setSdkInitialized(true);
 				console.log('[SDK Init] All SDKs initialized successfully');
 			} catch (error) {
 				console.error('[SDK Init] SDK 초기화 실패:', error);
-				setSdkInitialized(true);
 			}
 		};
 
 		initializeSDKs();
 	}, []);
 
-	const nativeFonts: Record<string, number> =
-		Platform.OS !== 'web'
-			? {
-					'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.otf'),
-					'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.otf'),
-					'Pretendard-Light': require('../assets/fonts/Pretendard-Light.otf'),
-					'Pretendard-Regular': require('../assets/fonts/Pretendard-Regular.otf'),
-					'Pretendard-Medium': require('../assets/fonts/Pretendard-Medium.otf'),
-					'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.otf'),
-					'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.otf'),
-					'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.otf'),
-					'Pretendard-Black': require('../assets/fonts/Pretendard-Black.otf'),
-					Rubik: require('../assets/fonts/Rubik-Regular.ttf'),
-					'Rubik-Bold': require('../assets/fonts/Rubik-Bold.ttf'),
-					'Gmarket-Sans-Medium': require('../assets/fonts/GmarketSansTTFMedium.ttf'),
-					'Gmarket-Sans-Bold': require('../assets/fonts/GmarketSansTTFBold.ttf'),
-					'Gmarket-Sans-Light': require('../assets/fonts/GmarketSansTTFLight.ttf'),
-					StyleScript: require('../assets/fonts/StyleScript-Regular.ttf'),
-					'MPLUS1p-Thin': require('../assets/fonts/MPLUS1p-Thin.ttf'),
-					'MPLUS1p-Light': require('../assets/fonts/MPLUS1p-Light.ttf'),
-					'MPLUS1p-Regular': require('../assets/fonts/MPLUS1p-Regular.ttf'),
-					'MPLUS1p-Medium': require('../assets/fonts/MPLUS1p-Medium.ttf'),
-					'MPLUS1p-Bold': require('../assets/fonts/MPLUS1p-Bold.ttf'),
-					'MPLUS1p-ExtraBold': require('../assets/fonts/MPLUS1p-ExtraBold.ttf'),
-					'MPLUS1p-Black': require('../assets/fonts/MPLUS1p-Black.ttf'),
-				}
-			: {};
+	const nativeFonts = useMemo<Record<string, number>>(() => {
+		if (Platform.OS === 'web') {
+			return {};
+		}
 
+		const isJapaneseLocale = getUserLanguage() === 'ja';
+		return isJapaneseLocale ? JAPANESE_NATIVE_FONTS : KOREAN_NATIVE_FONTS;
+	}, []);
 	const [fontsLoaded] = useFonts(nativeFonts);
 	const loaded = Platform.OS === 'web' ? true : fontsLoaded;
 	const [forceReady, setForceReady] = useState(false);
@@ -211,7 +236,7 @@ export default Sentry.wrap(function RootLayout() {
 		return () => clearTimeout(timeoutId);
 	}, []);
 
-	const isReady = (loaded && sdkInitialized) || forceReady;
+	const isReady = loaded || forceReady;
 
 	useEffect(() => {
 		if (!isReady) {
@@ -328,21 +353,13 @@ export default Sentry.wrap(function RootLayout() {
 		if (!data || typeof data !== 'object') return false;
 
 		const obj = data as Record<string, unknown>;
-		const validTypes = [
-			'comment',
-			'like',
-			'general',
-			'match_like',
-			'match_connection',
-			'reply',
-			'comment_like',
-		];
-
-		return typeof obj.type === 'string' && validTypes.includes(obj.type);
+		return (
+			typeof obj.type === 'string' && (NOTIFICATION_TYPES as readonly string[]).includes(obj.type)
+		);
 	}, []);
 
 	useEffect(() => {
-		if (!loaded || !sdkInitialized) return;
+		if (!loaded) return;
 
 		if (Platform.OS === 'web') {
 			setColdStartProcessed(true);
@@ -376,7 +393,7 @@ export default Sentry.wrap(function RootLayout() {
 		};
 
 		handleColdStartNotification();
-	}, [loaded, sdkInitialized, isValidNotificationData]);
+	}, [loaded, isValidNotificationData]);
 
 	useEffect(() => {
 		if (!loaded || !coldStartProcessed || Platform.OS === 'web') return;
@@ -426,10 +443,9 @@ export default Sentry.wrap(function RootLayout() {
 					<ModalProvider>
 						<I18nextProvider i18n={i18n}>
 							<GlobalChatProvider>
-								<PortoneProvider>
-									<View style={styles.container}>
-										<PortalProvider>
-											<AnalyticsProvider>
+								<View style={styles.container}>
+									<PortalProvider>
+										<AnalyticsProvider>
 											<RouteTracker>
 												<>
 													<Slot />
@@ -445,9 +461,8 @@ export default Sentry.wrap(function RootLayout() {
 												</>
 											</RouteTracker>
 										</AnalyticsProvider>
-										</PortalProvider>
-									</View>
-								</PortoneProvider>
+									</PortalProvider>
+								</View>
 							</GlobalChatProvider>
 						</I18nextProvider>
 					</ModalProvider>
@@ -457,13 +472,12 @@ export default Sentry.wrap(function RootLayout() {
 	);
 });
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{ rootView: ViewStyle; container: ViewStyle }>({
 	rootView: {
 		flex: 1,
 		...Platform.select({
 			web: {
-				height: '100%',
-				overflow: 'hidden',
+				minHeight: '100dvh',
 			},
 		}),
 	},
@@ -473,9 +487,8 @@ const styles = StyleSheet.create({
 			web: {
 				maxWidth: 468,
 				width: '100%',
-				height: '100%',
+				minHeight: '100dvh',
 				alignSelf: 'center',
-				overflow: 'hidden',
 			},
 		}),
 	},

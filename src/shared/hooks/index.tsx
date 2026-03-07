@@ -14,3 +14,4 @@ export { useOnboardingCompleted } from './use-onboarding-completed';
 export { useDebounce } from './use-debounce';
 export { useTracking } from './use-tracking';
 export { usePhotoPicker } from './use-photo-picker';
+export { usePreferenceTooltips } from './use-preference-tooltips';

@@ -1,4 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
+import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import * as Updates from 'expo-updates';
 import { useEffect, useRef } from 'react';
 import { AppState, type AppStateStatus, Platform } from 'react-native';
@@ -38,7 +39,7 @@ export function OTAUpdateHandler() {
 	useEffect(() => {
 		if (__DEV__ || Platform.OS === 'web') return;
 
-		const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+			const unsubscribe = messaging().onMessage(async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
 			if (remoteMessage.data?.type === 'ota_update') {
 				try {
 					const update = await Updates.checkForUpdateAsync();

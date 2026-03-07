@@ -44,13 +44,15 @@ export function PortalProvider({ children }: PortalProviderProps) {
 	return (
 		<PortalContext.Provider value={contextValue}>
 			{children}
-			<View style={styles.portalHost} pointerEvents="box-none">
-				{Array.from(portals.entries()).map(([key, element]) => (
-					<View key={key} style={StyleSheet.absoluteFill} pointerEvents="box-none">
-						{element}
-					</View>
-				))}
-			</View>
+			{portals.size > 0 && (
+				<View style={styles.portalHost} pointerEvents="box-none">
+					{Array.from(portals.entries()).map(([key, element]) => (
+						<View key={key} style={StyleSheet.absoluteFill} pointerEvents="box-none">
+							{element}
+						</View>
+					))}
+				</View>
+			)}
 		</PortalContext.Provider>
 	);
 }

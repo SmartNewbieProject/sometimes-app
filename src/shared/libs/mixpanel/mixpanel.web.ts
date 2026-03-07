@@ -11,14 +11,12 @@ class MixpanelWeb implements MixpanelAdapter {
 
   init(token: string, trackAutomaticEvents = true): void {
     try {
-      mixpanel.init(token, {
-        debug: process.env.NODE_ENV === 'development',
-        track_pageview: trackAutomaticEvents,
-        persistence: 'localStorage',
-        record_sessions_percent: 100,
-        record_mask_all_text: true,
-        record_mask_all_inputs: true,
-      });
+	      mixpanel.init(token, {
+	        debug: process.env.NODE_ENV === 'development',
+	        track_pageview: trackAutomaticEvents,
+	        persistence: 'localStorage',
+	        record_sessions_percent: 100,
+	      });
       this.initialized = true;
       console.log('[Mixpanel Web] Initialized successfully');
     } catch (error) {

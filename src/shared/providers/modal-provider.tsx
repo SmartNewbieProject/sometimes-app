@@ -1,7 +1,7 @@
 import ModalParticle from '@/src/widgets/particle/modal-particle';
 import ErrorFace from '@assets/icons/error-face.svg';
 import { Image } from 'expo-image';
-import { createContext, isValidElement, useState } from 'react';
+import { createContext, isValidElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	type LayoutChangeEvent,
@@ -43,6 +43,17 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 	const { showNestedErrorModal, showNestedModal, hideNestedModal, nestedModal } = useNestedModal();
 	const { width: windowWidth } = useWindowDimensions();
 	const modalWidth = windowWidth >= 768 ? 468 : 300;
+	const contextValue = useMemo(
+		() => ({
+			showModal,
+			showErrorModal,
+			hideModal,
+			showNestedErrorModal,
+			showNestedModal,
+			hideNestedModal,
+		}),
+		[hideModal, hideNestedModal, showErrorModal, showModal, showNestedErrorModal, showNestedModal],
+	);
 
 	const [size, setSize] = useState({ width: 0, height: 0 });
 	const onLayout = (event: LayoutChangeEvent) => {
@@ -256,16 +267,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 		);
 	};
 	return (
-		<ModalContext.Provider
-			value={{
-				showModal,
-				showErrorModal,
-				hideModal,
-				showNestedErrorModal,
-				showNestedModal,
-				hideNestedModal,
-			}}
-		>
+		<ModalContext.Provider value={contextValue}>
 			{children}
 
 			<Modal visible={!!currentModal} transparent animationType="fade" onRequestClose={hideModal}>
