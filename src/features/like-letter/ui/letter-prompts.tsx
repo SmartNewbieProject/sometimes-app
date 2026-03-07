@@ -14,8 +14,8 @@ type LetterPromptsProps = {
 };
 
 export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
-	const { data } = useLetterPrompts(connectionId);
-	const prompts = data?.questions || LETTER_PROMPT_KEYS;
+	const { questions } = useLetterPrompts(connectionId);
+	const prompts = questions.length > 0 ? questions : LETTER_PROMPT_KEYS;
 
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
