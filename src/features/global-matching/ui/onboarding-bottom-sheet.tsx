@@ -138,15 +138,15 @@ export const OnboardingBottomSheet = ({ visible, onClose, onComplete }: Props) =
 
 	const renderSuccessContent = () => (
 		<View style={styles.successContainer}>
-			<Animated.View style={[styles.checkCircle, { transform: [{ scale: checkScale }] }]}>
-				<Text size="32" style={styles.checkIcon}>
-					{'\u2713'}
-				</Text>
-			</Animated.View>
+				<Animated.View style={[styles.checkCircle, { transform: [{ scale: checkScale }] }]}>
+					<Text size="3xl" style={styles.checkIcon}>
+						{'\u2713'}
+					</Text>
+				</Animated.View>
 
-			<Text size="20" weight="bold" style={styles.successTitle}>
-				{t('features.global-matching.onboarding_complete_title')}
-			</Text>
+				<Text size="20" weight="bold" style={styles.successTitle}>
+					{t('features.global-matching.onboarding_complete_title')}
+				</Text>
 
 			<Text size="14" textColor="secondary" style={styles.successDesc}>
 				{t('features.global-matching.onboarding_complete_desc')}

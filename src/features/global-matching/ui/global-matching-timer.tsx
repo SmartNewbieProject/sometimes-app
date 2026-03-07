@@ -67,14 +67,14 @@ function GlobalMatchingTimerContent() {
 	const containerHeight =
 		match?.type === 'not-found' || match?.type === 'pending-approval' ? 400 : width || 350;
 
-	if (showFirstMatch) {
-		return (
-			<View>
-				<View onLayout={onLayout} style={[styles.container, { aspectRatio: 1 }]}>
-					<GlobalFirstMatch onPreferenceSelected={setSelectedPreferenceIds} />
+		if (showFirstMatch) {
+			return (
+				<View>
+					<View onLayout={onLayout} style={[styles.container, { aspectRatio: 1 }]}>
+						<GlobalFirstMatch />
+					</View>
+					<GlobalNav match={match} preferenceOptionIds={selectedPreferenceIds} />
 				</View>
-				<GlobalNav match={match} preferenceOptionIds={selectedPreferenceIds} />
-			</View>
 		);
 	}
 

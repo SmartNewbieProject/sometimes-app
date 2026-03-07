@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
 		borderTopEndRadius: 16,
 		height: 35,
 		width: '100%',
-		borderColor: semanticColors.border.default,
+		backgroundColor: 'transparent',
 	},
 	moreButtonRow: {
 		width: '100%',
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
 		borderTopEndRadius: 16,
 		height: 35,
 		width: '100%',
+		backgroundColor: 'transparent',
 	},
 	gradient: {
 		position: 'absolute',

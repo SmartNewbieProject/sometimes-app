@@ -39,7 +39,7 @@ export const useLatestMatchingV31 = () => {
 		gcTime: 5 * 60 * 1000,
 		refetchInterval: 30 * 1000,
 		refetchIntervalInBackground: false,
-		refetchOnWindowFocus: false, // 홈 탭 useFocusEffect + invalidateQueries로 커버
+		refetchOnWindowFocus: true,
 		retry: 3,
 		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 	});
