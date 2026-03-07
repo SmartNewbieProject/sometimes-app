@@ -1,190 +1,203 @@
-import { useModal } from "@/src/shared/hooks/use-modal";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import BlackXIcon from "@assets/icons/black-x-icon.svg";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useTranslation } from "react-i18next";
-import RouletteItem from "./roulette-item";
+import { useModal } from '@/src/shared/hooks/use-modal';
+import BlackXIcon from '@assets/icons/black-x-icon.svg';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouletteFonts } from '../../hooks/use-roulette-fonts';
+import RouletteItem from './roulette-item';
 function RouletteModal() {
-  const { hideModal } = useModal();
-  const { t } = useTranslation();
-  return (
-    <LinearGradient
-      colors={["#FFCFE5", "#FFFFFF", "#DECEFF"]}
-      locations={[0, 0.4339, 0.9534]}
-      start={{ x: 0.76, y: 0.08 }}
-      end={{ x: 0.24, y: 0.92 }}
-      style={styles.container}
-    >
-      <Pressable style={styles.closeButton} onPress={() => hideModal()}>
-        <BlackXIcon />
-      </Pressable>
-      <View style={styles.contentContainer}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>SOMETIME</Text>
-        </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.topTitle}>{t('features.event.roulette.top_title')}</Text>
-          <Text style={styles.bottomTitle}>{t('features.event.roulette.bottom_title')}</Text>
-          <Text style={styles.freeText}>lucky</Text>
-          <View style={styles.deco1} />
-          <View style={styles.deco2} />
-          <View style={styles.deco3} />
-          <View style={styles.deco4} />
-          <Image
-            source={require("@assets/images/roulette-mini.webp")}
-            style={styles.rouletteMini}
-          />
-          <Image
-            source={require("@assets/images/roulette-check.png")}
-            style={styles.rouletteCheck}
-          />
-        </View>
-        <View style={styles.descContainer}>
-          <Text style={styles.descText}>
-            {t('features.event.roulette.description_parts.prefix')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.luck')}</Text>
-            {t('features.event.roulette.description_parts.middle')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.try')}</Text>
-            {t('features.event.roulette.description_parts.suffix')}
-          </Text>
-        </View>
-        <RouletteItem />
-      </View>
-    </LinearGradient>
-  );
+	const { hideModal } = useModal();
+	const { t } = useTranslation();
+	const fontsLoaded = useRouletteFonts();
+
+	if (!fontsLoaded) {
+		return null;
+	}
+
+	return (
+		<LinearGradient
+			colors={['#FFCFE5', '#FFFFFF', '#DECEFF']}
+			locations={[0, 0.4339, 0.9534]}
+			start={{ x: 0.76, y: 0.08 }}
+			end={{ x: 0.24, y: 0.92 }}
+			style={styles.container}
+		>
+			<Pressable style={styles.closeButton} onPress={() => hideModal()}>
+				<BlackXIcon />
+			</Pressable>
+			<View style={styles.contentContainer}>
+				<View style={styles.logoContainer}>
+					<Text style={styles.logoText}>SOMETIME</Text>
+				</View>
+				<View style={styles.titleContainer}>
+					<Text style={styles.topTitle}>{t('features.event.roulette.top_title')}</Text>
+					<Text style={styles.bottomTitle}>{t('features.event.roulette.bottom_title')}</Text>
+					<Text style={styles.freeText}>lucky</Text>
+					<View style={styles.deco1} />
+					<View style={styles.deco2} />
+					<View style={styles.deco3} />
+					<View style={styles.deco4} />
+					<Image
+						source={require('@assets/images/roulette-mini.webp')}
+						style={styles.rouletteMini}
+					/>
+					<Image
+						source={require('@assets/images/roulette-check.png')}
+						style={styles.rouletteCheck}
+					/>
+				</View>
+				<View style={styles.descContainer}>
+					<Text style={styles.descText}>
+						{t('features.event.roulette.description_parts.prefix')}
+						<Text style={styles.strongText}>
+							{t('features.event.roulette.description_parts.luck')}
+						</Text>
+						{t('features.event.roulette.description_parts.middle')}
+						<Text style={styles.strongText}>
+							{t('features.event.roulette.description_parts.try')}
+						</Text>
+						{t('features.event.roulette.description_parts.suffix')}
+					</Text>
+				</View>
+				<RouletteItem />
+			</View>
+		</LinearGradient>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    maxWidth: 436,
-    marginHorizontal: 16,
-    paddingBottom: 72,
-    borderRadius: 20,
-    paddingTop: 20,
-    paddingHorizontal: 33,
-    position: "relative",
-  },
-  closeButton: {
-    position: "absolute",
-    top: 19,
-    right: 19,
-  },
-  contentContainer: {
-    alignItems: "center",
-  },
-  logoContainer: {
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    borderRadius: 50,
-    borderWidth: 0.5,
-    borderColor: semanticColors.brand.primary,
-  },
-  logoText: {
-    color: semanticColors.brand.primary,
-    fontFamily: "Gmarket-Sans-Light",
-    fontWeight: 300,
-    fontSize: 8,
-    lineHeight: 8,
-  },
-  titleContainer: {
-    position: "relative",
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  topTitle: {
-    color: semanticColors.text.primary,
-    fontFamily: "Gmarket-Sans-Light",
-    fontWeight: 300,
-    lineHeight: 42,
-    fontSize: 35,
-    textAlign: "center",
-  },
-  bottomTitle: {
-    color: semanticColors.text.primary,
-    fontFamily: "Gmarket-Sans-Bold",
-    fontWeight: 700,
-    lineHeight: 54,
-    fontSize: 45,
-    textAlign: "center",
-  },
-  rouletteMini: {
-    right: -90,
-    position: "absolute",
-    zIndex: -1,
-    width: 132,
-    height: 132,
-  },
-  rouletteCheck: {
-    left: -50,
-    top: 10,
-    position: "absolute",
-    zIndex: -1,
-    width: 80,
-    height: 80,
-  },
-  descContainer: {},
-  descText: {
-    fontFamily: "Gmarket-Sans-Medium",
-    fontWeight: 500,
-    fontSize: 20,
-    lineHeight: 26,
-    color: semanticColors.text.primary,
-  },
-  strongText: {
-    color: semanticColors.brand.primary,
-    fontFamily: "Gmarket-Sans-Bold",
-    fontWeight: 700,
-  },
-  freeText: {
-    color: semanticColors.brand.primary,
-    fontFamily: "StyleScript",
-    fontSize: 29,
-    fontWeight: 400,
-    lineHeight: 34.8,
-    position: "absolute",
-    top: 60,
-    left: 70,
-    zIndex: 30,
-    transform: [{ rotate: "-16deg" }],
-  },
-  deco1: {
-    backgroundColor: "#FFC8C833",
-    width: 15,
-    height: 15,
-    borderRadius: 15,
-    position: "absolute",
-    top: 22,
-    left: -16,
-  },
-  deco2: {
-    backgroundColor: "#FFC8C833",
-    width: 6,
-    height: 6,
-    borderRadius: 6,
-    position: "absolute",
-    top: 16,
-    left: -28,
-  },
-  deco3: {
-    backgroundColor: "#FFC8C833",
-    width: 9,
-    height: 9,
-    borderRadius: 9,
-    position: "absolute",
-    top: 76,
-    left: -70,
-  },
-  deco4: {
-    backgroundColor: semanticColors.brand.primary,
-    width: 8,
-    height: 8,
-    borderRadius: 8,
-    position: "absolute",
-    top: 10,
-    right: 10,
-  },
+	container: {
+		width: '100%',
+		maxWidth: 436,
+		marginHorizontal: 16,
+		paddingBottom: 72,
+		borderRadius: 20,
+		paddingTop: 20,
+		paddingHorizontal: 33,
+		position: 'relative',
+	},
+	closeButton: {
+		position: 'absolute',
+		top: 19,
+		right: 19,
+	},
+	contentContainer: {
+		alignItems: 'center',
+	},
+	logoContainer: {
+		paddingVertical: 4,
+		paddingHorizontal: 16,
+		borderRadius: 50,
+		borderWidth: 0.5,
+		borderColor: semanticColors.brand.primary,
+	},
+	logoText: {
+		color: semanticColors.brand.primary,
+		fontFamily: 'Gmarket-Sans-Light',
+		fontWeight: 300,
+		fontSize: 8,
+		lineHeight: 8,
+	},
+	titleContainer: {
+		position: 'relative',
+		paddingTop: 10,
+		paddingBottom: 20,
+	},
+	topTitle: {
+		color: semanticColors.text.primary,
+		fontFamily: 'Gmarket-Sans-Light',
+		fontWeight: 300,
+		lineHeight: 42,
+		fontSize: 35,
+		textAlign: 'center',
+	},
+	bottomTitle: {
+		color: semanticColors.text.primary,
+		fontFamily: 'Gmarket-Sans-Bold',
+		fontWeight: 700,
+		lineHeight: 54,
+		fontSize: 45,
+		textAlign: 'center',
+	},
+	rouletteMini: {
+		right: -90,
+		position: 'absolute',
+		zIndex: -1,
+		width: 132,
+		height: 132,
+	},
+	rouletteCheck: {
+		left: -50,
+		top: 10,
+		position: 'absolute',
+		zIndex: -1,
+		width: 80,
+		height: 80,
+	},
+	descContainer: {},
+	descText: {
+		fontFamily: 'Gmarket-Sans-Medium',
+		fontWeight: 500,
+		fontSize: 20,
+		lineHeight: 26,
+		color: semanticColors.text.primary,
+	},
+	strongText: {
+		color: semanticColors.brand.primary,
+		fontFamily: 'Gmarket-Sans-Bold',
+		fontWeight: 700,
+	},
+	freeText: {
+		color: semanticColors.brand.primary,
+		fontFamily: 'StyleScript',
+		fontSize: 29,
+		fontWeight: 400,
+		lineHeight: 34.8,
+		position: 'absolute',
+		top: 60,
+		left: 70,
+		zIndex: 30,
+		transform: [{ rotate: '-16deg' }],
+	},
+	deco1: {
+		backgroundColor: '#FFC8C833',
+		width: 15,
+		height: 15,
+		borderRadius: 15,
+		position: 'absolute',
+		top: 22,
+		left: -16,
+	},
+	deco2: {
+		backgroundColor: '#FFC8C833',
+		width: 6,
+		height: 6,
+		borderRadius: 6,
+		position: 'absolute',
+		top: 16,
+		left: -28,
+	},
+	deco3: {
+		backgroundColor: '#FFC8C833',
+		width: 9,
+		height: 9,
+		borderRadius: 9,
+		position: 'absolute',
+		top: 76,
+		left: -70,
+	},
+	deco4: {
+		backgroundColor: semanticColors.brand.primary,
+		width: 8,
+		height: 8,
+		borderRadius: 8,
+		position: 'absolute',
+		top: 10,
+		right: 10,
+	},
 });
 
 export default RouletteModal;

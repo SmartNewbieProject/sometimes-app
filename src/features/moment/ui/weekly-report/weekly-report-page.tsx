@@ -1,15 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
 	Dimensions,
-	Image,
-	LayoutAnimation,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	TouchableOpacity,
@@ -20,31 +15,29 @@ import Svg, { Circle, Line, Polygon, Text as SvgText } from 'react-native-svg';
 
 import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { Text } from '@/src/shared/ui';
+import { Header, Text } from '@/src/shared/ui';
 import {
 	type PersonalityTypeKey,
 	getPersonalityTypeLabel,
 } from '../../constants/personality-types';
 import { useMomentAnalytics } from '../../hooks/use-moment-analytics';
 import { useWeeklyReportQuery } from '../../queries';
+import { MOMENT_ONBOARDING_KEYS } from '../onboarding/keys';
+import {
+	AnimatedStatRow,
+	DIMENSION_ORDER,
+	DimIcon,
+	GrowthJourneySection,
+	IntegratedInsightsSection,
+	RadarChart as NarrativeRadarChart,
+	RadarLegend as NarrativeRadarLegend,
+	PersonaNarrativeSection,
+	StoryCard,
+	TitleAwardSection,
+	convertToRadarData,
+} from '../shared/narrative-report-components';
 
 const { width } = Dimensions.get('window');
-
-// ============================================
-// 차원 아이콘 매핑
-// ============================================
-const DIMENSION_ICONS: Record<string, string> = {
-	extraversion: '✨',
-	openness: '🌱',
-	conscientiousness: '🎯',
-	agreeableness: '💜',
-	neuroticism: '💧',
-};
-
-const getDimensionIcon = (category: string) => {
-	const key = category.toLowerCase();
-	return DIMENSION_ICONS[key] ?? '⭐';
-};
 
 // ============================================
 // CircularProgress
@@ -87,7 +80,7 @@ interface RadarItem {
 }
 
 const RadarChart = ({ radarData }: { radarData: RadarItem[] }) => {
-	const size = Math.min(width - 80, 300);
+	const size = Math.min(width - 40, 240);
 	const center = size / 2;
 	const maxRadius = size / 2 - 40;
 	const gridLevels = [20, 40, 60, 80, 100];
@@ -168,8 +161,8 @@ const RadarChart = ({ radarData }: { radarData: RadarItem[] }) => {
 						strokeWidth={2}
 					/>
 				))}
-				{radarData.map((d, i) => {
-					const lp = getPoint(120, d.angle);
+				{radarData.map((d) => {
+					const lp = getPoint(112, d.angle);
 					return (
 						<SvgText
 							key={d.category}
@@ -190,82 +183,79 @@ const RadarChart = ({ radarData }: { radarData: RadarItem[] }) => {
 };
 
 // ============================================
-// InsightCard (아코디언)
+// RadarLegend
+// ============================================
+const RadarLegend = ({
+	stats,
+	dimensionLabels,
+}: {
+	stats: Array<{ category: string; currentScore: number; prevScore?: number }>;
+	dimensionLabels: Record<string, string>;
+}) => (
+	<View style={styles.radarLegend}>
+		{DIMENSION_ORDER.map((dim) => {
+			const stat = stats.find((s) => s.category === dim);
+			const score = stat?.currentScore ?? 0;
+			return (
+				<View key={dim} style={styles.legendRow}>
+					<View style={styles.legendLabelContainer}>
+						<DimIcon dim={dim} size={15} />
+						<Text size="13" weight="medium" textColor="black">
+							{dimensionLabels[dim]}
+						</Text>
+					</View>
+					<Text size="13" weight="bold" style={styles.legendScore}>
+						{score}
+					</Text>
+					<View style={styles.legendBarBg}>
+						<View style={[styles.legendBarFill, { width: `${score}%` as `${number}%` }]} />
+					</View>
+				</View>
+			);
+		})}
+	</View>
+);
+
+// ============================================
+// InsightCard (항상 펼쳐진 카드)
 // ============================================
 interface InsightCardProps {
 	title: string;
+	icon: string;
 	score: number;
 	definition: string;
 	feedback: string;
-	defaultExpanded?: boolean;
 }
 
-const InsightCard = ({
-	title,
-	score,
-	definition,
-	feedback,
-	defaultExpanded = false,
-}: InsightCardProps) => {
-	const [expanded, setExpanded] = useState(defaultExpanded);
-	const { t } = useTranslation();
-
-	const toggle = () => {
-		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-		setExpanded((v) => !v);
-	};
-
+const InsightCard = ({ title, icon, score, definition, feedback }: InsightCardProps) => {
 	const scoreColor = score >= 70 ? '#00C853' : score >= 50 ? '#FF9800' : '#FF5252';
 
 	return (
-		<Pressable
-			style={styles.insightCard}
-			onPress={toggle}
-			accessible
-			accessibilityRole="button"
-			accessibilityLabel={title}
-			accessibilityState={{ expanded }}
-		>
+		<View style={styles.insightCard}>
 			<View style={styles.cardHeader}>
+				<DimIcon dim={icon} size={18} />
 				<Text size="15" weight="semibold" textColor="black" style={{ flex: 1 }}>
 					{title}
 				</Text>
-				<Text size="13" weight="bold" style={{ color: scoreColor, marginRight: 8 }}>
+				<Text size="13" weight="bold" style={{ color: scoreColor }}>
 					{score}
 				</Text>
-				{expanded ? (
-					<ChevronUp size={18} color="#767676" accessible={false} />
-				) : (
-					<ChevronDown size={18} color="#767676" accessible={false} />
-				)}
 			</View>
-			{expanded && (
-				<View style={styles.insightBody}>
-					{definition ? (
-						<>
-							<Text size="12" weight="semibold" textColor="black" style={styles.insightLabel}>
-								{t('features.moment.ui.weekly_report.label_definition')}
-							</Text>
-							<Text size="13" weight="normal" textColor="gray" style={styles.insightText}>
-								{definition}
-							</Text>
-						</>
-					) : null}
-					{feedback ? (
-						<>
-							<Text size="12" weight="semibold" textColor="black" style={styles.insightLabel}>
-								{t('features.moment.ui.weekly_report.label_feedback')}
-							</Text>
-							<View style={styles.quoteBlock}>
-								<Text size="13" weight="normal" textColor="gray" style={styles.insightText}>
-									{feedback}
-								</Text>
-							</View>
-						</>
-					) : null}
-				</View>
-			)}
-		</Pressable>
+			<View style={styles.insightBody}>
+				{definition ? (
+					<Text size="13" weight="normal" style={styles.insightText}>
+						{definition}
+					</Text>
+				) : null}
+				{feedback ? (
+					<View style={styles.quoteBlock}>
+						<Text size="13" weight="normal" style={styles.insightText}>
+							{feedback}
+						</Text>
+					</View>
+				) : null}
+			</View>
+		</View>
 	);
 };
 
@@ -295,6 +285,13 @@ export const WeeklyReportPage = () => {
 	const reportParams = { week: paramWeek || weekNumber, year: paramYear || year };
 
 	const { data: reportDataRaw, isLoading, error } = useWeeklyReportQuery(reportParams);
+	// 이전 주 params (week=1이면 전년도 52주)
+	const prevWeekNum = (paramWeek || weekNumber) === 1 ? 52 : (paramWeek || weekNumber) - 1;
+	const prevYearNum = (paramWeek || weekNumber) === 1 ? (paramYear || year) - 1 : paramYear || year;
+	const { data: prevReportDataRaw } = useWeeklyReportQuery({
+		week: prevWeekNum,
+		year: prevYearNum,
+	});
 	// biome-ignore lint/suspicious/noExplicitAny: flexible API response shape
 	const reportData = reportDataRaw as any;
 
@@ -359,12 +356,7 @@ export const WeeklyReportPage = () => {
 					<Text size="18" weight="bold" textColor="black" style={{ marginBottom: 12 }}>
 						{t('features.moment.ui.weekly_report.error_title')}
 					</Text>
-					<Text
-						size="14"
-						weight="normal"
-						textColor="gray"
-						style={{ textAlign: 'center', marginBottom: 24 }}
-					>
+					<Text size="14" weight="normal" style={{ textAlign: 'center', marginBottom: 24 }}>
 						{t('features.moment.ui.weekly_report.error_description')}
 					</Text>
 					<TouchableOpacity onPress={() => router.push('/moment')} activeOpacity={0.85}>
@@ -387,8 +379,17 @@ export const WeeklyReportPage = () => {
 	const report =
 		reportData?.reports?.[0] || reportData?.data?.reports?.[0] || reportData?.data || reportData;
 
+	const isNarrativeReport =
+		report?.reportType === 'onboarding' || report?.reportType === 'narrative';
+
 	// ── 데이터 없음
-	if (!report || (!report.title && !report.stats?.length && !report.insights?.length)) {
+	if (
+		!report ||
+		(!report.title &&
+			!report.stats?.length &&
+			!report.insights?.length &&
+			!report.narrativeSections?.length)
+	) {
 		return (
 			<View style={[styles.container, { paddingTop: insets.top }]}>
 				<LinearGradient
@@ -400,12 +401,7 @@ export const WeeklyReportPage = () => {
 					<Text size="18" weight="bold" textColor="black" style={{ marginBottom: 12 }}>
 						모먼트 보고서가 없어요
 					</Text>
-					<Text
-						size="14"
-						weight="normal"
-						textColor="gray"
-						style={{ textAlign: 'center', marginBottom: 24 }}
-					>
+					<Text size="14" weight="normal" style={{ textAlign: 'center', marginBottom: 24 }}>
 						{paramYear && paramWeek
 							? t('features.moment.ui.weekly_report.report_not_found', {
 									year: paramYear,
@@ -454,195 +450,352 @@ export const WeeklyReportPage = () => {
 	const displayWeek = report.weekNumber || paramWeek || weekNumber;
 	const displayYear = report.year || paramYear || year;
 
+	const dimensionLabels: Record<string, string> = {
+		extraversion: t(MOMENT_ONBOARDING_KEYS.result.radarExtraversion),
+		openness: t(MOMENT_ONBOARDING_KEYS.result.radarOpenness),
+		conscientiousness: t(MOMENT_ONBOARDING_KEYS.result.radarConscientiousness),
+		agreeableness: t(MOMENT_ONBOARDING_KEYS.result.radarAgreeableness),
+		neuroticism: t(MOMENT_ONBOARDING_KEYS.result.radarNeuroticism),
+	};
+
+	// ── 이전 주 dimensionScores (Narrative 레이더 B 오버레이용)
+	// biome-ignore lint/suspicious/noExplicitAny: flexible API response shape
+	const prevReportData = prevReportDataRaw as any;
+	const prevReport =
+		prevReportData?.reports?.[0] ??
+		prevReportData?.data?.reports?.[0] ??
+		prevReportData?.data ??
+		prevReportData;
+	const prevDimensionScores: Record<string, number> | null =
+		isNarrativeReport && prevReport?.dimensionScores ? prevReport.dimensionScores : null;
+
+	// ── Narrative 데이터 추출 (onboarding / narrative 타입)
+	const narrativeDimensionScores: Record<string, number> = report.dimensionScores ?? {};
+	const narrativeRadarData =
+		isNarrativeReport && Object.keys(narrativeDimensionScores).length > 0
+			? convertToRadarData(narrativeDimensionScores)
+			: [];
+	const narrativeTitleInfo = report.titleInfo ?? report.userTitles?.[0] ?? null;
+	const sf = isNarrativeReport ? report.storyFlow : null;
+	const narrativeKeyPatterns: string[] = sf?.integratedInsights?.keyPatterns ?? [];
+	const narrativeIntegratedContent: string = sf?.integratedInsights?.content ?? '';
+	const rawNarrativeSections = (report.narrativeSections ?? []) as Array<{
+		sectionTitle?: string;
+		userQuote?: { original: string; highlight: string };
+	}>;
+	const narrativeStorySections = (sf?.storySections ?? []).map(
+		(
+			s: {
+				sectionTitle?: string;
+				userStory?: string;
+				emotionalJourney?: string | string[];
+				whatThisTellsUs?: string;
+			},
+			i: number,
+		) => ({
+			...s,
+			title: rawNarrativeSections[i]?.sectionTitle ?? s.sectionTitle,
+			userQuote: rawNarrativeSections[i]?.userQuote ?? null,
+			emotionalJourney:
+				typeof s.emotionalJourney === 'string' ? [s.emotionalJourney] : s.emotionalJourney,
+		}),
+	);
+	const narrativeNextSteps: string[] = sf?.growthJourney?.nextSteps ?? [];
+	const narrativeGrowthSuggestion: string = sf?.growthJourney?.suggestion ?? '';
+	const narrativePersonaDescription: string = sf?.personaNarrative?.description ?? '';
+	const narrativeCharacteristics: string[] = sf?.personaNarrative?.characteristics ?? [];
+
 	return (
 		<View style={styles.container}>
-			<LinearGradient
-				colors={['#FFFFFF', '#F5F1FF', '#DECEFF', '#B095E0']}
-				locations={[0, 0.5, 0.78, 1]}
-				style={styles.gradient}
-			/>
-
-			{/* 백 헤더 */}
-			<View style={[styles.topBar, { top: insets.top }]}>
-				<TouchableOpacity
-					style={styles.backBtn}
-					onPress={handleBack}
-					accessibilityRole="button"
-					accessibilityLabel={t('features.moment.ui.weekly_report.go_back')}
-				>
-					<Ionicons name="chevron-back" size={24} color={colors.primaryPurple} accessible={false} />
-				</TouchableOpacity>
-			</View>
-
-			<ScrollView
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 64 }]}
-			>
-				{/* 1. 헤더 */}
-				<View style={styles.headerSection}>
-					<Image
-						source={require('@/assets/images/guide-miho.webp')}
-						style={styles.characterImage}
-						resizeMode="contain"
-					/>
-					<Text size="18" weight="bold" style={styles.completeTitleText}>
-						{t('features.moment.ui.weekly_report.traits_title')}
-					</Text>
-					<View style={styles.dateBadge}>
-						<Text size="12" weight="medium" style={{ color: colors.primaryPurple }}>
-							{displayYear}년 {displayWeek}주차
-						</Text>
-					</View>
-				</View>
-
-				{/* 2. 칭호 히어로 카드 */}
+			{/* Narrative 모드 배경 그라디언트 */}
+			{isNarrativeReport ? (
 				<LinearGradient
-					colors={['#7A4AE2', '#5B35C0']}
-					start={{ x: 0, y: 0 }}
-					end={{ x: 1, y: 1 }}
-					style={styles.titleHeroCard}
-				>
-					<View style={styles.heroBgCircle1} />
-					<View style={styles.heroBgCircle2} />
-					<Text size="28" weight="bold" style={styles.heroTitle}>
-						{report.title || t('features.moment.ui.weekly_report.default_title')}
-					</Text>
-					{report.subTitle ? (
-						<Text size="14" weight="normal" style={styles.heroSubTitle}>
-							{report.subTitle}
-						</Text>
-					) : null}
-				</LinearGradient>
+					colors={['#FFFFFF', '#FAFAFE', '#F2EEFF', '#E4DAFF']}
+					locations={[0, 0.45, 0.82, 1]}
+					style={StyleSheet.absoluteFillObject}
+				/>
+			) : null}
 
-				{/* 3. 5개 성향 스탯 그리드 */}
-				{stats.length > 0 ? (
-					<View style={styles.section}>
-						<View style={styles.sectionLabelRow}>
-							<View style={styles.sectionLabelBar} />
-							<Text size="16" weight="semibold" textColor="black">
-								{t('features.moment.onboarding.result.stats_title')}
+			{/* 수평 압축 헤더 */}
+			<Header.Container style={styles.compactHeader}>
+				<Header.LeftContent>
+					<Header.LeftButton visible={true} onPress={handleBack} />
+				</Header.LeftContent>
+
+				<Header.CenterContent>
+					<View style={styles.headerCenter}>
+						<View style={styles.headerTextGroup}>
+							<Text size="14" weight="bold" textColor="black" numberOfLines={1}>
+								{report.title || t('features.moment.ui.weekly_report.default_title')}
 							</Text>
-						</View>
-						<View style={styles.statsGrid}>
-							{stats.map((s, idx) => (
-								<View
-									key={s.category}
-									style={[styles.statCard, idx === stats.length - 1 && styles.statCardFull]}
-								>
-									<CircularProgress value={s.currentScore} />
-									<Text size="20" weight="normal" style={styles.statIcon}>
-										{getDimensionIcon(s.category)}
-									</Text>
-									<Text size="13" weight="semibold" textColor="black" style={styles.statLabel}>
-										{getPersonalityTypeLabel(s.category as PersonalityTypeKey) || s.category}
-									</Text>
-									{s.prevScore !== undefined ? (
-										<Text
-											size="11"
-											weight="normal"
-											style={{
-												color: s.currentScore >= s.prevScore ? '#00C853' : '#FF5252',
-												textAlign: 'center',
-											}}
-										>
-											{s.currentScore >= s.prevScore
-												? `▲ +${s.currentScore - s.prevScore}`
-												: `▼ ${s.currentScore - s.prevScore}`}
-										</Text>
-									) : null}
-								</View>
-							))}
+							<Text
+								size="11"
+								weight="semibold"
+								numberOfLines={1}
+								style={{ color: colors.primaryPurple }}
+							>
+								{displayYear}년 {displayWeek}주차
+							</Text>
 						</View>
 					</View>
-				) : null}
+				</Header.CenterContent>
 
-				{/* 4. 방사형 그래프 */}
-				{radarData.length > 0 ? (
-					<View style={styles.section}>
-						<View style={styles.sectionLabelRow}>
-							<View style={styles.sectionLabelBar} />
-							<Text size="16" weight="semibold" textColor="black">
-								{t('features.moment.onboarding.result.radar_chart_title')}
-							</Text>
-						</View>
-						<View style={styles.chartWrapper}>
-							<RadarChart radarData={radarData} />
-							<View style={styles.legend}>
-								<View style={styles.legendItem}>
-									<View
-										style={[styles.legendBox, { backgroundColor: semanticColors.brand.primary }]}
-									/>
-									<Text size="10" weight="normal" textColor="gray">
-										{t('features.moment.ui.weekly_report.this_week')}
-									</Text>
-								</View>
-								<View style={styles.legendItem}>
-									<View
-										style={[
-											styles.legendBox,
-											{ borderWidth: 2, borderColor: '#A0A0A0', borderStyle: 'dashed' },
-										]}
-									/>
-									<Text size="10" weight="normal" textColor="gray">
-										{t('features.moment.ui.weekly_report.last_week')}
-									</Text>
+				<Header.RightContent>
+					<View style={styles.headerDateBadge}>
+						<Text size="11" weight="bold" style={{ color: colors.primaryPurple }}>
+							{displayWeek}주차
+						</Text>
+					</View>
+				</Header.RightContent>
+			</Header.Container>
+
+			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+				{isNarrativeReport ? (
+					<>
+						{/* Narrative: 칭호 히어로 카드 */}
+						{narrativeTitleInfo ? (
+							<TitleAwardSection
+								weekLabel={`${displayWeek}주차`}
+								title={narrativeTitleInfo.title}
+								subTitle={narrativeTitleInfo.subTitle}
+							/>
+						) : null}
+
+						{/* Narrative: 5개 성향 스탯 */}
+						{Object.keys(narrativeDimensionScores).length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.statsTitle)}
+								</Text>
+								<View style={styles.statsGrid}>
+									{DIMENSION_ORDER.map((dim, i) => (
+										<AnimatedStatRow
+											key={dim}
+											category={dim}
+											score={narrativeDimensionScores[dim] ?? 0}
+											change={null}
+											label={dimensionLabels[dim]}
+											index={i}
+										/>
+									))}
 								</View>
 							</View>
-						</View>
-					</View>
-				) : null}
+						) : null}
 
-				{/* 5. 키워드 패턴 */}
-				{keywords.length > 0 || report.description ? (
-					<View style={styles.section}>
-						<View style={styles.sectionLabelRow}>
-							<View style={styles.sectionLabelBar} />
-							<Text size="16" weight="semibold" textColor="black">
-								{t('features.moment.onboarding.result.patterns_title')}
-							</Text>
-						</View>
-						{keywords.length > 0 ? (
-							<View style={styles.patternTagsRow}>
-								{keywords.slice(0, 8).map((kw) => (
-									<View key={kw} style={styles.patternTag}>
-										<Text size="12" weight="medium" style={{ color: colors.primaryPurple }}>
-											{kw}
-										</Text>
+						{/* Narrative: 방사형 그래프 */}
+						{narrativeRadarData.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.radarChartTitle)}
+								</Text>
+								<View style={styles.chartWrapper}>
+									<View style={{ alignItems: 'center' }}>
+										<NarrativeRadarChart
+											radarData={narrativeRadarData}
+											prevDimensionScores={prevDimensionScores}
+										/>
 									</View>
+									<NarrativeRadarLegend
+										dimensionScores={narrativeDimensionScores}
+										dimensionLabels={dimensionLabels}
+									/>
+								</View>
+							</View>
+						) : null}
+
+						{/* Narrative: 키 패턴 + 인사이트 */}
+						{narrativeKeyPatterns.length > 0 || narrativeIntegratedContent ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.patternsTitle)}
+								</Text>
+								<IntegratedInsightsSection
+									keyPatterns={narrativeKeyPatterns}
+									content={narrativeIntegratedContent}
+								/>
+							</View>
+						) : null}
+
+						{/* Narrative: 나의 이야기 */}
+						{narrativeStorySections.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.storyTitle)}
+								</Text>
+									{narrativeStorySections.map((section: any, index: number) => (
+										<StoryCard
+										key={section.title ?? index}
+										title={section.title ?? `Section ${index + 1}`}
+										userQuote={section.userQuote}
+										userStory={section.userStory}
+										emotionalJourney={section.emotionalJourney}
+										whatThisTellsUs={section.whatThisTellsUs}
+									/>
 								))}
 							</View>
 						) : null}
-						{report.description ? (
-							<View style={styles.quoteBlock}>
-								<Text size="14" weight="normal" textColor="gray" style={{ lineHeight: 22 }}>
-									{report.description}
+
+						{/* Narrative: 성장 제안 */}
+						{narrativeNextSteps.length > 0 || narrativeGrowthSuggestion ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.growthTitle)}
 								</Text>
+								<GrowthJourneySection
+									nextSteps={narrativeNextSteps}
+									suggestion={narrativeGrowthSuggestion}
+								/>
 							</View>
 						) : null}
-					</View>
-				) : null}
 
-				{/* 6. 인사이트 아코디언 */}
-				{insights.length > 0 ? (
-					<View style={styles.section}>
-						<View style={styles.sectionLabelRow}>
-							<View style={styles.sectionLabelBar} />
-							<Text size="16" weight="semibold" textColor="black">
-								{t('features.moment.ui.weekly_report.analysis_title')}
+						{/* Narrative: 페르소나 요약 */}
+						{narrativePersonaDescription || narrativeCharacteristics.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t(MOMENT_ONBOARDING_KEYS.result.personaTitle)}
+								</Text>
+								<PersonaNarrativeSection
+									description={narrativePersonaDescription}
+									characteristics={narrativeCharacteristics}
+								/>
+							</View>
+						) : null}
+					</>
+				) : (
+					<>
+						{/* Legacy: 칭호 히어로 카드 */}
+						<LinearGradient
+							colors={['#7A4AE2', '#5B35C0']}
+							start={{ x: 0, y: 1 }}
+							end={{ x: 1, y: 0 }}
+							style={styles.titleHeroCard}
+						>
+							<Text style={styles.heroWeekLabel}>{displayWeek}주차 이번 주</Text>
+							<Text size="24" weight="bold" style={styles.heroTitle}>
+								{report.title || t('features.moment.ui.weekly_report.default_title')}
 							</Text>
-						</View>
-						{insights.map((ins, idx) => (
-							<InsightCard
-								key={ins.category}
-								title={`${getDimensionIcon(ins.category)} ${getPersonalityTypeLabel(ins.category as PersonalityTypeKey) || ins.category}`}
-								score={ins.score}
-								definition={ins.definition}
-								feedback={ins.feedback}
-								defaultExpanded={idx === 0}
-							/>
-						))}
-					</View>
-				) : null}
+							{report.subTitle ? (
+								<Text size="13" weight="normal" style={styles.heroSubTitle}>
+									{report.subTitle}
+								</Text>
+							) : null}
+						</LinearGradient>
+
+						{/* Legacy: 5개 성향 스탯 세로 목록 */}
+						{stats.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t('features.moment.onboarding.result.stats_title')}
+								</Text>
+								<View style={styles.statsGrid}>
+									{stats.map((s, i) => {
+										const score = s.currentScore;
+										const change = s.prevScore !== undefined ? score - s.prevScore : null;
+										return (
+											<AnimatedStatRow
+												key={s.category}
+												category={s.category}
+												score={score}
+												change={change}
+												label={
+													getPersonalityTypeLabel(s.category as PersonalityTypeKey) || s.category
+												}
+												index={i}
+											/>
+										);
+									})}
+								</View>
+							</View>
+						) : null}
+
+						{/* Legacy: 방사형 그래프 */}
+						{radarData.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t('features.moment.onboarding.result.radar_chart_title')}
+								</Text>
+								<View style={styles.chartWrapper}>
+									<View style={{ alignItems: 'center' }}>
+										<RadarChart radarData={radarData} />
+										<View style={styles.legend}>
+											<View style={styles.legendItem}>
+												<View
+													style={[
+														styles.legendBox,
+														{ backgroundColor: semanticColors.brand.primary },
+													]}
+												/>
+												<Text size="10" weight="normal">
+													{t('features.moment.ui.weekly_report.this_week')}
+												</Text>
+											</View>
+											<View style={styles.legendItem}>
+												<View
+													style={[
+														styles.legendBox,
+														{ borderWidth: 2, borderColor: '#A0A0A0', borderStyle: 'dashed' },
+													]}
+												/>
+												<Text size="10" weight="normal">
+													{t('features.moment.ui.weekly_report.last_week')}
+												</Text>
+											</View>
+										</View>
+									</View>
+									<RadarLegend stats={stats} dimensionLabels={dimensionLabels} />
+								</View>
+							</View>
+						) : null}
+
+						{/* Legacy: 키워드 패턴 */}
+						{keywords.length > 0 || report.description ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t('features.moment.onboarding.result.patterns_title')}
+								</Text>
+								{keywords.length > 0 ? (
+									<View style={styles.patternTagsRow}>
+										{keywords.slice(0, 8).map((kw) => (
+											<View key={kw} style={styles.patternTag}>
+												<Text size="12" weight="medium" style={{ color: colors.primaryPurple }}>
+													{kw}
+												</Text>
+											</View>
+										))}
+									</View>
+								) : null}
+								{report.description ? (
+									<View style={styles.quoteBlock}>
+										<Text size="14" weight="normal" style={{ lineHeight: 22 }}>
+											{report.description}
+										</Text>
+									</View>
+								) : null}
+							</View>
+						) : null}
+
+						{/* Legacy: 인사이트 카드 */}
+						{insights.length > 0 ? (
+							<View style={styles.section}>
+								<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+									{t('features.moment.ui.weekly_report.analysis_title')}
+								</Text>
+								{insights.map((ins) => (
+									<InsightCard
+										key={ins.category}
+										title={
+											getPersonalityTypeLabel(ins.category as PersonalityTypeKey) || ins.category
+										}
+										icon={ins.category}
+										score={ins.score}
+										definition={ins.definition}
+										feedback={ins.feedback}
+									/>
+								))}
+							</View>
+						) : null}
+					</>
+				)}
 
 				<View style={{ height: 100 }} />
 			</ScrollView>
@@ -669,10 +822,7 @@ export const WeeklyReportPage = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: colors.white,
-	},
-	gradient: {
-		...StyleSheet.absoluteFillObject,
+		backgroundColor: '#F2F4F6',
 	},
 	centerBox: {
 		flex: 1,
@@ -680,143 +830,87 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 40,
 	},
-	// 백 헤더
-	topBar: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		height: 52,
-		backgroundColor: 'transparent',
+	// 수평 압축 헤더
+	compactHeader: {
+		backgroundColor: colors.white,
+		borderBottomWidth: 1,
+		borderBottomColor: '#EDE9F8',
+	},
+	headerCenter: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: 8,
-		zIndex: 10,
+		gap: 10,
 	},
-	backBtn: {
-		padding: 8,
+	headerTextGroup: {
+		flex: 1,
+		gap: 1,
+	},
+	headerDateBadge: {
+		backgroundColor: '#F8F5FF',
 		borderRadius: 8,
+		paddingVertical: 4,
+		paddingHorizontal: 8,
+		borderWidth: 1.5,
+		borderColor: '#D4C2F5',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	scrollContent: {
 		paddingHorizontal: 20,
+		paddingTop: 32,
 		paddingBottom: 40,
-	},
-	// 헤더
-	headerSection: {
-		alignItems: 'center',
-		marginTop: 20,
-		marginBottom: 20,
-	},
-	characterImage: {
-		width: 70,
-		height: 70,
-		borderRadius: 35,
-		borderWidth: 2,
-		borderColor: colors.primaryPurple,
-		marginBottom: 10,
-	},
-	completeTitleText: {
-		color: '#7A4AE2',
-		textAlign: 'center',
-		marginBottom: 8,
-	},
-	dateBadge: {
-		backgroundColor: '#F8F5FF',
-		paddingVertical: 4,
-		paddingHorizontal: 12,
-		borderRadius: 12,
 	},
 	// 히어로 카드
 	titleHeroCard: {
 		borderRadius: 20,
-		padding: 24,
+		padding: 20,
 		marginBottom: 20,
-		overflow: 'hidden',
-		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: 'rgba(196,168,245,0.3)',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 16 },
+		shadowOpacity: 0.5,
+		shadowRadius: 48,
+		elevation: 16,
 	},
-	heroBgCircle1: {
-		position: 'absolute',
-		width: 120,
-		height: 120,
-		borderRadius: 60,
-		backgroundColor: 'rgba(255,255,255,0.08)',
-		top: -30,
-		right: -20,
-	},
-	heroBgCircle2: {
-		position: 'absolute',
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		backgroundColor: 'rgba(255,255,255,0.06)',
-		bottom: -10,
-		left: 10,
+	heroWeekLabel: {
+		fontSize: 10,
+		fontWeight: '600',
+		color: 'rgba(255,255,255,0.6)',
+		letterSpacing: 0.8,
+		textTransform: 'uppercase',
+		marginBottom: 6,
 	},
 	heroTitle: {
 		color: '#FFFFFF',
-		textAlign: 'center',
-		marginBottom: 8,
+		lineHeight: 32,
+		marginBottom: 4,
 	},
 	heroSubTitle: {
-		color: '#FFFFFF',
-		textAlign: 'center',
-		opacity: 0.9,
+		color: 'rgba(255,255,255,0.75)',
+		lineHeight: 19,
 	},
 	// 섹션
 	section: {
 		marginBottom: 24,
 	},
-	sectionLabelRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 8,
+	sectionTitle: {
 		marginBottom: 12,
 	},
-	sectionLabelBar: {
-		width: 4,
-		height: 18,
-		borderRadius: 2,
-		backgroundColor: '#7A4AE2',
-	},
-	// 스탯 그리드
+	// 스탯 세로 목록
 	statsGrid: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		justifyContent: 'center',
-		gap: 10,
-	},
-	statCard: {
-		width: (width - 40 - 10) / 2,
 		backgroundColor: colors.white,
 		borderRadius: 16,
-		padding: 14,
-		alignItems: 'center',
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.08,
-		shadowRadius: 6,
-		elevation: 2,
-		gap: 6,
-		borderWidth: 1,
-		borderColor: 'rgba(122,74,226,0.06)',
-	},
-	statCardFull: {
-		width: width - 40,
-	},
-	statIcon: {
-		marginTop: 2,
-	},
-	statLabel: {
-		textAlign: 'center',
+		paddingHorizontal: 16,
+		paddingTop: 4,
+		paddingBottom: 4,
 	},
 	// 레이더 차트
 	chartWrapper: {
 		backgroundColor: colors.white,
 		borderRadius: 20,
-		padding: 12,
-		alignItems: 'center',
+		padding: 16,
+		overflow: 'hidden',
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.06,
@@ -842,6 +936,39 @@ const styles = StyleSheet.create({
 		height: 16,
 		borderRadius: 2,
 	},
+	// 레이더 레전드
+	radarLegend: {
+		marginTop: 16,
+		gap: 10,
+	},
+	legendRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 8,
+	},
+	legendLabelContainer: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+	},
+	legendScore: {
+		color: colors.primaryPurple,
+		width: 32,
+		textAlign: 'right',
+	},
+	legendBarBg: {
+		width: 80,
+		height: 6,
+		backgroundColor: '#EDE9F8',
+		borderRadius: 3,
+		overflow: 'hidden',
+	},
+	legendBarFill: {
+		height: 6,
+		backgroundColor: colors.primaryPurple,
+		borderRadius: 3,
+	},
 	// 패턴
 	patternTagsRow: {
 		flexDirection: 'row',
@@ -856,9 +983,11 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 	},
 	quoteBlock: {
+		backgroundColor: colors.white,
+		borderRadius: 12,
+		padding: 14,
 		borderLeftWidth: 3,
 		borderLeftColor: '#7A4AE2',
-		paddingLeft: 14,
 	},
 	// 인사이트 카드
 	insightCard: {
@@ -875,18 +1004,16 @@ const styles = StyleSheet.create({
 	cardHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
+		gap: 8,
 	},
 	insightBody: {
 		marginTop: 12,
 		gap: 6,
 	},
-	insightLabel: {
-		marginBottom: 4,
-	},
 	insightText: {
 		lineHeight: 20,
 		marginBottom: 10,
+		color: '#374151',
 	},
 	// 하단 버튼
 	buttonContainer: {

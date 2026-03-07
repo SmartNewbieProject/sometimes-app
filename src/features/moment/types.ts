@@ -283,6 +283,14 @@ export interface UIWeeklyReport {
 	keywords?: string[];
 	sentimentScore?: number;
 	reports?: UIWeeklyReport[];
+	reportType?: string;
+	narrativeSections?: NarrativeSection[];
+	storyFlow?: StoryFlow;
+	titleInfo?: { title: string; subTitle: string; imageUrl: string };
+	dimensionScores?: Record<string, number>;
+	description?: string;
+	persona?: string;
+	userTitles?: Array<{ title: string; subTitle: string; imageUrl?: string }>;
 }
 
 export const WeeklyReportResponse = z.object({
@@ -366,6 +374,55 @@ export const LatestReportErrorResponse = z.object({
 });
 
 export type LatestReportErrorResponse = z.infer<typeof LatestReportErrorResponse>;
+
+// Narrative report types (narrative / onboarding reportType)
+export const NarrativeSection = z.object({
+	id: z.string(),
+	sectionTitle: z.string(),
+	userQuote: z.object({
+		original: z.string(),
+		highlight: z.string(),
+	}),
+	interpretation: z.object({
+		title: z.string(),
+		content: z.string(),
+		psychologicalInsight: z.string(),
+	}),
+	emotionalTone: z.enum(['positive', 'neutral', 'challenging', 'growth']),
+	importance: z.enum(['high', 'medium', 'low']),
+});
+
+export type NarrativeSection = z.infer<typeof NarrativeSection>;
+
+export const StoryFlow = z.object({
+	opening: z.object({ title: z.string(), content: z.string() }),
+	storySections: z.array(
+		z.object({
+			sectionTitle: z.string(),
+			userStory: z.string(),
+			whatThisTellsUs: z.string(),
+			emotionalJourney: z.union([z.string(), z.array(z.string())]),
+		}),
+	),
+	integratedInsights: z.object({
+		title: z.string(),
+		content: z.string(),
+		keyPatterns: z.array(z.string()),
+	}),
+	personaNarrative: z.object({
+		title: z.string(),
+		description: z.string(),
+		characteristics: z.array(z.string()),
+	}),
+	growthJourney: z.object({
+		title: z.string(),
+		suggestion: z.string(),
+		nextSteps: z.array(z.string()),
+	}),
+	titleAward: z.object({ ceremonyText: z.string() }),
+});
+
+export type StoryFlow = z.infer<typeof StoryFlow>;
 
 // =======================
 // Profile API 타입
@@ -641,8 +698,8 @@ export const OnboardingReport = z.object({
 	id: z.string(),
 	weekOfYear: z.number(),
 	year: z.number(),
-	narrativeSections: z.array(z.any()),
-	storyFlow: z.any(),
+	narrativeSections: z.array(NarrativeSection),
+	storyFlow: StoryFlow,
 	dimensionScores: z.record(z.string(), z.number()),
 	titleInfo: OnboardingReportTitleInfo,
 	reportType: z.string(),

@@ -267,11 +267,11 @@
 			"story_title": "回答から見る私",
 			"growth_title": "これからの成長ヒント",
 			"persona_title": "私のペルソナ",
-			"dimension_desc_extraversion": "社交エネルギー",
-			"dimension_desc_openness": "新しい経験への開放性",
-			"dimension_desc_conscientiousness": "計画性と責任感",
-			"dimension_desc_agreeableness": "共感と思いやり",
-			"dimension_desc_neuroticism": "感情の敏感さ"
+			"dimension_desc_extraversion": "エネルギー",
+			"dimension_desc_openness": "好奇心",
+			"dimension_desc_conscientiousness": "信頼感",
+			"dimension_desc_agreeableness": "優しさ",
+			"dimension_desc_neuroticism": "感受性"
 		}
 	}
 }

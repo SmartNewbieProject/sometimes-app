@@ -265,11 +265,11 @@
 			"story_title": "답변으로 보는 나",
 			"growth_title": "앞으로의 성장 힌트",
 			"persona_title": "나의 페르소나",
-			"dimension_desc_extraversion": "사회적 에너지",
-			"dimension_desc_openness": "새로운 경험 수용",
-			"dimension_desc_conscientiousness": "계획과 책임감",
-			"dimension_desc_agreeableness": "공감과 배려",
-			"dimension_desc_neuroticism": "감정 민감성"
+			"dimension_desc_extraversion": "에너지",
+			"dimension_desc_openness": "호기심",
+			"dimension_desc_conscientiousness": "신뢰감",
+			"dimension_desc_agreeableness": "다정함",
+			"dimension_desc_neuroticism": "감수성"
 		}
 	}
 }

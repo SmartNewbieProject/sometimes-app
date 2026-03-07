@@ -415,9 +415,9 @@ export const OnboardingIntro = () => {
 			>
 				{/* Title Section */}
 				<StaggerFadeIn delay={0} style={styles.titleSection}>
-					<Text size="22" weight="bold" textColor="black" style={styles.title}>
-						{t(MOMENT_ONBOARDING_KEYS.intro.title)}
-					</Text>
+						<Text size="24" weight="bold" textColor="black" style={styles.title}>
+							{t(MOMENT_ONBOARDING_KEYS.intro.title)}
+						</Text>
 					<Text size="14" weight="normal" textColor="gray" style={styles.subtitle}>
 						{t(MOMENT_ONBOARDING_KEYS.intro.subtitle)}
 					</Text>
