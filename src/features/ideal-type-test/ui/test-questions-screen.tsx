@@ -120,6 +120,7 @@ export function TestQuestionsScreen({
 	const { emitToast } = useToast();
 	const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const isSubmittingRef = useRef(false);
 	const hasTrackedCurrentQuestion = useRef(false);
 	const questionStartTimeRef = useRef<number>(Date.now());
 	const testStartTimeRef = useRef<number>(Date.now());
@@ -179,8 +180,9 @@ export function TestQuestionsScreen({
 	}, [sessionId, currentQuestionIndex, answers.length, trackAbandoned, onAbandon, userType]);
 
 	const handleSelectOption = async (optionId: string) => {
-		if (isPending || isSubmitting || !currentQuestion || !sessionId) return;
+		if (isSubmittingRef.current || isPending || !currentQuestion || !sessionId) return;
 
+		isSubmittingRef.current = true;
 		setIsSubmitting(true);
 		setSelectedOptionId(optionId);
 
@@ -190,8 +192,6 @@ export function TestQuestionsScreen({
 		};
 
 		const allAnswers = [...answers, answer];
-
-		addAnswer(answer);
 
 		const timeSpentSeconds = Math.round((Date.now() - questionStartTimeRef.current) / 1000);
 
@@ -224,6 +224,8 @@ export function TestQuestionsScreen({
 			},
 			{
 				onSuccess: (data) => {
+					addAnswer(answer);
+					isSubmittingRef.current = false;
 					setIsSubmitting(false);
 
 					if (data.isComplete) {
@@ -252,11 +254,8 @@ export function TestQuestionsScreen({
 				},
 				onError: (error) => {
 					console.error('Failed to submit answer:', error);
+					isSubmittingRef.current = false;
 					setIsSubmitting(false);
-
-					const currentAnswers = useTestProgress.getState().answers;
-					const filteredAnswers = currentAnswers.slice(0, -1);
-					useTestProgress.setState({ answers: filteredAnswers });
 
 					emitToast(t('features.ideal-type-test.errors.submit_failed'));
 				},
@@ -288,7 +287,7 @@ export function TestQuestionsScreen({
 			{/* Question + Options */}
 			<Animated.View
 				key={currentQuestion.id}
-				entering={SlideInRight.duration(350).springify().damping(20).stiffness(200)}
+				entering={SlideInRight.duration(350).springify().damping(28).stiffness(180)}
 				exiting={SlideOutLeft.duration(250)}
 				style={styles.questionAndOptions}
 			>
@@ -314,7 +313,7 @@ export function TestQuestionsScreen({
 			<View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
 				<Text style={styles.progressText}>
 					{t('features.ideal-type-test.questions.progress_info', {
-						answered: answers.length,
+						answered: currentQuestionIndex + 1,
 						total: questions.length,
 					})}
 				</Text>

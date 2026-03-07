@@ -12,12 +12,12 @@ export default function MomentIdealTypeTestResultScreen() {
 	const { t } = useTranslation();
 	const { result, sessionId, clear } = useTestProgress();
 
-	const { shareNative } = useShareTestResult({
-		resultName: result?.name || '',
-		resultEmoji: result?.emoji || '',
-		resultId: result?.id || '',
-		sessionId,
-	});
+		const { shareNative } = useShareTestResult({
+			resultName: result?.name || '',
+			resultEmoji: '',
+			resultId: result?.id || '',
+			sessionId,
+		});
 
 	return (
 		<DefaultLayout style={styles.layout}>

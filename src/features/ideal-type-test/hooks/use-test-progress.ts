@@ -46,9 +46,10 @@ export const useTestProgress = create<TestProgressState>((set, get) => ({
 	setResult: (result) => set({ result }),
 
 	nextQuestion: () =>
-		set((state) => ({
-			currentQuestionIndex: Math.min(state.currentQuestionIndex + 1, state.questions.length - 1),
-		})),
+		set((state) => {
+			if (state.currentQuestionIndex >= state.questions.length - 1) return {};
+			return { currentQuestionIndex: state.currentQuestionIndex + 1 };
+		}),
 
 	clear: () =>
 		set({

@@ -198,6 +198,9 @@ export function useIdealTypeTestPrompt(
 		if (hasShownRef.current) return;
 		if (!__DEV__ && !featureFlag?.enabled) return;
 
+		// Web이 아닌 플랫폼(앱)에서는 표시하지 않음
+		if (Platform.OS !== 'web') return;
+
 		// Web에서만 sessionStorage 사용 (__DEV__에서는 항상 노출)
 		if (!__DEV__ && Platform.OS === 'web') {
 			const hasShown = sessionStorage.getItem('ideal_type_test_prompt_shown');
