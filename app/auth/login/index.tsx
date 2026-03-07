@@ -1,4 +1,3 @@
-import { type AuthTab, AuthTabBar } from '@/src/features/article/ui';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { resetAuthState } from '@/src/shared/libs/axios';
@@ -6,7 +5,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import Signup from '@features/signup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,16 +15,9 @@ const { useSignupProgress } = Signup;
 export default function LoginScreen() {
 	const { clear } = useSignupProgress();
 	const params = useLocalSearchParams();
-	const router = useRouter();
 	const { emitToast } = useToast();
 	const hasTrackedView = useRef(false);
 	const insets = useSafeAreaInsets();
-
-	const handleTabChange = (tab: AuthTab) => {
-		if (tab === 'story') {
-			router.replace('/auth/sometimes');
-		}
-	};
 
 	useEffect(() => {
 		resetAuthState();
@@ -61,7 +53,7 @@ export default function LoginScreen() {
 						showsVerticalScrollIndicator={false}
 						bounces={false}
 					>
-						<View style={[styles.contentWrapper, { paddingTop: insets.top }]}>
+						<View style={[styles.contentWrapper, { paddingTop: insets.top + (Platform.OS === 'android' ? 48 : 0) }]}>
 							<View style={styles.logoSection}>
 								<Signup.Logo />
 							</View>
@@ -76,7 +68,6 @@ export default function LoginScreen() {
 					</View>
 				</View>
 			</LinearGradient>
-			<AuthTabBar activeTab="login" onTabChange={handleTabChange} />
 		</View>
 	);
 }
@@ -100,7 +91,7 @@ const styles = StyleSheet.create({
 	},
 	contentWrapper: {
 		alignItems: 'center',
-		paddingBottom: 24,
+		paddingBottom: 8,
 	},
 	logoSection: {
 		alignItems: 'center',
@@ -114,9 +105,20 @@ const styles = StyleSheet.create({
 	},
 	bottomFixed: {
 		backgroundColor: '#FFFFFF',
+		borderTopLeftRadius: 24,
+		borderTopRightRadius: 24,
 		borderTopWidth: 1,
+		borderLeftWidth: 1,
+		borderRightWidth: 1,
 		borderTopColor: '#F0EDF8',
-		paddingTop: 16,
+		borderLeftColor: '#F0EDF8',
+		borderRightColor: '#F0EDF8',
+		paddingTop: 32,
 		alignItems: 'center',
+		shadowColor: '#7C3AED',
+		shadowOffset: { width: 0, height: -4 },
+		shadowOpacity: 0.08,
+		shadowRadius: 12,
+		elevation: 8,
 	},
 });

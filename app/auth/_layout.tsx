@@ -16,11 +16,21 @@ export default function AuthLayout() {
           }}
         />
         <Stack.Screen
+          name="sometimes"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "#FFFFFF",
+            },
+            animation: "fade",
+          }}
+        />
+        <Stack.Screen
           name="login/index"
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: "transparent",
+              backgroundColor: "#FFFFFF",
             },
             animation: "fade",
           }}

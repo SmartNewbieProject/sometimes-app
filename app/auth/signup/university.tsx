@@ -83,9 +83,9 @@ function UniversityPage() {
 				auth_method: authMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+			onboardingEvents.trackUniversityVerificationStarted();
 			hasTrackedView.current = true;
 		}
-		onboardingEvents.trackUniversityVerificationStarted();
 	}, [onboardingEvents]);
 
 	const handleBackPress = useCallback(() => {
@@ -126,24 +126,11 @@ function UniversityPage() {
 		return () => subscription.remove();
 	}, [handleBackPress]);
 
-	console.log('[UniversityPage] Render:', {
-		trigger,
-		isLoading,
-		isSearching,
-		filteredUnivLength: filteredUniv?.length,
-		showHeader,
-	});
 
 	return (
 		<DefaultLayout style={styles.layout}>
 			{!showHeader && <PalePurpleGradient />}
-			<View style={[styles.container]}>
-				{!trigger && <UniversityLogos logoSize={64} country={country} />}
-
-				<Animated.View style={[styles.titleContainer, animatedTitleStyle]} pointerEvents="none">
-					<RNText style={styles.welcome}>{t('apps.auth.sign_up.university.welcome')}</RNText>
-					<RNText style={styles.title}>{t('apps.auth.sign_up.university.title')}</RNText>
-				</Animated.View>
+			<View style={[styles.container, { paddingTop: trigger ? 12 : 60 }]}>
 				<Animated.View style={[animatedContainerStyle, { width: '100%', zIndex: 10 }]}>
 					{!trigger && <GraduateBanner />}
 					{trigger && (
@@ -174,6 +161,13 @@ function UniversityPage() {
 						/>
 					</View>
 				</Animated.View>
+				{!trigger && (
+				<Animated.View style={[styles.titleContainer, animatedTitleStyle]} pointerEvents="none">
+					<RNText style={styles.welcome}>{t('apps.auth.sign_up.university.welcome')}</RNText>
+					<RNText style={styles.title}>{t('apps.auth.sign_up.university.title')}</RNText>
+				</Animated.View>
+			)}
+				{!trigger && <UniversityLogos logoSize={64} country={country} />}
 				<Show when={trigger}>
 					<Animated.View style={[styles.listAndBottomContainer, animatedListStyle]}>
 						{isSearching ? (
@@ -269,15 +263,13 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: 16,
-
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'flex-start',
 	},
 	titleContainer: {
-		position: 'absolute',
 		alignItems: 'center',
-		zIndex: 1,
-		transform: [{ translateY: 75 }],
+		width: '100%',
+		marginTop: 24,
 	},
 	logoContainer: {
 		top: -60,

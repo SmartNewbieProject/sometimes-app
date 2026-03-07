@@ -98,6 +98,7 @@ function UniversityCluster() {
 					</View>
 						<FlashList
 							data={sortedData}
+							estimatedItemSize={56}
 							renderItem={({ item }) => (
 								<UniversityCard
 									onClick={() => {}}
@@ -160,7 +161,6 @@ const styles = StyleSheet.create({
 	lottie: {
 		width: 200,
 		height: 200,
-		marginLeft: 45,
 	},
 	title: {
 		fontSize: 32,
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'transparent',
 	},
 	univContainer: {
+		flex: 1,
 		width: '100%',
 		paddingHorizontal: 16,
 		marginTop: 24,

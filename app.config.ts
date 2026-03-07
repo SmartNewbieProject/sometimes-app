@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.2.0',
-			runtimeVersion: '4.2.0',
+			version: '4.2.1',
+			runtimeVersion: '4.2.1',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): any => {
 			ios: {
 				supportsTablet: true,
 				bundleIdentifier: 'com.some-in-univ',
-				buildNumber: '345',
+				buildNumber: '346',
 				entitlements: {
 					'com.apple.developer.applesignin': ['Default'],
 				},
@@ -146,12 +146,7 @@ export default ({ config }: ConfigContext): any => {
 					NSAppTransportSecurity: {
 						NSAllowsArbitraryLoads: false,
 						NSExceptionDomains: {
-							'192.168.219.49': {
-								NSExceptionAllowsInsecureHTTPLoads: true,
-								NSExceptionRequiresForwardSecrecy: false,
-								NSIncludesSubdomains: true,
-							},
-							'192.168.219.50': {
+							'192.168.219.44': {
 								NSExceptionAllowsInsecureHTTPLoads: true,
 								NSExceptionRequiresForwardSecrecy: false,
 								NSIncludesSubdomains: true,

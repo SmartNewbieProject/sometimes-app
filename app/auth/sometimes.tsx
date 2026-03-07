@@ -3,7 +3,7 @@ import {
 	AuthTabBar,
 	type AuthTab,
 } from '@/src/features/article/ui';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 export default function SometimesStoryScreen() {
@@ -17,7 +17,6 @@ export default function SometimesStoryScreen() {
 
 	return (
 		<View style={styles.container}>
-			<Stack.Screen options={{ headerShown: false }} />
 			<ArticleListScreen />
 			<AuthTabBar activeTab="story" onTabChange={handleTabChange} />
 		</View>

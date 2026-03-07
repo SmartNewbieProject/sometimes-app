@@ -279,7 +279,7 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 				<View style={{ paddingBottom: 4, marginTop: 2 }}>
 					<BannerSlide />
 				</View>
-				<View style={{ marginTop: 8 }}>
+				<View>
 					{collapse ? (
 						<LikeCollapse collapse={collapse.data} type={collapse.type} />
 					) : (
@@ -295,7 +295,7 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 				</Show>
 
 	{renderMatchingSection()}
-				<View style={{ marginTop: 20 }}>
+				<View>
 					<HistoryCollapse />
 				</View>
 				<View>
@@ -352,9 +352,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: semanticColors.surface.background,
 	},
-	matchingSection: {
-		marginTop: 14,
-	},
+	matchingSection: {},
 	scrollView: {
 		flex: 1,
 	},
@@ -365,9 +363,7 @@ const styles = StyleSheet.create({
 		gap: 14,
 		paddingBottom: 20,
 	},
-	profilePhotoSection: {
-		marginTop: 14,
-	},
+	profilePhotoSection: {},
 
 });
 

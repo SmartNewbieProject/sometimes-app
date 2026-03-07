@@ -1,9 +1,8 @@
 import { Image } from "expo-image";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { router, useLocalSearchParams } from "expo-router";
-import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
@@ -19,17 +18,6 @@ import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CategoryBadge } from "@/src/features/somemate/ui/category-badge";
-
-const useKeyboardHeight = () => {
-  const fallbackHeight = useSharedValue(0);
-  if (Platform.OS === 'web') {
-    return { height: fallbackHeight };
-  }
-   
-  const { useAnimatedKeyboard } = require('react-native-reanimated');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useAnimatedKeyboard();
-};
 
 type ListItem =
   | { type: "spacer"; id: string }
@@ -67,19 +55,6 @@ export default function SomemateChatScreen() {
   const displayMessages = useMemo(() => {
     return isStreaming ? [...allMessages, ...localMessages] : allMessages;
   }, [isStreaming, allMessages, localMessages]);
-
-  const keyboard = useKeyboardHeight();
-
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY:
-          Platform.OS === "android" || Platform.OS === "web"
-            ? 0
-            : -keyboard.height.value + insets.bottom,
-      },
-    ],
-  }));
 
   const handleSend = useCallback(async (message: string) => {
     if (!sessionId || isStreaming) return;
@@ -268,7 +243,7 @@ export default function SomemateChatScreen() {
 
   useEffect(() => {
     const onBackPress = () => {
-      router.replace("/chat");
+      router.back();
       return true;
     };
 
@@ -317,15 +292,6 @@ export default function SomemateChatScreen() {
 
     return items;
   }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingContent]);
-
-  // 새 메시지 아이템이 추가될 때(길이 변화) 하단으로 스크롤
-  const prevListLengthRef = useRef(0);
-  useEffect(() => {
-    if (listData.length > prevListLengthRef.current) {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }
-    prevListLengthRef.current = listData.length;
-  }, [listData.length]);
 
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === "spacer") {
@@ -408,17 +374,18 @@ export default function SomemateChatScreen() {
   };
 
   return (
-    <View
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? insets.top : 0}
       style={{
         flex: 1,
         backgroundColor: semanticColors.surface.background,
         paddingTop: insets.top,
         width: "100%",
-        paddingBottom: insets.bottom + 4,
       }}
     >
       <View style={styles.header}>
-        <Pressable onPress={() => router.replace("/chat")}>
+        <Pressable onPress={() => router.back()}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
         <Pressable style={styles.profileSection}>
@@ -442,17 +409,14 @@ export default function SomemateChatScreen() {
         </Pressable>
       </View>
 
-      <Animated.View
-        style={[
-          {
-            flex: 1,
-            width: "100%",
-            backgroundColor: semanticColors.surface.surface,
-            alignContent: "center",
-            justifyContent: "center",
-          },
-          animatedStyles,
-        ]}
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          backgroundColor: semanticColors.surface.surface,
+          alignContent: "center",
+          justifyContent: "center",
+        }}
       >
         {isLoadingMessages ? (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -492,8 +456,8 @@ export default function SomemateChatScreen() {
             <SomemateInput onSend={handleSend} />
           </>
         )}
-      </Animated.View>
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
