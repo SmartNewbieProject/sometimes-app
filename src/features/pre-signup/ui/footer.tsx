@@ -14,7 +14,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
   return (
     <View style={styles.container}>
       <View style={styles.feedbackContainer}>
-        <Feedback.WallaFeedbackBanner textContent={t("features.pre-signup.ui.footer.feedback_banner")} />
+        <Feedback.WallaFeedbackBanner />
       </View>
       <View style={styles.buttonContainer}>
         <Button
