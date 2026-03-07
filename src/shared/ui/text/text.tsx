@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import colors from '../../constants/colors';
 import { semanticColors } from '../../constants/semantic-colors';
+import { isJapanese } from '../../libs/local';
 
 export type TextVariant = 'primary' | 'secondary';
 export type TextSize =
@@ -66,9 +67,25 @@ export const Text: React.FC<TextProps> = ({
 	...rest
 }) => {
 	const getFontFamily = () => {
+		if (isJapanese()) {
+			switch (weight) {
+				case 'light':
+				case 'normal':
+				case 'regular':
+					return 'MPLUS1p-Regular';
+				case 'medium':
+					return 'MPLUS1p-Medium';
+				case 'semibold':
+				case 'bold':
+				case 'black':
+					return 'MPLUS1p-Bold';
+				default:
+					return 'MPLUS1p-Regular';
+			}
+		}
+
 		switch (weight) {
 			case 'light':
-				return 'Pretendard-Light';
 			case 'normal':
 			case 'regular':
 				return 'Pretendard-Regular';
@@ -79,7 +96,7 @@ export const Text: React.FC<TextProps> = ({
 			case 'bold':
 				return 'Pretendard-Bold';
 			case 'black':
-				return 'Pretendard-Black';
+				return 'Pretendard-ExtraBold';
 			default:
 				return 'Pretendard-Regular';
 		}

@@ -119,7 +119,7 @@ function Slider({
   };
 
   const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => !isSingle,
+    onStartShouldSetPanResponder: () => false,
     onMoveShouldSetPanResponder: (_e, gestureState) => {
       if (isSingle) return false;
       return (

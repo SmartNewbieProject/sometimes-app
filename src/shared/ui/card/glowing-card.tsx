@@ -1,12 +1,20 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import colors from '../../constants/colors';
 import { semanticColors } from '../../constants/semantic-colors';
 
 interface GlowingCardProps {
   children: React.ReactNode;
+  onPress?: () => void;
 }
 
-export const GlowingCard = ({ children, ...props }: GlowingCardProps) => {
+export const GlowingCard = ({ children, onPress, ...props }: GlowingCardProps) => {
+  if (onPress) {
+    return (
+      <Pressable style={styles.container} onPress={onPress} {...props}>
+        {children}
+      </Pressable>
+    );
+  }
   return (
     <View style={styles.container} {...props}>
       {children}

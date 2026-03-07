@@ -8,6 +8,7 @@ import { Image } from 'expo-image';
 import { router, usePathname } from 'expo-router';
 import React, { type ReactNode, useCallback } from 'react';
 import { Text as RNText, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CommunitySelected from '@/assets/icons/nav/community-selected.svg';
 import CommunityUnselected from '@/assets/icons/nav/community-unselected.svg';
@@ -108,6 +109,7 @@ const navigationItems: NavigationItem[] = [
 
 export function BottomNavigation() {
 	const pathname = usePathname();
+	const insets = useSafeAreaInsets();
 	const { data: momentEnabled } = useMomentEnabled();
 	const unreadChatCount = useUnreadChatCount();
 	const { incrementNavClickCount, showPromptForNavClick } = useAppInstallPrompt();
@@ -135,7 +137,7 @@ export function BottomNavigation() {
 		[incrementNavClickCount, showPromptForNavClick],
 	);
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
 			<View style={styles.navContainer}>
 				{navigationItems
 					.filter((item) => item.name !== 'moment' || canAccessMoment)
@@ -176,7 +178,6 @@ const styles = StyleSheet.create({
 		backgroundColor: semanticColors.surface.card,
 		borderTopColor: semanticColors.border.card,
 		borderTopWidth: 1,
-		paddingBottom: 16,
 		width: '100%',
 	},
 	navContainer: {

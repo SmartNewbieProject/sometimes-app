@@ -40,6 +40,7 @@ const SHEET_HEIGHT = isWeb ? Math.min(600, SCREEN_HEIGHT * 0.7) : SCREEN_HEIGHT 
 export interface BottomSheetPickerOption {
 	label: string;
 	value: string;
+	subtitle?: string;
 }
 
 export interface BottomSheetPickerProps {
@@ -53,6 +54,9 @@ export interface BottomSheetPickerProps {
 	searchPlaceholder?: string;
 	emptyText?: string;
 	loading?: boolean;
+	renderEmpty?: (searchQuery: string) => React.ReactNode;
+	pinnedOptions?: BottomSheetPickerOption[];
+	onSearchChange?: (query: string) => void;
 }
 
 function WebBottomSheetPicker({
@@ -66,6 +70,9 @@ function WebBottomSheetPicker({
 	searchPlaceholder,
 	emptyText,
 	loading = false,
+	renderEmpty,
+	pinnedOptions,
+	onSearchChange,
 }: BottomSheetPickerProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
@@ -78,6 +85,10 @@ function WebBottomSheetPicker({
 
 	const finalSearchPlaceholder = searchPlaceholder || t('common.검색');
 	const finalEmptyText = emptyText || t('common.결과가_없습니다');
+
+	useEffect(() => {
+		onSearchChange?.(searchQuery);
+	}, [searchQuery, onSearchChange]);
 
 	const filteredOptions = useMemo(() => {
 		if (!searchQuery.trim()) return options;
@@ -119,6 +130,20 @@ function WebBottomSheetPicker({
 	const renderItem = useCallback(
 		({ item }: { item: BottomSheetPickerOption }) => {
 			const isSelected = item.value === selectedValue;
+			if (item.subtitle) {
+				return (
+					<Pressable
+						style={({ pressed }) => [
+							styles.suggestionItem,
+							pressed && styles.suggestionItemPressed,
+						]}
+						onPress={() => handleSelect(item.value)}
+					>
+						<Text style={styles.suggestionName}>{item.label}</Text>
+						<Text style={styles.suggestionUniv}>{item.subtitle}</Text>
+					</Pressable>
+				);
+			}
 			return (
 				<Pressable
 					style={({ pressed }) => [
@@ -222,25 +247,70 @@ function WebBottomSheetPicker({
 								{t('common.loading')}
 							</Text>
 						</View>
-					) : filteredOptions.length === 0 ? (
-						<View style={styles.emptyContainer}>
-							<Text size="md" textColor="muted" style={styles.emptyText}>
-								{finalEmptyText}
-							</Text>
-						</View>
 					) : (
-						<FlatList
-							data={filteredOptions}
-							renderItem={renderItem}
-							keyExtractor={keyExtractor}
-							style={styles.list}
-							contentContainerStyle={styles.listContent}
-							keyboardShouldPersistTaps="handled"
-							showsVerticalScrollIndicator
-							initialNumToRender={15}
-							maxToRenderPerBatch={10}
-							windowSize={5}
-						/>
+						<>
+							{filteredOptions.length === 0 ? (
+								<View style={styles.emptyContainer}>
+									{renderEmpty ? (
+										renderEmpty(searchQuery)
+									) : (
+										<Text size="md" textColor="muted" style={styles.emptyText}>
+											{finalEmptyText}
+										</Text>
+									)}
+								</View>
+							) : (
+								<FlatList
+									data={filteredOptions}
+									renderItem={renderItem}
+									keyExtractor={keyExtractor}
+									style={styles.list}
+									contentContainerStyle={styles.listContent}
+									keyboardShouldPersistTaps="handled"
+									showsVerticalScrollIndicator
+									initialNumToRender={15}
+									maxToRenderPerBatch={10}
+									windowSize={5}
+								/>
+							)}
+							{pinnedOptions && pinnedOptions.length > 0 && (
+								<View style={styles.pinnedContainer}>
+									<View style={styles.pinnedDivider} />
+									{pinnedOptions.map((item) => {
+										const isSelected = item.value === selectedValue;
+										return (
+											<Pressable
+												key={item.value}
+												style={({ pressed }) => [
+													styles.optionItem,
+													isSelected && styles.optionItemSelected,
+													pressed && styles.optionItemPressed,
+												]}
+												onPress={() => handleSelect(item.value)}
+											>
+												<Text
+													size="lg"
+													weight={isSelected ? 'semibold' : 'normal'}
+													textColor="primary"
+													style={styles.optionText}
+												>
+													{item.label}
+												</Text>
+												{isSelected && (
+													<View style={styles.checkIconWrapper}>
+														<CheckIcon
+															width={16}
+															height={16}
+															color={semanticColors.brand.primary}
+														/>
+													</View>
+												)}
+											</Pressable>
+										);
+									})}
+								</View>
+							)}
+						</>
 					)}
 				</View>
 			</View>
@@ -259,6 +329,9 @@ function NativeBottomSheetPicker({
 	searchPlaceholder,
 	emptyText,
 	loading = false,
+	renderEmpty,
+	pinnedOptions,
+	onSearchChange,
 }: BottomSheetPickerProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
@@ -270,6 +343,10 @@ function NativeBottomSheetPicker({
 
 	const finalSearchPlaceholder = searchPlaceholder || t('common.검색');
 	const finalEmptyText = emptyText || t('common.결과가_없습니다');
+
+	useEffect(() => {
+		onSearchChange?.(searchQuery);
+	}, [searchQuery, onSearchChange]);
 
 	const filteredOptions = useMemo(() => {
 		if (!searchQuery.trim()) return options;
@@ -402,6 +479,20 @@ function NativeBottomSheetPicker({
 	const renderItem = useCallback(
 		({ item }: { item: BottomSheetPickerOption }) => {
 			const isSelected = item.value === selectedValue;
+			if (item.subtitle) {
+				return (
+					<Pressable
+						style={({ pressed }) => [
+							styles.suggestionItem,
+							pressed && styles.suggestionItemPressed,
+						]}
+						onPress={() => handleSelect(item.value)}
+					>
+						<Text style={styles.suggestionName}>{item.label}</Text>
+						<Text style={styles.suggestionUniv}>{item.subtitle}</Text>
+					</Pressable>
+				);
+			}
 			return (
 				<Pressable
 					style={({ pressed }) => [
@@ -502,25 +593,70 @@ function NativeBottomSheetPicker({
 								{t('common.loading')}
 							</Text>
 						</View>
-					) : filteredOptions.length === 0 ? (
-						<View style={styles.emptyContainer}>
-							<Text size="md" textColor="muted" style={styles.emptyText}>
-								{finalEmptyText}
-							</Text>
-						</View>
 					) : (
-						<FlatList
-							data={filteredOptions}
-							renderItem={renderItem}
-							keyExtractor={keyExtractor}
-							style={styles.list}
-							contentContainerStyle={styles.listContent}
-							keyboardShouldPersistTaps="handled"
-							showsVerticalScrollIndicator
-							initialNumToRender={15}
-							maxToRenderPerBatch={10}
-							windowSize={5}
-						/>
+						<>
+							{filteredOptions.length === 0 ? (
+								<View style={styles.emptyContainer}>
+									{renderEmpty ? (
+										renderEmpty(searchQuery)
+									) : (
+										<Text size="md" textColor="muted" style={styles.emptyText}>
+											{finalEmptyText}
+										</Text>
+									)}
+								</View>
+							) : (
+								<FlatList
+									data={filteredOptions}
+									renderItem={renderItem}
+									keyExtractor={keyExtractor}
+									style={styles.list}
+									contentContainerStyle={styles.listContent}
+									keyboardShouldPersistTaps="handled"
+									showsVerticalScrollIndicator
+									initialNumToRender={15}
+									maxToRenderPerBatch={10}
+									windowSize={5}
+								/>
+							)}
+							{pinnedOptions && pinnedOptions.length > 0 && (
+								<View style={styles.pinnedContainer}>
+									<View style={styles.pinnedDivider} />
+									{pinnedOptions.map((item) => {
+										const isSelected = item.value === selectedValue;
+										return (
+											<Pressable
+												key={item.value}
+												style={({ pressed }) => [
+													styles.optionItem,
+													isSelected && styles.optionItemSelected,
+													pressed && styles.optionItemPressed,
+												]}
+												onPress={() => handleSelect(item.value)}
+											>
+												<Text
+													size="lg"
+													weight={isSelected ? 'semibold' : 'normal'}
+													textColor="primary"
+													style={styles.optionText}
+												>
+													{item.label}
+												</Text>
+												{isSelected && (
+													<View style={styles.checkIconWrapper}>
+														<CheckIcon
+															width={16}
+															height={16}
+															color={semanticColors.brand.primary}
+														/>
+													</View>
+												)}
+											</Pressable>
+										);
+									})}
+								</View>
+							)}
+						</>
 					)}
 				</Animated.View>
 			</View>
@@ -675,5 +811,36 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		textAlign: 'center',
+	},
+	pinnedContainer: {
+		paddingHorizontal: 8,
+		paddingBottom: 8,
+	},
+	pinnedDivider: {
+		height: 1,
+		backgroundColor: semanticColors.border.smooth,
+		marginHorizontal: 8,
+		marginBottom: 8,
+	},
+	suggestionItem: {
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		borderRadius: 8,
+		marginHorizontal: 4,
+		marginVertical: 2,
+	},
+	suggestionItemPressed: {
+		backgroundColor: '#F5F0FF',
+	},
+	suggestionName: {
+		fontSize: 15,
+		color: semanticColors.text.primary,
+		fontFamily: 'Pretendard-Medium',
+	},
+	suggestionUniv: {
+		fontSize: 12,
+		color: semanticColors.text.muted,
+		fontFamily: 'Pretendard-Regular',
+		marginTop: 2,
 	},
 });
