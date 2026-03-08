@@ -67,7 +67,7 @@ export function HotPostsCarousel() {
 				<TouchableOpacity
 					activeOpacity={0.7}
 					onPress={handleViewAllPress}
-					hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+					style={styles.viewAllButton}
 				>
 					<Text style={styles.viewAll}>{t('features.home.ui.hot_posts_carousel.view_all')}</Text>
 				</TouchableOpacity>
@@ -113,6 +113,10 @@ const styles = StyleSheet.create({
 		fontSize: 17,
 		fontWeight: '700',
 		color: semanticColors.text.primary,
+	},
+	viewAllButton: {
+		paddingVertical: 13,
+		paddingHorizontal: 8,
 	},
 	viewAll: {
 		fontSize: 13,
