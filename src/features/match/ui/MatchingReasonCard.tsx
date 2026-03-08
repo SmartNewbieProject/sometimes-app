@@ -14,7 +14,6 @@ interface MatchingReasonCardProps {
 	isLoading?: boolean;
 }
 
-const SPIRAL_HOLES = [0, 1, 2, 3, 4];
 const TYPING_SPEED_MS = 80;
 const LINE_DELAY_MS = 600;
 const RESET_DELAY_MS = 2000;
@@ -222,31 +221,32 @@ export const MatchingReasonCard = ({
 
 	return (
 		<View style={styles.container}>
-			{/* 노트 카드 */}
+			{/* 편지지 카드 */}
 			<View style={styles.noteCard}>
-				{/* 노트 본문: 스피럴 컬럼 + 콘텐츠 영역 */}
+				{/* 편지지 헤더 장식선 */}
+				<View style={styles.letterHeader}>
+					<View style={styles.letterHeaderLine} />
+					<Text style={styles.letterHeaderText}>✉️</Text>
+					<View style={styles.letterHeaderLine} />
+				</View>
+
+				{/* 편지지 본문 */}
 				<View style={styles.noteInner}>
-					{/* 스피럴 컬럼 */}
-					<View style={styles.spiralColumn}>
-						{SPIRAL_HOLES.map((i) => (
-							<View key={i} style={styles.spiralHole} />
-						))}
-					</View>
+					{/* 왼쪽 빨간 세로선 */}
+					<View style={styles.redMarginLine} />
 
 					{/* 콘텐츠 영역 */}
 					<View
 						style={styles.contentArea}
 						onLayout={(e) => setAreaHeight(e.nativeEvent.layout.height)}
 					>
-						{/* 배경 줄 */}
+						{/* 편지지 배경 줄 */}
 						{areaHeight > 0 &&
 							Array.from({ length: lineCount }).map((_, i) => (
 								<View
+									// biome-ignore lint/suspicious/noArrayIndexKey: 고정 배경 요소
 									key={i}
-									style={[
-										styles.noteLine,
-										{ top: titleHeight + 12 + i * NOTE_LINE_HEIGHT },
-									]}
+									style={[styles.noteLine, { top: titleHeight + 12 + i * NOTE_LINE_HEIGHT }]}
 								/>
 							))}
 						{/* 카드 타이틀 */}
@@ -291,14 +291,11 @@ export const MatchingReasonCard = ({
 								{!expanded && (
 									<>
 										<LinearGradient
-											colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.97)']}
+											colors={['rgba(255,253,246,0)', 'rgba(255,253,246,0.97)']}
 											style={styles.fadeOverlay}
 										/>
 										<Animated.View
-											style={[
-												styles.floatingBtnWrap,
-												{ transform: [{ translateY: floatAnim }] },
-											]}
+											style={[styles.floatingBtnWrap, { transform: [{ translateY: floatAnim }] }]}
 										>
 											<TouchableOpacity
 												style={styles.floatingBtn}
@@ -315,7 +312,7 @@ export const MatchingReasonCard = ({
 					</View>
 				</View>
 
-				{/* 페이지 번호 */}
+				{/* 편지지 하단 장식 */}
 				<View style={styles.pageNumRow}>
 					<Text style={styles.pageNum}>— p. 1 —</Text>
 				</View>
@@ -339,48 +336,59 @@ export const MatchingReasonCard = ({
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#fff',
+		backgroundColor: '#FFF8EE',
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 		borderBottomWidth: 1,
-		borderBottomColor: '#efefef',
+		borderBottomColor: '#E8D9C5',
 	},
 	noteCard: {
-		backgroundColor: '#fff',
+		backgroundColor: '#FFFDF6',
 		borderWidth: 1,
-		borderColor: '#e0e0e0',
+		borderColor: '#E8D9C5',
 		borderRadius: 10,
 		overflow: 'hidden',
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.06,
-		shadowRadius: 4,
-		elevation: 1,
+		shadowColor: '#C8A86B',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.12,
+		shadowRadius: 6,
+		elevation: 2,
+	},
+	letterHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 12,
+		paddingVertical: 6,
+		backgroundColor: '#FFF4E0',
+		borderBottomWidth: 1,
+		borderBottomColor: '#E8D9C5',
+		gap: 8,
+	},
+	letterHeaderLine: {
+		flex: 1,
+		height: 1,
+		backgroundColor: '#C8A86B50',
+	},
+	letterHeaderText: {
+		fontSize: 14,
 	},
 	noteInner: {
 		flexDirection: 'row',
 	},
-	spiralColumn: {
-		width: 24,
-		backgroundColor: '#f5f5f5',
-		borderRightWidth: 1,
-		borderRightColor: '#e0e0e0',
-		paddingVertical: 6,
-		gap: 9,
-		alignItems: 'center',
-	},
-	spiralHole: {
-		width: 10,
-		height: 10,
-		borderRadius: 5,
-		backgroundColor: '#ddd',
-		borderWidth: 1.5,
-		borderColor: '#ccc',
+	redMarginLine: {
+		position: 'absolute',
+		left: 40,
+		top: 0,
+		bottom: 0,
+		width: 1.5,
+		backgroundColor: '#FF6B6B35',
+		zIndex: 1,
 	},
 	contentArea: {
 		flex: 1,
 		padding: 8,
-		paddingHorizontal: 10,
+		paddingLeft: 52,
+		paddingRight: 12,
 		position: 'relative',
 	},
 	noteLine: {
@@ -388,7 +396,7 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		height: 1,
-		backgroundColor: '#e8e8f0',
+		backgroundColor: '#C8A86B28',
 	},
 	titleRow: {
 		flexDirection: 'row',
@@ -465,20 +473,20 @@ const styles = StyleSheet.create({
 		gap: 4,
 	},
 	reasonText: {
-		fontSize: 20,
-		lineHeight: 22,
-		color: '#2c2c2e',
+		fontSize: 22,
+		lineHeight: 30,
+		color: '#3A2A1A',
 		fontFamily: 'Gaegu_400Regular',
 	},
 	pageNumRow: {
-		backgroundColor: '#f5f5f5',
+		backgroundColor: '#FFF4E0',
 		borderTopWidth: 1,
-		borderTopColor: '#e0e0e0',
+		borderTopColor: '#E8D9C5',
 	},
 	pageNum: {
 		textAlign: 'center',
 		fontSize: 10,
-		color: '#ccc',
+		color: '#B9945A',
 		paddingVertical: 4,
 	},
 	kwSection: {
