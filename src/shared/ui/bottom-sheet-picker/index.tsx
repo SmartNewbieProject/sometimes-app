@@ -1,6 +1,7 @@
 import CheckIcon from '@assets/icons/circle-check.svg';
 import SearchIcon from '@assets/icons/search.svg';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Dimensions,
@@ -42,6 +43,7 @@ export interface BottomSheetPickerOption {
 	label: string;
 	value: string;
 	subtitle?: string;
+	compact?: boolean;
 }
 
 export interface BottomSheetPickerProps {
@@ -58,6 +60,7 @@ export interface BottomSheetPickerProps {
 	renderEmpty?: (searchQuery: string) => React.ReactNode;
 	pinnedOptions?: BottomSheetPickerOption[];
 	onSearchChange?: (query: string) => void;
+	listFooterComponent?: React.ReactNode;
 }
 
 function WebBottomSheetPicker({
@@ -74,6 +77,7 @@ function WebBottomSheetPicker({
 	renderEmpty,
 	pinnedOptions,
 	onSearchChange,
+	listFooterComponent,
 }: BottomSheetPickerProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
@@ -131,17 +135,20 @@ function WebBottomSheetPicker({
 	const renderItem = useCallback(
 		({ item }: { item: BottomSheetPickerOption }) => {
 			const isSelected = item.value === selectedValue;
-			if (item.subtitle) {
+			if (item.subtitle || item.compact) {
 				return (
 					<Pressable
 						style={({ pressed }) => [
 							styles.suggestionItem,
+							isSelected && styles.suggestionItemSelected,
 							pressed && styles.suggestionItemPressed,
 						]}
 						onPress={() => handleSelect(item.value)}
 					>
-						<Text style={styles.suggestionName}>{item.label}</Text>
-						<Text style={styles.suggestionUniv}>{item.subtitle}</Text>
+						<Text style={[styles.suggestionName, isSelected && styles.suggestionNameSelected]}>
+							{item.label}
+						</Text>
+						{item.subtitle ? <Text style={styles.suggestionUniv}>{item.subtitle}</Text> : null}
 					</Pressable>
 				);
 			}
@@ -251,15 +258,20 @@ function WebBottomSheetPicker({
 					) : (
 						<>
 							{filteredOptions.length === 0 ? (
-								<View style={styles.emptyContainer}>
-									{renderEmpty ? (
-										renderEmpty(searchQuery)
-									) : (
-										<Text size="md" textColor="muted" style={styles.emptyText}>
-											{finalEmptyText}
-										</Text>
+								<>
+									<View style={styles.emptyContainer}>
+										{renderEmpty ? (
+											renderEmpty(searchQuery)
+										) : (
+											<Text size="md" textColor="muted" style={styles.emptyText}>
+												{finalEmptyText}
+											</Text>
+										)}
+									</View>
+									{listFooterComponent && (
+										<View style={styles.listFooterContainer}>{listFooterComponent}</View>
 									)}
-								</View>
+								</>
 							) : (
 								<FlatList
 									data={filteredOptions}
@@ -272,6 +284,11 @@ function WebBottomSheetPicker({
 									initialNumToRender={15}
 									maxToRenderPerBatch={10}
 									windowSize={5}
+									ListFooterComponent={
+										listFooterComponent ? (
+											<View style={styles.listFooterContainer}>{listFooterComponent}</View>
+										) : null
+									}
 								/>
 							)}
 							{pinnedOptions && pinnedOptions.length > 0 && (
@@ -333,6 +350,7 @@ function NativeBottomSheetPicker({
 	renderEmpty,
 	pinnedOptions,
 	onSearchChange,
+	listFooterComponent,
 }: BottomSheetPickerProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
@@ -487,17 +505,20 @@ function NativeBottomSheetPicker({
 	const renderItem = useCallback(
 		({ item }: { item: BottomSheetPickerOption }) => {
 			const isSelected = item.value === selectedValue;
-			if (item.subtitle) {
+			if (item.subtitle || item.compact) {
 				return (
 					<Pressable
 						style={({ pressed }) => [
 							styles.suggestionItem,
+							isSelected && styles.suggestionItemSelected,
 							pressed && styles.suggestionItemPressed,
 						]}
 						onPress={() => handleSelect(item.value)}
 					>
-						<Text style={styles.suggestionName}>{item.label}</Text>
-						<Text style={styles.suggestionUniv}>{item.subtitle}</Text>
+						<Text style={[styles.suggestionName, isSelected && styles.suggestionNameSelected]}>
+							{item.label}
+						</Text>
+						{item.subtitle ? <Text style={styles.suggestionUniv}>{item.subtitle}</Text> : null}
 					</Pressable>
 				);
 			}
@@ -604,15 +625,20 @@ function NativeBottomSheetPicker({
 					) : (
 						<>
 							{filteredOptions.length === 0 ? (
-								<View style={styles.emptyContainer}>
-									{renderEmpty ? (
-										renderEmpty(searchQuery)
-									) : (
-										<Text size="md" textColor="muted" style={styles.emptyText}>
-											{finalEmptyText}
-										</Text>
+								<>
+									<View style={styles.emptyContainer}>
+										{renderEmpty ? (
+											renderEmpty(searchQuery)
+										) : (
+											<Text size="md" textColor="muted" style={styles.emptyText}>
+												{finalEmptyText}
+											</Text>
+										)}
+									</View>
+									{listFooterComponent && (
+										<View style={styles.listFooterContainer}>{listFooterComponent}</View>
 									)}
-								</View>
+								</>
 							) : (
 								<FlatList
 									data={filteredOptions}
@@ -625,6 +651,11 @@ function NativeBottomSheetPicker({
 									initialNumToRender={15}
 									maxToRenderPerBatch={10}
 									windowSize={5}
+									ListFooterComponent={
+										listFooterComponent ? (
+											<View style={styles.listFooterContainer}>{listFooterComponent}</View>
+										) : null
+									}
 								/>
 							)}
 							{pinnedOptions && pinnedOptions.length > 0 && (
@@ -816,9 +847,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingHorizontal: 20,
+		paddingVertical: 52,
 	},
 	emptyText: {
 		textAlign: 'center',
+	},
+	listFooterContainer: {
+		paddingHorizontal: 20,
+		paddingTop: 8,
+		paddingBottom: 16,
+		alignItems: 'center',
 	},
 	pinnedContainer: {
 		paddingHorizontal: 8,
@@ -837,6 +875,9 @@ const styles = StyleSheet.create({
 		marginHorizontal: 4,
 		marginVertical: 2,
 	},
+	suggestionItemSelected: {
+		backgroundColor: '#F0EAFF',
+	},
 	suggestionItemPressed: {
 		backgroundColor: '#F5F0FF',
 	},
@@ -844,6 +885,10 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		color: semanticColors.text.primary,
 		fontFamily: 'Pretendard-Medium',
+	},
+	suggestionNameSelected: {
+		color: semanticColors.brand.primary,
+		fontFamily: 'Pretendard-SemiBold',
 	},
 	suggestionUniv: {
 		fontSize: 12,

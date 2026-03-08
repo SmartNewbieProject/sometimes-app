@@ -1,13 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
 	StyleSheet,
 	View,
 	Pressable,
-	Platform,
-	useWindowDimensions,
+	Modal,
 	type ViewStyle,
 	type GestureResponderEvent,
-	type LayoutRectangle,
 } from 'react-native';
 import { ImageResource } from '../image-resource';
 import { ImageResources } from '../../libs';
@@ -28,11 +26,12 @@ type DropdownProps = {
 };
 
 const DROPDOWN_WIDTH = 140;
+const TRIGGER_SIZE = 32;
+
+type MenuPosition = { top: number; left: number };
 
 export const Dropdown = ({ open, items, dropdownStyle, onOpenChange }: DropdownProps) => {
-	const triggerRef = useRef<View>(null);
-	const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(null);
-	const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+	const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
 
 	const handleClose = () => {
 		onOpenChange?.(false);
@@ -42,103 +41,56 @@ export const Dropdown = ({ open, items, dropdownStyle, onOpenChange }: DropdownP
 		e.stopPropagation();
 		if (open) {
 			handleClose();
-		} else {
-			onOpenChange?.(true);
+			return;
 		}
-	};
-
-	// Measure trigger position ONLY for the backdrop
-	useEffect(() => {
-		if (open && triggerRef.current) {
-			// We need global coordinates for the backdrop to cover the screen
-			// regardless of where the dropdown is in the hierarchy.
-			if (Platform.OS === 'web') {
-				const element = triggerRef.current as unknown as HTMLElement;
-				const rect = element.getBoundingClientRect();
-				setTriggerLayout({ x: rect.left, y: rect.top, width: rect.width, height: rect.height });
-			} else {
-				triggerRef.current.measureInWindow((x, y, width, height) => {
-					setTriggerLayout({ x, y, width, height });
-				});
-			}
-		}
-	}, [open, windowWidth, windowHeight]);
-
-	const renderMenu = () => {
-		return (
-			<View
-				style={[
-					styles.menu,
-					dropdownStyle,
-					// Position relative to the trigger container
-					{
-						top: '100%', // Right below the trigger
-						right: 0,    // Right aligned with the trigger
-						marginTop: 4,
-					},
-				]}
-			>
-				{items.map((item, index) => (
-					<Pressable
-						key={item.key}
-						style={({ pressed }) => [
-							styles.item,
-							pressed && styles.itemPressed,
-							index === items.length - 1 && { borderBottomWidth: 0 },
-						]}
-						onPress={(e) => {
-							e.stopPropagation();
-							item.onPress();
-							handleClose();
-						}}
-					>
-						<Text style={styles.itemText} textColor="black">
-							{item.content}
-						</Text>
-					</Pressable>
-				))}
-			</View>
-		);
+		// pageX/pageY는 유저가 실제 누른 화면 좌표 — ref 측정과 달리 항상 정확
+		const { pageX, pageY } = e.nativeEvent;
+		// 탭 위치는 버튼 중앙 기준 → 버튼 우측 하단으로 메뉴 배치
+		setMenuPosition({
+			top: pageY + TRIGGER_SIZE / 2 + 4,
+			left: pageX + TRIGGER_SIZE / 2 - DROPDOWN_WIDTH,
+		});
+		onOpenChange?.(true);
 	};
 
 	return (
-		<View
-			style={[
-				styles.container,
-				open && { zIndex: 9999 } // Ensure dropdown is on top when open
-			]}
-		>
-			<Pressable
-				ref={triggerRef}
-				onPress={handleTriggerPress}
-				style={styles.trigger}
-				hitSlop={8}
-			>
+		<View style={styles.container}>
+			<Pressable onPress={handleTriggerPress} style={styles.trigger} hitSlop={8}>
 				<ImageResource resource={ImageResources.MENU} width={24} height={24} />
 			</Pressable>
 
-			{open && (
-				<>
-					{/* Backdrop: Positioned absolutely to cover the whole screen */}
-					{/* We use negative margins/positions based on trigger layout to expand it */}
-					{triggerLayout && (
-						<Pressable
+			{open && menuPosition && (
+				<Modal transparent visible animationType="none" onRequestClose={handleClose}>
+					<Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose}>
+						<View
 							style={[
-								styles.backdrop as import('react-native').ViewStyle,
-								{
-									top: -triggerLayout.y,
-									left: -triggerLayout.x,
-									width: windowWidth,
-									height: windowHeight,
-								}
+								styles.menu,
+								dropdownStyle,
+								{ position: 'absolute', top: menuPosition.top, left: menuPosition.left },
 							]}
-							onPress={handleClose}
-						/>
-					)}
-
-					{/* Menu: Rendered normally in the flow, positioned absolutely relative to container */}
-					{renderMenu()}
-				</>
+						>
+							{items.map((item, index) => (
+								<Pressable
+									key={item.key}
+									style={({ pressed }) => [
+										styles.item,
+										pressed && styles.itemPressed,
+										index === items.length - 1 && { borderBottomWidth: 0 },
+									]}
+									onPress={(e) => {
+										e.stopPropagation();
+										item.onPress();
+										handleClose();
+									}}
+								>
+									<Text style={styles.itemText} textColor="black">
+										{item.content}
+									</Text>
+								</Pressable>
+							))}
+						</View>
+					</Pressable>
+				</Modal>
 			)}
 		</View>
 	);
@@ -156,13 +108,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		// @ts-ignore
 		cursor: 'pointer',
-	},
-	backdrop: {
-		position: 'absolute',
-		zIndex: -1, // Behind the menu but above other content (since container is zIndex 9999)
-		backgroundColor: 'transparent', // Or 'rgba(0,0,0,0.1)' for debugging
-		// @ts-ignore
-		cursor: 'default',
 	},
 	menu: {
 		position: 'absolute',

@@ -65,12 +65,18 @@ interface PortalProps {
 export function Portal({ children, name }: PortalProps) {
 	const { mount, unmount } = usePortal();
 
+	// children이 변할 때마다 mount 업데이트 (unmount 없이)
+	// unmount를 cleanup에 넣으면 children 변경 시 언마운트/리마운트 되어 내부 애니메이션이 초기화됨
 	React.useEffect(() => {
 		mount(name, children);
+	}, [name, children, mount]);
+
+	// 컴포넌트 자체가 언마운트될 때만 unmount
+	React.useEffect(() => {
 		return () => {
 			unmount(name);
 		};
-	}, [name, children, mount, unmount]);
+	}, [name, unmount]);
 
 	return null;
 }

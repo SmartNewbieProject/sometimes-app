@@ -2,7 +2,7 @@ import colors from '@/src/shared/constants/colors';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { Portal } from '@/src/shared/providers/portal-provider';
 import { Text } from '@shared/ui';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { FeedbackDrawer } from './feedback-drawer';
@@ -10,23 +10,19 @@ import { FeedbackDrawer } from './feedback-drawer';
 export const WallaFeedbackBanner = () => {
 	const { t } = useTranslation();
 	const { showModal, hideModal } = useModal();
-	// drawerMounted: 마운트 여부 (애니메이션 완료 후 언마운트)
-	// drawerVisible: Drawer에 전달하는 open/close 상태
+	// drawerMounted 하나로만 관리
+	// visible prop을 변경하면 Portal children이 바뀌어 내부 애니메이션이 리셋되는 버그가 생기므로
+	// FeedbackDrawer는 마운트 시 자동으로 열리고, 닫기 애니메이션 완료 후 언마운트
 	const [drawerMounted, setDrawerMounted] = useState(false);
-	const [drawerVisible, setDrawerVisible] = useState(false);
-	const unmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const openDrawer = () => {
-		if (unmountTimerRef.current) clearTimeout(unmountTimerRef.current);
 		setDrawerMounted(true);
-		// 마운트 후 한 프레임 뒤 visible=true → 오픈 애니메이션 트리거
-		requestAnimationFrame(() => setDrawerVisible(true));
 	};
 
 	const closeDrawer = () => {
-		setDrawerVisible(false);
-		// 닫기 애니메이션(300ms) 완료 후 언마운트
-		unmountTimerRef.current = setTimeout(() => setDrawerMounted(false), 400);
+		// FeedbackDrawer 내부에서 닫기 애니메이션 완료 후 이 함수를 호출하므로
+		// 애니메이션이 끝난 시점에 즉시 언마운트
+		setDrawerMounted(false);
 	};
 
 	const handleSuccess = () => {
@@ -82,7 +78,7 @@ export const WallaFeedbackBanner = () => {
 			{drawerMounted && (
 				<Portal name="feedback-drawer">
 					<FeedbackDrawer
-						visible={drawerVisible}
+						visible={true}
 						onClose={closeDrawer}
 						onSuccess={handleSuccess}
 						onError={handleError}

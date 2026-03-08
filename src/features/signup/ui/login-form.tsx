@@ -274,8 +274,13 @@ function KakaoLoginComponent() {
 		return () => subscription.remove();
 	}, []);
 
-	// TODO: 개발 확인용 플래그 — 배포 전 제거
-	const showInstagramIOSGuide = Platform.OS === 'web';
+	const isInstagramIAB = () => {
+		if (Platform.OS !== 'web') return false;
+		const ua = navigator.userAgent;
+		return /Instagram|FBAN|FBAV/.test(ua);
+	};
+
+	const showInstagramIOSGuide = isInstagramIAB();
 
 	const handleCopyLink = () => {
 		navigator.clipboard?.writeText(window.location.href).catch(() => {});
@@ -623,12 +628,6 @@ function KakaoLoginComponent() {
 			isKakaoLoginPendingRef.current = false;
 			setIsLoading(false);
 		}
-	};
-
-	const isInstagramIAB = () => {
-		if (Platform.OS !== 'web') return false;
-		const ua = navigator.userAgent;
-		return /Instagram|FBAN|FBAV/.test(ua);
 	};
 
 	const handleWebKakaoLogin = () => {

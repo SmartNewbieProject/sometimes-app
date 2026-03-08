@@ -128,6 +128,10 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 		`features.match.miho_messages.${message.rarity}.${message.id}.line1`,
 		message.lines[0],
 	);
+	const line2 = t(
+		`features.match.miho_messages.${message.rarity}.${message.id}.line2`,
+		message.lines[1] ?? '',
+	);
 
 	return (
 		<Animated.View
@@ -151,8 +155,8 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 					<Text style={styles.title} numberOfLines={1}>
 						{title}
 					</Text>
-					<Text style={styles.subtitle} numberOfLines={1}>
-						{line1}
+					<Text style={styles.subtitle} numberOfLines={2}>
+						{line1} {line2}
 					</Text>
 					<View style={styles.progressTrack} onLayout={handleTrackLayout}>
 						<Animated.View style={[styles.progressBar, { width: barWidth }]} />

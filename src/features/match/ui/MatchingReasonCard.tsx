@@ -1,59 +1,335 @@
-import { Text } from '@/src/shared/ui';
-import React from 'react';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { Badge, Text } from '@/src/shared/ui';
+import { Gaegu_400Regular, useFonts } from '@expo-google-fonts/gaegu';
+import Feather from '@expo/vector-icons/Feather';
+import { LinearGradient } from 'expo-linear-gradient';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Animated, Easing, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface MatchingReasonCardProps {
 	reasons: string[];
 	keywords: string[];
+	isLoading?: boolean;
 }
 
-export const MatchingReasonCard = ({ reasons, keywords }: MatchingReasonCardProps) => {
+const SPIRAL_HOLES = [0, 1, 2, 3, 4];
+const TYPING_SPEED_MS = 80;
+const LINE_DELAY_MS = 600;
+const RESET_DELAY_MS = 2000;
+const BLINK_DURATION_MS = 500;
+
+// ─── 타이핑 훅 ────────────────────────────────────────────
+function useTypingEffect(lines: string[]) {
+	const [completedLines, setCompletedLines] = useState<string[]>([]);
+	const [currentText, setCurrentText] = useState('');
+	const [lineIndex, setLineIndex] = useState(0);
+	const [charIndex, setCharIndex] = useState(0);
+
+	useEffect(() => {
+		if (lines.length === 0) return;
+
+		if (lineIndex >= lines.length) {
+			const resetTimer = setTimeout(() => {
+				setCompletedLines([]);
+				setCurrentText('');
+				setLineIndex(0);
+				setCharIndex(0);
+			}, RESET_DELAY_MS);
+			return () => clearTimeout(resetTimer);
+		}
+
+		const currentLine = lines[lineIndex];
+
+		if (charIndex < currentLine.length) {
+			const timer = setTimeout(() => {
+				setCurrentText(currentLine.slice(0, charIndex + 1));
+				setCharIndex((prev) => prev + 1);
+			}, TYPING_SPEED_MS);
+			return () => clearTimeout(timer);
+		}
+
+		const lineCompleteTimer = setTimeout(() => {
+			setCompletedLines((prev) => [...prev, currentLine]);
+			setCurrentText('');
+			setLineIndex((prev) => prev + 1);
+			setCharIndex(0);
+		}, LINE_DELAY_MS);
+		return () => clearTimeout(lineCompleteTimer);
+	}, [lines, lineIndex, charIndex]);
+
+	return { completedLines, currentText, isTyping: lineIndex < lines.length };
+}
+
+// ─── Web 커서 ─────────────────────────────────────────────
+function PenCursorWeb() {
+	const opacity = useRef(new Animated.Value(1)).current;
+
+	useEffect(() => {
+		const animation = Animated.loop(
+			Animated.sequence([
+				Animated.timing(opacity, {
+					toValue: 0.3,
+					duration: BLINK_DURATION_MS,
+					easing: Easing.linear,
+					useNativeDriver: true,
+				}),
+				Animated.timing(opacity, {
+					toValue: 1.0,
+					duration: BLINK_DURATION_MS,
+					easing: Easing.linear,
+					useNativeDriver: true,
+				}),
+			]),
+		);
+		animation.start();
+		return () => animation.stop();
+	}, [opacity]);
+
+	return (
+		<Animated.View style={{ opacity }}>
+			<Feather name="edit-3" size={14} color={semanticColors.brand.primary} />
+		</Animated.View>
+	);
+}
+
+// ─── Native 커서 (Reanimated) ─────────────────────────────
+let PenCursorNative: React.ComponentType | null = null;
+
+if (Platform.OS !== 'web') {
+	const Reanimated = require('react-native-reanimated');
+	const {
+		useSharedValue,
+		useAnimatedStyle,
+		withRepeat,
+		withTiming,
+		Easing: ReanimatedEasing,
+	} = Reanimated;
+
+	PenCursorNative = function PenCursorNativeImpl() {
+		const opacity = useSharedValue(1);
+
+		useEffect(() => {
+			opacity.value = withRepeat(
+				withTiming(0.3, {
+					duration: BLINK_DURATION_MS,
+					easing: ReanimatedEasing.linear,
+				}),
+				-1,
+				true,
+			);
+		}, [opacity]);
+
+		const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
+		return (
+			<Reanimated.default.View style={animatedStyle}>
+				<Feather name="edit-3" size={14} color={semanticColors.brand.primary} />
+			</Reanimated.default.View>
+		);
+	};
+}
+
+function PenCursor() {
+	if (Platform.OS !== 'web' && PenCursorNative) {
+		return <PenCursorNative />;
+	}
+	return <PenCursorWeb />;
+}
+
+// ─── 타이핑 콘텐츠 ────────────────────────────────────────
+function TypingContent() {
 	const { t } = useTranslation();
+
+	const lines = [
+		t('features.match.ui.matching_reason_placeholder.typing_line_1'),
+		t('features.match.ui.matching_reason_placeholder.typing_line_2'),
+		t('features.match.ui.matching_reason_placeholder.typing_line_3'),
+	];
+
+	const { completedLines, currentText, isTyping } = useTypingEffect(lines);
+
+	return (
+		<View style={styles.typingArea}>
+			{completedLines.map((line, i) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: 완료된 줄은 순서 고정
+				<Text key={i} style={styles.reasonText}>
+					{line}
+				</Text>
+			))}
+			{isTyping && (
+				<View style={styles.currentLine}>
+					<Text style={styles.reasonText}>{currentText}</Text>
+					<PenCursor />
+				</View>
+			)}
+		</View>
+	);
+}
+
+const NOTE_LINE_HEIGHT = 24;
+const COLLAPSED_HEIGHT = NOTE_LINE_HEIGHT * 4 + 24; // 120px
+
+// ─── 메인 컴포넌트 ────────────────────────────────────────
+export const MatchingReasonCard = ({
+	reasons,
+	keywords,
+	isLoading = false,
+}: MatchingReasonCardProps) => {
+	const { t } = useTranslation();
+	const [areaHeight, setAreaHeight] = useState(0);
+	const [titleHeight, setTitleHeight] = useState(0);
+	const [expanded, setExpanded] = useState(false);
+	const [contentHeight, setContentHeight] = useState(0);
+	const [fontsLoaded] = useFonts({ Gaegu_400Regular });
+	const floatAnim = useRef(new Animated.Value(0)).current;
+	const expandAnim = useRef(new Animated.Value(COLLAPSED_HEIGHT)).current;
+
+	const handleExpand = () => {
+		setExpanded(true);
+		Animated.spring(expandAnim, {
+			toValue: contentHeight || COLLAPSED_HEIGHT * 3,
+			tension: 40,
+			friction: 9,
+			useNativeDriver: false,
+		}).start();
+	};
+
+	const lineCount = Math.ceil((areaHeight - titleHeight) / NOTE_LINE_HEIGHT) + 1;
+
+	useEffect(() => {
+		if (expanded || isLoading) return;
+		const animation = Animated.loop(
+			Animated.sequence([
+				Animated.timing(floatAnim, {
+					toValue: -5,
+					duration: 900,
+					easing: Easing.inOut(Easing.sin),
+					useNativeDriver: true,
+				}),
+				Animated.timing(floatAnim, {
+					toValue: 0,
+					duration: 900,
+					easing: Easing.inOut(Easing.sin),
+					useNativeDriver: true,
+				}),
+			]),
+		);
+		animation.start();
+		return () => animation.stop();
+	}, [expanded, isLoading, floatAnim]);
 
 	return (
 		<View style={styles.container}>
-			{/* 상단 바: 타이틀 + 우표 아이콘 */}
-			<View style={styles.topBar}>
-				<Text style={styles.sectionTitle}>
-					✨ {t('features.match.ui.matching_reason_placeholder.title')}
-				</Text>
-				<View style={styles.stamp}>
-					<Text style={styles.stampEmoji}>💌</Text>
+			{/* 노트 카드 */}
+			<View style={styles.noteCard}>
+				{/* 노트 본문: 스피럴 컬럼 + 콘텐츠 영역 */}
+				<View style={styles.noteInner}>
+					{/* 스피럴 컬럼 */}
+					<View style={styles.spiralColumn}>
+						{SPIRAL_HOLES.map((i) => (
+							<View key={i} style={styles.spiralHole} />
+						))}
+					</View>
+
+					{/* 콘텐츠 영역 */}
+					<View
+						style={styles.contentArea}
+						onLayout={(e) => setAreaHeight(e.nativeEvent.layout.height)}
+					>
+						{/* 배경 줄 */}
+						{areaHeight > 0 &&
+							Array.from({ length: lineCount }).map((_, i) => (
+								<View
+									key={i}
+									style={[
+										styles.noteLine,
+										{ top: titleHeight + 12 + i * NOTE_LINE_HEIGHT },
+									]}
+								/>
+							))}
+						{/* 카드 타이틀 */}
+						<View
+							style={styles.titleRow}
+							onLayout={(e) => setTitleHeight(e.nativeEvent.layout.height)}
+						>
+							<Text style={styles.cardTitle}>
+								✨ {t('features.match.ui.matching_reason_placeholder.title')}
+							</Text>
+							{isLoading && (
+								<View style={styles.writingBadge}>
+									<Text style={styles.writingBadgeText}>작성 중</Text>
+								</View>
+							)}
+						</View>
+
+						{/* 사유 텍스트: 로딩 시 타이핑 / 완료 시 실제 데이터 */}
+						{isLoading ? (
+							<TypingContent />
+						) : (
+							<Animated.View style={[styles.reasonsClip, { height: expandAnim }]}>
+								<View
+									style={styles.reasonsContainer}
+									onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
+								>
+									{reasons.map((reason, index) => (
+										// biome-ignore lint/suspicious/noArrayIndexKey: reasons are static per render
+										<View key={index} style={styles.reasonBlock}>
+											{reason
+												.split('. ')
+												.filter(Boolean)
+												.map((sentence, sIdx, arr) => (
+													// biome-ignore lint/suspicious/noArrayIndexKey: sentence order is fixed
+													<Text key={sIdx} style={styles.reasonText}>
+														{sIdx < arr.length - 1 ? `${sentence}.` : sentence}
+													</Text>
+												))}
+										</View>
+									))}
+								</View>
+								{!expanded && (
+									<>
+										<LinearGradient
+											colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.97)']}
+											style={styles.fadeOverlay}
+										/>
+										<Animated.View
+											style={[
+												styles.floatingBtnWrap,
+												{ transform: [{ translateY: floatAnim }] },
+											]}
+										>
+											<TouchableOpacity
+												style={styles.floatingBtn}
+												onPress={handleExpand}
+												activeOpacity={0.85}
+											>
+												<Text style={styles.floatingBtnText}>✉️ 편지 전체 보기</Text>
+											</TouchableOpacity>
+										</Animated.View>
+									</>
+								)}
+							</Animated.View>
+						)}
+					</View>
+				</View>
+
+				{/* 페이지 번호 */}
+				<View style={styles.pageNumRow}>
+					<Text style={styles.pageNum}>— p. 1 —</Text>
 				</View>
 			</View>
 
-			{/* 편지 카드 */}
-			<View style={styles.letterCard}>
-				{/* 보라 스트라이프 */}
-				<View style={styles.stripe} />
-
-				{/* 편지 본문 */}
-				<View style={styles.letterContent}>
-					{reasons.map((reason, index) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: reasons are static per render
-						<Text key={index} style={styles.reasonText}>
-							{reason}
-						</Text>
-					))}
-
-					{/* 서명 */}
-					<Text style={styles.signature}>
-						— {t('features.match.ui.matching_reason_card.signature')} 🦊
-					</Text>
-				</View>
-			</View>
-
-			{/* 키워드 섹션 (항상 노출) */}
-			{keywords.length > 0 && (
+			{/* 키워드 섹션: 로딩 중에는 숨김 */}
+			{!isLoading && keywords.length > 0 && (
 				<View style={styles.kwSection}>
 					<Text style={styles.kwIcon}>🔍</Text>
 					{keywords.map((keyword, index) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: keywords are static per render
-						<View key={index} style={styles.kwTag}>
-							<Text style={styles.kwHash}>#</Text>
-							<Text style={styles.kwTagText}>{keyword}</Text>
-						</View>
+						<Badge key={index} variant="approved">
+							#{keyword}
+						</Badge>
 					))}
 				</View>
 			)}
@@ -69,91 +345,151 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: '#efefef',
 	},
-	topBar: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: 14,
-	},
-	sectionTitle: {
-		fontSize: 12,
-		fontWeight: '700',
-		color: '#7A4AE2',
-	},
-	stamp: {
-		width: 36,
-		height: 36,
-		borderWidth: 2,
-		borderColor: '#c4b3f0',
-		borderStyle: 'dashed',
-		borderRadius: 4,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	stampEmoji: {
-		fontSize: 18,
-	},
-	letterCard: {
-		backgroundColor: '#FEFEFE',
+	noteCard: {
+		backgroundColor: '#fff',
 		borderWidth: 1,
-		borderColor: '#ececec',
-		borderRadius: 12,
+		borderColor: '#e0e0e0',
+		borderRadius: 10,
 		overflow: 'hidden',
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.05,
+		shadowOpacity: 0.06,
 		shadowRadius: 4,
 		elevation: 1,
 	},
-	stripe: {
-		height: 4,
-		backgroundColor: '#7A4AE2',
+	noteInner: {
+		flexDirection: 'row',
 	},
-	letterContent: {
-		padding: 14,
+	spiralColumn: {
+		width: 24,
+		backgroundColor: '#f5f5f5',
+		borderRightWidth: 1,
+		borderRightColor: '#e0e0e0',
+		paddingVertical: 6,
+		gap: 9,
+		alignItems: 'center',
+	},
+	spiralHole: {
+		width: 10,
+		height: 10,
+		borderRadius: 5,
+		backgroundColor: '#ddd',
+		borderWidth: 1.5,
+		borderColor: '#ccc',
+	},
+	contentArea: {
+		flex: 1,
+		padding: 8,
+		paddingHorizontal: 10,
+		position: 'relative',
+	},
+	noteLine: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		height: 1,
+		backgroundColor: '#e8e8f0',
+	},
+	titleRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+		marginBottom: 4,
+	},
+	cardTitle: {
+		fontSize: 11,
+		fontWeight: '700',
+		color: '#7A4AE2',
+	},
+	writingBadge: {
+		backgroundColor: '#FFF0D6',
+		borderWidth: 1,
+		borderColor: '#F0C88A',
+		borderRadius: 999,
+		paddingHorizontal: 6,
+		paddingVertical: 1,
+	},
+	writingBadgeText: {
+		fontSize: 10,
+		fontWeight: '600',
+		color: '#B9945A',
+	},
+	typingArea: {
+		gap: 4,
+		minHeight: 80,
+	},
+	currentLine: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 4,
+	},
+	reasonsClip: {
+		overflow: 'hidden',
+		position: 'relative',
+	},
+	fadeOverlay: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		right: 0,
+		height: 52,
+	},
+	floatingBtnWrap: {
+		position: 'absolute',
+		bottom: 10,
+		left: 0,
+		right: 0,
+		alignItems: 'center',
+		zIndex: 10,
+	},
+	floatingBtn: {
+		backgroundColor: '#7A4AE2',
+		paddingHorizontal: 18,
+		paddingVertical: 8,
+		borderRadius: 999,
+		shadowColor: '#7A4AE2',
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.35,
+		shadowRadius: 8,
+		elevation: 6,
+	},
+	floatingBtnText: {
+		color: '#fff',
+		fontSize: 13,
+		fontWeight: '600',
+	},
+	reasonsContainer: {
+		gap: 12,
+	},
+	reasonBlock: {
+		gap: 4,
 	},
 	reasonText: {
-		fontSize: 14,
-		lineHeight: 26,
+		fontSize: 20,
+		lineHeight: 22,
 		color: '#2c2c2e',
-		fontStyle: 'italic',
+		fontFamily: 'Gaegu_400Regular',
 	},
-	signature: {
-		textAlign: 'right',
-		fontSize: 12,
-		color: '#b0b0b0',
-		fontStyle: 'italic',
-		marginTop: 10,
+	pageNumRow: {
+		backgroundColor: '#f5f5f5',
+		borderTopWidth: 1,
+		borderTopColor: '#e0e0e0',
+	},
+	pageNum: {
+		textAlign: 'center',
+		fontSize: 10,
+		color: '#ccc',
+		paddingVertical: 4,
 	},
 	kwSection: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		gap: 6,
-		marginTop: 12,
+		gap: 5,
+		marginTop: 10,
 		alignItems: 'center',
 	},
 	kwIcon: {
-		fontSize: 12,
-		color: '#8e8e93',
-	},
-	kwTag: {
-		flexDirection: 'row',
-		backgroundColor: '#fff',
-		borderWidth: 1,
-		borderColor: '#ddd',
-		borderRadius: 4,
-		paddingHorizontal: 10,
-		paddingVertical: 3,
-		alignItems: 'center',
-	},
-	kwHash: {
-		fontSize: 11.5,
-		fontWeight: '700',
-		color: '#7A4AE2',
-	},
-	kwTagText: {
-		fontSize: 11.5,
-		fontWeight: '500',
-		color: '#555',
+		fontSize: 11,
+		color: '#999',
 	},
 });
