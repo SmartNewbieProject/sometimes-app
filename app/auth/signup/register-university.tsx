@@ -1,4 +1,3 @@
-import { DefaultLayout } from '@/src/features/layout/ui';
 import { useSignupProgress } from '@/src/features/signup/hooks';
 import {
 	useCreateDepartmentMutation,
@@ -21,8 +20,6 @@ import {
 	ActivityIndicator,
 	FlatList,
 	Keyboard,
-	KeyboardAvoidingView,
-	Platform,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -169,7 +166,7 @@ export default function RegisterUniversityPage() {
 	};
 
 	return (
-		<DefaultLayout style={styles.layout}>
+		<View style={styles.layout}>
 			<PalePurpleGradient />
 			<Header
 				title={
@@ -181,10 +178,7 @@ export default function RegisterUniversityPage() {
 				showLogo={false}
 				onBackPress={handleBackPress}
 			/>
-			<KeyboardAvoidingView
-				style={styles.flex}
-				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-			>
+			<View style={styles.flex}>
 				<View style={styles.container}>
 					<View style={styles.stepIndicatorRow}>
 						<View style={[styles.stepDot, styles.stepDotActive]} />
@@ -397,14 +391,14 @@ export default function RegisterUniversityPage() {
 						</View>
 					)}
 				</View>
-			</KeyboardAvoidingView>
-		</DefaultLayout>
+			</View>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	layout: {
-		position: 'relative',
+		flex: 1,
 	},
 	flex: {
 		flex: 1,

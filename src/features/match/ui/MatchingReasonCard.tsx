@@ -1,150 +1,159 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
-import { Text } from "@/src/shared/ui";
-import { semanticColors } from "@/src/shared/constants/semantic-colors";
-import Feather from "@expo/vector-icons/Feather";
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
-    measure,
-    runOnUI,
-    useAnimatedRef,
-} from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { Text } from '@/src/shared/ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
 
 interface MatchingReasonCardProps {
-    reasons: string[];
-    keywords: string[];
+	reasons: string[];
+	keywords: string[];
 }
 
-export const MatchingReasonCard = ({
-    reasons,
-    keywords,
-}: MatchingReasonCardProps) => {
-    const { t } = useTranslation();
-    const [isExpanded, setIsExpanded] = useState(false);
-    const height = useSharedValue(0);
+export const MatchingReasonCard = ({ reasons, keywords }: MatchingReasonCardProps) => {
+	const { t } = useTranslation();
 
-    const toggleExpand = () => {
-        setIsExpanded(!isExpanded);
-        // Simple toggle for now, can be animated better with layout transitions or measured height
-    };
+	return (
+		<View style={styles.container}>
+			{/* 상단 바: 타이틀 + 우표 아이콘 */}
+			<View style={styles.topBar}>
+				<Text style={styles.sectionTitle}>
+					✨ {t('features.match.ui.matching_reason_placeholder.title')}
+				</Text>
+				<View style={styles.stamp}>
+					<Text style={styles.stampEmoji}>💌</Text>
+				</View>
+			</View>
 
-    return (
-        <View style={styles.container}>
-            {/* Main Reason */}
-            <View style={styles.reasonContainer}>
-                {reasons.map((reason, index) => (
-                    <Text key={index} style={styles.reasonText} textColor="primary">
-                        {reason}
-                    </Text>
-                ))}
-            </View>
+			{/* 편지 카드 */}
+			<View style={styles.letterCard}>
+				{/* 보라 스트라이프 */}
+				<View style={styles.stripe} />
 
-            {/* Divider */}
-            <View style={styles.divider} />
+				{/* 편지 본문 */}
+				<View style={styles.letterContent}>
+					{reasons.map((reason, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: reasons are static per render
+						<Text key={index} style={styles.reasonText}>
+							{reason}
+						</Text>
+					))}
 
-            {/* Analysis Basis Header */}
-            <Pressable onPress={toggleExpand} style={styles.basisHeader}>
-                <Text style={styles.basisTitle} textColor="secondary">
-                    {t("features.match.ui.matching_reason_card.analysis_keywords")}
-                </Text>
-                <View style={styles.expandButton}>
-                    <Text style={styles.expandText} textColor="secondary">
-                        {isExpanded ? t("features.match.ui.matching_reason_card.collapse") : t("features.match.ui.matching_reason_card.expand")}
-                    </Text>
-                    <Feather
-                        name={isExpanded ? "chevron-up" : "chevron-down"}
-                        size={16}
-                        color={semanticColors.text.secondary}
-                    />
-                </View>
-            </Pressable>
+					{/* 서명 */}
+					<Text style={styles.signature}>
+						— {t('features.match.ui.matching_reason_card.signature')} 🦊
+					</Text>
+				</View>
+			</View>
 
-            {/* Keywords (Collapsible) */}
-            {isExpanded && (
-                <View style={styles.keywordsContainer}>
-                    {keywords.map((keyword, index) => (
-                        <View key={index} style={styles.keywordTag}>
-                            <Text style={styles.keywordText} textColor="secondary">
-                                #{keyword}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-            )}
-        </View>
-    );
+			{/* 키워드 섹션 (항상 노출) */}
+			{keywords.length > 0 && (
+				<View style={styles.kwSection}>
+					<Text style={styles.kwIcon}>🔍</Text>
+					{keywords.map((keyword, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: keywords are static per render
+						<View key={index} style={styles.kwTag}>
+							<Text style={styles.kwHash}>#</Text>
+							<Text style={styles.kwTagText}>{keyword}</Text>
+						</View>
+					))}
+				</View>
+			)}
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: semanticColors.surface.surface,
-        borderRadius: 16,
-        padding: 20,
-        marginHorizontal: 20,
-        marginBottom: 24,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    header: {
-        marginBottom: 12,
-    },
-    headerTitle: {
-        fontSize: 14,
-        fontWeight: "600",
-    },
-    reasonContainer: {
-        marginBottom: 16,
-    },
-    reasonText: {
-        fontSize: 18,
-        fontWeight: "400",
-        lineHeight: 26,
-        marginBottom: 12,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: semanticColors.border.default,
-        marginBottom: 16,
-    },
-    basisHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 12,
-    },
-    basisTitle: {
-        fontSize: 14,
-        fontWeight: "600",
-    },
-    expandButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-    },
-    expandText: {
-        fontSize: 12,
-    },
-    keywordsContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 8,
-        marginTop: 12,
-    },
-    keywordTag: {
-        backgroundColor: semanticColors.surface.background,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: semanticColors.border.default,
-    },
-    keywordText: {
-        fontSize: 13,
-    },
+	container: {
+		backgroundColor: '#fff',
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		borderBottomWidth: 1,
+		borderBottomColor: '#efefef',
+	},
+	topBar: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginBottom: 14,
+	},
+	sectionTitle: {
+		fontSize: 12,
+		fontWeight: '700',
+		color: '#7A4AE2',
+	},
+	stamp: {
+		width: 36,
+		height: 36,
+		borderWidth: 2,
+		borderColor: '#c4b3f0',
+		borderStyle: 'dashed',
+		borderRadius: 4,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	stampEmoji: {
+		fontSize: 18,
+	},
+	letterCard: {
+		backgroundColor: '#FEFEFE',
+		borderWidth: 1,
+		borderColor: '#ececec',
+		borderRadius: 12,
+		overflow: 'hidden',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.05,
+		shadowRadius: 4,
+		elevation: 1,
+	},
+	stripe: {
+		height: 4,
+		backgroundColor: '#7A4AE2',
+	},
+	letterContent: {
+		padding: 14,
+	},
+	reasonText: {
+		fontSize: 14,
+		lineHeight: 26,
+		color: '#2c2c2e',
+		fontStyle: 'italic',
+	},
+	signature: {
+		textAlign: 'right',
+		fontSize: 12,
+		color: '#b0b0b0',
+		fontStyle: 'italic',
+		marginTop: 10,
+	},
+	kwSection: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		gap: 6,
+		marginTop: 12,
+		alignItems: 'center',
+	},
+	kwIcon: {
+		fontSize: 12,
+		color: '#8e8e93',
+	},
+	kwTag: {
+		flexDirection: 'row',
+		backgroundColor: '#fff',
+		borderWidth: 1,
+		borderColor: '#ddd',
+		borderRadius: 4,
+		paddingHorizontal: 10,
+		paddingVertical: 3,
+		alignItems: 'center',
+	},
+	kwHash: {
+		fontSize: 11.5,
+		fontWeight: '700',
+		color: '#7A4AE2',
+	},
+	kwTagText: {
+		fontSize: 11.5,
+		fontWeight: '500',
+		color: '#555',
+	},
 });

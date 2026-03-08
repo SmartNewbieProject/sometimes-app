@@ -126,6 +126,54 @@ class QueryCacheManager {
 			}),
 		);
 
+		this.addSubscription(
+			chatEventBus.on('SOCKET_CONNECTED').subscribe(() => {
+				// 재연결 후 ghost connection 중 stuck된 이미지 메시지를 failed로 전환
+				const chatListQueries = this.queryClient
+					?.getQueryCache()
+					.findAll({ queryKey: ['chat-list'] });
+				// biome-ignore lint/complexity/noForEach: 기존 패턴 유지
+				chatListQueries?.forEach((query) => {
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+					const data = query.state.data as any;
+					if (!data?.pages) return;
+					let hasStuck = false;
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+					for (const p of data.pages as any[]) {
+						for (const m of (p.messages ?? []) as Chat[]) {
+							if (m.optimistic && m.messageType === 'image' && !m.mediaUrl) {
+								hasStuck = true;
+								break;
+							}
+						}
+						if (hasStuck) break;
+					}
+					if (!hasStuck) return;
+
+					const chatRoomId = query.queryKey[1] as string;
+					this.queryClient?.setQueryData(
+						['chat-list', chatRoomId],
+						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+						(old: any) => {
+							if (!old) return old;
+							return {
+								...old,
+								// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+								pages: old.pages.map((p: any) => ({
+									...p,
+									messages: p.messages.map((m: Chat) =>
+										m.optimistic && m.messageType === 'image' && !m.mediaUrl
+											? { ...m, sendingStatus: 'failed' as const, uploadStatus: 'failed' as const }
+											: m,
+									),
+								})),
+							};
+						},
+					);
+				});
+			}),
+		);
+
 		devLogWithTag('Chat Cache', 'QueryCacheManager initialized');
 	}
 

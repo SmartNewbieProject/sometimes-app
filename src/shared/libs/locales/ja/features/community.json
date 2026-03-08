@@ -193,7 +193,17 @@
 		},
 		"article_list_screen": {
 			"title": "SOMETIMEストーリー",
-			"subtitle": "SOMETIMEがお届けするストーリーをチェックしてみてください"
+			"subtitle": "SOMETIMEがお届けするストーリーをチェックしてみてください",
+			"empty": "まだ投稿がありません",
+			"date_format": "M月D日",
+			"category_labels": {
+				"story": "ストーリー",
+				"interview": "インタビュー",
+				"tips": "デートのヒント",
+				"team": "チーム紹介",
+				"update": "アップデート",
+				"safety": "安全"
+			}
 		},
 		"delete_error": "投稿の削除に失敗しました。しばらくしてからもう一度お試しください。",
 		"새_글_작성": "[JA] 새 글 작성",

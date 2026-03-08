@@ -118,11 +118,15 @@ export const useExternalMatching = () => {
 
 			// 쿼리 갱신
 			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: ["latest-matching-v31"] }),
 				queryClient.invalidateQueries({ queryKey: ["latest-matching-v2"] }),
 				queryClient.invalidateQueries({ queryKey: ["gem", "current"] }),
 				queryClient.invalidateQueries({ queryKey: ["matching-first"] }),
 			]);
-			await queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] });
+			await Promise.all([
+				queryClient.refetchQueries({ queryKey: ["latest-matching-v31"] }),
+				queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] }),
+			]);
 
 			devLogWithTag('외부 매칭', '완료');
 

@@ -1,38 +1,39 @@
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import useLiked from '@/src/features/like/hooks/use-liked';
 import { LikeButton } from '@/src/features/like/ui/like-button';
+import MatchReasons from '@/src/features/match-reasons';
+import MatchingAnalysis from '@/src/features/match-reasons/ui/matching-analysis';
+import {
+	MatchingReasonCard,
+	MatchingReasonPlaceholder,
+	MihoIntroModal,
+	PartnerBasicInfo,
+	PartnerIdealType,
+	PartnerMBTI,
+} from '@/src/features/match/ui';
 import {
 	ILikedRejectedButton,
 	InChatButton,
 	LikedMeOpenButton,
 } from '@/src/features/post-box/ui/post-box-card';
-import PhotoSlider from '@/src/widgets/slide/photo-slider';
-import Loading from '@features/loading';
-import Match, { MatchContext, MihoMessage } from '@features/match';
-import MatchReasons from '@/src/features/match-reasons';
-import MatchingAnalysis from '@/src/features/match-reasons/ui/matching-analysis';
-import {
-	MihoIntroModal,
-	PartnerBasicInfo,
-	PartnerMBTI,
-	PartnerIdealType,
-	MatchingReasonCard,
-} from '@/src/features/match/ui';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
-import { BlurredPhotoCard } from '@/src/widgets/blurred-photo-card';
 import { cn, formatLastLogin, getSmartUnivLogoUrl, parser } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { BlurredPhotoCard } from '@/src/widgets/blurred-photo-card';
+import PhotoSlider from '@/src/widgets/slide/photo-slider';
 import Feather from '@expo/vector-icons/Feather';
-import { Button, Show, Text, HeaderWithNotification } from '@shared/ui';
+import Loading from '@features/loading';
+import Match, { type MatchContext, type MihoMessage } from '@features/match';
+import { Button, HeaderWithNotification, Show, Text } from '@shared/ui';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, ScrollView, StyleSheet, View, Text as RNText } from 'react-native';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { Platform, Pressable, Text as RNText, ScrollView, StyleSheet, View } from 'react-native';
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
@@ -176,8 +177,8 @@ export default function PartnerDetailScreen() {
 		partner.characteristics,
 	);
 
-	const personal = characteristicsOptions['PERSONALITY'];
-	const loveStyles = characteristicsOptions['DATING_STYLE'];
+	const personal = characteristicsOptions.PERSONALITY;
+	const loveStyles = characteristicsOptions.DATING_STYLE;
 
 	const mainProfileImageUrl =
 		partner.profileImages.find((img) => img.isMain)?.imageUrl ||
@@ -428,27 +429,14 @@ export default function PartnerDetailScreen() {
 
 						<PartnerIdealType partner={partner} />
 
-						<Text
-							style={{
-								color: semanticColors.text.primary,
-								fontSize: 22,
-								fontWeight: 'bold',
-								paddingHorizontal: 20,
-								marginBottom: 4,
-							}}
-						>
-							{t('apps.partner.view.matching_reason_title')}
-						</Text>
-
-						{matchReasonsData?.reasons &&
-							matchReasonsData.reasons.length > 0 &&
+						{!matchReasonsData || matchReasonsData.status === 'generating' ? (
+							<MatchingReasonPlaceholder />
+						) : matchReasonsData.status === 'ready' && matchReasonsData.reasons.length > 0 ? (
 							(() => {
-								// Helper: characteristics를 번역
 								const translateCharacteristics = (
 									categoryKey: string,
 									fallbackKey: string,
 								): string[] => {
-									// 영어 키 우선, 없으면 한글 키 fallback
 									const items =
 										parser.getMultipleCharacteristicsOptions(
 											[categoryKey],
@@ -460,8 +448,8 @@ export default function PartnerDetailScreen() {
 										)[fallbackKey];
 
 									return (
+										// biome-ignore lint/suspicious/noExplicitAny: characteristic item type from API
 										items?.map((c: any) => {
-											// 서버에서 key 제공하면 i18n 사용, 아니면 label 그대로
 											if (c.key) {
 												return t(`apps.partner.characteristics.${c.key.toLowerCase()}`);
 											}
@@ -480,7 +468,8 @@ export default function PartnerDetailScreen() {
 										]}
 									/>
 								);
-							})()}
+							})()
+						) : null}
 
 						{validProfileImages.length > 2 && (
 							<View

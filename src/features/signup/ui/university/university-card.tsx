@@ -3,20 +3,16 @@ import React, { useRef, useState } from 'react';
 import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { UniversityCard as UniversityCardProps } from '../../queries/use-universities';
 
-const FOUNDATION_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-	NATIONAL: { label: '국립', bg: '#E8F4FD', text: '#1A6FA8' },
-	PUBLIC: { label: '공립', bg: '#E8F4FD', text: '#1A6FA8' },
-	PRIVATE: { label: '사립', bg: '#FFF0E6', text: '#C05A00' },
-};
-
 function UniversityCard({
-	item: { name, area, logoUrl, universityType },
+	item: { name, area, logoUrl },
 	onClick,
 	isSelected,
+	compact = false,
 }: {
 	item: UniversityCardProps;
 	onClick: () => void;
 	isSelected: boolean;
+	compact?: boolean;
 }) {
 	const [logoError, setLogoError] = useState(false);
 	const [isPressed, setIsPressed] = useState(false);
@@ -40,6 +36,7 @@ function UniversityCard({
 	};
 
 	const backgroundColor = isSelected || isPressed ? '#E6DBFF' : '#FFFFFF';
+	const avatarSize = compact ? 24 : 32;
 
 	return (
 		<Pressable
@@ -51,6 +48,7 @@ function UniversityCard({
 			<Animated.View
 				style={[
 					styles.container,
+					compact && styles.containerCompact,
 					{
 						backgroundColor,
 						borderColor: isSelected ? semanticColors.brand.primary : semanticColors.border.default,
@@ -58,35 +56,34 @@ function UniversityCard({
 					},
 				]}
 			>
-				<View style={styles.avatar}>
+				<View
+					style={[
+						styles.avatar,
+						{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 },
+					]}
+				>
 					{logoUrl && !logoError ? (
 						<Image
 							source={{ uri: logoUrl }}
-							style={styles.logoImage}
+							style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
 							onError={() => setLogoError(true)}
 						/>
 					) : (
-						<Text style={styles.initialText}>{name?.charAt(0) ?? '?'}</Text>
+						<Text style={[styles.initialText, compact && styles.initialTextCompact]}>
+							{name?.charAt(0) ?? '?'}
+						</Text>
 					)}
 				</View>
 				<View style={styles.nameRow}>
-					<Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+					<Text
+						numberOfLines={1}
+						ellipsizeMode="tail"
+						style={[styles.title, compact && styles.titleCompact]}
+					>
 						{name}
 					</Text>
-					{universityType && FOUNDATION_BADGE[universityType] && (
-						<View
-							style={[
-								styles.badge,
-								{ backgroundColor: FOUNDATION_BADGE[universityType].bg },
-							]}
-						>
-							<Text style={[styles.badgeText, { color: FOUNDATION_BADGE[universityType].text }]}>
-								{FOUNDATION_BADGE[universityType].label}
-							</Text>
-						</View>
-					)}
 				</View>
-				<Text style={styles.area}>{area}</Text>
+				<Text style={[styles.area, compact && styles.areaCompact]}>{area}</Text>
 				{isSelected && <View style={styles.dot} />}
 			</Animated.View>
 		</Pressable>
@@ -106,26 +103,27 @@ const styles = StyleSheet.create({
 		marginBottom: 4,
 		alignItems: 'center',
 	},
+	containerCompact: {
+		paddingVertical: 6,
+		paddingHorizontal: 8,
+		gap: 6,
+		marginBottom: 2,
+	},
 	avatar: {
-		width: 32,
-		height: 32,
-		borderRadius: 16,
 		backgroundColor: '#EDE5FF',
 		alignItems: 'center',
 		justifyContent: 'center',
 		flexShrink: 0,
 		overflow: 'hidden',
 	},
-	logoImage: {
-		width: 32,
-		height: 32,
-		borderRadius: 16,
-	},
 	initialText: {
 		fontSize: 10,
 		fontWeight: '700',
 		fontFamily: 'Pretendard-Bold',
 		color: semanticColors.brand.primary,
+	},
+	initialTextCompact: {
+		fontSize: 8,
 	},
 	nameRow: {
 		flex: 1,
@@ -141,16 +139,8 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 		fontFamily: 'Pretendard-SemiBold',
 	},
-	badge: {
-		paddingHorizontal: 4,
-		paddingVertical: 1,
-		borderRadius: 3,
-		flexShrink: 0,
-	},
-	badgeText: {
-		fontSize: 9,
-		fontWeight: '600',
-		fontFamily: 'Pretendard-SemiBold',
+	titleCompact: {
+		fontSize: 13,
 	},
 	area: {
 		fontSize: 12,
@@ -158,6 +148,9 @@ const styles = StyleSheet.create({
 		fontFamily: 'Pretendard-Regular',
 		fontWeight: '400',
 		flexShrink: 0,
+	},
+	areaCompact: {
+		fontSize: 11,
 	},
 	dot: {
 		width: 6,

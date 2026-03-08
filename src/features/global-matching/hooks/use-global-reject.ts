@@ -1,4 +1,5 @@
 import { queryClient } from '@/src/shared/config/query';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useMutation } from '@tanstack/react-query';
@@ -8,6 +9,7 @@ import { globalReject } from '../apis';
 export function useGlobalReject() {
 	const { showErrorModal } = useModal();
 	const { t } = useTranslation();
+	const { withLoading } = useGlobalLoading();
 
 	const mutation = useMutation({
 		mutationFn: (connectionId: string) => globalReject(connectionId),
@@ -23,8 +25,11 @@ export function useGlobalReject() {
 		},
 	});
 
+	const onGlobalReject = (connectionId: string) =>
+		withLoading(() => mutation.mutateAsync(connectionId));
+
 	return {
-		onGlobalReject: mutation.mutateAsync,
+		onGlobalReject,
 		isRejectPending: mutation.isPending,
 	};
 }

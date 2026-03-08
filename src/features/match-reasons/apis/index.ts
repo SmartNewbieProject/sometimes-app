@@ -6,9 +6,17 @@ export interface MatchReason {
   category?: string;
 }
 
-export interface MatchReasonsResponse {
-  reasons: MatchReason[];
-}
+export type MatchReasonsResponse =
+  | {
+      status: 'ready';
+      reasons: MatchReason[];
+      narrative: string;
+    }
+  | {
+      status: 'generating';
+      reasons?: never;
+      narrative?: never;
+    };
 
 export const getMatchReasons = async (
   connectionId: string

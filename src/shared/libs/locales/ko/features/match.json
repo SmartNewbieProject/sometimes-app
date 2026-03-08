@@ -6,16 +6,21 @@
 		"matching_reason_card": {
 			"analysis_keywords": "분석 키워드",
 			"collapse": "접기",
-			"expand": "더보기"
+			"expand": "더보기",
+			"signature": "미호가 썼어요"
 		},
 		"matching_reason_placeholder": {
 			"title": "이 분과 매칭된 이유",
 			"description": "상대방은 이곳에서\n당신과 매칭된 이유를 확인해요",
 			"example_reason": "비슷한 관심사와 가치관을 가지고 있어요",
-			"hint": "미호가 분석한 매칭 이유가 표시돼요"
+			"hint": "미호가 매칭 이유를 작성 중이에요",
+			"typing_line_1": "소중한 인연을 분석하고 있어요",
+			"typing_line_2": "두 분의 공통점을 찾는 중...",
+			"typing_line_3": "설레는 이유를 작성하고 있어요 ✨"
 		},
 		"partner_info_block": {
 			"basic_info_title": "기본 정보",
+			"ideal_type_title": "이상형",
 			"no_info": "정보 없음",
 			"doesnt_matter": "상관없음",
 			"tattoo_prefix": "문신 : ",

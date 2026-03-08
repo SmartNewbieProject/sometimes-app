@@ -25,7 +25,7 @@ export const GemStoreLayout = ({
 	title,
 }: GemStoreLayoutProps) => {
 	const insets = useSafeAreaInsets();
-	const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
+	const { showIndicator, handleScroll, scrollViewRef, handleIndicatorPress } = useScrollIndicator();
 
 	return (
 		<View style={[styles.container, { paddingTop: insets.top }]}>
@@ -60,7 +60,7 @@ export const GemStoreLayout = ({
 					</View>
 				</View>
 			</ScrollView>
-			<ScrollDownIndicator visible={showIndicator} />
+			<ScrollDownIndicator visible={showIndicator} onPress={handleIndicatorPress} />
 
 			<Show when={!!isLoading}>
 				<View style={styles.loadingOverlay}>

@@ -98,11 +98,12 @@ function UniversityCluster() {
 					</View>
 						<FlashList
 							data={sortedData}
-							estimatedItemSize={56}
+							estimatedItemSize={40}
 							renderItem={({ item }) => (
 								<UniversityCard
 									onClick={() => {}}
 									isSelected={false}
+									compact
 									item={{
 										...item,
 										area: item.region,

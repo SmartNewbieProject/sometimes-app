@@ -202,6 +202,18 @@ class SocketConnectionManager {
 			return;
 		}
 
+		// Ghost connection 감지: connected: true이지만 pong이 stale → forceReconnect
+		const timeSinceLastPong = Date.now() - this.lastPongReceived;
+		if (this.socket.connected && timeSinceLastPong > this.STALE_CONNECTION_THRESHOLD) {
+			devLogWithTag(
+				'Socket',
+				`Ghost connection detected (${timeSinceLastPong}ms stale), forcing reconnect...`,
+			);
+			this.stopHealthCheck();
+			this.forceReconnect();
+			return;
+		}
+
 		// Socket.IO 내장 재연결에 위임
 		// reconnection: true 설정으로 Socket.IO가 자동으로 재시도함
 		devLogWithTag('Socket', 'Delegating reconnection to Socket.IO...');

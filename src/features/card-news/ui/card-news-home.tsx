@@ -20,10 +20,12 @@ import { useCardNewsAnalytics } from "../hooks";
 import { useCardNewsHighlights, useCardNewsInfiniteList } from "../queries";
 import type { CardNewsHighlight, CardNewsListItem } from "../types";
 import { useTranslation } from "react-i18next";
+import { useCategory, SOMETIME_STORY_CODE } from "@/src/features/community/hooks";
 
 export function CardNewsHome() {
   const { t } = useTranslation();
   const analytics = useCardNewsAnalytics();
+  const { changeCategory } = useCategory();
   const { data: highlights } = useCardNewsHighlights();
   const { items: listItems } = useCardNewsInfiniteList(10);
   const hasTrackedSectionViewRef = useRef(false);
@@ -76,13 +78,13 @@ export function CardNewsHome() {
       {/* 썸타임 이야기 링크 */}
       <TouchableOpacity
         style={styles.storyLink}
-        onPress={() => router.push('/article')}
+        onPress={() => changeCategory(SOMETIME_STORY_CODE)}
         activeOpacity={0.8}
       >
         <Text style={styles.storyLinkEmoji}>📖</Text>
         <View style={styles.storyLinkContent}>
-          <Text style={styles.storyLinkTitle}>썸타임 이야기</Text>
-          <Text style={styles.storyLinkDescription}>썸타임이 들려주는 이야기를 만나보세요</Text>
+          <Text style={styles.storyLinkTitle}>{t("features.community.ui.article_list_screen.title")}</Text>
+          <Text style={styles.storyLinkDescription}>{t("features.community.ui.article_list_screen.subtitle")}</Text>
         </View>
         <View style={styles.mlAuto}>
           <IconWrapper>

@@ -2,6 +2,7 @@ import { useArticles } from '@/src/features/article/queries';
 import type { ArticleCategory, ArticleListItem } from '@/src/features/article/types';
 import colors from '@/src/shared/constants/colors';
 import type React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SometimeArticleCard } from './sometime-article-card';
 
@@ -16,6 +17,7 @@ export const SometimeArticleList = ({
 	ListHeaderComponent,
 	embedded,
 }: SometimeArticleListProps) => {
+	const { t } = useTranslation();
 	const { articles, isLoading, isLoadingMore, hasNextPage, loadMore, refresh } = useArticles({
 		category,
 	});
@@ -43,7 +45,7 @@ export const SometimeArticleList = ({
 		if (isLoading) return null;
 		return (
 			<View style={styles.empty}>
-				<Text style={styles.emptyText}>아직 등록된 글이 없어요</Text>
+				<Text style={styles.emptyText}>{t('features.community.ui.article_list_screen.empty')}</Text>
 			</View>
 		);
 	};
