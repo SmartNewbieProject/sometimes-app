@@ -7,8 +7,10 @@ import type { Preferences } from '@/src/features/my-info/api';
 import { savePreferences } from '@/src/features/my-info/services';
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { ImageResources, tryCatch } from '@/src/shared/libs';
 import { PalePurpleGradient, StepSlider, Text } from '@/src/shared/ui';
+import Tooltip from '@/src/shared/ui/tooltip';
 
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -37,6 +39,8 @@ export default function MilitarySelectionScreen() {
 	const index = preferences?.options.findIndex((item) => item.id === militaryStatus?.id);
 
 	const currentIndex = index !== undefined && index !== -1 ? index : 0;
+	const tooltips = usePreferenceTooltips('apps.my-info.military', preferences?.options.length ?? 0);
+
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!militaryStatus && preferences.options[currentIndex]) {
@@ -198,6 +202,12 @@ export default function MilitarySelectionScreen() {
 						/>
 					</Loading.Lottie>
 				</View>
+				<View style={styles.tooltipContainer}>
+					<Tooltip
+						title={tooltips[currentIndex]?.title ?? ''}
+						description={tooltips[currentIndex]?.description ?? []}
+					/>
+				</View>
 			</View>
 
 			<Layout.TwoButtons
@@ -216,6 +226,12 @@ const styles = StyleSheet.create({
 	},
 	contentContainer: {
 		flex: 1,
+		position: 'relative',
+	},
+	tooltipContainer: {
+		position: 'absolute',
+		paddingHorizontal: 32,
+		bottom: 42,
 	},
 	ageContainer: {
 		flex: 1,

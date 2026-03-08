@@ -2,10 +2,8 @@ import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import useLiked from '@/src/features/like/hooks/use-liked';
 import { LikeButton } from '@/src/features/like/ui/like-button';
 import MatchReasons from '@/src/features/match-reasons';
-import MatchingAnalysis from '@/src/features/match-reasons/ui/matching-analysis';
 import {
 	MatchingReasonCard,
-	MatchingReasonPlaceholder,
 	MihoIntroModal,
 	PartnerBasicInfo,
 	PartnerIdealType,
@@ -18,7 +16,6 @@ import {
 } from '@/src/features/post-box/ui/post-box-card';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { cn, formatLastLogin, getSmartUnivLogoUrl, parser } from '@/src/shared/libs';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { BlurredPhotoCard } from '@/src/widgets/blurred-photo-card';
@@ -54,26 +51,11 @@ export default function PartnerDetailScreen() {
 	const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
 	const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
 	const { profileDetails } = useAuth();
-	const { disableGlobalLoading, enableGlobalLoading } = useGlobalLoading();
-	const [isZoomVisible, setZoomVisible] = useState(false);
+const [isZoomVisible, setZoomVisible] = useState(false);
 	const { isStatus, isLiked, isExpired } = useLiked();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [showMihoIntro, setShowMihoIntro] = useState(false);
-	const [isAnalyzing, setIsAnalyzing] = useState(true);
 	const hasTrackedView = useRef(false);
-
-	// 온보딩 로딩 중에는 전역 로딩 오버레이 비활성화
-	useEffect(() => {
-		if (isAnalyzing) {
-			disableGlobalLoading();
-		} else {
-			enableGlobalLoading();
-		}
-
-		return () => {
-			enableGlobalLoading();
-		};
-	}, [isAnalyzing, disableGlobalLoading, enableGlobalLoading]);
 
 	// 내 승인된 사진 개수 계산
 	const myApprovedPhotosCount =
@@ -102,43 +84,21 @@ export default function PartnerDetailScreen() {
 	useEffect(() => {
 		if (!partner) return;
 
-		// 재방문 (isFirstView: false) - 애니메이션/모달 스킵
-		if (partner.isFirstView === false) {
-			setIsAnalyzing(false);
-			setShowMihoIntro(false);
-
-			// Mixpanel 트래킹만 실행
-			if (!hasTrackedView.current) {
-				hasTrackedView.current = true;
-				mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWED, {
-					viewed_profile_id: partner.id,
-					view_source: 'matching_history',
-					partner_age: partner.age,
-					partner_university: partner.universityDetails?.name,
-					timestamp: new Date().toISOString(),
-				});
-			}
-			return;
+		if (!hasTrackedView.current) {
+			hasTrackedView.current = true;
+			mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWED, {
+				viewed_profile_id: partner.id,
+				view_source: 'matching_history',
+				partner_age: partner.age,
+				partner_university: partner.universityDetails?.name,
+				timestamp: new Date().toISOString(),
+			});
 		}
 
-		// 최초 방문 (isFirstView: true 또는 undefined) - 애니메이션 + 모달 표시
-		const timer = setTimeout(() => {
-			setIsAnalyzing(false);
+		// 최초 방문에만 미호 인트로 모달 표시
+		if (partner.isFirstView !== false) {
 			setShowMihoIntro(true);
-
-			if (!hasTrackedView.current) {
-				hasTrackedView.current = true;
-				mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWED, {
-					viewed_profile_id: partner.id,
-					view_source: 'matching_history',
-					partner_age: partner.age,
-					partner_university: partner.universityDetails?.name,
-					timestamp: new Date().toISOString(),
-				});
-			}
-		}, 4000);
-
-		return () => clearTimeout(timer);
+		}
 	}, [partner]);
 
 	const onZoomClose = () => {
@@ -314,12 +274,7 @@ export default function PartnerDetailScreen() {
 				}
 			/>
 
-			{isAnalyzing ? (
-				<View style={styles.analyzingContainer}>
-					<MatchingAnalysis imageUrl={mainProfileImageUrl} />
-				</View>
-			) : (
-				<>
+			<>
 					<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 						{validProfileImages.length > 0 && (
 							<View
@@ -430,7 +385,7 @@ export default function PartnerDetailScreen() {
 						<PartnerIdealType partner={partner} />
 
 						{!matchReasonsData || matchReasonsData.status === 'generating' ? (
-							<MatchingReasonPlaceholder />
+							<MatchingReasonCard reasons={[]} keywords={[]} isLoading />
 						) : matchReasonsData.status === 'ready' && matchReasonsData.reasons.length > 0 ? (
 							(() => {
 								const translateCharacteristics = (
@@ -563,7 +518,6 @@ export default function PartnerDetailScreen() {
 					{/* Bottom Action Bar */}
 					{renderBottomButtons()}
 				</>
-			)}
 		</View>
 	);
 }
@@ -572,11 +526,6 @@ const styles = StyleSheet.create({
 	mainContainer: {
 		flex: 1,
 		backgroundColor: semanticColors.surface.background,
-	},
-	analyzingContainer: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
 	},
 	scrollView: {
 		flex: 1,
