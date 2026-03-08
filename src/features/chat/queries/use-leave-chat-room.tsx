@@ -1,3 +1,4 @@
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { Text } from '@/src/shared/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,8 +14,15 @@ function useLeaveChatRoom() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { showErrorModal, showModal, hideModal } = useModal();
+	const { showLoading, hideLoading } = useGlobalLoading();
 	return useMutation({
 		mutationFn: leaveChatRoom,
+		onMutate: () => {
+			showLoading();
+		},
+		onSettled: () => {
+			hideLoading();
+		},
 		onSuccess: (_, variables) => {
 			removeChatRoomFromCache(queryClient, variables.chatRoomId);
 			showModal({

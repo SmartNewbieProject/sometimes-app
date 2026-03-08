@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   ReduceMotion,
@@ -12,9 +12,10 @@ import colors from '@/src/shared/constants/colors';
 
 interface ScrollDownIndicatorProps {
   visible: boolean;
+  onPress?: () => void;
 }
 
-export const ScrollDownIndicator = ({ visible }: ScrollDownIndicatorProps) => {
+export const ScrollDownIndicator = ({ visible, onPress }: ScrollDownIndicatorProps) => {
   const translateYAnim = useSharedValue(0);
   const opacityAnim = useSharedValue(visible ? 1 : 0);
 
@@ -45,12 +46,10 @@ export const ScrollDownIndicator = ({ visible }: ScrollDownIndicatorProps) => {
   });
 
   return (
-    <Animated.View style={[styles.container, animatedStyle]} pointerEvents="none">
-      <View style={styles.arrow}>
-        <View style={styles.arrowLine} />
-        <View style={[styles.arrowHead, styles.arrowHeadLeft]} />
-        <View style={[styles.arrowHead, styles.arrowHeadRight]} />
-      </View>
+    <Animated.View style={[styles.container, animatedStyle]}>
+      <Pressable onPress={onPress} style={styles.pressable}>
+        <View style={styles.chevron} />
+      </Pressable>
     </Animated.View>
   );
 };
@@ -76,31 +75,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  arrow: {
-    width: 12,
-    height: 12,
+  pressable: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arrowLine: {
-    width: 2,
-    height: 8,
-    backgroundColor: colors.primaryPurple,
-    marginBottom: 2,
-  },
-  arrowHead: {
-    position: 'absolute',
-    bottom: 0,
-    width: 6,
-    height: 2,
-    backgroundColor: colors.primaryPurple,
-  },
-  arrowHeadLeft: {
-    left: 3,
+  chevron: {
+    width: 9,
+    height: 9,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
+    borderColor: colors.primaryPurple,
     transform: [{ rotate: '45deg' }],
-  },
-  arrowHeadRight: {
-    right: 3,
-    transform: [{ rotate: '-45deg' }],
+    marginTop: -4,
   },
 });

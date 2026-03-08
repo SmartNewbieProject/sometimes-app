@@ -15,7 +15,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -26,6 +26,7 @@ interface ArticleHeaderProps {
   isOwner: boolean;
   dropdownOpen: boolean;
   dropdownItems: DropdownItem[];
+  onOpenChange: (open: boolean) => void;
   t: (key: string) => string;
 }
 
@@ -33,13 +34,14 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   isOwner,
   dropdownOpen,
   dropdownItems,
+  onOpenChange,
   t,
 }) => (
   <HeaderWithNotification
     centerContent={<Text weight="bold">커뮤니티</Text>}
     rightContent={
       <Show when={isOwner}>
-        <Dropdown open={dropdownOpen} items={dropdownItems} />
+        <Dropdown open={dropdownOpen} items={dropdownItems} onOpenChange={onOpenChange} />
       </Show>
     }
   />
@@ -52,8 +54,7 @@ export default function ArticleDetailScreen() {
   const { article, isLoading, error } = useArticleDetail(id);
   const {
     value: isDropdownOpen,
-    toggle: toggleDropdown,
-    setFalse: closeDropdown,
+    setValue: setDropdownOpen,
   } = useBoolean();
   const { my } = useAuth();
   const { showModal } = useModal();
@@ -173,6 +174,7 @@ export default function ArticleDetailScreen() {
         isOwner={isOwner}
         dropdownOpen={isDropdownOpen}
         dropdownItems={dropdownItems}
+        onOpenChange={setDropdownOpen}
         t={t}
       />
 

@@ -15,6 +15,8 @@ import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+const SECTION_TITLE_COLOR = '#7A4AE2';
+
 interface PartnerInfoBlockProps {
 	partner: UserProfile;
 }
@@ -60,26 +62,16 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Text textColor="muted" style={styles.title}>
+		<View style={styles.sectionDivider}>
+			<Text style={styles.sectionTitle}>
 				{t('features.match.ui.partner_info_block.basic_info_title')}
 			</Text>
-			<View style={[styles.infoCard, { backgroundColor: semanticColors.surface.surface }]}>
+			<View style={styles.chipsRow}>
 				{basicInfoItems.map((info) => (
-					<View key={info.label} style={styles.infoItem}>
-						<ImageResource resource={info.icon} width={24} height={24} />
-						<Text textColor="secondary" style={styles.infoText} numberOfLines={1}>
-							{info.prefix && (
-								<Text
-									style={{
-										color: semanticColors.text.secondary,
-										fontSize: 14,
-									}}
-								>
-									{info.prefix}
-								</Text>
-							)}
-							{info.label}
+					<View key={info.label} style={styles.chip}>
+						<ImageResource resource={info.icon} width={16} height={16} />
+						<Text style={styles.chipText} numberOfLines={1}>
+							{info.prefix ? `${info.prefix} ${info.label}` : info.label}
 						</Text>
 					</View>
 				))}
@@ -94,7 +86,8 @@ export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
 	}
 
 	return (
-		<View style={styles.mbtiContainer}>
+		<View style={styles.sectionDivider}>
+			<Text style={styles.sectionTitle}>MBTI</Text>
 			<MBTICard mbti={partner.mbti as MBTIType} showCompatibility={true} />
 		</View>
 	);
@@ -119,124 +112,91 @@ export const PartnerIdealType = ({ partner }: PartnerInfoBlockProps) => {
 		? getResultMascotImage(resultTypeId)
 		: getResultMascotImageByName(name);
 
+	const displayTags = tags?.length > 0 ? tags : meta ? [meta.subtitle].filter(Boolean) : [];
+
 	return (
-		<View style={styles.idealTypeContainer}>
-			<View style={styles.idealTypeCard}>
-				<View style={styles.idealTypeContent}>
-					{meta ? (
-						<>
-							<Text style={styles.idealTypeSubtitle}>{meta.subtitle}</Text>
-							<Text style={styles.idealTypeName}>{name}</Text>
-							<Text style={styles.idealTypeDescription}>{meta.description}</Text>
-						</>
-					) : (
-						<>
-							<Text style={styles.idealTypeName}>{name}</Text>
-							<View style={styles.idealTypeTags}>
-								{tags.map((tag: string) => (
-									<Text key={tag} style={styles.idealTypeTag}>
-										#{tag}
-									</Text>
-								))}
-							</View>
-						</>
-					)}
+		<View style={styles.sectionDivider}>
+			<View style={styles.idealTypeHeader}>
+				<View style={{ flex: 1 }}>
+					<Text style={styles.sectionTitle}>
+						{t('features.match.ui.partner_info_block.ideal_type_title') ?? '이상형'}
+					</Text>
+					<Text style={styles.idealTypeName}>{name}</Text>
+					{meta?.description ? (
+						<Text style={styles.idealTypeDescription}>{meta.description}</Text>
+					) : null}
 				</View>
-				<Image source={mascotImage} style={styles.idealTypeMascot} contentFit="contain" />
+				{mascotImage ? (
+					<Image source={mascotImage} style={styles.idealTypeMascotSmall} contentFit="contain" />
+				) : null}
 			</View>
+			{displayTags.length > 0 && (
+				<View style={styles.chipsRow}>
+					{displayTags.map((tag: string) => (
+						<View key={tag} style={styles.chip}>
+							<Text style={styles.chipText}>#{tag}</Text>
+						</View>
+					))}
+				</View>
+			)}
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 20,
-		paddingVertical: 24,
+	sectionDivider: {
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		borderBottomWidth: 1,
+		borderBottomColor: '#f0f0f0',
 	},
-	title: {
-		fontSize: 18,
-		marginBottom: 16,
+	sectionTitle: {
+		fontSize: 13,
+		fontWeight: '600',
+		color: SECTION_TITLE_COLOR,
+		marginBottom: 10,
 	},
-	infoCard: {
-		borderRadius: 16,
-		padding: 20,
+	chipsRow: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		justifyContent: 'space-between',
+		gap: 8,
 	},
-	infoItem: {
-		width: '48%',
+	chip: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 16,
+		gap: 6,
+		backgroundColor: '#F8F9FA',
+		borderRadius: 999,
+		paddingHorizontal: 12,
+		paddingVertical: 6,
 	},
-	infoText: {
-		marginLeft: 8,
-		fontWeight: '500',
-		fontSize: 14,
-		flex: 1,
-	},
-	mbtiContainer: {
-		paddingHorizontal: 20,
-		paddingBottom: 24,
-	},
-	idealTypeContainer: {
-		paddingHorizontal: 20,
-		paddingBottom: 24,
-	},
-	idealTypeCard: {
-		backgroundColor: '#F6F6F6',
-		borderRadius: 20,
-		borderWidth: 1.5,
-		borderStyle: 'dashed',
-		borderColor: semanticColors.brand.primary,
-		paddingVertical: 20,
-		paddingLeft: 21,
-		paddingRight: 110,
-		minHeight: 120,
-		position: 'relative',
-		overflow: 'hidden',
-	},
-	idealTypeContent: {
-		flex: 1,
-	},
-	idealTypeSubtitle: {
-		fontSize: 15,
+	chipText: {
+		fontSize: 13,
 		fontWeight: '500',
 		color: '#303030',
-		lineHeight: 20,
+	},
+	idealTypeHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 10,
 	},
 	idealTypeName: {
-		fontSize: 25,
+		fontSize: 20,
 		fontWeight: '600',
 		color: semanticColors.brand.primary,
-		lineHeight: 33,
+		lineHeight: 26,
 		marginTop: 2,
 	},
 	idealTypeDescription: {
-		fontSize: 10,
-		fontWeight: '300',
-		color: '#303030',
-		lineHeight: 13,
-		marginTop: 8,
-	},
-	idealTypeTags: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		gap: 6,
-		marginTop: 8,
-	},
-	idealTypeTag: {
 		fontSize: 12,
-		fontWeight: '500',
-		color: semanticColors.brand.primary,
+		fontWeight: '300',
+		color: '#888',
+		lineHeight: 16,
+		marginTop: 4,
 	},
-	idealTypeMascot: {
-		position: 'absolute',
-		right: 2,
-		top: '50%',
-		width: 103,
-		height: 103,
-		transform: [{ translateY: -51.5 }],
+	idealTypeMascotSmall: {
+		width: 72,
+		height: 72,
+		marginLeft: 8,
 	},
 });

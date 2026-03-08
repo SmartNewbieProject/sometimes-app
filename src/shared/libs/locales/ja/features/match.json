@@ -6,16 +6,21 @@
 		"matching_reason_card": {
 			"analysis_keywords": "分析キーワード",
 			"collapse": "閉じる",
-			"expand": "もっと見る"
+			"expand": "もっと見る",
+			"signature": "ミホが書きました"
 		},
 		"matching_reason_placeholder": {
 			"title": "この方とマッチングした理由",
 			"description": "相手はここで\nあなたとマッチングした理由を確認します",
 			"example_reason": "似た趣味や価値観を持っています",
-			"hint": "Mihoが分析したマッチング理由が表示されます"
+			"hint": "Mihoがマッチング理由を作成中です",
+			"typing_line_1": "大切なご縁を分析しています",
+			"typing_line_2": "お二人の共通点を探し中...",
+			"typing_line_3": "ときめく理由を書いています ✨"
 		},
 		"partner_info_block": {
 			"basic_info_title": "基本情報",
+			"ideal_type_title": "理想のタイプ",
 			"no_info": "情報なし",
 			"doesnt_matter": "こだわらない",
 			"tattoo_prefix": "タトゥー: ",

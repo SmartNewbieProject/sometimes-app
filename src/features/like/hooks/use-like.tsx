@@ -1,6 +1,7 @@
 import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
 import { queryClient } from '@/src/shared/config/query';
 import { LIKE_TYPES, MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { axiosClient, tryCatch } from '@/src/shared/libs';
@@ -66,6 +67,7 @@ export default function useLike() {
 	const { t } = useTranslation();
 	const { showPromptForMatching } = useAppInstallPrompt();
 	const tracker = useTracking();
+	const { withLoading } = useGlobalLoading();
 
 	const performLike = async (connectionId: string) => {
 		await tryCatch(
@@ -172,17 +174,19 @@ export default function useLike() {
 	};
 
 	const onLike = async (connectionId: string) => {
-		await tryCatch(
-			async () => {
-				performLike(connectionId);
-			},
-			(err) => {
-				if (err.status === HttpStatusCode.Forbidden) {
-					showErrorModal(t('features.like.hooks.use-like.no_gems'), 'announcement');
-					return;
-				}
-				showErrorModal(err.error, 'error');
-			},
+		await withLoading(() =>
+			tryCatch(
+				async () => {
+					await performLike(connectionId);
+				},
+				(err) => {
+					if (err.status === HttpStatusCode.Forbidden) {
+						showErrorModal(t('features.like.hooks.use-like.no_gems'), 'announcement');
+						return;
+					}
+					showErrorModal(err.error, 'error');
+				},
+			),
 		);
 	};
 	return {

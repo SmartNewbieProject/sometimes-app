@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider, focusManager, onlineManager } from '@tanstack/react-query';
 import NetInfo from '@react-native-community/netinfo';
 import { Platform, AppState, type AppStateStatus } from 'react-native';
-import { useGlobalLoadingSync } from '../hooks/use-global-loading';
 
 if (Platform.OS !== 'web') {
 	focusManager.setEventListener((handleFocus) => {
@@ -31,15 +30,9 @@ export const queryClient = new QueryClient({
 	},
 });
 
-function GlobalLoadingSync() {
-	useGlobalLoadingSync();
-	return null;
-}
-
 export function QueryProvider({ children }: { children: React.ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<GlobalLoadingSync />
 			{children}
 		</QueryClientProvider>
 	);

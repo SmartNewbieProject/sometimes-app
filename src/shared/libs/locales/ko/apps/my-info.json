@@ -81,7 +81,15 @@
 	"military": {
 		"empty_form": "비어있는 양식이 존재합니다.",
 		"title": "군대는 다녀 오셨나요?",
-		"loading": "옵션을 불러오고 있어요"
+		"loading": "옵션을 불러오고 있어요",
+		"tooltip_0_title": "미필",
+		"tooltip_0_desc_1": "아직 군 복무를 하지 않았어요",
+		"tooltip_0_desc_2": "재학 중이거나 입대 전이에요",
+		"tooltip_1_title": "면제",
+		"tooltip_1_desc_1": "개인적인 사유로 군 복무가 면제됐어요",
+		"tooltip_2_title": "군필",
+		"tooltip_2_desc_1": "군 복무를 완료했어요",
+		"tooltip_2_desc_2": "사회복무요원·산업기능요원 등도 포함돼요"
 	},
 	"personality": {
 		"max_3": "최대 3개 선택",

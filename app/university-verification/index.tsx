@@ -1,7 +1,7 @@
 import { Header, Text, PalePurpleGradient } from '@/src/shared/ui';
 import { LabelInput } from '@/src/widgets/label-input';
 import { router } from 'expo-router';
-import { ScrollView, TouchableOpacity, View, Pressable, Linking, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View, Pressable, Linking, StyleSheet } from 'react-native';
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
@@ -213,8 +213,12 @@ export default function UniversityVerificationScreen() {
 				<Header.RightContent></Header.RightContent>
 			</Header.Container>
 
-			<View style={styles.container}>
-				<ScrollView style={styles.scrollView}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+				keyboardVerticalOffset={0}
+				style={styles.container}
+			>
+				<ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
 					<View style={styles.formContainer}>
 						{/* 학교 이메일 주소 입력 섹션 */}
 						<View style={styles.inputSection}>
@@ -317,7 +321,7 @@ export default function UniversityVerificationScreen() {
 						</Text>
 					</TouchableOpacity>
 				</View>
-			</View>
+			</KeyboardAvoidingView>
 		</View>
 	);
 }

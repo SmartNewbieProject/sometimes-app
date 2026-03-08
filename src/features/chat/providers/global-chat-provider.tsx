@@ -403,12 +403,28 @@ export const GlobalChatProvider = ({
 				}
 			});
 
+		const unsubscribeHealthCheckFailed = chatEventBus
+			.on('SOCKET_HEALTH_CHECK_FAILED')
+			.subscribe(({ payload }) => {
+				log('Socket health check failed, last activity:', payload.lastActivity);
+				if (
+					accessToken &&
+					!tokenLoading &&
+					socketConnectionManager.isModuleInitialized &&
+					isNetworkAvailable
+				) {
+					reconnectAttempts.current = 0;
+					attemptConnection(accessToken, 'health check failed - ghost connection');
+				}
+			});
+
 		return () => {
 			unsubscribeDisconnect.unsubscribe();
 			unsubscribeConnected.unsubscribe();
 			unsubscribeReconnectFailed.unsubscribe();
 			unsubscribeTokenUpdated.unsubscribe();
 			unsubscribeConnectionNeeded.unsubscribe();
+			unsubscribeHealthCheckFailed.unsubscribe();
 
 			// cleanup 시 타임아웃 정리
 			if (reconnectTimeoutRef.current) {

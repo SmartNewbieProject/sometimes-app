@@ -4,7 +4,7 @@ import { AppState, type AppStateStatus } from 'react-native';
 import { likeLetterApi } from '../api';
 
 const POLL_INTERVAL_MS = 2000;
-const MAX_POLLS = 15;
+const MAX_POLLS = 60; // 최대 2분 (2초 × 60)
 
 export const useLetterPrompts = (connectionId: string) => {
 	const pollCountRef = useRef(0);
@@ -15,9 +15,12 @@ export const useLetterPrompts = (connectionId: string) => {
 		queryFn: () => likeLetterApi.getLetterQuestions(connectionId),
 		enabled: !!connectionId,
 		staleTime: 0,
+		retry: 0, // 에러 시 즉시 재시도 없이 refetchInterval에 위임
 		refetchInterval: (query) => {
-			if (query.state.data?.status !== 'pending') return false;
 			if (pollCountRef.current >= MAX_POLLS) return false;
+			const status = query.state.data?.status;
+			// completed / failed 일 때만 폴링 중단, 그 외(pending·null·에러)는 계속
+			if (status === 'completed' || status === 'failed') return false;
 			pollCountRef.current += 1;
 			return POLL_INTERVAL_MS;
 		},
@@ -31,7 +34,7 @@ export const useLetterPrompts = (connectionId: string) => {
 				'letter-questions',
 				connectionId,
 			]);
-			if (cached?.status === 'pending') {
+			if (cached?.status !== 'completed' && cached?.status !== 'failed') {
 				pollCountRef.current = 0;
 				queryClient.invalidateQueries({ queryKey: ['letter-questions', connectionId] });
 			}
@@ -46,6 +49,6 @@ export const useLetterPrompts = (connectionId: string) => {
 		questions: query.data?.status === 'completed' ? query.data.questions : [],
 		isPending: query.data?.status === 'pending',
 		isFailed: query.data?.status === 'failed',
-		isTimedOut: pollCountRef.current >= MAX_POLLS && query.data?.status === 'pending',
+		isTimedOut: pollCountRef.current >= MAX_POLLS && query.data?.status !== 'completed',
 	};
 };

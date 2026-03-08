@@ -1,9 +1,9 @@
 import colors from '@/src/shared/constants/colors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+	BackHandler,
 	Dimensions,
 	Keyboard,
-	Modal,
 	Platform,
 	StyleSheet,
 	TouchableWithoutFeedback,
@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import Animated, {
 	Easing,
-	cancelAnimation,
 	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
@@ -26,43 +25,32 @@ const SHEET_HEIGHT = Platform.OS === 'web'
 	: SCREEN_HEIGHT * 0.88;
 const ANIMATION_DURATION = 300;
 
+// visible prop 제거 — 마운트 = 열림, onClose() 호출 시 부모가 언마운트
 type FeedbackDrawerProps = {
-	visible: boolean;
 	onClose: () => void;
 	onSuccess: () => void;
 	onError?: () => void;
 };
 
-// ─── 웹용 (CSS transition, Portal 내부에서 렌더링 — body/ScrollView 간섭 없음) ──
-function WebFeedbackDrawer({ visible, onClose, onSuccess, onError }: FeedbackDrawerProps) {
+// ─── 웹용 ────────────────────────────────────────────────────────────────────
+function WebFeedbackDrawer({ onClose, onSuccess, onError }: FeedbackDrawerProps) {
 	const insets = useSafeAreaInsets();
-	const [isMounted, setIsMounted] = useState(false);
-	const [animState, setAnimState] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed');
+	const [isOpen, setIsOpen] = useState(false);
 
+	// 마운트 직후 open 애니메이션
 	useEffect(() => {
-		if (visible && !isMounted) {
-			setIsMounted(true);
-			setAnimState('opening');
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => setAnimState('open'));
-			});
-		}
-	}, [visible, isMounted]);
+		const raf1 = requestAnimationFrame(() => {
+			const raf2 = requestAnimationFrame(() => setIsOpen(true));
+			return () => cancelAnimationFrame(raf2);
+		});
+		return () => cancelAnimationFrame(raf1);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const handleClose = useCallback(() => {
-		setAnimState('closing');
-		setTimeout(() => {
-			setIsMounted(false);
-			setAnimState('closed');
-			onClose();
-		}, ANIMATION_DURATION);
+		setIsOpen(false);
+		setTimeout(onClose, ANIMATION_DURATION);
 	}, [onClose]);
 
-	if (!isMounted) return null;
-
-	const isOpen = animState === 'open';
-
-	// Portal host가 이미 absoluteFill로 루트에 배치되므로 flex 컨테이너로만 사용
 	return (
 		<View style={styles.container}>
 			<TouchableWithoutFeedback onPress={handleClose}>
@@ -96,132 +84,83 @@ function WebFeedbackDrawer({ visible, onClose, onSuccess, onError }: FeedbackDra
 	);
 }
 
-// ─── 네이티브용 (Reanimated) ─────────────────────────────────────────────────
-function NativeFeedbackDrawer({ visible, onClose, onSuccess, onError }: FeedbackDrawerProps) {
+// ─── 네이티브용 ───────────────────────────────────────────────────────────────
+// 마운트 = 자동 열림, 오버레이/뒤로가기 → 닫기 애니메이션 → onClose() → 부모가 언마운트
+// visible/isMounted 같은 중간 상태 없음 → "열렸다 닫힘" 버그 원천 차단
+function NativeFeedbackDrawer({ onClose, onSuccess, onError }: FeedbackDrawerProps) {
 	const insets = useSafeAreaInsets();
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const translateY = useSharedValue(SHEET_HEIGHT);
 	const backdropOpacity = useSharedValue(0);
-
 	const isClosingRef = useRef(false);
-	const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const animateCloseCallbackRef = useRef<(() => void) | null>(null);
+	const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	const animateOpen = useCallback(() => {
-		translateY.value = withTiming(0, {
-			duration: ANIMATION_DURATION,
-			easing: Easing.out(Easing.cubic),
-		});
-		backdropOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
-	}, [translateY, backdropOpacity]);
-
-	const forceCleanup = useCallback(() => {
-		if (closeTimeoutRef.current) {
-			clearTimeout(closeTimeoutRef.current);
-			closeTimeoutRef.current = null;
-		}
-		isClosingRef.current = false;
-		cancelAnimation(translateY);
-		cancelAnimation(backdropOpacity);
-		translateY.value = SHEET_HEIGHT;
-		backdropOpacity.value = 0;
-		setIsModalVisible(false);
-	}, [translateY, backdropOpacity]);
-
-	const onAnimationComplete = useCallback(() => {
-		if (closeTimeoutRef.current) {
-			clearTimeout(closeTimeoutRef.current);
-			closeTimeoutRef.current = null;
-		}
-		isClosingRef.current = false;
-		animateCloseCallbackRef.current?.();
-	}, []);
-
-	const animateClose = useCallback(
-		(callback: () => void) => {
-			if (isClosingRef.current) return;
-			isClosingRef.current = true;
-			animateCloseCallbackRef.current = callback;
-			Keyboard.dismiss();
-
-			closeTimeoutRef.current = setTimeout(() => {
-				closeTimeoutRef.current = null;
-				if (isClosingRef.current) {
-					forceCleanup();
-					callback();
-				}
-			}, ANIMATION_DURATION + 100);
-
-			translateY.value = withTiming(SHEET_HEIGHT, {
-				duration: ANIMATION_DURATION - 50,
-				easing: Easing.in(Easing.cubic),
-			});
-			backdropOpacity.value = withTiming(
-				0,
-				{ duration: ANIMATION_DURATION - 50 },
-				() => { runOnJS(onAnimationComplete)(); },
-			);
-		},
-		[translateY, backdropOpacity, forceCleanup, onAnimationComplete],
-	);
-
+	// 마운트 시 한 번만 열림 애니메이션
 	useEffect(() => {
-		if (visible) {
-			isClosingRef.current = false;
-			translateY.value = SHEET_HEIGHT;
-			backdropOpacity.value = 0;
-			setIsModalVisible(true);
-			const timer = setTimeout(animateOpen, 16);
-			return () => clearTimeout(timer);
-		}
-		forceCleanup();
-	}, [visible, animateOpen, translateY, backdropOpacity, forceCleanup]);
+		const timer = setTimeout(() => {
+			translateY.value = withTiming(0, {
+				duration: ANIMATION_DURATION,
+				easing: Easing.out(Easing.cubic),
+			});
+			backdropOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
+		}, 16);
+		return () => clearTimeout(timer);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+	// 언마운트 시 fallback timer 정리
 	useEffect(() => {
 		return () => {
-			if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+			if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
 		};
 	}, []);
 
 	const handleClose = useCallback(() => {
-		animateClose(() => {
-			setIsModalVisible(false);
+		if (isClosingRef.current) return;
+		isClosingRef.current = true;
+		Keyboard.dismiss();
+
+		// 닫기 애니메이션 완료 → onClose() → 부모에서 setDrawerMounted(false) → 이 컴포넌트 언마운트
+		translateY.value = withTiming(SHEET_HEIGHT, {
+			duration: ANIMATION_DURATION - 50,
+			easing: Easing.in(Easing.cubic),
+		}, () => { runOnJS(onClose)(); });
+		backdropOpacity.value = withTiming(0, { duration: ANIMATION_DURATION - 50 });
+
+		// 애니메이션 완료 콜백이 실행되지 않을 경우 fallback
+		fallbackTimerRef.current = setTimeout(() => {
+			fallbackTimerRef.current = null;
 			onClose();
+		}, ANIMATION_DURATION + 100);
+	}, [translateY, backdropOpacity, onClose]);
+
+	// Android 뒤로가기
+	useEffect(() => {
+		const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+			handleClose();
+			return true;
 		});
-	}, [animateClose, onClose]);
+		return () => sub.remove();
+	}, [handleClose]);
 
 	const backdropAnimStyle = useAnimatedStyle(() => ({ opacity: backdropOpacity.value }));
-	// translateY만 담당 — 높이는 styles.sheet에서 고정
 	const sheetAnimStyle = useAnimatedStyle(() => ({
 		transform: [{ translateY: translateY.value }],
 	}));
 
-	if (!isModalVisible) return null;
-
 	return (
-		<Modal
-			transparent
-			visible={isModalVisible}
-			animationType="none"
-			onRequestClose={handleClose}
-			statusBarTranslucent
-		>
-			<View style={styles.container}>
-				<TouchableWithoutFeedback onPress={handleClose}>
-					<Animated.View style={[styles.backdrop, backdropAnimStyle]} />
-				</TouchableWithoutFeedback>
+		<View style={[StyleSheet.absoluteFill, styles.container]}>
+			<TouchableWithoutFeedback onPress={handleClose}>
+				<Animated.View style={[styles.backdrop, backdropAnimStyle]} />
+			</TouchableWithoutFeedback>
 
-				{/* sheet 스타일을 Animated.View에 직접 적용 — 높이가 확정되어야 내부 ScrollView가 스크롤됨 */}
-				<Animated.View
-					style={[styles.sheet, sheetAnimStyle, { paddingBottom: insets.bottom + 16 }]}
-				>
-					<View style={styles.handleContainer}>
-						<View style={styles.handle} />
-					</View>
-					<FeedbackLetterContent onSuccess={onSuccess} onError={onError} />
-				</Animated.View>
-			</View>
-		</Modal>
+			<Animated.View
+				style={[styles.sheet, sheetAnimStyle, { paddingBottom: insets.bottom + 16 }]}
+			>
+				<View style={styles.handleContainer}>
+					<View style={styles.handle} />
+				</View>
+				<FeedbackLetterContent onSuccess={onSuccess} onError={onError} />
+			</Animated.View>
+		</View>
 	);
 }
 
@@ -245,7 +184,7 @@ const styles = StyleSheet.create({
 	},
 	sheet: {
 		width: '100%',
-		height: SHEET_HEIGHT,      // maxHeight → height 고정: ScrollView가 스크롤 영역을 정확히 계산
+		height: SHEET_HEIGHT,
 		backgroundColor: colors.white,
 		borderTopLeftRadius: 24,
 		borderTopRightRadius: 24,

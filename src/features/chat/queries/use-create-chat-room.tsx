@@ -1,3 +1,4 @@
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { storage } from '@/src/shared/libs/store';
@@ -15,9 +16,16 @@ function useCreateChatRoom() {
 	const router = useRouter();
 	const { showModal, showErrorModal, hideModal } = useModal();
 	const { chatEvents } = useMixpanel();
+	const { showLoading, hideLoading } = useGlobalLoading();
 
 	return useMutation({
 		mutationFn: createChatRoom,
+		onMutate: () => {
+			showLoading();
+		},
+		onSettled: () => {
+			hideLoading();
+		},
 		onSuccess: async ({ chatRoomId, partnerId }: { chatRoomId: string; partnerId?: string }) => {
 			// KPI 이벤트: 채팅 시작 (시간 차이 계산 포함)
 			if (partnerId) {

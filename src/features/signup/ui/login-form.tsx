@@ -6,6 +6,7 @@ import {
 } from '@/src/shared/constants/mixpanel-events';
 import { useMixpanel } from '@/src/shared/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { env } from '@/src/shared/libs/env';
 import { isJapanese } from '@/src/shared/libs/local';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -207,9 +208,11 @@ const loginFormStyles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	kakaoCaption: {
+		width: 330,
 		marginTop: 6,
 		color: '#997700',
 		textAlign: 'center',
+		alignSelf: 'center',
 	},
 	dividerContainer: {
 		flexDirection: 'row',
@@ -249,6 +252,7 @@ function KakaoLoginComponent() {
 	const { authEvents, signupEvents } = useMixpanel();
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
+	const { emitToast } = useToast();
 	const authStartTimeRef = useRef<number | null>(null);
 	const isKakaoLoginPendingRef = useRef(false);
 	const isCancelledRef = useRef(false);
@@ -269,6 +273,19 @@ function KakaoLoginComponent() {
 		});
 		return () => subscription.remove();
 	}, []);
+
+	const isInstagramIAB = () => {
+		if (Platform.OS !== 'web') return false;
+		const ua = navigator.userAgent;
+		return /Instagram|FBAN|FBAV/.test(ua);
+	};
+
+	const showInstagramIOSGuide = isInstagramIAB();
+
+	const handleCopyLink = () => {
+		navigator.clipboard?.writeText(window.location.href).catch(() => {});
+		emitToast('링크가 복사되었어요. Safari를 열고 주소창에 붙여넣어 주세요.');
+	};
 
 	const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
 	const redirectUri = env.KAKAO_REDIRECT_URI;
@@ -614,16 +631,32 @@ function KakaoLoginComponent() {
 	};
 
 	const handleWebKakaoLogin = () => {
-		// 웹에서는 기존 방식 유지
-		const scope = ['name', 'gender', 'birthyear', 'birthday', 'phone_number'].join(' ');
+		if (Platform.OS !== 'web') return;
 
+		const scope = ['name', 'gender', 'birthyear', 'birthday', 'phone_number'].join(' ');
 		const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(
 			redirectUri,
 		)}&response_type=code&scope=${encodeURIComponent(scope)}`;
 
-		if (Platform.OS === 'web') {
-			window.location.href = kakaoAuthUrl;
+		// Instagram 인앱브라우저 + Android: intent:// scheme으로 Chrome 강제 오픈
+		// (iOS는 진입 시 useEffect에서 안내 모달을 먼저 표시)
+		if (isInstagramIAB()) {
+			const isAndroid = /Android/.test(navigator.userAgent);
+			if (isAndroid) {
+				const intentUrl = [
+					`intent://${kakaoAuthUrl.replace(/^https?:\/\//, '')}`,
+					'#Intent',
+					'scheme=https',
+					'package=com.android.chrome',
+					`S.browser_fallback_url=${encodeURIComponent(kakaoAuthUrl)}`,
+					'end',
+				].join(';');
+				window.location.href = intentUrl;
+				return;
+			}
 		}
+
+		window.location.href = kakaoAuthUrl;
 	};
 
 	const handleKakaoLogin = () => {
@@ -663,6 +696,16 @@ function KakaoLoginComponent() {
 
 	return (
 		<View style={kakaoStyles.container}>
+			{showInstagramIOSGuide && (
+				<View style={kakaoStyles.iabGuideCard}>
+					<RNText style={kakaoStyles.iabGuideTitle}>
+						인스타그램 내부에서는 카카오 간편 로그인이 제한됩니다. Safari에서 열어주세요.
+					</RNText>
+					<Pressable onPress={handleCopyLink} style={kakaoStyles.iabGuideCta}>
+						<RNText style={kakaoStyles.iabGuideCtaText}>링크 복사하기</RNText>
+					</Pressable>
+				</View>
+			)}
 			<Pressable
 				onPress={handleKakaoLogin}
 				disabled={isLoading}
@@ -699,6 +742,7 @@ function KakaoLoginComponent() {
 const kakaoStyles = StyleSheet.create({
 	container: {
 		width: '100%',
+		alignItems: 'center',
 	},
 	button: {
 		width: 330,
@@ -709,6 +753,35 @@ const kakaoStyles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		gap: 10,
+	},
+	iabGuideCard: {
+		width: 330,
+		flexDirection: 'column',
+		gap: 5,
+		backgroundColor: '#1C1C1E',
+		borderRadius: 12,
+		paddingVertical: 10,
+		paddingHorizontal: 14,
+		marginBottom: 10,
+	},
+	iabGuideTitle: {
+		fontSize: 12,
+		fontWeight: '700',
+		color: '#E5E5E5',
+		lineHeight: 17,
+	},
+	iabGuideDesc: {
+		fontSize: 11,
+		color: '#888',
+		lineHeight: 16,
+	},
+	iabGuideCta: {
+		alignSelf: 'flex-start',
+	},
+	iabGuideCtaText: {
+		fontSize: 12,
+		fontWeight: '700',
+		color: '#FEE500',
 	},
 });
 

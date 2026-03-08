@@ -1,10 +1,27 @@
 {
 	"ui": {
+		"matching_reason_card": {
+			"analysis_keywords": "Analysis Keywords",
+			"collapse": "Collapse",
+			"expand": "Expand",
+			"signature": "Written by Miho"
+		},
+		"partner_info_block": {
+			"basic_info_title": "Basic Info",
+			"ideal_type_title": "Ideal Type",
+			"no_info": "No info",
+			"doesnt_matter": "Doesn't matter",
+			"tattoo_prefix": "Tattoo: ",
+			"preferred_age_prefix": "Preferred age: "
+		},
 		"matching_reason_placeholder": {
 			"title": "Why you matched",
 			"description": "Your match will see here\nwhy you were matched together",
 			"example_reason": "You share similar interests and values",
-			"hint": "Miho's matching analysis will appear here"
+			"hint": "Miho is writing your match reasons",
+			"typing_line_1": "Analyzing your special connection...",
+			"typing_line_2": "Finding what you two have in common...",
+			"typing_line_3": "Writing the reasons you'll love ✨"
 		},
 		"음주_선호도": "[EN] 음주 선호도",
 		"흡연_선호도": "[EN] 흡연 선호도",

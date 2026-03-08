@@ -1,11 +1,12 @@
+import { MIXPANEL_EVENTS, USER_ACTION_SOURCES } from '@/src/shared/constants/mixpanel-events';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { type ReportResponse, submitReport } from '../services/report';
-import { useTranslation } from "react-i18next";
-import { MIXPANEL_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/mixpanel-events";
 
 interface ApiErrorResponse {
 	statusCode?: number;
@@ -23,7 +24,8 @@ interface SubmitReportVariables {
 export function useReport() {
 	const queryClient = useQueryClient();
 	const { showModal, hideModal } = useModal();
-  const { t } = useTranslation();
+	const { t } = useTranslation();
+	const { showLoading, hideLoading } = useGlobalLoading();
 
 	const { mutate, isPending, isError, error } = useMutation<
 		ReportResponse,
@@ -32,8 +34,13 @@ export function useReport() {
 		unknown
 	>({
 		mutationFn: submitReport,
+		onMutate: () => {
+			showLoading();
+		},
+		onSettled: () => {
+			hideLoading();
+		},
 		onSuccess: (data, variables) => {
-
 			mixpanelAdapter.track(MIXPANEL_EVENTS.USER_REPORTED, {
 				reported_user_id: variables.userId,
 				reason: variables.reason,
@@ -42,10 +49,10 @@ export function useReport() {
 			});
 
 			showModal({
-				title: t("features.ban-report.hooks.use_report.modal_title_success"),
-				children: t("features.ban-report.hooks.use_report.modal_message_success"),
+				title: t('features.ban-report.hooks.use_report.modal_title_success'),
+				children: t('features.ban-report.hooks.use_report.modal_message_success'),
 				primaryButton: {
-					text: t("confirm"),
+					text: t('confirm'),
 					onClick: () => {
 						hideModal();
 						router.navigate('/home');
@@ -61,12 +68,13 @@ export function useReport() {
 		onError: (error) => {
 			console.error('신고 제출 중 오류 발생:', error);
 			const errorMessage =
-				error.response?.data?.message || t("features.ban-report.hooks.use_report.default_error_message");
+				error.response?.data?.message ||
+				t('features.ban-report.hooks.use_report.default_error_message');
 			showModal({
-				title:  t("features.ban-report.hooks.use_report.modal_title_error"),
+				title: t('features.ban-report.hooks.use_report.modal_title_error'),
 				children: errorMessage,
 				primaryButton: {
-					text: t("confirm"),
+					text: t('confirm'),
 					onClick: () => hideModal(),
 				},
 			});

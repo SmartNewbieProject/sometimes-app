@@ -41,7 +41,6 @@ export function LikeOptionModal({
 	const { data } = useCurrentGem();
 	const currentGem = data?.totalGem ?? 0;
 	const [isInsufficient, setIsInsufficient] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 3;
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 5;
@@ -76,13 +75,14 @@ export function LikeOptionModal({
 		onSelect('simple');
 	};
 
-	const handleLetterLike = async () => {
+	const handleLetterLike = () => {
 		trackOptionSelected('letter_like');
 
 		const basePath = source === 'home' ? '/home' : `/partner/view/${matchId}`;
 		const fullRedirectPath = currentRedirectTo
 			? `${basePath}?redirectTo=${currentRedirectTo}`
 			: basePath;
+
 		if (canLetter) {
 			onClose();
 			router.push({
@@ -100,46 +100,7 @@ export function LikeOptionModal({
 			return;
 		}
 
-		try {
-			setIsLoading(true);
-			if (currentGem < letterLikeCost) {
-				mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_GEM_INSUFFICIENT, {
-					connection_id: connectionId,
-					match_id: matchId,
-					gem_balance: currentGem,
-					gem_required: letterLikeCost,
-					gem_shortage: letterLikeCost - currentGem,
-				});
-				setIsInsufficient(true);
-				return;
-			}
-
-			const gemBefore = currentGem;
-			await likeLetterApi.getLetterPermission(connectionId);
-			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
-
-			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PERMISSION_PURCHASED, {
-				connection_id: connectionId,
-				match_id: matchId,
-				gem_cost: letterLikeCost,
-				gem_balance_before: gemBefore,
-				gem_balance_after: gemBefore - letterLikeCost,
-			});
-
-			onClose();
-			router.push({
-				pathname: '/like-letter/write',
-				params: {
-					connectionId,
-					matchId,
-					nickname,
-					profileUrl: encodeURIComponent(profileUrl),
-					canLetter: 'true',
-					source,
-					redirectTo: encodeURIComponent(fullRedirectPath),
-				},
-			});
-		} catch (error: unknown) {
+		if (currentGem < letterLikeCost) {
 			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_GEM_INSUFFICIENT, {
 				connection_id: connectionId,
 				match_id: matchId,
@@ -148,9 +109,36 @@ export function LikeOptionModal({
 				gem_shortage: letterLikeCost - currentGem,
 			});
 			setIsInsufficient(true);
-		} finally {
-			setIsLoading(false);
+			return;
 		}
+
+		const gemBefore = currentGem;
+
+		// 질문 생성 요청을 백그라운드에서 실행 — 응답을 기다리지 않고 바로 진입
+		likeLetterApi.getLetterPermission(connectionId).then(() => {
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PERMISSION_PURCHASED, {
+				connection_id: connectionId,
+				match_id: matchId,
+				gem_cost: letterLikeCost,
+				gem_balance_before: gemBefore,
+				gem_balance_after: gemBefore - letterLikeCost,
+			});
+		});
+
+		onClose();
+		router.push({
+			pathname: '/like-letter/write',
+			params: {
+				connectionId,
+				matchId,
+				nickname,
+				profileUrl: encodeURIComponent(profileUrl),
+				canLetter: 'true',
+				source,
+				redirectTo: encodeURIComponent(fullRedirectPath),
+			},
+		});
 	};
 
 	const handleGoToCharge = () => {
@@ -270,7 +258,7 @@ export function LikeOptionModal({
 						</Text>
 					</Pressable>
 
-					<Pressable style={styles.letterOption} onPress={handleLetterLike} disabled={isLoading}>
+					<Pressable style={styles.letterOption} onPress={handleLetterLike}>
 						<View style={styles.gemBadge}>
 							<ImageResource resource={ImageResources.GEM} width={22} height={22} />
 							<Text size="15" style={styles.gemCountLight}>
@@ -278,9 +266,7 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.letterLikeText}>
-							{isLoading
-								? t('features.like-letter.ui.option_modal.loading')
-								: t('features.like-letter.ui.option_modal.letter_like')}
+							{t('features.like-letter.ui.option_modal.letter_like')}
 						</Text>
 					</Pressable>
 				</View>

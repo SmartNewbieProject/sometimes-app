@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		flexGrow: 1,
 		paddingHorizontal: 24,
-		paddingBottom: 140,
+		paddingBottom: 24,
 	},
 	headerSection: {
 		alignItems: 'center',
@@ -407,11 +407,6 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	bottomContainer: {
-		position: 'absolute',
-		bottom: 0,
-		width: '100%',
 		paddingTop: 16,
-		paddingHorizontal: 0,
-		backgroundColor: 'transparent',
 	},
 });

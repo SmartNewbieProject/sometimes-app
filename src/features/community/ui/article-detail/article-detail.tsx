@@ -23,8 +23,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	Image,
 	Keyboard,
-	KeyboardAvoidingView,
-	Platform,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -445,27 +443,21 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 					</Loading.Lottie>
 				</View>
 			</ScrollView>
-			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-				style={detailStyles.keyboardAvoidingView}
-			>
-				<View style={[detailStyles.inputFormContainer, { paddingBottom: insets.bottom }]}>
-					<InputForm
-						checked={checked}
-						setChecked={setChecked}
-						editingCommentId={editingCommentId}
-						handleCancelEdit={handleCancelEdit}
-						editingContent={editingContent}
-						setEditingContent={setEditingContent}
-						form={form}
-						handleSubmitUpdate={handleSubmitUpdate}
-						handleSubmit={handleSubmit}
-						replyTarget={replyTarget}
-						handleCancelReply={handleCancelReply}
-					/>
-				</View>
-			</KeyboardAvoidingView>
+			<View style={[detailStyles.inputFormContainer, { paddingBottom: insets.bottom }]}>
+				<InputForm
+					checked={checked}
+					setChecked={setChecked}
+					editingCommentId={editingCommentId}
+					handleCancelEdit={handleCancelEdit}
+					editingContent={editingContent}
+					setEditingContent={setEditingContent}
+					form={form}
+					handleSubmitUpdate={handleSubmitUpdate}
+					handleSubmit={handleSubmit}
+					replyTarget={replyTarget}
+					handleCancelReply={handleCancelReply}
+				/>
+			</View>
 		</View>
 	);
 };
@@ -473,15 +465,13 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 const detailStyles = StyleSheet.create({
 	container: {
 		flex: 1,
-		position: 'relative',
 		backgroundColor: semanticColors.surface.background,
 	},
 	scrollContent: {
-		paddingBottom: 140,
+		paddingBottom: 100,
 	},
 	scrollView: {
 		flex: 1,
-		position: 'relative',
 		paddingHorizontal: 16,
 	},
 	articleCard: {
@@ -556,12 +546,6 @@ const detailStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'column',
 		paddingBottom: 16,
-	},
-	keyboardAvoidingView: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
 	},
 	inputFormContainer: {
 		backgroundColor: semanticColors.surface.background,

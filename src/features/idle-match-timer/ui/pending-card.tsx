@@ -211,8 +211,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginTop: 'auto',
-    marginBottom: 12,
+    marginTop: 8,
     zIndex: 1,
   },
   bellIcon: {

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getPreviewHistory } from "../apis";
 import type { PreviewMatchingHistory } from "../type";
 
@@ -7,8 +7,9 @@ export const usePreviewHistory = () => {
     queryKey: ["preview-history"],
     queryFn: getPreviewHistory,
     initialData: { imageUrls: [], countOfPartner: 0 },
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
   });
 
   return { previewHistory, ...queryProps };

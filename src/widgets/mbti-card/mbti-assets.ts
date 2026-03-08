@@ -1,5 +1,5 @@
-import type { MBTIType } from './types';
 import type { ImageSourcePropType } from 'react-native';
+import type { MBTIType } from './types';
 
 const MBTI_ICONS: Record<MBTIType, ImageSourcePropType> = {
 	ISTJ: require('@/assets/images/mbti/istj.webp'),

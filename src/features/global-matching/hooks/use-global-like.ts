@@ -1,4 +1,5 @@
 import { queryClient } from '@/src/shared/config/query';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -30,39 +31,42 @@ export function useGlobalLike() {
 	const { show: showCashable } = useCashableModal();
 	const { t } = useTranslation();
 	const { mutateAsync: like, isPending: isLikePending } = useGlobalLikeMutation();
+	const { withLoading } = useGlobalLoading();
 
 	const onGlobalLike = async (connectionId: string, letter?: string) => {
-		await tryCatch(
-			async () => {
-				await like({ connectionId, letter });
+		await withLoading(() =>
+			tryCatch(
+				async () => {
+					await like({ connectionId, letter });
 
-				showModal({
-					showLogo: true,
-					showParticle: true,
-					title: t('features.global-matching.like_success'),
-					primaryButton: {
-						text: t('features.global-matching.confirm'),
-						onClick: () => {},
-					},
-				});
-			},
-			(err) => {
-				if (err.status === HttpStatusCode.Forbidden) {
-					showCashable({
-						textContent: t('features.like.hooks.use-like.charge_message'),
+					showModal({
+						showLogo: true,
+						showParticle: true,
+						title: t('features.global-matching.like_success'),
+						primaryButton: {
+							text: t('features.global-matching.confirm'),
+							onClick: () => {},
+						},
 					});
-					return;
-				}
-				if (err.status === HttpStatusCode.Conflict) {
-					showErrorModal(t('features.like.hooks.use-like.duplicate_like'), 'announcement');
-					return;
-				}
-				if (err.status === HttpStatusCode.NotFound) {
-					showErrorModal(t('features.global-matching.match_expired'), 'announcement');
-					return;
-				}
-				showErrorModal(err.error ?? err.message ?? 'Unknown error', 'error');
-			},
+				},
+				(err) => {
+					if (err.status === HttpStatusCode.Forbidden) {
+						showCashable({
+							textContent: t('features.like.hooks.use-like.charge_message'),
+						});
+						return;
+					}
+					if (err.status === HttpStatusCode.Conflict) {
+						showErrorModal(t('features.like.hooks.use-like.duplicate_like'), 'announcement');
+						return;
+					}
+					if (err.status === HttpStatusCode.NotFound) {
+						showErrorModal(t('features.global-matching.match_expired'), 'announcement');
+						return;
+					}
+					showErrorModal(err.error ?? err.message ?? 'Unknown error', 'error');
+				},
+			),
 		);
 	};
 

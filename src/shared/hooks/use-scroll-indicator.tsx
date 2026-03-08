@@ -17,9 +17,14 @@ export const useScrollIndicator = () => {
     }
   };
 
+  const handleIndicatorPress = () => {
+    scrollViewRef.current?.scrollTo({ y: 300, animated: true });
+  };
+
   return {
     showIndicator,
     handleScroll,
     scrollViewRef,
+    handleIndicatorPress,
   };
 };

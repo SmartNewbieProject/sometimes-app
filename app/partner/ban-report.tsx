@@ -3,10 +3,11 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,8 +22,6 @@ import { useReport } from "@/src/features/ban-report/hooks/useReport";
 import useLeaveChatRoom from "@/src/features/chat/queries/use-leave-chat-room";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Header } from "@shared/ui";
-
-const { width } = Dimensions.get("window");
 
 export default function ReportScreen() {
   const { t } = useTranslation();
@@ -266,6 +265,11 @@ export default function ReportScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+        style={styles.flex}
+      >
       <View style={styles.customHeader}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -284,7 +288,7 @@ export default function ReportScreen() {
         <View style={styles.headerRightPlaceholder} />
       </View>
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <View style={styles.profileContainer}>
           <Image
             source={{ uri: profile.profileImage }}
@@ -418,6 +422,7 @@ export default function ReportScreen() {
           )}
         </TouchableOpacity>
       </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -426,6 +431,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: semanticColors.surface.background,
+  },
+  flex: {
+    flex: 1,
   },
   customHeader: {
     flexDirection: "row",

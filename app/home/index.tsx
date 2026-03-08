@@ -26,6 +26,7 @@ import { useHomeSummary } from '@/src/features/profile-viewer/queries';
 import { FloatingSummaryCard } from '@/src/features/profile-viewer/ui';
 import WelcomeReward from '@/src/features/welcome-reward';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useStorage } from '@/src/shared/hooks/use-storage';
@@ -81,6 +82,7 @@ const { useWelcomeReward } = welcomeRewardHooks;
 const HomeScreen = () => {
 	const { t } = useTranslation();
 	const { showModal } = useModal();
+	const { disableGlobalLoading, enableGlobalLoading } = useGlobalLoading();
 	const { featureEvents } = useMixpanel();
 	const { trackHomeViewed } = featureEvents;
 	const hasTrackedHomeView = useRef(false);
@@ -207,6 +209,9 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 	// 화면이 포커스될 때마다 데이터 리프레시, 홈 조회 추적 및 heartbeat 전송
 	useFocusEffect(
 		useCallback(() => {
+			// 홈 화면에서는 미호 로딩 오버레이 비활성화
+			disableGlobalLoading();
+
 			if (!hasTrackedHomeView.current) {
 				trackHomeViewed();
 				hasTrackedHomeView.current = true;
@@ -219,7 +224,12 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 			queryClient.invalidateQueries({ queryKey: ['check-preference-fill'], refetchType: 'active' });
 			queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'], refetchType: 'active' });
 			queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
-		}, [queryClient, trackHomeViewed]),
+
+			return () => {
+				// 홈 화면을 떠날 때 로딩 오버레이 재활성화
+				enableGlobalLoading();
+			};
+		}, [queryClient, trackHomeViewed, disableGlobalLoading, enableGlobalLoading]),
 	);
 
 	const renderMatchingSection = () => {

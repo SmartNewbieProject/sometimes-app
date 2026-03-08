@@ -1,11 +1,12 @@
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
-import { ARTICLE_CATEGORY_LABELS, type ArticleListItem } from '@/src/features/article/types';
+import type { ArticleListItem } from '@/src/features/article/types';
 import colors from '@/src/shared/constants/colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import dayUtils from '@/src/shared/libs/day';
 import { Image as ExpoImage } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface SometimeArticleCardProps {
@@ -15,6 +16,7 @@ interface SometimeArticleCardProps {
 
 export const SometimeArticleCard = ({ article, embedded }: SometimeArticleCardProps) => {
 	const router = useRouter();
+	const { t } = useTranslation();
 	const { sometimeStoryEvents } = useMixpanel();
 
 	const handlePress = () => {
@@ -28,9 +30,10 @@ export const SometimeArticleCard = ({ article, embedded }: SometimeArticleCardPr
 		}
 	};
 
-	const categoryLabel = ARTICLE_CATEGORY_LABELS[article.category];
+	const categoryLabel = t(`features.community.ui.article_list_screen.category_labels.${article.category}`);
+	const dateFormat = t('features.community.ui.article_list_screen.date_format');
 	const formattedDate = article.publishedAt
-		? dayUtils.create(article.publishedAt).format('M월 D일')
+		? dayUtils.create(article.publishedAt).format(dateFormat)
 		: '';
 
 	return (

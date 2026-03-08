@@ -3,7 +3,7 @@ import { Text } from '@/src/shared/ui';
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { LETTER_PROMPT_KEYS } from '../utils/letter-validator';
 
 import { useLetterPrompts } from '../hooks/use-letter-prompts';
@@ -14,7 +14,9 @@ type LetterPromptsProps = {
 };
 
 export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
-	const { questions } = useLetterPrompts(connectionId);
+	const { questions, isTimedOut, isFailed } = useLetterPrompts(connectionId);
+	// questions가 없으면(아직 생성 중) 타임아웃/실패 전까지 항상 spinner 표시
+	const isQuestionsLoading = questions.length === 0 && !isTimedOut && !isFailed;
 	const prompts = questions.length > 0 ? questions : LETTER_PROMPT_KEYS;
 
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -46,28 +48,40 @@ export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
 						이런 문구는 어때요?
 					</Text>
 				</View>
-				<Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={16} color="#737275" />
+				{isQuestionsLoading ? (
+					<ActivityIndicator size="small" color={colors.primaryPurple} />
+				) : (
+					<Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={16} color="#737275" />
+				)}
 			</Pressable>
 
 			{isExpanded && (
 				<View style={styles.promptsContainer}>
-					{prompts.map((prompt, index) => (
-						<Pressable
-							key={index}
-							style={[styles.promptItem, selectedIndex === index && styles.promptItemSelected]}
-							onPress={() => handleSelect(prompt, index)}
-						>
-							<Text
-								size="12"
-								style={[
-									styles.promptText,
-									selectedIndex === index ? styles.promptTextSelected : {},
-								]}
-							>
-								{prompt}
+					{isQuestionsLoading ? (
+						<View style={styles.loadingContainer}>
+							<Text size="12" style={styles.loadingText}>
+								딱 맞는 문구를 만들고 있어요 🪄
 							</Text>
-						</Pressable>
-					))}
+						</View>
+					) : (
+						prompts.map((prompt, index) => (
+							<Pressable
+								key={index}
+								style={[styles.promptItem, selectedIndex === index && styles.promptItemSelected]}
+								onPress={() => handleSelect(prompt, index)}
+							>
+								<Text
+									size="12"
+									style={[
+										styles.promptText,
+										selectedIndex === index ? styles.promptTextSelected : {},
+									]}
+								>
+									{prompt}
+								</Text>
+							</Pressable>
+						))
+					)}
 				</View>
 			)}
 		</View>
@@ -133,5 +147,15 @@ const styles = StyleSheet.create({
 	},
 	promptTextSelected: {
 		color: colors.primaryPurple,
+	},
+	loadingContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		paddingVertical: 16,
+	},
+	loadingText: {
+		color: '#737275',
 	},
 });

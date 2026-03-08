@@ -8,9 +8,9 @@ import { Text } from '@/src/shared/ui/text';
 import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
 import type { AxiosError } from 'axios';
 import { useGlobalSearchParams } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { useSignupProgress } from '../../hooks';
 import {
 	useCreateDepartmentMutation,
@@ -19,7 +19,6 @@ import {
 } from '../../queries';
 
 const MIN_TOUCH_TARGET = 48;
-const CREATE_NEW_VALUE = '__CREATE_NEW__';
 
 function DepartmentSearch() {
 	const { t } = useTranslation();
@@ -30,8 +29,8 @@ function DepartmentSearch() {
 	} = useSignupProgress();
 
 	const [isVisible, setIsVisible] = useState(false);
-	const [isInlineMode, setIsInlineMode] = useState(false);
-	const [inlineDeptName, setInlineDeptName] = useState('');
+	// false: 현재 학교 학과 목록, true: 외부(전체 대학) 학과 검색 모드
+	const [isCrossMode, setIsCrossMode] = useState(false);
 	const [pickerSearchQuery, setPickerSearchQuery] = useState('');
 	const debouncedSearchQuery = useDebounce(pickerSearchQuery, 300);
 
@@ -39,15 +38,19 @@ function DepartmentSearch() {
 		universityId: string;
 	}>();
 	const effectiveUniversityId = universityId ?? formUniversityId;
+
+	// 현재 학교 학과 목록 (BottomSheetPicker 내부에서 로컬 필터링)
 	const { data: departments = [], isLoading } = useDepartmentQuery(effectiveUniversityId);
-	const {
-		data: searchResults = [],
-		isFetching: isSearchFetching,
-	} = useSearchDepartmentsQuery(debouncedSearchQuery);
+
+	// 외부 검색: 다른 대학 포함 전체 학과 검색 (cross mode에서만 활성화)
+	const { data: searchResults = [], isFetching: isSearchFetching } = useSearchDepartmentsQuery(
+		isCrossMode ? debouncedSearchQuery : '',
+	);
+
 	const createDepartmentMutation = useCreateDepartmentMutation();
 
 	const departmentOptions: BottomSheetPickerOption[] = useMemo(() => {
-		if (debouncedSearchQuery.trim()) {
+		if (isCrossMode) {
 			return searchResults.map((item) => ({
 				label: item.name,
 				value: item.name,
@@ -56,170 +59,61 @@ function DepartmentSearch() {
 		}
 		return departments
 			.filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
-			.map((dept) => ({ label: dept, value: dept }));
-	}, [debouncedSearchQuery, searchResults, departments]);
+			.map((dept) => ({ label: dept, value: dept, compact: true }));
+	}, [isCrossMode, searchResults, departments]);
 
-	const pinnedOptions: BottomSheetPickerOption[] = useMemo(
-		() => [
-			{
-				label: t('features.signup.ui.department_direct_input_option'),
-				value: CREATE_NEW_VALUE,
-			},
-		],
-		[t],
-	);
-
-	const handleSelect = (value: string) => {
-		if (value === CREATE_NEW_VALUE) {
-			setIsInlineMode(true);
-			setIsVisible(false);
-			return;
+	const handleSelect = async (value: string) => {
+		if (isCrossMode && effectiveUniversityId) {
+			// 다른 학교 학과 선택 → 현재 학교에 등록
+			const alreadyExists = departments.includes(value);
+			if (!alreadyExists) {
+				try {
+					await createDepartmentMutation.mutateAsync({
+						universityId: effectiveUniversityId,
+						name: value,
+					});
+				} catch (error) {
+					const axiosError = error as AxiosError;
+					if (axiosError?.response?.status === 409) {
+						// 이미 등록됨, 그냥 선택
+					} else if (axiosError?.response?.status === 429) {
+						emitToast(t('features.signup.ui.department_direct_rate_limit'));
+						return;
+					} else {
+						emitToast(t('features.signup.ui.department_direct_error'));
+						return;
+					}
+				}
+			}
 		}
 		updateForm({ departmentName: value });
 	};
 
-	const handleInlineSubmit = async () => {
-		if (!inlineDeptName.trim() || !effectiveUniversityId) return;
-
-		try {
-			await createDepartmentMutation.mutateAsync({
-				universityId: effectiveUniversityId,
-				name: inlineDeptName.trim(),
-			});
-			updateForm({ departmentName: inlineDeptName.trim() });
-			setIsInlineMode(false);
-			setInlineDeptName('');
-		} catch (error) {
-			const axiosError = error as AxiosError;
-			if (axiosError?.response?.status === 409) {
-				updateForm({ departmentName: inlineDeptName.trim() });
-				setIsInlineMode(false);
-				setInlineDeptName('');
-			} else if (axiosError?.response?.status === 429) {
-				emitToast(t('features.signup.ui.department_direct_rate_limit'));
-			} else {
-				emitToast(t('features.signup.ui.department_direct_error'));
-			}
-		}
+	const handleClose = () => {
+		setIsVisible(false);
+		setIsCrossMode(false);
+		setPickerSearchQuery('');
 	};
 
-	const handleInlineCancel = () => {
-		setIsInlineMode(false);
-		setInlineDeptName('');
-	};
-
-	const handleEmptyRegister = useCallback(
-		async (name: string) => {
-			if (!name.trim() || !effectiveUniversityId) return;
-
-			try {
-				await createDepartmentMutation.mutateAsync({
-					universityId: effectiveUniversityId,
-					name: name.trim(),
-				});
-				updateForm({ departmentName: name.trim() });
-				setIsVisible(false);
-			} catch (error) {
-				const axiosError = error as AxiosError;
-				if (axiosError?.response?.status === 409) {
-					updateForm({ departmentName: name.trim() });
-					setIsVisible(false);
-				} else if (axiosError?.response?.status === 429) {
-					emitToast(t('features.signup.ui.department_direct_rate_limit'));
-				} else {
-					emitToast(t('features.signup.ui.department_direct_error'));
-				}
-			}
-		},
-		[effectiveUniversityId, createDepartmentMutation, updateForm, emitToast, t],
-	);
-
-	const renderEmpty = useCallback(
-		(query: string) => {
-			if (!query.trim()) {
-				return (
-					<Text size="md" textColor="muted" style={styles.emptyText}>
-						{t('features.signup.ui.department_search_empty')}
-					</Text>
-				);
-			}
-			return (
-				<View style={styles.emptyRegisterContainer}>
-					<Text size="md" textColor="muted" style={styles.emptyMessageText}>
-						{t('features.signup.ui.department_search_empty_with_query', { query })}
-					</Text>
-					<Pressable
-						onPress={() => handleEmptyRegister(query)}
-						disabled={createDepartmentMutation.isPending}
-						style={({ pressed }) => [
-							styles.emptyRegisterButton,
-							createDepartmentMutation.isPending && styles.submitButtonDisabled,
-							pressed && styles.buttonPressed,
-						]}
-					>
-						{createDepartmentMutation.isPending ? (
-							<ActivityIndicator color="#FFFFFF" size="small" />
-						) : (
-							<Text size="sm" weight="semibold" style={styles.emptyRegisterButtonText}>
-								{t('features.signup.ui.department_empty_register', { query })}
-							</Text>
-						)}
-					</Pressable>
-				</View>
-			);
-		},
-		[t, createDepartmentMutation.isPending, handleEmptyRegister],
-	);
+	// "내가 찾는 학과가 없다면?" 버튼 — 피커를 닫지 않고 cross mode로 전환
+	const noDeptFooter = !isCrossMode ? (
+		<Pressable
+			onPress={() => {
+				setIsCrossMode(true);
+				setPickerSearchQuery('');
+			}}
+			style={({ pressed }) => [styles.noDeptButton, pressed && styles.buttonPressed]}
+		>
+			<Text size="sm" weight="medium" textColor="purple">
+				{t('features.signup.ui.department_no_dept_button')}
+			</Text>
+		</Pressable>
+	) : null;
 
 	const hasValue = !!departmentName;
 
 	if (isLoading) {
 		return <Loading.Page title={t('features.signup.ui.department_search_loading')} />;
-	}
-
-	if (isInlineMode) {
-		return (
-			<View style={styles.container}>
-				<View style={styles.inlineContainer}>
-					<TextInput
-						style={styles.inlineInput}
-						value={inlineDeptName}
-						onChangeText={setInlineDeptName}
-						placeholder={t('features.signup.ui.department_direct_input_placeholder')}
-						placeholderTextColor="#9B94AB"
-						autoFocus
-					/>
-					<View style={styles.inlineButtons}>
-						<Pressable
-							onPress={handleInlineCancel}
-							style={({ pressed }) => [styles.cancelButton, pressed && styles.buttonPressed]}
-						>
-							<Text size="sm" weight="medium" textColor="secondary">
-								{t('features.signup.ui.department_direct_cancel')}
-							</Text>
-						</Pressable>
-						<Pressable
-							onPress={handleInlineSubmit}
-							disabled={!inlineDeptName.trim() || createDepartmentMutation.isPending}
-							style={({ pressed }) => [
-								styles.submitButton,
-								(!inlineDeptName.trim() || createDepartmentMutation.isPending) &&
-									styles.submitButtonDisabled,
-								pressed && styles.buttonPressed,
-							]}
-						>
-							{createDepartmentMutation.isPending ? (
-								<ActivityIndicator color="#FFFFFF" size="small" />
-							) : (
-								<Text size="sm" weight="semibold" style={styles.submitButtonText}>
-									{t('features.signup.ui.department_direct_submit')}
-								</Text>
-							)}
-						</Pressable>
-					</View>
-				</View>
-			</View>
-		);
 	}
 
 	return (
@@ -244,18 +138,24 @@ function DepartmentSearch() {
 
 			<BottomSheetPicker
 				visible={isVisible}
-				onClose={() => setIsVisible(false)}
+				onClose={handleClose}
 				options={departmentOptions}
 				selectedValue={departmentName}
 				onSelect={handleSelect}
-				title={t('features.signup.ui.department_search_title')}
+				title={
+					isCrossMode
+						? t('features.signup.ui.department_cross_dept_title')
+						: t('features.signup.ui.department_search_title')
+				}
 				searchable={true}
 				searchPlaceholder={t('features.signup.ui.department_search_placeholder')}
 				emptyText={t('features.signup.ui.department_search_empty')}
-				loading={isLoading || (debouncedSearchQuery.trim().length > 0 && isSearchFetching)}
-				pinnedOptions={pinnedOptions}
-				renderEmpty={renderEmpty}
-				onSearchChange={setPickerSearchQuery}
+				loading={
+					(isCrossMode && debouncedSearchQuery.trim().length > 0 && isSearchFetching) ||
+					createDepartmentMutation.isPending
+				}
+				onSearchChange={isCrossMode ? setPickerSearchQuery : undefined}
+				listFooterComponent={noDeptFooter}
 			/>
 		</View>
 	);
@@ -292,73 +192,15 @@ const styles = StyleSheet.create({
 		height: 28,
 		backgroundColor: semanticColors.surface.other,
 	},
-	inlineContainer: {
-		gap: 12,
-	},
-	inlineInput: {
-		minHeight: MIN_TOUCH_TARGET,
-		borderRadius: 15,
+	noDeptButton: {
+		paddingVertical: 10,
+		paddingHorizontal: 16,
+		borderRadius: 20,
 		borderWidth: 1,
 		borderColor: semanticColors.brand.primary,
-		backgroundColor: semanticColors.surface.background,
-		paddingHorizontal: 12,
-		fontSize: 16,
-		color: semanticColors.text.primary,
-		fontFamily: 'Pretendard-Regular',
-	},
-	inlineButtons: {
-		flexDirection: 'row',
-		gap: 8,
-	},
-	cancelButton: {
-		flex: 1,
-		minHeight: 44,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: semanticColors.border.default,
-		backgroundColor: semanticColors.surface.background,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	submitButton: {
-		flex: 1,
-		minHeight: 44,
-		borderRadius: 12,
-		backgroundColor: semanticColors.brand.primary,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	submitButtonDisabled: {
-		opacity: 0.4,
-	},
-	submitButtonText: {
-		color: '#FFFFFF',
 	},
 	buttonPressed: {
-		opacity: 0.85,
-	},
-	emptyRegisterContainer: {
-		alignItems: 'center',
-		gap: 16,
-		paddingHorizontal: 20,
-	},
-	emptyMessageText: {
-		textAlign: 'center',
-	},
-	emptyText: {
-		textAlign: 'center',
-	},
-	emptyRegisterButton: {
-		minHeight: 44,
-		borderRadius: 12,
-		backgroundColor: semanticColors.brand.primary,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingHorizontal: 24,
-		paddingVertical: 12,
-	},
-	emptyRegisterButtonText: {
-		color: '#FFFFFF',
+		opacity: 0.7,
 	},
 });
 
