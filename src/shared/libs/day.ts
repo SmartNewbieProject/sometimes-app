@@ -63,12 +63,17 @@ const create = (config?: ConfigType) => {
 const createUTC = (config?: ConfigType) =>
   dayjs(config).utc();
 
+// UTC 문자열(Z 없이 전달되는 서버 UTC 시간)을 KST로 변환
+const createFromUTC = (config?: ConfigType) =>
+  dayjs.utc(config).tz('Asia/Seoul');
+
 const dayUtils = {
   getDayBy6Digit,
   getAgeBy6Digit,
   create,
   formatRelativeTime,
   createUTC,
+  createFromUTC,
 };
 
 export default dayUtils;

@@ -323,7 +323,7 @@ const WaitingContent = ({ secondary }: { secondary: MatchDetailsV31 }) => {
 	}, [secondary.untilNext]);
 
 	const formattedDate = secondary.untilNext
-		? dayUtils.create(secondary.untilNext).format('M/D HH:mm')
+		? dayUtils.createFromUTC(secondary.untilNext).format('M/D HH:mm')
 		: '';
 
 	return (
@@ -370,7 +370,7 @@ const NotFoundContent = ({ match }: { match: MatchDetailsV31 }) => {
 	}, [match.untilNext]);
 
 	const formattedDate = match.untilNext
-		? dayUtils.create(match.untilNext).format('M/D HH:mm')
+		? dayUtils.createFromUTC(match.untilNext).format('M/D HH:mm')
 		: '';
 
 	const failureCode = match.failureCode;
