@@ -104,6 +104,7 @@ export const env = {
 console.log('=================================');
 console.log('[Environment] Final Config:');
 console.log('  API_URL:', env.API_URL);
+console.log('  SERVER_URL:', env.SERVER_URL);
 console.log('  MERCHANT_ID:', env.MERCHANT_ID);
 console.log('  CHANNEL_KEY:', env.CHANNEL_KEY.substring(0, 20) + '...');
 console.log('=================================');
@@ -113,4 +114,14 @@ if (!env.API_URL || env.API_URL === '') {
   console.error('[env.ts] ❌ CRITICAL: API_URL is not set!');
   console.error('[env.ts] This will cause API calls to fail.');
   console.error('[env.ts] Check app.config.ts and rebuild.');
+}
+
+// SERVER_URL 유효성 검사 (채팅 소켓 연결용)
+if (!env.SERVER_URL || !env.SERVER_URL.startsWith('https://')) {
+  console.error('[env.ts] ❌ CRITICAL: SERVER_URL is invalid!');
+  console.error('[env.ts]   value:', env.SERVER_URL);
+  console.error('[env.ts]   expected: https://api.some-in-univ.com');
+  console.error('[env.ts]   → chat socket connection will fail on native');
+} else {
+  console.log('[env.ts] ✅ SERVER_URL OK:', env.SERVER_URL);
 }

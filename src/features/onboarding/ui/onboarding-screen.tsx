@@ -168,6 +168,12 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 			return;
 		}
 		await saveOnboardingComplete();
+
+		if (beforeRemoveUnsubRef.current) {
+			beforeRemoveUnsubRef.current();
+			beforeRemoveUnsubRef.current = null;
+		}
+
 		router.replace('/home');
 	};
 

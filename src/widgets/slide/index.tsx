@@ -140,6 +140,7 @@ function Slider({
 			if (isSingle) return false;
 			return Math.abs(gestureState.dx) > 5 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
 		},
+		onPanResponderTerminationRequest: () => false,
 		onPanResponderGrant: () => {
 			isDraggingRef.current = true;
 			// 진행 중인 autoPlay 애니메이션 즉시 중단
@@ -156,10 +157,10 @@ function Slider({
 			if (containerWidth === 0) return;
 			const dx = gestureState.dx;
 			const vx = gestureState.vx;
-			const threshold = Math.max(40, containerWidth * 0.1);
+			const threshold = 10;
 			// 변위 또는 속도 기반 슬라이드 방향 판정
-			const isNext = dx < -threshold || vx < -0.5;
-			const isPrev = dx > threshold || vx > 0.5;
+			const isNext = dx < -threshold || vx < -0.15;
+			const isPrev = dx > threshold || vx > 0.15;
 			if (isNext) {
 				pendingRef.current = true;
 				moveToIndex(focusRef.current + 1);
@@ -253,10 +254,10 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		left: 0,
 		right: 0,
-		paddingHorizontal: 8,
+		gap: 3,
 	},
 	indicatorButton: {
-		padding: 12,
+		paddingVertical: 12,
 	},
 	indicator: {
 		width: 8,

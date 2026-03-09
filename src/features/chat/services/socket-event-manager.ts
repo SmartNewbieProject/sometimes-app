@@ -1,6 +1,6 @@
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { devLogWithTag, devWarn, logError } from '@/src/shared/utils';
+import { chatError, chatLog, chatWarn, devLogWithTag, devWarn, logError } from '@/src/shared/utils';
 import { uriToBase64 } from '@/src/shared/utils/image';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
@@ -582,8 +582,23 @@ class SocketConnectionManager {
 		devLogWithTag('Socket', 'Base URL:', url);
 		devLogWithTag('Socket', 'Token length:', token ? token.length : 0);
 
+		// URL 유효성 검사 (프로덕션 오진단 방지)
+		if (!url || !url.startsWith('http')) {
+			chatError('CONNECT_INVALID_URL', { url, reason: 'URL must start with http/https' });
+		}
+
 		const socketUrl = buildChatSocketUrl(url, '', token);
 		devLogWithTag('Socket', 'Built Socket URL:', socketUrl);
+
+		// 프로덕션에서 추적 가능한 연결 시도 로그
+		chatLog('CONNECT_ATTEMPT', {
+			baseUrl: url,
+			platform: Platform.OS,
+			hasToken: !!token,
+			tokenLength: token?.length ?? 0,
+			hasExistingSocket: !!this.socket,
+			isCurrentlyConnected: !!this.socket?.connected,
+		});
 
 		devLogWithTag('Socket', 'Current state:', {
 			hasSocket: !!this.socket,
@@ -599,6 +614,7 @@ class SocketConnectionManager {
 
 		if (this.socket && this.currentUrl === socketUrl && this.socket.connected) {
 			devLogWithTag('Socket', 'Socket already connected, reusing...');
+			chatLog('CONNECT_REUSED', { url });
 			return this.socket;
 		}
 
@@ -617,6 +633,7 @@ class SocketConnectionManager {
 			});
 			devLogWithTag('Socket', '=== CONNECT END ===');
 		} catch (error) {
+			chatError('CONNECT_CREATE_FAILED', { url, error: String(error) });
 			logError('Failed to create socket:', error);
 			devLogWithTag('Socket', 'Socket creation failed:', error);
 			devLogWithTag('Socket', '=== CONNECT FAILED ===');
@@ -630,13 +647,33 @@ class SocketConnectionManager {
 		this.currentUrl = null;
 	}
 
+	private getSocketIoDebug() {
+		const socketWithIo = this.socket as
+			| (Socket & {
+					io?: {
+						engine?: {
+							readyState?: string;
+							transport?: { name?: string };
+						};
+					};
+			  })
+			| null;
+
+		return {
+			socketId: this.socket?.id ?? null,
+			transport: socketWithIo?.io?.engine?.transport?.name ?? null,
+			engineReadyState: socketWithIo?.io?.engine?.readyState ?? null,
+		};
+	}
+
 	private createSocketConnection(socketUrl: string, token: string) {
-		// Polling 우선 → WebSocket 업그레이드 (서버 transport 순서와 일치, ALB 다중 인스턴스 호환)
-		const transports = ['polling', 'websocket'];
+		// 네이티브는 websocket only로 연결해 ALB sticky cookie에 의존하는 polling handshake를 피한다.
+		const isNative = Platform.OS === 'ios' || Platform.OS === 'android';
+		const transports = isNative ? ['websocket'] : ['polling', 'websocket'];
 
 		const options = {
 			transports,
-			upgrade: true, // polling → websocket 자동 업그레이드
+			upgrade: !isNative, // 웹만 polling → websocket 업그레이드 사용
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
 			rejectUnauthorized: true,
@@ -653,9 +690,20 @@ class SocketConnectionManager {
 			forceNew: !!this.socket,
 		};
 
+		chatLog('SOCKET_IO_INIT', {
+			url: socketUrl,
+			transports: options.transports,
+			isNative,
+			secure: options.secure,
+			withCredentials: options.withCredentials,
+			platform: Platform.OS,
+			nodeEnv: process.env.NODE_ENV,
+		});
+
 		devLogWithTag('Socket', 'Creating socket with options:', {
 			url: socketUrl,
 			transports: options.transports,
+			isNative,
 			withCredentials: options.withCredentials,
 			secure: options.secure,
 			hasAuth: !!options.auth,
@@ -686,6 +734,12 @@ class SocketConnectionManager {
 			devLogWithTag('Socket', `Reconnected after ${attempt} attempts`);
 			this.reconnectAttempts = 0;
 			this.isReconnecting = false;
+			chatLog('RECONNECTED', {
+				attempts: attempt,
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 			chatEventBus.emit({
 				type: 'SOCKET_CONNECTED',
 				payload: { reconnected: true, attempts: attempt },
@@ -695,11 +749,22 @@ class SocketConnectionManager {
 		// 재연결 시도
 		this.socket.io.on('reconnect_attempt', (attempt) => {
 			devLogWithTag('Socket', `Reconnect attempt: ${attempt}`);
+			chatWarn('RECONNECT_ATTEMPT', {
+				attempt,
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 		});
 
 		// 재연결 실패 (모든 시도 소진)
 		this.socket.io.on('reconnect_failed', () => {
 			devLogWithTag('Socket', 'All reconnection attempts failed');
+			chatError('RECONNECT_FAILED', {
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 			chatEventBus.emit({
 				type: 'SOCKET_RECONNECT_FAILED',
 				payload: { error: 'All reconnection attempts exhausted' },
@@ -709,6 +774,12 @@ class SocketConnectionManager {
 		// 재연결 에러
 		this.socket.io.on('reconnect_error', (error) => {
 			devLogWithTag('Socket', 'Reconnect error:', error.message);
+			chatWarn('RECONNECT_ERROR', {
+				message: error.message,
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 		});
 	}
 
@@ -718,34 +789,60 @@ class SocketConnectionManager {
 			this.reconnectAttempts = 0;
 			this.isReconnecting = false;
 			this.lastSuccessfulSend = Date.now();
-			this.lastPongReceived = Date.now(); // Health check 초기화
+			this.lastPongReceived = Date.now();
+			chatLog('CONNECTED', {
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 			chatEventBus.emit({ type: 'SOCKET_CONNECTED', payload: {} });
 			this.processPendingMessages();
-			this.startHealthCheck(); // Health check 시작
+			this.startHealthCheck();
 		});
 	}
 
 	private registerDisconnectHandler() {
 		this.socket?.on('disconnect', (reason) => {
 			devLogWithTag('Socket', 'Disconnected:', reason);
-			this.stopHealthCheck(); // Health check 중지
+			this.stopHealthCheck();
+			chatWarn('DISCONNECTED', {
+				reason,
+				url: this.currentUrl,
+				platform: Platform.OS,
+				...this.getSocketIoDebug(),
+			});
 			chatEventBus.emit({ type: 'SOCKET_DISCONNECTED', payload: { reason } });
 
 			// 'io server disconnect' → 서버가 강제로 끊음 (수동 재연결 필요)
 			if (reason === 'io server disconnect') {
 				devLogWithTag('Socket', 'Server disconnected, manual reconnect needed');
-				this.socket?.connect(); // 수동 재연결
+				this.socket?.connect();
 				return;
 			}
 
 			// 'transport close', 'ping timeout' → Socket.IO가 자동 재연결 시도함
-			// 추가적인 수동 재연결 로직은 불필요 (Socket.IO 내장 재연결 사용)
 		});
 	}
 
 	private registerErrorHandler() {
 		this.socket?.on('connect_error', (error) => {
+			const errorWithContext = error as Error & {
+				description?: unknown;
+				context?: unknown;
+				type?: string;
+			};
+
 			logError('Socket connection error:', error.message);
+			chatError('CONNECT_ERROR', {
+				message: error.message,
+				errorName: error.name,
+				errorType: errorWithContext.type,
+				url: this.currentUrl,
+				platform: Platform.OS,
+				description: errorWithContext.description,
+				context: errorWithContext.context,
+				...this.getSocketIoDebug(),
+			});
 			devLogWithTag('Socket', 'Connection failed:', error.message);
 			chatEventBus.emit({
 				type: 'SOCKET_DISCONNECTED',
@@ -755,6 +852,7 @@ class SocketConnectionManager {
 
 		this.socket?.on('error', (error: { message?: string }) => {
 			logError('Socket error:', error);
+			chatError('SOCKET_ERROR', { message: error?.message, url: this.currentUrl });
 			devLogWithTag('Socket', 'Error:', error);
 
 			const errorMessage = error?.message || '';

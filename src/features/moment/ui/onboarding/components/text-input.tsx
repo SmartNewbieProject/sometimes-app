@@ -1,6 +1,6 @@
 import colors from '@/src/shared/constants/colors';
 import { Text } from '@/src/shared/ui';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
 interface OnboardingTextInputProps {
@@ -20,6 +20,22 @@ export const OnboardingTextInput = ({
 	const nodeRef = useRef<HTMLTextAreaElement | null>(null);
 	// 안정적인 고유 ID (useId 대신 useRef로 생성)
 	const nativeId = useRef(`mt-input-${Math.random().toString(36).slice(2, 9)}`).current;
+
+	// 네이티브: 로컬 state로 IME 조합 보호 (부모 리렌더로 인한 조합 끊김 방지)
+	const [localValue, setLocalValue] = useState(value);
+	const onChangeRef = useRef(onChange);
+	onChangeRef.current = onChange;
+
+	// 부모 value가 외부에서 변경된 경우 (스텝 이동 등) 로컬 동기화
+	useEffect(() => {
+		if (Platform.OS === 'web') return;
+		setLocalValue(value);
+	}, [value]);
+
+	const handleNativeChangeText = useCallback((text: string) => {
+		setLocalValue(text);
+		onChangeRef.current(text);
+	}, []);
 
 	// 웹: 네이티브 DOM 이벤트로 한글 IME 처리
 	useEffect(() => {
@@ -66,14 +82,16 @@ export const OnboardingTextInput = ({
 		}
 	}, [value]);
 
+	const displayValue = Platform.OS === 'web' ? value : localValue;
+
 	return (
 		<View style={styles.container}>
 			<TextInput
 				// 웹: uncontrolled (defaultValue) + nativeID → React가 DOM 값을 덮어쓰지 않아 IME 정상 작동
-				// 네이티브: controlled (value + onChangeText)
+				// 네이티브: 로컬 state 기반 controlled → 부모 store 리렌더가 IME 조합을 끊지 않음
 				{...(Platform.OS === 'web'
 					? { nativeID: nativeId, defaultValue: value }
-					: { value, onChangeText: onChange }
+					: { value: localValue, onChangeText: handleNativeChangeText }
 				)}
 				style={styles.textInput}
 				placeholder={placeholder}
@@ -87,7 +105,7 @@ export const OnboardingTextInput = ({
 			/>
 			<View style={styles.charCount}>
 				<Text size="12" weight="normal" textColor="gray">
-					{value.length}/{maxLength}
+					{displayValue.length}/{maxLength}
 				</Text>
 			</View>
 		</View>

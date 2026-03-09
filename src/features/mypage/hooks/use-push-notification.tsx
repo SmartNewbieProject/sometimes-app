@@ -1,15 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
-import { AppState, Linking, Alert, Platform } from 'react-native';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import {
-	getPushNotificationStatus,
-	enablePushNotification,
-	disablePushNotification,
 	checkNotificationPermissionStatus,
+	disablePushNotification,
+	enablePushNotification,
+	getPushNotificationStatus,
 	requestNotificationPermission,
 } from '@/src/shared/libs/notifications';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
+import { Alert, AppState, Linking, Platform, Text } from 'react-native';
 
 export const usePushNotification = () => {
 	const { t } = useTranslation();
@@ -65,8 +64,7 @@ export const usePushNotification = () => {
 
 		try {
 			if (Platform.OS !== 'web') {
-				// getPermissionsAsync(캐시) 대신 requestPermissionsAsync(실시간)로 실제 OS 상태 확인
-				// iOS에서 캐시된 denied 값이 반환되어 잘못된 "설정 이동" Alert이 뜨는 문제 방지
+				// 이미 허용된 상태면 그대로 진행하고, 필요한 경우에만 시스템 권한 요청을 띄웁니다.
 				const permission = await requestNotificationPermission();
 
 				if (permission === 'denied') {
@@ -94,41 +92,16 @@ export const usePushNotification = () => {
 					? error.message
 					: t('features.mypage.notification.activation_failed_title');
 
-			if (errorMessage === 'NO_PUSH_TOKEN_REGISTERED') {
-				if (Platform.OS === 'web') {
-					showModal({
-						title: t('features.mypage.notification.registration_required_title'),
-						children: (
-							<Text>{t('features.mypage.notification.registration_required_message')}</Text>
-						),
-						primaryButton: {
-							text: t('features.mypage.notification.confirm'),
-							onClick: () => {},
-						},
-					});
-				} else {
-					showModal({
-						title: t('features.mypage.notification.registration_required_title'),
-						children: (
-							<Text>{t('features.mypage.notification.registration_required_message')}</Text>
-						),
-						primaryButton: {
-							text: t('features.mypage.notification.go_to_settings'),
-							onClick: () => Linking.openSettings(),
-						},
-						secondaryButton: {
-							text: t('features.mypage.notification.cancel'),
-							onClick: () => {},
-						},
-					});
-				}
-			} else {
-				showModal({
-					title: t('features.mypage.notification.activation_failed_title'),
-					children: errorMessage,
-					primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
-				});
-			}
+			const resolvedMessage =
+				errorMessage === 'NO_PUSH_TOKEN_REGISTERED'
+					? t('common.푸시_토큰_획득_실패')
+					: errorMessage;
+
+			showModal({
+				title: t('features.mypage.notification.activation_failed_title'),
+				children: <Text>{resolvedMessage}</Text>,
+				primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
+			});
 		} finally {
 			setIsUpdating(false);
 		}

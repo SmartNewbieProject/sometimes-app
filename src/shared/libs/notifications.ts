@@ -304,12 +304,23 @@ export async function checkNotificationPermissionStatus(): Promise<Notifications
 
 /**
  * 알림 권한을 요청합니다.
- * - undetermined: 시스템 다이얼로그 표시
- * - granted/denied: 다이얼로그 없이 현재 상태 즉시 반환 (iOS 캐시 문제 방지)
+ * - granted: 현재 상태를 그대로 반환
+ * - undetermined/canAskAgain: 시스템 다이얼로그를 통해 재요청
+ * - denied: 재요청 불가 상태면 현재 값을 그대로 반환
  */
 export async function requestNotificationPermission(): Promise<Notifications.PermissionStatus> {
-	const { status } = await Notifications.requestPermissionsAsync();
-	return status;
+	const { status: existingStatus, canAskAgain } = await Notifications.getPermissionsAsync();
+
+	if (existingStatus === 'granted') {
+		return existingStatus;
+	}
+
+	if (existingStatus === 'undetermined' || canAskAgain) {
+		const { status } = await Notifications.requestPermissionsAsync();
+		return status;
+	}
+
+	return existingStatus;
 }
 
 /** @deprecated requestNotificationPermission 사용 권장 */
@@ -337,23 +348,41 @@ export async function getPushNotificationStatus(): Promise<PushNotificationStatu
  * 모바일: 토큰이 없으면 새로 등록하고, 등록된 모든 토큰을 활성화
  */
 export async function enablePushNotification(): Promise<void> {
+	let currentDevicePushToken: string | null = null;
+
 	if (Platform.OS !== 'web') {
-		const token = await registerForPushNotificationsAsync();
-		if (!token) {
+		currentDevicePushToken = await registerForPushNotificationsAsync();
+		if (!currentDevicePushToken) {
 			throw new Error(i18n.t('common.푸시_토큰_획득_실패'));
 		}
 	}
 
 	const response = (await axiosClient.get('/push-notifications/tokens')) as PushTokenResponse;
 
-	if (!response?.success || !Array.isArray(response?.data) || response.data.length === 0) {
+	if (!response?.success || !Array.isArray(response?.data)) {
+		if (currentDevicePushToken) {
+			await axiosClient.patch('/push-notifications/enable', {
+				pushToken: currentDevicePushToken,
+			});
+			return;
+		}
+
+		throw new Error('NO_PUSH_TOKEN_REGISTERED');
+	}
+
+	const pushTokens = Array.from(
+		new Set([
+			...response.data.map((tokenData) => tokenData.pushToken),
+			...(currentDevicePushToken ? [currentDevicePushToken] : []),
+		]),
+	);
+
+	if (pushTokens.length === 0) {
 		throw new Error('NO_PUSH_TOKEN_REGISTERED');
 	}
 
 	await Promise.all(
-		response.data.map((tokenData) =>
-			axiosClient.patch('/push-notifications/enable', { pushToken: tokenData.pushToken }),
-		),
+		pushTokens.map((pushToken) => axiosClient.patch('/push-notifications/enable', { pushToken })),
 	);
 }
 

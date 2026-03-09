@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -140,7 +140,10 @@ export const OnboardingQuestions = () => {
 	}
 
 	return (
-		<Animated.View style={[styles.container, { paddingTop: insets.top }, animatedBgStyle]}>
+		<Animated.View
+			style={[styles.container, { paddingTop: insets.top }, animatedBgStyle]}
+			onTouchStart={Keyboard.dismiss}
+		>
 			<Header.Container>
 				<Header.LeftContent>
 					<Header.LeftButton visible onPress={handleBack} />

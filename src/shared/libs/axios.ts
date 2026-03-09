@@ -336,4 +336,8 @@ export const resetAuthState = () => {
 	isLoggingOut = false;
 };
 
+export const setLoggingOut = () => {
+	isLoggingOut = true;
+};
+
 export default axiosClient;

@@ -51,26 +51,29 @@ function DepartmentSearch() {
 
 	const departmentOptions: BottomSheetPickerOption[] = useMemo(() => {
 		if (isCrossMode) {
-			return searchResults.map((item) => ({
+			return searchResults.map((item, index) => ({
 				label: item.name,
-				value: item.name,
+				value: `${item.name}__${item.universityName ?? index}`,
 				subtitle: item.universityName,
 			}));
 		}
 		return departments
 			.filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
+			.filter((dept, index, arr) => arr.indexOf(dept) === index)
 			.map((dept) => ({ label: dept, value: dept, compact: true }));
 	}, [isCrossMode, searchResults, departments]);
 
 	const handleSelect = async (value: string) => {
+		// cross mode에서는 value가 "학과명__대학명" 형식이므로 학과명만 추출
+		const deptName = isCrossMode ? value.split('__')[0] : value;
 		if (isCrossMode && effectiveUniversityId) {
 			// 다른 학교 학과 선택 → 현재 학교에 등록
-			const alreadyExists = departments.includes(value);
+			const alreadyExists = departments.includes(deptName);
 			if (!alreadyExists) {
 				try {
 					await createDepartmentMutation.mutateAsync({
 						universityId: effectiveUniversityId,
-						name: value,
+						name: deptName,
 					});
 				} catch (error) {
 					const axiosError = error as AxiosError;
@@ -86,7 +89,7 @@ function DepartmentSearch() {
 				}
 			}
 		}
-		updateForm({ departmentName: value });
+		updateForm({ departmentName: deptName });
 	};
 
 	const handleClose = () => {

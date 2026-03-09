@@ -58,16 +58,17 @@ const GlowButton = ({ onPress, children }: GlowButtonProps) => {
 		<Pressable
 			onPress={onPress}
 			onLayout={(e) => setContainerW(e.nativeEvent.layout.width || 0)}
-			style={styles.gradientButtonContainer}
+			style={styles.gradientButtonBorder}
 		>
-			<LinearGradient
-				colors={['#9B6DFF', '#7A4AE2', '#6B3FD4']}
-				start={{ x: 0, y: 0 }}
-				end={{ x: 1, y: 1 }}
-				style={styles.gradientButton}
-			>
-				{children}
-			</LinearGradient>
+			<View style={styles.gradientButtonInner}>
+				<LinearGradient
+					colors={['#9B6DFF', '#7A4AE2', '#6B3FD4']}
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 1 }}
+					style={styles.gradientButton}
+				>
+					{children}
+				</LinearGradient>
 			<Animated.View style={[styles.glowOverlay, animatedStyle]}>
 				<LinearGradient
 					colors={[
@@ -85,6 +86,7 @@ const GlowButton = ({ onPress, children }: GlowButtonProps) => {
 					style={StyleSheet.absoluteFill}
 				/>
 			</Animated.View>
+			</View>
 		</Pressable>
 	);
 };
@@ -257,12 +259,18 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 	},
-	gradientButtonContainer: {
+	gradientButtonBorder: {
 		flex: 1,
 		width: '100%',
 		borderRadius: 16,
-		borderWidth: 3,
-		borderColor: '#6B3FD4',
+		backgroundColor: '#6B3FD4',
+		padding: 3,
+		overflow: 'hidden',
+	},
+	gradientButtonInner: {
+		flex: 1,
+		borderRadius: 13,
+		backgroundColor: '#6B3FD4',
 		overflow: 'hidden',
 	},
 	gradientButton: {

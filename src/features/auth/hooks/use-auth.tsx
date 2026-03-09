@@ -1,5 +1,6 @@
 import { chatEventBus } from '@/src/features/chat/services/chat-event-bus';
 import { axiosClient, platform, storage, tryCatch } from '@/src/shared/libs';
+import { setLoggingOut } from '@/src/shared/libs/axios';
 import { getCountryFromLocale } from '@/src/shared/libs/country-detector';
 import { eventBus } from '@/src/shared/libs/event-bus';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -145,6 +146,7 @@ export function useAuth() {
 	};
 
 	const logoutOnly = async () => {
+		setLoggingOut();
 		resetAppState();
 		Sentry.setUser(null);
 		deleteFcmTokenAsync(); // OTA Silent Push 차단 (에러 무시)
@@ -177,15 +179,8 @@ export function useAuth() {
 				trackEvent(MIXPANEL_EVENTS.AUTH_LOGOUT, {
 					reason: LOGOUT_REASONS.MANUAL,
 				});
-				logoutOnly();
-				showModal({
-					title: t('features.auth.hooks.use_auth.logout_modal_title'),
-					children: t('features.auth.hooks.use_auth.logout_modal_message'),
-					primaryButton: {
-						text: t('features.auth.hooks.use_auth.logout_modal_button'),
-						onClick: () => router.push('/auth/login'),
-					},
-				});
+				await logoutOnly();
+				router.push('/auth/login');
 			},
 			(error) => {
 				console.error(error);

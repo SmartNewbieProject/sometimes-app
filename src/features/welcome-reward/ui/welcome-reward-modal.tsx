@@ -1,254 +1,216 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Image,
-  Text as RNText,
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-  Easing,
-  withSpring,
-} from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+	Animated,
+	Easing,
+	type LayoutChangeEvent,
+	Pressable,
+	StyleSheet,
+	View,
+} from 'react-native';
+import { Image } from 'expo-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import { Text } from '@/src/shared/ui';
 
-
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const AUTO_DISMISS_MS = 3000;
 
 interface WelcomeRewardModalProps {
-  visible: boolean;
-  onClose: () => void;
+	visible: boolean;
+	onClose: () => void;
 }
 
 const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
-  visible,
-  onClose,
+	visible,
+	onClose,
 }) => {
-  const { t } = useTranslation();
-  const modalOpacity = useSharedValue(0);
-  const mihoScale = useSharedValue(0);
-  const speechBubbleScale = useSharedValue(0);
+	const { t } = useTranslation();
+	const insets = useSafeAreaInsets();
+	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (visible) {
-      modalOpacity.value = withTiming(1, {
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-      });
+	const translateY = useRef(new Animated.Value(50)).current;
+	const chipOpacity = useRef(new Animated.Value(0)).current;
+	const progress = useRef(new Animated.Value(1)).current;
+	const trackWidthAnim = useRef(new Animated.Value(0)).current;
+	const barWidth = useRef(Animated.multiply(progress, trackWidthAnim)).current;
 
-      mihoScale.value = withDelay(
-        100,
-        withSpring(1, {
-          damping: 12,
-          stiffness: 250,
-        })
-      );
+	const dismiss = useCallback(() => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+			timerRef.current = null;
+		}
+		Animated.parallel([
+			Animated.timing(translateY, {
+				toValue: 50,
+				duration: 250,
+				easing: Easing.in(Easing.cubic),
+				useNativeDriver: false,
+			}),
+			Animated.timing(chipOpacity, {
+				toValue: 0,
+				duration: 250,
+				easing: Easing.in(Easing.cubic),
+				useNativeDriver: false,
+			}),
+		]).start(() => onClose());
+	}, [onClose, translateY, chipOpacity]);
 
-      speechBubbleScale.value = withDelay(
-        300,
-        withSpring(1, {
-          damping: 10,
-          stiffness: 300,
-        })
-      );
-    } else {
-      modalOpacity.value = 0;
-      mihoScale.value = 0;
-      speechBubbleScale.value = 0;
-    }
-  }, [visible, modalOpacity, mihoScale, speechBubbleScale]);
+	useEffect(() => {
+		if (visible) {
+			translateY.setValue(50);
+			chipOpacity.setValue(0);
+			progress.setValue(1);
 
-  const modalAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: modalOpacity.value,
-  }));
+			Animated.parallel([
+				Animated.timing(translateY, {
+					toValue: 0,
+					duration: 400,
+					easing: Easing.out(Easing.back(1.2)),
+					useNativeDriver: false,
+				}),
+				Animated.timing(chipOpacity, {
+					toValue: 1,
+					duration: 300,
+					easing: Easing.out(Easing.cubic),
+					useNativeDriver: false,
+				}),
+			]).start();
 
-  const mihoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: mihoScale.value }],
-  }));
+			Animated.timing(progress, {
+				toValue: 0,
+				duration: AUTO_DISMISS_MS,
+				easing: Easing.linear,
+				useNativeDriver: false,
+			}).start();
 
-  const speechBubbleAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: speechBubbleScale.value }],
-  }));
+			timerRef.current = setTimeout(dismiss, AUTO_DISMISS_MS);
+		}
 
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+				timerRef.current = null;
+			}
+		};
+	}, [visible, translateY, chipOpacity, progress, dismiss]);
 
+	const handleTrackLayout = useCallback(
+		(e: LayoutChangeEvent) => {
+			trackWidthAnim.setValue(e.nativeEvent.layout.width);
+		},
+		[trackWidthAnim],
+	);
 
-  const handleClose = () => {
-    modalOpacity.value = withTiming(0, {
-      duration: 150,
-      easing: Easing.in(Easing.ease),
-    });
-    setTimeout(() => {
-      onClose();
-    }, 150);
-  };
+	if (!visible) return null;
 
-  if (!visible) return null;
+	const title = t('features.welcome-reward.ui.modal.title');
+	const gemLabel = t('features.welcome-reward.ui.modal.gem_reward_label');
+	const rewardText = t('features.welcome-reward.ui.modal.reward_text');
 
-  return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="none"
-      onRequestClose={handleClose}
-    >
-      <Animated.View style={[styles.overlay, modalAnimatedStyle]}>
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View style={{ flex: 1 }} />
-        </TouchableWithoutFeedback>
-
-        <Animated.View style={[styles.container, speechBubbleAnimatedStyle]}>
-          {/* 말풍선 */}
-          <TouchableWithoutFeedback onPress={handleClose}>
-            <View style={styles.speechBubbleContainer}>
-            <View style={styles.speechBubble}>
-                <Text style={styles.speechText}>
-                  {t("features.welcome-reward.ui.modal.title")}
-                </Text>
-                <Text style={styles.subText}>
-                  {t("features.welcome-reward.ui.modal.subline")}
-                </Text>
-                <View style={styles.gemReward}>
-                  <Text style={styles.gemText}>{t("features.welcome-reward.ui.modal.gem_reward_label")}</Text>
-                  <Text style={styles.rewardText}>{t("features.welcome-reward.ui.modal.reward_text")}</Text>
-                </View>
-                <View style={styles.closeButtonContainer}>
-                  <RNText style={styles.closeButtonText} onPress={handleClose}>
-                    {t("features.welcome-reward.ui.modal.close_hint")}
-                  </RNText>
-                </View>
-              </View>
-              <View style={styles.speechTail} />
-            </View>
-          </TouchableWithoutFeedback>
-
-          {/* 미호 캐릭터 */}
-          <Animated.View style={[styles.mihoContainer, mihoAnimatedStyle]}>
-            <Image
-              source={require("@assets/images/instagram-some.webp")}
-              style={styles.mihoImage}
-              resizeMode="contain"
-            />
-          </Animated.View>
-        </Animated.View>
-      </Animated.View>
-    </Modal>
-  );
+	return (
+		<Animated.View
+			style={[
+				styles.wrapper,
+				{ bottom: insets.bottom + 100 },
+				{ transform: [{ translateY }], opacity: chipOpacity },
+			]}
+			pointerEvents={visible ? 'auto' : 'none'}
+		>
+			<Pressable onPress={dismiss} style={styles.chip}>
+				<View style={styles.avatarContainer}>
+					<Image
+						source={require('@assets/images/instagram-some.webp')}
+						style={styles.avatar}
+						contentFit="cover"
+					/>
+				</View>
+				<View style={styles.textContainer}>
+					<Text style={styles.title} numberOfLines={1}>
+						{title}
+					</Text>
+					<Text style={styles.subtitle} numberOfLines={1}>
+						{gemLabel}{rewardText}
+					</Text>
+					<View style={styles.progressTrack} onLayout={handleTrackLayout}>
+						<Animated.View style={[styles.progressBar, { width: barWidth }]} />
+					</View>
+				</View>
+			</Pressable>
+		</Animated.View>
+	);
 };
 
+const AVATAR_SIZE = 52;
+
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingBottom: 100,
-  },
-  container: {
-    width: screenWidth * 0.9,
-    maxWidth: 400,
-    position: "relative",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  mihoContainer: {
-    position: "absolute",
-    bottom: -10,
-    right: -20,
-    zIndex: 2,
-  },
-  mihoImage: {
-    width: 80,
-    height: 80,
-  },
-  speechBubbleContainer: {
-    zIndex: 3,
-    marginRight: 60,
-  },
-  speechBubble: {
-    backgroundColor: '#F7F3FF',
-    borderRadius: 16,
-    padding: 18,
-    minHeight: 120,
-    justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  speechTail: {
-    position: "absolute",
-    bottom: 20,
-    right: -8,
-    width: 0,
-    height: 0,
-    borderTopWidth: 12,
-    borderBottomWidth: 12,
-    borderLeftWidth: 12,
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent",
-    borderLeftColor: "#F3EDFF",
-  },
-  speechText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: '#000000',
-    marginBottom: 6,
-    textAlign: "left",
-  },
-  subText: {
-    fontSize: 14,
-    color: '#000000',
-    lineHeight: 20,
-    marginBottom: 14,
-    textAlign: "left",
-  },
-  gemReward: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  gemText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FF6B6B",
-  },
-  rewardText: {
-    fontSize: 16,
-    color: '#000000',
-    fontWeight: "600",
-  },
-  closeButtonContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginTop: 12,
-  },
-  closeButtonText: {
-    fontSize: 14,
-    color: '#000000',
-    fontWeight: "600",
-    textAlign: "center",
-  },
-
-
+	wrapper: {
+		position: 'absolute',
+		left: '4%',
+		width: '92%',
+		zIndex: 999,
+	},
+	chip: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: 'rgba(122, 74, 226, 0.95)',
+		borderRadius: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 40,
+		paddingRight: 16,
+		marginLeft: 20,
+		shadowColor: '#7A4AE2',
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.25,
+		shadowRadius: 12,
+		elevation: 8,
+	},
+	avatarContainer: {
+		position: 'absolute',
+		left: -AVATAR_SIZE / 2 + 6,
+		top: '50%',
+		marginTop: -AVATAR_SIZE / 2,
+		width: AVATAR_SIZE,
+		height: AVATAR_SIZE,
+		borderRadius: AVATAR_SIZE / 2,
+		backgroundColor: '#E8DEFF',
+		borderWidth: 3,
+		borderColor: 'rgba(122, 74, 226, 0.95)',
+		overflow: 'hidden',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 6,
+		elevation: 6,
+	},
+	avatar: {
+		width: '100%',
+		height: '100%',
+	},
+	textContainer: {
+		flex: 1,
+		gap: 2,
+	},
+	title: {
+		fontSize: 13,
+		fontWeight: '700',
+		color: '#FFFFFF',
+	},
+	subtitle: {
+		fontSize: 12,
+		color: 'rgba(255, 255, 255, 0.85)',
+	},
+	progressTrack: {
+		height: 3,
+		backgroundColor: 'rgba(255, 255, 255, 0.2)',
+		borderRadius: 1.5,
+		marginTop: 6,
+		overflow: 'hidden',
+	},
+	progressBar: {
+		height: 3,
+		backgroundColor: 'rgba(255, 255, 255, 0.7)',
+		borderRadius: 1.5,
+	},
 });
 
 export default WelcomeRewardModal;

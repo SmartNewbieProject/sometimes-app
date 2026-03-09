@@ -1,7 +1,14 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import React, { useRef, useState } from 'react';
-import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from 'react-native-reanimated';
 import type { UniversityCard as UniversityCardProps } from '../../queries/use-universities';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 function UniversityCard({
 	item: { name, area, logoUrl },
@@ -14,79 +21,70 @@ function UniversityCard({
 	isSelected: boolean;
 	compact?: boolean;
 }) {
-	const [logoError, setLogoError] = useState(false);
-	const [isPressed, setIsPressed] = useState(false);
-	const scale = useRef(new Animated.Value(1)).current;
+	const [logoError, setLogoError] = React.useState(false);
+	const scale = useSharedValue(1);
 
 	const onPressIn = () => {
-		setIsPressed(true);
-		Animated.spring(scale, {
-			toValue: 0.97,
-			useNativeDriver: true,
-		}).start();
+		scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
 	};
 
 	const onPressOut = () => {
-		setIsPressed(false);
-		Animated.spring(scale, {
-			toValue: 1,
-			friction: 8,
-			useNativeDriver: true,
-		}).start();
+		scale.value = withSpring(1, { damping: 8, stiffness: 200 });
 	};
 
-	const backgroundColor = isSelected || isPressed ? '#E6DBFF' : '#FFFFFF';
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
+	const backgroundColor = isSelected ? '#E6DBFF' : '#FFFFFF';
 	const avatarSize = compact ? 24 : 32;
 
 	return (
-		<Pressable
+		<AnimatedPressable
 			testID={`university-card-${name}`}
 			onPress={onClick}
 			onPressIn={onPressIn}
 			onPressOut={onPressOut}
+			style={[
+				styles.container,
+				compact && styles.containerCompact,
+				{
+					backgroundColor,
+					borderColor: isSelected ? semanticColors.brand.primary : semanticColors.border.default,
+				},
+				animatedStyle,
+			]}
 		>
-			<Animated.View
+			<View
 				style={[
-					styles.container,
-					compact && styles.containerCompact,
-					{
-						backgroundColor,
-						borderColor: isSelected ? semanticColors.brand.primary : semanticColors.border.default,
-						transform: [{ scale }],
-					},
+					styles.avatar,
+					{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 },
 				]}
 			>
-				<View
-					style={[
-						styles.avatar,
-						{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 },
-					]}
-				>
-					{logoUrl && !logoError ? (
-						<Image
-							source={{ uri: logoUrl }}
-							style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
-							onError={() => setLogoError(true)}
-						/>
-					) : (
-						<Text style={[styles.initialText, compact && styles.initialTextCompact]}>
-							{name?.charAt(0) ?? '?'}
-						</Text>
-					)}
-				</View>
-				<View style={styles.nameRow}>
-					<Text
-						numberOfLines={1}
-						ellipsizeMode="tail"
-						style={[styles.title, compact && styles.titleCompact]}
-					>
-						{name}
+				{logoUrl && !logoError ? (
+					<Image
+						source={{ uri: logoUrl }}
+						style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
+						onError={() => setLogoError(true)}
+					/>
+				) : (
+					<Text style={[styles.initialText, compact && styles.initialTextCompact]}>
+						{name?.charAt(0) ?? '?'}
 					</Text>
-				</View>
-				<Text style={[styles.area, compact && styles.areaCompact]}>{area}</Text>
-				{isSelected && <View style={styles.dot} />}
-			</Animated.View>
-		</Pressable>
+				)}
+			</View>
+			<View style={styles.nameRow}>
+				<Text
+					numberOfLines={1}
+					ellipsizeMode="tail"
+					style={[styles.title, compact && styles.titleCompact]}
+				>
+					{name}
+				</Text>
+			</View>
+			<Text style={[styles.area, compact && styles.areaCompact]}>{area}</Text>
+			{isSelected && <View style={styles.dot} />}
+		</AnimatedPressable>
 	);
 }
 
@@ -161,4 +159,6 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default UniversityCard;
+export default React.memo(UniversityCard, (prev, next) =>
+	prev.item.id === next.item.id && prev.isSelected === next.isSelected,
+);

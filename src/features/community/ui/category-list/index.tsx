@@ -108,6 +108,7 @@ export const CategoryList = () => {
 				ref={scrollRef}
 				showsHorizontalScrollIndicator={false}
 				scrollEventThrottle={16}
+				contentContainerStyle={styles.scrollContent}
 			>
 				<Loading.Lottie
 					title={t('features.community.ui.category_list.loading_categories')}
@@ -164,9 +165,11 @@ export const CategoryList = () => {
 const styles = StyleSheet.create({
 	container: {
 		width: '100%',
-		paddingHorizontal: 16,
 		backgroundColor: semanticColors.surface.background,
 		overflow: 'hidden',
+	},
+	scrollContent: {
+		paddingHorizontal: 16,
 	},
 	categoriesRow: {
 		flexDirection: 'row',

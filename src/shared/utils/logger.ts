@@ -90,3 +90,22 @@ export const devLogObject = (label: string, obj: unknown): void => {
 		console.log(`${label}:`, JSON.stringify(obj, null, 2));
 	}
 };
+
+/**
+ * 채팅/소켓 전용 프로덕션 로그 (dev + prod 모두 출력)
+ * 연결 상태, URL, 오류 원인 추적용
+ */
+export const chatLog = (event: string, data?: Record<string, unknown>): void => {
+	const payload = data ? ` ${JSON.stringify(data)}` : '';
+	console.log(`[Chat]${payload ? ` ${event} |${payload}` : ` ${event}`}`);
+};
+
+export const chatWarn = (event: string, data?: Record<string, unknown>): void => {
+	const payload = data ? ` ${JSON.stringify(data)}` : '';
+	console.warn(`[Chat:WARN]${payload ? ` ${event} |${payload}` : ` ${event}`}`);
+};
+
+export const chatError = (event: string, data?: Record<string, unknown>): void => {
+	const payload = data ? ` ${JSON.stringify(data)}` : '';
+	console.error(`[Chat:ERR]${payload ? ` ${event} |${payload}` : ` ${event}`}`);
+};

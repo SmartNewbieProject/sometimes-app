@@ -113,8 +113,6 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   outerWrapper: {
-    overflow: "hidden",
-    borderRadius: 36,
   },
   text: {
     marginBottom: 5,

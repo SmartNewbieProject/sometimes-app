@@ -14,6 +14,7 @@ export const PalePurpleGradient = () => {
 					gradient: gradientStyle,
 				}).gradient
 			}
+			pointerEvents="none"
 		/>
 	);
 };

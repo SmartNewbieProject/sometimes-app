@@ -39,9 +39,17 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 	const trackWidthAnim = useRef(new Animated.Value(0)).current;
 	const barWidth = useRef(Animated.multiply(progress, trackWidthAnim)).current;
 
+	const messageRef = useRef<MihoMessage | null>(null);
 	const message = useMemo(() => {
-		if (!visible) return null;
-		return getMihoMessage(matchContext);
+		if (!visible) {
+			messageRef.current = null;
+			return null;
+		}
+		// visible인 동안은 최초 결정된 메시지를 유지 (matchContext 변경에 의한 리렌더 방지)
+		if (messageRef.current) return messageRef.current;
+		const msg = getMihoMessage(matchContext);
+		messageRef.current = msg;
+		return msg;
 	}, [visible, matchContext]);
 
 	const rarityStyle = useMemo(() => {

@@ -36,25 +36,42 @@ function useUniversityHook() {
 		queryFn: () => getTopUniversities(country),
 	});
 
+	// 전체 대학 리스트를 미리 불러와서 검색 시 즉시 표시
+	const { data: allUnivs, isLoading: isLoadingAll } = useQuery({
+		queryKey: ['universities', 'search', '', country],
+		queryFn: () => searchUniversities('', country),
+	});
+
 	const { data: searchResults, isLoading: isSearching } = useQuery({
 		queryKey: ['universities', 'search', debouncedSearchText, country],
 		queryFn: () => searchUniversities(debouncedSearchText, country),
 		enabled: debouncedSearchText.length > 0,
 	});
 
-	const rawUnivs = debouncedSearchText ? searchResults : topUnivs;
-	const isLoading = debouncedSearchText ? isSearching : isLoadingTop;
+	const rawUnivs = debouncedSearchText ? searchResults : (allUnivs ?? topUnivs);
+	const isLoading = debouncedSearchText ? isSearching : (isLoadingAll || isLoadingTop);
 
 	const isDebouncing = searchText.length > 0 && searchText !== debouncedSearchText;
 	const isActuallySearching = isDebouncing || isSearching;
 
 	const univs = useMemo(() => {
-		return rawUnivs?.map((item) => ({
-			...item,
-			logoUrl: getSmartUnivLogoUrl(item.code, country),
-			universityType: item.foundation,
-			area: getRegionsByRegionCode(item.region),
-		}));
+		if (!rawUnivs) return undefined;
+		// 동일 이름이 2개 이상인 대학 감지 (캠퍼스 구분 없는 경우)
+		const nameCount = new Map<string, number>();
+		for (const item of rawUnivs) {
+			nameCount.set(item.name, (nameCount.get(item.name) ?? 0) + 1);
+		}
+		return rawUnivs.map((item) => {
+			const area = getRegionsByRegionCode(item.region);
+			const isDuplicate = (nameCount.get(item.name) ?? 0) > 1;
+			return {
+				...item,
+				name: isDuplicate && area ? `${item.name} (${area})` : item.name,
+				logoUrl: getSmartUnivLogoUrl(item.code, country),
+				universityType: item.foundation,
+				area,
+			};
+		});
 	}, [rawUnivs, country]);
 
 	const filteredUniv = useMemo(() => {

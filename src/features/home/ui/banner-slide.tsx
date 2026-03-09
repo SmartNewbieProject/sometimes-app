@@ -63,8 +63,7 @@ const styles = StyleSheet.create({
     minHeight: 92,
   },
   indicatorContainer: {
-    bottom: -16,
-    marginTop: 4,
+    bottom: -20,
   },
 });
 

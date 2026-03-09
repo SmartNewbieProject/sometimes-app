@@ -143,8 +143,8 @@ export function BottomNavigation() {
 				prefetchCardNews(queryClient);
 			}
 
-			// 탭 전환 즉시 실행 — 앱 설치 유도는 비동기 후처리
-			router.push(path);
+			// 탭 전환 즉시 실행 — replace로 스택 누적 방지
+			router.replace(path);
 
 			incrementNavClickCount().then((shouldShowPrompt) => {
 				if (shouldShowPrompt) {
