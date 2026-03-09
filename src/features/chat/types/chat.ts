@@ -24,6 +24,7 @@ export interface ChatRoomDetail {
 	createdAt: string;
 	paymentConfirm?: boolean;
 	hasLeft?: boolean;
+	isPartnerWithdrawn?: boolean;
 	snooze: boolean;
 	canRefund: boolean;
 	partner: Partner;
@@ -57,6 +58,7 @@ export interface ChatRoomList {
 	roomActivation?: boolean;
 	paymentConfirm: boolean;
 	canRefund: boolean;
+	isPartnerWithdrawn?: boolean;
 }
 
 export interface ChatRoomListResponse {

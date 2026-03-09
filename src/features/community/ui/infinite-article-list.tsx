@@ -103,13 +103,13 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 
 		const isWeb = Platform.OS === 'web';
 
-		const invalidateAndRefetch = async () => {
+		const invalidateAndRefetch = useCallback(async () => {
 			await queryClient.invalidateQueries({
 				queryKey: createArticlesQueryKey(categoryCode),
 			});
 			await refetch();
 			setOpenPreviewArticleId(null);
-		};
+		}, [queryClient, categoryCode, refetch]);
 
 		const handleScroll = useCallback(
 			(event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -121,20 +121,23 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 			[isWeb, saveScrollPosition],
 		);
 
-		const like = (item: ArticleType) => {
-			if (!my?.id) {
-				return;
-			}
-			tryCatch(
-				async () => {
-					updateArticleLike(item.id);
-					await apis.articles.doLike(item);
-				},
-				(error) => {
-					console.error('Article like update failed:', error);
-				},
-			);
-		};
+		const like = useCallback(
+			(item: ArticleType) => {
+				if (!my?.id) {
+					return;
+				}
+				tryCatch(
+					async () => {
+						updateArticleLike(item.id);
+						await apis.articles.doLike(item);
+					},
+					(error) => {
+						console.error('Article like update failed:', error);
+					},
+				);
+			},
+			[my?.id, updateArticleLike],
+		);
 
 		const [openPreviewArticleId, setOpenPreviewArticleId] = useState<string | null>(null);
 
@@ -142,53 +145,71 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 			setOpenPreviewArticleId(null);
 		}, [categoryCode]);
 
-		const deleteArticle = (id: string) => {
-			showModal({
-				title: t('features.community.ui.infinite_article_list.delete_article_title'),
-				children: (
-					<View>
-						<Text size="sm" textColor="black">
-							{t('features.community.ui.infinite_article_list.delete_article_confirm')}
-						</Text>
-					</View>
-				),
-				primaryButton: {
-					text: t('features.community.ui.infinite_article_list.delete_button'),
-					onClick: () =>
-						tryCatch(
-							async () => {
-								await apis.articles.deleteArticle(id);
-								setOpenPreviewArticleId(null);
-								await invalidateAndRefetch();
-							},
-							(serverError: unknown) => {
-								const err = serverError as {
-									message?: string;
-									error?: string;
-									status?: number;
-									statusCode?: number;
-								} | null;
-								console.error('Article deletion error:', {
-									error: serverError,
-									errorMessage: err?.message,
-									errorString: err?.error,
-									status: err?.status,
-									statusCode: err?.statusCode,
-									articleId: id,
-								});
+		const deleteArticle = useCallback(
+			(id: string) => {
+				showModal({
+					title: t('features.community.ui.infinite_article_list.delete_article_title'),
+					children: (
+						<View>
+							<Text size="sm" textColor="black">
+								{t('features.community.ui.infinite_article_list.delete_article_confirm')}
+							</Text>
+						</View>
+					),
+					primaryButton: {
+						text: t('features.community.ui.infinite_article_list.delete_button'),
+						onClick: () =>
+							tryCatch(
+								async () => {
+									await apis.articles.deleteArticle(id);
+									setOpenPreviewArticleId(null);
+									await invalidateAndRefetch();
+								},
+								(serverError: unknown) => {
+									const err = serverError as {
+										message?: string;
+										error?: string;
+										status?: number;
+										statusCode?: number;
+									} | null;
+									console.error('Article deletion error:', {
+										error: serverError,
+										errorMessage: err?.message,
+										errorString: err?.error,
+										status: err?.status,
+										statusCode: err?.statusCode,
+										articleId: id,
+									});
 
-								const errorMessage =
-									err?.message || err?.error || t('features.community.ui.delete_error');
-								showErrorModal(errorMessage, 'error');
-							},
-						),
-				},
-				secondaryButton: {
-					text: t('cancel'),
-					onClick: () => {},
-				},
-			});
-		};
+									const errorMessage =
+										err?.message || err?.error || t('features.community.ui.delete_error');
+									showErrorModal(errorMessage, 'error');
+								},
+							),
+					},
+					secondaryButton: {
+						text: t('cancel'),
+						onClick: () => {},
+					},
+				});
+			},
+			[showModal, showErrorModal, invalidateAndRefetch, t],
+		);
+
+		const handleArticlePress = useCallback((id: string) => {
+			router.push(`/community/${id}`);
+		}, []);
+
+		const handleArticleLike = useCallback(
+			(article: ArticleType) => {
+				like(article);
+			},
+			[like],
+		);
+
+		const handleTogglePreview = useCallback((id: string) => {
+			setOpenPreviewArticleId((prev) => (prev === id ? null : id));
+		}, []);
 
 		// 스켈레톤 버킷
 		const pickVariant = useCallback((): 'short' | 'medium' | 'long' => {
@@ -236,16 +257,10 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 		const isLoadingMoreRef = useRef(isLoadingMore);
 		useEffect(() => {
 			pageSizeRef.current = initialSize;
-		}, [initialSize]);
-		useEffect(() => {
 			pagesCountRef.current = pagesCount;
-		}, [pagesCount]);
-		useEffect(() => {
 			hasNextPageRef.current = hasNextPage;
-		}, [hasNextPage]);
-		useEffect(() => {
 			isLoadingMoreRef.current = isLoadingMore;
-		}, [isLoadingMore]);
+		}, [initialSize, pagesCount, hasNextPage, isLoadingMore]);
 
 		const viewabilityConfigRef = useRef<ViewabilityConfig>({
 			itemVisiblePercentThreshold: 10,
@@ -327,16 +342,12 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 					renderItem={(article: ArticleType) => (
 						<Article
 							data={article}
-							onPress={() => {
-								router.push(`/community/${article.id}`);
-							}}
-							onLike={() => like(article)}
+							onPress={handleArticlePress}
+							onLike={handleArticleLike}
 							onDelete={deleteArticle}
 							refresh={invalidateAndRefetch}
 							isPreviewOpen={openPreviewArticleId === article.id}
-							onTogglePreview={() => {
-								setOpenPreviewArticleId((prev) => (prev === article.id ? null : article.id));
-							}}
+							onTogglePreview={handleTogglePreview}
 						/>
 					)}
 					onLoadMore={loadMore}

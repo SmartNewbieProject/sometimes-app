@@ -1,13 +1,15 @@
 import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
+import { prefetchCardNews } from '@/src/features/card-news/queries';
 import { useUnreadChatCount } from '@/src/features/chat/hooks/use-unread-chat-count';
 import { useMomentEnabled } from '@/src/features/moment/queries/use-moment-enabled';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { Text } from '@/src/shared/ui/text';
+import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
-import { router, usePathname } from 'expo-router';
+import { type Href, router, usePathname } from 'expo-router';
 import React, { type ReactNode, useCallback } from 'react';
-import { Platform, StyleSheet, Text as RNText, TouchableOpacity, View } from 'react-native';
+import { Platform, Text as RNText, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CommunitySelected from '@/assets/icons/nav/community-selected.svg';
@@ -70,7 +72,7 @@ const NavIcons: Record<
 type NavigationItem = {
 	name: string;
 	label: string;
-	path: string;
+	path: Href;
 	icon: (typeof NavIcons)[NavItem];
 };
 
@@ -113,31 +115,45 @@ export function BottomNavigation() {
 	const { data: momentEnabled } = useMomentEnabled();
 	const unreadChatCount = useUnreadChatCount();
 	const { incrementNavClickCount, showPromptForNavClick } = useAppInstallPrompt();
+	const queryClient = useQueryClient();
+	const bottomPadding =
+		Platform.select({
+			android: insets.bottom + 24,
+			web: 0,
+			default: insets.bottom,
+		}) ?? insets.bottom;
 
 	const canAccessMoment = momentEnabled?.enabled ?? false;
 
-	const isActive = (path: string) => {
-		if (pathname.includes('/chat/somemate')) {
-			return path === '/moment';
-		}
-		return pathname.startsWith(path);
-	};
+	const isActive = useCallback(
+		(path: Href) => {
+			if (pathname.includes('/chat/somemate')) {
+				return path === '/moment';
+			}
+			return pathname.startsWith(path);
+		},
+		[pathname],
+	);
 
 	const handleNavClick = useCallback(
-		async (path: string) => {
+		async (path: Href) => {
 			if (isActive(path)) return;
+
+			if (typeof path === 'string' && path.startsWith('/community')) {
+				prefetchCardNews(queryClient);
+			}
 
 			const shouldShowPrompt = await incrementNavClickCount();
 			if (shouldShowPrompt) {
 				await showPromptForNavClick();
 			}
 
-			router.push(path as any);
+			router.push(path);
 		},
-		[incrementNavClickCount, showPromptForNavClick],
+		[incrementNavClickCount, isActive, queryClient, showPromptForNavClick],
 	);
 	return (
-		<View style={[styles.container, { paddingBottom: insets.bottom + (Platform.OS === 'android' ? 24 : 16) }]}>
+		<View style={[styles.container, { paddingBottom: bottomPadding }]}>
 			<View style={styles.navContainer}>
 				{navigationItems
 					.filter((item) => item.name !== 'moment' || canAccessMoment)
@@ -179,6 +195,11 @@ const styles = StyleSheet.create({
 		borderTopColor: semanticColors.border.card,
 		borderTopWidth: 1,
 		width: '100%',
+		...Platform.select({
+			web: {
+				paddingBottom: 'env(safe-area-inset-bottom)',
+			},
+		}),
 	},
 	navContainer: {
 		flexDirection: 'row',

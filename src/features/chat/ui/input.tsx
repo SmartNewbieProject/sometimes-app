@@ -19,12 +19,7 @@ import {
 	View,
 	useWindowDimensions,
 } from 'react-native';
-import Animated, {
-	useAnimatedKeyboard,
-	useAnimatedStyle,
-	useSharedValue,
-	withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../auth';
 import { useJpAgeConfirmation } from '../hooks/use-jp-age-confirmation';
@@ -61,8 +56,10 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 		Keyboard.dismiss();
 	};
 
+	const isChatDisabled = partner?.hasLeft || partner?.isPartnerWithdrawn;
+
 	const handleTipsButton = () => {
-		if (partner?.hasLeft) return;
+		if (isChatDisabled) return;
 
 		showModal({
 			showLogo: true,
@@ -118,11 +115,6 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 
 	const animatedStyles = useAnimatedStyle(() => ({
 		transform: [{ rotate: `${rotate.value}deg` }],
-	}));
-	const keyboard = useAnimatedKeyboard();
-
-	const animatedKeyboardStyles = useAnimatedStyle(() => ({
-		paddingBottom: Platform.OS === 'android' && keyboard.height.value > 0 ? 16 : 0,
 	}));
 
 	const sendMessage = useCallback(() => {
@@ -198,28 +190,29 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 				style={[
 					styles.container,
 					{ width: width, paddingBottom: Platform.OS === 'ios' ? insets.bottom : 12 },
-					animatedKeyboardStyles,
 				]}
 			>
-				<Pressable onPress={handlePhotoButton} style={styles.photoButton}>
+				<Pressable onPress={handlePhotoButton} style={styles.photoButton} disabled={isChatDisabled}>
 					<Animated.View style={animatedStyles}>
 						<Image source={require('@assets/icons/plus.png')} style={{ width: 14, height: 14 }} />
 					</Animated.View>
 				</Pressable>
-				<Pressable onPress={handleTipsButton} style={styles.tipsButton} disabled={partner?.hasLeft}>
+				<Pressable onPress={handleTipsButton} style={styles.tipsButton} disabled={isChatDisabled}>
 					<BulbIcon width={24} height={24} />
 				</Pressable>
 				<View style={styles.inputContainer}>
 					<TextInput
 						multiline={true}
 						value={chat}
-						editable={!isPhotoClicked && !partner?.hasLeft}
+						editable={!isPhotoClicked && !isChatDisabled}
 						onChangeText={(text) => setChat(text)}
 						style={styles.textInput}
 						placeholder={
-							partner?.hasLeft
-								? t('features.chat.ui.input.placeholder_ended')
-								: t('features.chat.ui.input.placeholder')
+							partner?.isPartnerWithdrawn
+								? t('features.chat.ui.input.placeholder_withdrawn')
+								: isChatDisabled
+									? t('features.chat.ui.input.placeholder_ended')
+									: t('features.chat.ui.input.placeholder')
 						}
 						placeholderTextColor={semanticColors.text.disabled}
 						numberOfLines={3}

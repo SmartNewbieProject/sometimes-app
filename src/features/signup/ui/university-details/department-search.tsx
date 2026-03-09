@@ -156,6 +156,7 @@ function DepartmentSearch() {
 				}
 				onSearchChange={isCrossMode ? setPickerSearchQuery : undefined}
 				listFooterComponent={noDeptFooter}
+				sheetHeightRatio={0.9}
 			/>
 		</View>
 	);

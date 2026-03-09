@@ -1,5 +1,4 @@
 import { type PreferenceSaveBody, savePreferencesApi } from "../apis";
-import { useMyInfoForm } from "../hooks/use-my-info-form";
 import { PreferenceKeys } from "../queries";
 
 export enum MyInfoSteps {
@@ -71,5 +70,4 @@ export const savePreferences = async (props: Properties) => {
   }
 
   await savePreferencesApi(body);
-  useMyInfoForm.getState().clear();
 };

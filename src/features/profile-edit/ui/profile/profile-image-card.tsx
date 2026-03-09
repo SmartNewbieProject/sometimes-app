@@ -36,9 +36,11 @@ function ProfileImageCard({
   return (
     <Pressable onPress={onClick} style={styles.card}>
       <Image source={imageUri} style={styles.image} />
-      <View style={styles.imageTag}>
-        <Text style={styles.imageTagText}>{isMain ? t("features.profile-edit.ui.profile.image_card.main") : t("features.profile-edit.ui.profile.image_card.select")}</Text>
-      </View>
+      {!isMain && (
+        <View style={styles.imageTag}>
+          <Text style={styles.imageTagText}>{t("features.profile-edit.ui.profile.image_card.select")}</Text>
+        </View>
+      )}
     </Pressable>
   );
 }

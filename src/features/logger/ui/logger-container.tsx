@@ -13,7 +13,7 @@ interface LoggerContainerProps {
 }
 
 function LoggerContainer({ children }: LoggerContainerProps) {
-	if (!__DEV__ || Platform.OS === 'web') {
+	if (Platform.OS === 'web') {
 		return <>{children}</>;
 	}
 

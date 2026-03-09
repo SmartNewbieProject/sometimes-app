@@ -67,7 +67,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
   const { profileDetails } = useAuth();
   const name = profileDetails?.name ?? "";
   return imagesUrls && imagesUrls?.length > 0 ? (
-    <View>
+    <View style={styles.outerWrapper}>
       <Text style={styles.text}>
         {type === "iLiked"
           ? t("features.like.ui.like_collapse.i_liked_title", { name })
@@ -146,10 +146,13 @@ const styles = StyleSheet.create({
   background: {
     top: 0,
     left: 0,
-    zIndex: -1,
     bottom: 0,
     right: 0,
     position: "absolute",
+  },
+  outerWrapper: {
+    overflow: "hidden",
+    borderRadius: 36,
   },
   text: {
     marginBottom: 5,

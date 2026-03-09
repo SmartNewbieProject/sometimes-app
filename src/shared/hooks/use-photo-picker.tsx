@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		...(Platform.OS === 'web' && {
 			maxWidth: 468,
+			alignSelf: 'center',
 		}),
 	},
 	guideSection: {

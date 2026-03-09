@@ -3,17 +3,11 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import { dayUtils } from '@/src/shared/libs';
 import LockChatIcon from '@assets/icons/lock-chat.svg';
 import { useRouter } from 'expo-router';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Animated,
-	Dimensions,
-	PanResponder,
-	Pressable,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useAuth } from '../../../auth';
 import useChatLock from '../../hooks/use-chat-lock';
 import useRefundChatRoom from '../../queries/use-refund-chat-room';
@@ -71,66 +65,53 @@ function OpenVariant({ item }: ChatRoomCardProps) {
 	const buttonWidth = screenWidth * 0.25;
 	const router = useRouter();
 	const threshold = buttonWidth / 2;
-	const translateX = useRef(new Animated.Value(0)).current;
-	const offsetX = useRef(0);
-	const pan = useRef(
-		PanResponder.create({
-			onStartShouldSetPanResponder: () => true,
-			onMoveShouldSetPanResponder: () => true,
 
-			onPanResponderGrant: () => {
-				translateX.stopAnimation((value) => {
-					offsetX.current = value;
-				});
-			},
+	const translateX = useSharedValue(0);
+	const offsetX = useSharedValue(0);
 
-			onPanResponderMove: (evt, g) => {
-				let newX = offsetX.current + g.dx;
+	const panGesture = Gesture.Pan()
+		.onBegin(() => {
+			offsetX.value = translateX.value;
+		})
+		.onUpdate(({ translationX: dx }) => {
+			const newX = Math.min(0, Math.max(-buttonWidth, offsetX.value + dx));
+			translateX.value = newX;
+		})
+		.onEnd(() => {
+			if (translateX.value <= -threshold) {
+				translateX.value = withSpring(-buttonWidth, { damping: 15, stiffness: 150 });
+				offsetX.value = -buttonWidth;
+			} else {
+				translateX.value = withSpring(0, { damping: 15, stiffness: 150 });
+				offsetX.value = 0;
+			}
+		})
+		.onFinalize(() => {
+			if (translateX.value > -threshold) {
+				translateX.value = withSpring(0, { damping: 15, stiffness: 150 });
+				offsetX.value = 0;
+			}
+		});
 
-				newX = Math.min(0, Math.max(-buttonWidth, newX));
-				translateX.setValue(newX);
-			},
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ translateX: translateX.value }],
+	}));
 
-			onPanResponderRelease: () => {
-				translateX.stopAnimation((value) => {
-					if (value <= -threshold) {
-						Animated.spring(translateX, {
-							toValue: -buttonWidth,
-							useNativeDriver: false,
-						}).start(() => {
-							offsetX.current = -buttonWidth;
-						});
-					} else {
-						Animated.spring(translateX, {
-							toValue: 0,
-							useNativeDriver: false,
-						}).start(() => {
-							offsetX.current = 0;
-						});
-					}
-				});
-			},
+	const handlePress = () => router.push(`/chat/${item.id}`);
 
-			onPanResponderTerminate: () => {
-				Animated.spring(translateX, {
-					toValue: 0,
-					useNativeDriver: false,
-				}).start(() => {
-					offsetX.current = 0;
-				});
-			},
-		}),
-	).current;
 	return (
-		<Pressable
-			onPress={() => router.push(`/chat/${item.id}`)}
-			style={{ flex: 1, alignItems: 'flex-end' }}
-		>
+		<View style={{ flex: 1, alignItems: 'flex-end' }}>
 			<View style={[styles.deleteButton, { width: buttonWidth }]}>
 				<Text style={styles.buttonText}>{t('features.chat.ui.chat_room_card.leave')}</Text>
 			</View>
-			<RenderContent item={item} />
-		</Pressable>
+			<GestureDetector gesture={panGesture}>
+				<Animated.View style={[{ width: screenWidth }, animatedStyle]}>
+					<Pressable onPress={handlePress}>
+						<RenderContent item={item} />
+					</Pressable>
+				</Animated.View>
+			</GestureDetector>
+		</View>
 	);
 }
 
@@ -166,7 +147,7 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
 	};
 
 	return (
-		<Animated.View style={[styles.roomContainer, { width: screenWidth }]}>
+		<View style={[styles.roomContainer, { width: screenWidth }]}>
 			<ChatProfileImage size={55} imageUri={item.profileImages} />
 
 			<View style={styles.rightContainer}>
@@ -175,11 +156,13 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
 						{item.nickName}
 					</Text>
 					<Text style={styles.lastMessageText} numberOfLines={1}>
-						{item.recentMessage === ''
-							? t('features.chat.ui.chat_room_card.photo')
-							: item.recentMessage
-								? item.recentMessage
-								: t('features.chat.ui.chat_room_card.start_conversation')}
+						{item.isPartnerWithdrawn
+							? t('features.chat.ui.chat_room_card.partner_withdrawn')
+							: item.recentMessage === ''
+								? t('features.chat.ui.chat_room_card.photo')
+								: item.recentMessage
+									? item.recentMessage
+									: t('features.chat.ui.chat_room_card.start_conversation')}
 					</Text>
 				</View>
 				<View style={styles.infoContainer}>
@@ -202,7 +185,7 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
 					)}
 				</View>
 			</View>
-		</Animated.View>
+		</View>
 	);
 };
 

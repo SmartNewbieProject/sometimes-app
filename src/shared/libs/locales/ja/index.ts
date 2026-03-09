@@ -51,6 +51,7 @@ import featuresPass from './features/pass.json';
 import featuresPayment from './features/payment.json';
 import featuresPostBox from './features/post-box.json';
 import featuresPreSignup from './features/pre-signup.json';
+import featuresProfile from './features/profile.json';
 import featuresProfileEdit from './features/profile-edit.json';
 import featuresProfileViewer from './features/profile-viewer.json';
 import featuresSetting from './features/setting.json';
@@ -135,6 +136,7 @@ const features = {
 	pass: featuresPass,
 	'post-box': featuresPostBox,
 	'pre-signup': featuresPreSignup,
+	profile: featuresProfile,
 	'profile-edit': featuresProfileEdit,
 	'profile-viewer': featuresProfileViewer,
 	setting: featuresSetting,

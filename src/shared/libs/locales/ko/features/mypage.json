@@ -150,7 +150,7 @@
 		"edit": "수정",
 		"photo_hint": "여기를 터치하여 내 프로필을 볼 수 있어요!",
 		"gem_label": "구슬",
-		"gem_remaining": "구슬 {{count}}개",
+		"gem_count": "{{count}}개",
 		"ideal_type": "이상형 설정",
 		"photo_mgmt": "사진 관리",
 		"preview": "미리보기",

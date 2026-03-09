@@ -16,10 +16,12 @@ const useStore = create<State>((set) => ({
 }));
 
 export const useCategory = () => {
-	const { category, changeCategory } = useStore();
+	const category = useStore((s) => s.category);
+	const changeCategory = useStore((s) => s.changeCategory);
 	const { data: categories = [], ...queryProps } = useQuery({
 		queryKey: ['category-list'],
 		queryFn: apis.articles.getCategoryList,
+		staleTime: 5 * 60 * 1000,
 	});
 
 	useEffect(() => {

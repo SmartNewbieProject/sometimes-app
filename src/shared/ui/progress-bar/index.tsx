@@ -17,6 +17,9 @@ export const ProgressBar = ({
       borderRadius={100}
       width={width}
       height={12}
+      animated={true}
+      animationType="timing"
+      animationConfig={{ duration: 300 }}
     />
   );
 };

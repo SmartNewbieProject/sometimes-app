@@ -61,6 +61,7 @@
 	},
 	"navigation": {
 		"next": "次へ",
+		"previous": "戻る",
 		"start": "始める",
 		"skip": "スキップ"
 	},

@@ -1,6 +1,7 @@
 import BigTitle from '@/assets/icons/big-title.svg';
 import { AppleReviewModal } from '@/src/features/auth/ui/apple-review-modal';
 import { EmailLoginModal } from '@/src/features/auth/ui/email-login-modal';
+import { showLoggerOverlay } from '@/src/features/logger/service/logger-visibility';
 import { Text } from '@/src/shared/ui';
 import { Image } from 'expo-image';
 import { useRef, useState } from 'react';
@@ -16,6 +17,8 @@ export default function Logo() {
 		null,
 	);
 	const rotationValue = useRef(new Animated.Value(0)).current;
+	const tapCountRef = useRef(0);
+	const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const { t } = useTranslation();
 
 	const handlePressIn = () => {
@@ -26,6 +29,15 @@ export default function Logo() {
 			}, 2500);
 		}, 2500);
 		setLongPressTimeout(timeout);
+
+		// 5번 빠르게 탭 → 로그 패널 오픈
+		tapCountRef.current += 1;
+		if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+		tapTimerRef.current = setTimeout(() => { tapCountRef.current = 0; }, 1500);
+		if (tapCountRef.current >= 5) {
+			tapCountRef.current = 0;
+			showLoggerOverlay();
+		}
 	};
 
 	const handlePressOut = () => {

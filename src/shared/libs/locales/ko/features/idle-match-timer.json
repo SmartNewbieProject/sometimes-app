@@ -104,7 +104,7 @@
 			"waiting_desc": "{{date}} 공개",
 			"partner_suffix": "파트너",
 			"not_found_no_match_pool_title": "매칭 상대가 부족해요",
-			"not_found_no_match_pool_desc": "다음 매칭 {{date}}에 다시 시도돼요",
+			"not_found_no_match_pool_desc": "21:00에 공개돼요",
 			"not_found_no_match_pool_cta": "조건 넓히기",
 			"not_found_filtered_out_title": "조건이 까다로워요",
 			"not_found_filtered_out_desc": "이상형 범위를 넓히면 매칭 확률이 올라가요",

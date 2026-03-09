@@ -5,6 +5,7 @@ import { mixpanelAdapter } from './mixpanel';
 import { getCountryFromLocale } from './country-detector';
 
 export const resetAppState = () => {
+  queryClient.cancelQueries();
   queryClient.clear();
 
   useChatStore.getState().disconnectSocket();

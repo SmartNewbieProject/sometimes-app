@@ -43,6 +43,9 @@ export function handleMultipleFacesDetected(showModal: ShowModalFn, t: TFunction
  * - 파일 크기/형식/Vision 장애: 토스트
  * - 얼굴 미감지/다중 감지: 모달
  * 처리된 경우 true, 미처리된 경우 false 반환
+ *
+ * axios 인터셉터가 에러를 { error, code, status } 형태로 변환하므로
+ * error.response.data 경로와 직접 경로를 모두 지원
  */
 export function handleProfileImageError(
 	// biome-ignore lint/suspicious/noExplicitAny: error type varies
@@ -51,38 +54,41 @@ export function handleProfileImageError(
 	emitToast: (msg: string) => void,
 	t: TFunction,
 ): boolean {
-	// API 응답 형식: { "error": "..." }
-	const errorValue: string | undefined =
-		error?.response?.data?.error || error?.response?.data?.errorCode || error?.errorCode;
+	// axios 인터셉터 변환 후: { error: string, code: string, status: number }
+	// 레거시(미변환): error.response.data.error / error.response.data.errorCode
+	const errorCode: string | undefined =
+		error?.code || error?.response?.data?.code || error?.response?.data?.errorCode || error?.errorCode;
+	const errorMessage: string | undefined =
+		error?.error || error?.response?.data?.error;
 
-	if (!errorValue) return false;
+	if (!errorCode && !errorMessage) return false;
 
 	// 파일 크기 초과 (NestJS ParseFilePipe 메시지)
-	if (errorValue.includes('expected size')) {
+	if (errorMessage?.includes('expected size')) {
 		emitToast('파일 크기가 너무 큽니다. 20MB 이하의 사진을 사용해 주세요');
 		return true;
 	}
 
 	// 지원하지 않는 파일 형식
-	if (errorValue.includes('expected type')) {
+	if (errorMessage?.includes('expected type')) {
 		emitToast('지원하지 않는 형식입니다. JPEG, PNG, WEBP 형식만 가능합니다');
 		return true;
 	}
 
 	// 얼굴 미감지 (신뢰도 미달 포함)
-	if (errorValue === PROFILE_IMAGE_ERROR_CODES.NO_FACE_DETECTED) {
+	if (errorCode === PROFILE_IMAGE_ERROR_CODES.NO_FACE_DETECTED) {
 		handleNoFaceDetected(showModal, t);
 		return true;
 	}
 
 	// 여러 명 얼굴 감지
-	if (errorValue === PROFILE_IMAGE_ERROR_CODES.MULTIPLE_FACES_DETECTED) {
+	if (errorCode === PROFILE_IMAGE_ERROR_CODES.MULTIPLE_FACES_DETECTED) {
 		handleMultipleFacesDetected(showModal, t);
 		return true;
 	}
 
 	// Google Vision 서비스 장애
-	if (errorValue === PROFILE_IMAGE_ERROR_CODES.VISION_UNAVAILABLE) {
+	if (errorCode === PROFILE_IMAGE_ERROR_CODES.VISION_UNAVAILABLE) {
 		emitToast('사진 인식 서비스에 일시적 장애가 발생했습니다. 잠시 후 다시 시도해 주세요');
 		return true;
 	}

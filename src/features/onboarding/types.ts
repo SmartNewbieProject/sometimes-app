@@ -27,6 +27,7 @@ export interface NavigationButtonsProps {
   currentIndex: number;
   totalSlides: number;
   onNext: () => void;
+  onPrevious: () => void;
   isTransitioning: boolean;
   source?: string;
 }

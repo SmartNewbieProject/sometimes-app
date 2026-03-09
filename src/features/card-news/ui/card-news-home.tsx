@@ -2,7 +2,7 @@
  * 카드뉴스 홈 화면
  * 하이라이트 캐러셀 + 무한 스크롤 목록
  */
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -17,7 +17,6 @@ import VectorIcon from "@/assets/icons/Vector.svg";
 import { CardNewsHighlights } from "./card-news-highlights";
 import { CardNewsList } from "./card-news-list";
 import { useCardNewsAnalytics } from "../hooks";
-import { useCardNewsHighlights, useCardNewsInfiniteList } from "../queries";
 import type { CardNewsHighlight, CardNewsListItem } from "../types";
 import { useTranslation } from "react-i18next";
 import { useCategory, SOMETIME_STORY_CODE } from "@/src/features/community/hooks";
@@ -26,20 +25,6 @@ export function CardNewsHome() {
   const { t } = useTranslation();
   const analytics = useCardNewsAnalytics();
   const { changeCategory } = useCategory();
-  const { data: highlights } = useCardNewsHighlights();
-  const { items: listItems } = useCardNewsInfiniteList(10);
-  const hasTrackedSectionViewRef = useRef(false);
-
-  useEffect(() => {
-    if (highlights && !hasTrackedSectionViewRef.current) {
-      hasTrackedSectionViewRef.current = true;
-      analytics.trackSectionViewed(
-        highlights.length,
-        listItems.length > 0,
-        'home'
-      );
-    }
-  }, [highlights, listItems.length, analytics]);
 
   const handlePressHighlight = useCallback((item: CardNewsHighlight) => {
     router.push(`/card-news/${item.id}`);
@@ -55,7 +40,11 @@ export function CardNewsHome() {
     Linking.openURL(FAQ_URL);
   }, [analytics]);
 
-  const HeaderComponent = (
+  const handleStoryPress = useCallback(() => {
+    changeCategory(SOMETIME_STORY_CODE);
+  }, [changeCategory]);
+
+  const headerComponent = useMemo(() => (
     <>
       <TouchableOpacity
         style={styles.faqBanner}
@@ -78,7 +67,7 @@ export function CardNewsHome() {
       {/* 썸타임 이야기 링크 */}
       <TouchableOpacity
         style={styles.storyLink}
-        onPress={() => changeCategory(SOMETIME_STORY_CODE)}
+        onPress={handleStoryPress}
         activeOpacity={0.8}
       >
         <Text style={styles.storyLinkEmoji}>📖</Text>
@@ -92,9 +81,8 @@ export function CardNewsHome() {
           </IconWrapper>
         </View>
       </TouchableOpacity>
-
     </>
-  );
+  ), [handleFAQPress, handlePressHighlight, handleStoryPress, t]);
 
   return (
     <View style={styles.container}>
@@ -102,7 +90,7 @@ export function CardNewsHome() {
 
       <CardNewsList
         onPressItem={handlePressListItem}
-        ListHeaderComponent={HeaderComponent}
+        ListHeaderComponent={headerComponent}
       />
     </View>
   );

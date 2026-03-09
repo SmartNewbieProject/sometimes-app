@@ -61,6 +61,7 @@
 	},
 	"navigation": {
 		"next": "다음",
+		"previous": "이전",
 		"start": "시작하기",
 		"skip": "건너뛰기"
 	},

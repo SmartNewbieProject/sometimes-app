@@ -61,6 +61,7 @@ export type ChatDomainEvent =
 				canRefund?: boolean;
 				paymentConfirm?: boolean;
 				refundedGems?: number;
+				isPartnerWithdrawn?: boolean;
 				totalGems?: number;
 			};
 	  }

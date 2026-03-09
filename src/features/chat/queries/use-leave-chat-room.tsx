@@ -9,7 +9,11 @@ import { leaveChatRoom } from '../apis';
 import { chatLeaveErrorHandlers } from '../services/chat-leave-error-handler';
 import { removeChatRoomFromCache } from '../utils/chat-cache';
 
-function useLeaveChatRoom() {
+interface LeaveChatRoomOptions {
+	onCustomSuccess?: () => void;
+}
+
+function useLeaveChatRoom(options?: LeaveChatRoomOptions) {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const queryClient = useQueryClient();
@@ -25,17 +29,21 @@ function useLeaveChatRoom() {
 		},
 		onSuccess: (_, variables) => {
 			removeChatRoomFromCache(queryClient, variables.chatRoomId);
-			showModal({
-				title: t('common.안내'),
-				children: <Text textColor="black">채팅방을 나갔습니다.</Text>,
-				primaryButton: {
-					text: t('common.확인'),
-					onClick: () => {
-						hideModal();
-						router.push('/chat');
+			if (options?.onCustomSuccess) {
+				options.onCustomSuccess();
+			} else {
+				showModal({
+					title: t('common.안내'),
+					children: <Text textColor="black">채팅방을 나갔습니다.</Text>,
+					primaryButton: {
+						text: t('common.확인'),
+						onClick: () => {
+							hideModal();
+							router.push('/chat');
+						},
 					},
-				},
-			});
+				});
+			}
 		},
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		onError: (error: any) => {

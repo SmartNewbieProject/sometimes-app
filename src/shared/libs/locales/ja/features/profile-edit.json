@@ -6,8 +6,8 @@
 	"ui": {
 		"save_button": "保存",
 		"profile_image_cover": {
-			"default_title": "プロフィール審査中です",
-			"default_subtitle": "現在プロフィールを審査中です\n審査完了後、写真の編集が可能になります"
+			"default_title": "写真を審査中です",
+			"default_subtitle": "審査中の写真は変更できません\nタップして写真を管理できます"
 		},
 		"validation": {
 			"empty_form": "未入力の項目があります。"

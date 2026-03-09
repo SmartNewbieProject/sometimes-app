@@ -149,22 +149,19 @@ export function useAuth() {
 		Sentry.setUser(null);
 		deleteFcmTokenAsync(); // OTA Silent Push 차단 (에러 무시)
 
-		if (!refreshToken) {
-			router.push('/auth/login');
-			await setToken(null);
-			await setRefreshToken(null);
-			await setApprovalStatus(null);
-			await clearOnboardingCompletedFlag();
-			await storage.removeItem('user-country');
-			return;
-		}
-
-		await logoutApi(refreshToken);
+		// 토큰을 먼저 삭제 — 캐시 클리어 후 재실행되는 쿼리가 이전 유저 토큰으로 요청하지 못하도록
 		await setToken(null);
 		await setRefreshToken(null);
 		await setApprovalStatus(null);
 		await clearOnboardingCompletedFlag();
 		await storage.removeItem('user-country');
+
+		if (!refreshToken) {
+			router.push('/auth/login');
+			return;
+		}
+
+		await logoutApi(refreshToken).catch(console.error);
 	};
 	const clearTokensOnly = async () => {
 		await setToken(null);

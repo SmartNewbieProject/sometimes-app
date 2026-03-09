@@ -1,5 +1,6 @@
 import colors from '@/src/shared/constants/colors';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { Portal } from '@/src/shared/providers/portal-provider';
 import { Text } from '@shared/ui';
 import { useState } from 'react';
@@ -10,6 +11,7 @@ import { FeedbackDrawer } from './feedback-drawer';
 export const WallaFeedbackBanner = () => {
 	const { t } = useTranslation();
 	const { showModal, hideModal } = useModal();
+	const { emitToast } = useToast();
 	// drawerMounted 하나로만 관리
 	// visible prop을 변경하면 Portal children이 바뀌어 내부 애니메이션이 리셋되는 버그가 생기므로
 	// FeedbackDrawer는 마운트 시 자동으로 열리고, 닫기 애니메이션 완료 후 언마운트
@@ -27,14 +29,7 @@ export const WallaFeedbackBanner = () => {
 
 	const handleSuccess = () => {
 		closeDrawer();
-		showModal({
-			title: t('features.feedback.ui.success.title'),
-			children: null,
-			primaryButton: {
-				text: t('features.feedback.ui.success.confirm'),
-				onClick: hideModal,
-			},
-		});
+		emitToast(t('features.feedback.ui.success.title'), '🙏');
 	};
 
 	const handleError = () => {

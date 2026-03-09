@@ -150,7 +150,7 @@
 		"edit": "編集",
 		"photo_hint": "タップしてプロフィールを確認できます！",
 		"gem_label": "ビー玉",
-		"gem_remaining": "ビー玉 {{count}}個",
+		"gem_count": "{{count}}個",
 		"ideal_type": "理想の相手",
 		"photo_mgmt": "写真管理",
 		"preview": "プレビュー",

@@ -296,7 +296,17 @@ class SocketConnectionManager {
 	private setupMessageHandlers() {
 		this.addSubscription(
 			chatEventBus.on('MESSAGES_READ_REQUESTED').subscribe(({ payload }) => {
-				this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
+				this.socket?.emit(
+					'readMessages',
+					{ chatRoomId: payload.chatRoomId },
+					(response: { success: boolean }) => {
+						if (!response?.success) {
+							setTimeout(() => {
+								this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
+							}, 2000);
+						}
+					},
+				);
 			}),
 		);
 
@@ -621,11 +631,8 @@ class SocketConnectionManager {
 	}
 
 	private createSocketConnection(socketUrl: string, token: string) {
-		// 모바일 환경에서는 polling 우선 (네트워크 안정성), 웹에서는 websocket 우선
-		const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
-		const transports = isMobile
-			? ['polling', 'websocket'] // 모바일: polling 우선 (WiFi↔LTE 전환 시 안정적)
-			: ['websocket', 'polling']; // 웹: websocket 우선
+		// WebSocket 우선 (ALB sticky session 없는 다중 인스턴스 환경에서 polling 분산 문제 방지)
+		const transports = ['websocket', 'polling']; // WebSocket persistent connection → ALB 라우팅 불필요
 
 		const options = {
 			transports,
@@ -793,6 +800,13 @@ class SocketConnectionManager {
 
 		this.socket?.on('chatRoomMetaUpdated', (payload) => {
 			chatEventBus.emit({ type: 'CHAT_ROOM_META_UPDATED', payload });
+		});
+
+		this.socket?.on('partnerWithdrawn', (payload) => {
+			chatEventBus.emit({
+				type: 'CHAT_ROOM_META_UPDATED',
+				payload: { chatRoomId: payload.chatRoomId, isPartnerWithdrawn: true },
+			});
 		});
 	}
 

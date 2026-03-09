@@ -7,7 +7,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BackHandler } from 'react-native';
+import { BackHandler, Keyboard } from 'react-native';
 import Signup from '..';
 import {
 	ensureAppleId,
@@ -138,6 +138,10 @@ function useInviteCode() {
 		setSignupLoading(false);
 	};
 	const onBackPress = () => {
+		if (Keyboard.isVisible()) {
+			Keyboard.dismiss();
+			return true;
+		}
 		router.back();
 		return true;
 	};

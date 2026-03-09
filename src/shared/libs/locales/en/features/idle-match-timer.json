@@ -96,7 +96,7 @@
 			"waiting_desc": "Opens {{date}}",
 			"partner_suffix": "Partner",
 			"not_found_no_match_pool_title": "Not enough matches",
-			"not_found_no_match_pool_desc": "Next match on {{date}}",
+			"not_found_no_match_pool_desc": "Opens at 21:00",
 			"not_found_no_match_pool_cta": "Broaden criteria",
 			"not_found_filtered_out_title": "Filters too strict",
 			"not_found_filtered_out_desc": "Broaden your type for better match odds",

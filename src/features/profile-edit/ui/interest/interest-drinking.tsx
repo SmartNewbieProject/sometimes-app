@@ -1,6 +1,7 @@
 import Interest from '@/src/features/interest';
 import type { Preferences } from '@/src/features/interest/api';
 import colors from '@/src/shared/constants/colors';
+import { usePreferenceTooltips } from '@/src/shared/hooks/use-preference-tooltips';
 import { PreferenceSlider } from '@/src/shared/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +29,8 @@ function InterestDrinking() {
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.DRINKING) ?? preferencesArray[0];
 
+	const tooltips = usePreferenceTooltips('apps.interest.drink', preferences.options.length);
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>{t('features.profile-edit.ui.interest.drinking.title')}</Text>
@@ -40,6 +43,8 @@ function InterestDrinking() {
 				showMiddle={false}
 				firstLabelLeft={0}
 				lastLabelLeft={-70}
+				showTooltip={true}
+				tooltips={tooltips}
 			/>
 		</View>
 	);

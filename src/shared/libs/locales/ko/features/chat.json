@@ -33,7 +33,8 @@
 		},
 		"input": {
 			"placeholder": "메세지를 입력하세요",
-			"placeholder_ended": "대화가 종료되었어요"
+			"placeholder_ended": "대화가 종료되었어요",
+			"placeholder_withdrawn": "상대방이 탈퇴했습니다"
 		},
 		"search": {
 			"placeholder": "검색"
@@ -92,7 +93,8 @@
 			"accept": "수락",
 			"leave": "나가기",
 			"photo": "사진",
-			"start_conversation": "대화를 시작해볼까요?"
+			"start_conversation": "대화를 시작해볼까요?",
+			"partner_withdrawn": "상대방이 탈퇴했어요"
 		},
 		"new_match_banner": {
 			"default_name": "썸타임",

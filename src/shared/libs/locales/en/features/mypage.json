@@ -6,7 +6,7 @@
 		"edit": "Edit",
 		"photo_hint": "Tap here to view your profile!",
 		"gem_label": "Gems",
-		"gem_remaining": "{{count}} Gems",
+		"gem_count": "{{count}}",
 		"ideal_type": "Ideal Type",
 		"photo_mgmt": "Photos",
 		"preview": "Preview",

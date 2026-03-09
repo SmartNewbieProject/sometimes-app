@@ -10,12 +10,14 @@ interface SometimeArticleListProps {
 	category?: ArticleCategory;
 	ListHeaderComponent?: React.ReactElement;
 	embedded?: boolean;
+	returnPath?: string;
 }
 
 export const SometimeArticleList = ({
 	category,
 	ListHeaderComponent,
 	embedded,
+	returnPath,
 }: SometimeArticleListProps) => {
 	const { t } = useTranslation();
 	const { articles, isLoading, isLoadingMore, hasNextPage, loadMore, refresh } = useArticles({
@@ -29,7 +31,7 @@ export const SometimeArticleList = ({
 	};
 
 	const renderItem = ({ item }: { item: ArticleListItem }) => (
-		<SometimeArticleCard article={item} embedded={embedded} />
+		<SometimeArticleCard article={item} embedded={embedded} returnPath={returnPath} />
 	);
 
 	const renderFooter = () => {

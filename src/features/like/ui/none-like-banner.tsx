@@ -41,7 +41,7 @@ function NoneLikeBanner() {
       </View>
     );
   return (
-    <View>
+    <View style={styles.outerWrapper}>
       <Text style={styles.text}>{t("features.like.ui.none_like_banner.nothing_like")}</Text>
       <Pressable
         style={styles.container}
@@ -112,6 +112,10 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Medium",
     lineHeight: 14,
   },
+  outerWrapper: {
+    overflow: "hidden",
+    borderRadius: 36,
+  },
   text: {
     marginBottom: 5,
     marginLeft: 14,
@@ -124,7 +128,6 @@ const styles = StyleSheet.create({
   background: {
     top: 0,
     left: 0,
-    zIndex: -1,
     bottom: 0,
     right: 0,
     position: "absolute",

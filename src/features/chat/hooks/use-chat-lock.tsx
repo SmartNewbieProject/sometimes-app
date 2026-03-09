@@ -2,7 +2,9 @@ import { useAuth } from '@/src/features/auth';
 import { useFeatureCost } from '@/src/features/payment/hooks';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { CHAT_KEYS } from '@/src/shared/libs/locales/keys';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
@@ -12,6 +14,8 @@ import useLeaveChatRoom from '../queries/use-leave-chat-room';
 function useChatLock(chatRoomId: string) {
 	const { t } = useTranslation();
 	const { showModal } = useModal();
+	const { emitToast } = useToast();
+	const router = useRouter();
 	const { profileDetails } = useAuth();
 	const { featureCosts } = useFeatureCost();
 	const chatStartCost = profileDetails?.gender === 'MALE' ? (featureCosts?.CHAT_START ?? 0) : 0;
@@ -19,7 +23,12 @@ function useChatLock(chatRoomId: string) {
 		chatRoomId,
 		chatStartCost,
 	);
-	const { mutateAsync: leaveMutateAsync, isPending: isLeaving } = useLeaveChatRoom();
+	const { mutateAsync: leaveMutateAsync, isPending: isLeaving } = useLeaveChatRoom({
+		onCustomSuccess: () => {
+			emitToast('채팅을 거절했습니다.');
+			router.push('/chat');
+		},
+	});
 
 	const handleUnlock = () => {
 		if (isEntering || isLeaving) return;

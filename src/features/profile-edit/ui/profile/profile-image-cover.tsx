@@ -2,7 +2,6 @@ import React from "react";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
-import LockIcon from "@/assets/icons/lock-chat.svg";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -36,7 +35,6 @@ export default function ProfileImageCover({
       <View style={styles.dim} />
 
       <View style={styles.center}>
-        <LockIcon width={32} height={32} />
         <Text style={styles.title}>{displayTitle}</Text>
         <Text style={styles.subtitle}>{displaySubtitle}</Text>
       </View>
@@ -68,7 +66,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   title: {
-    marginTop: 10,
+    marginTop: 0,
     color: semanticColors.text.inverse,
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",

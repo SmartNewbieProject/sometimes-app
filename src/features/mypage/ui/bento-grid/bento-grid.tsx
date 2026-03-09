@@ -202,11 +202,10 @@ export const BentoGrid = () => {
 				<View style={styles.gemArea}>
 					<Pressable style={styles.gemBadge} onPress={() => router.push('/purchase/gem-store')}>
 						<ImageResource resource={ImageResources.GEM} width={24} height={24} />
-						<Text style={styles.gemBadgeText}>{gem?.totalGem ?? 0}</Text>
+						<Text style={styles.gemBadgeText}>
+							{t('features.mypage.bento.gem_count', { count: gem?.totalGem ?? 0 })}
+						</Text>
 					</Pressable>
-					<Text style={styles.gemHint}>
-						{t('features.mypage.bento.gem_remaining', { count: gem?.totalGem ?? 0 })}
-					</Text>
 				</View>
 				<View style={styles.photoBottomInfo}>
 					<View style={styles.photoNameRow}>
@@ -282,32 +281,8 @@ export const BentoGrid = () => {
 				</Pressable>
 			</View>
 
-			{/* Row 2: 사진 관리 (비포/애프터 넛지 카드) */}
-			{profileImages.length >= REQUIRED_PHOTO_COUNT ? (
-				<Pressable
-					style={styles.completeTile}
-					onPress={() => router.push('/profile/photo-management?referrer=mypage')}
-				>
-					<View style={styles.completeLeft}>
-						<CheckCircleIcon />
-						<Text size="sm" weight="semibold" textColor="black">
-							{t('features.mypage.bento.photo_mgmt')}
-						</Text>
-						<Text style={styles.completeBadge}>{t('features.mypage.bento.photo_complete')}</Text>
-					</View>
-					<View style={styles.completeRight}>
-						{thumbnailImages.map((img, idx) => (
-							<Image
-								key={img.imageUrl || img.url || idx}
-								source={{ uri: img.imageUrl || img.url }}
-								style={[styles.completeThumb, idx > 0 && { marginLeft: -16 }]}
-								contentFit="cover"
-							/>
-						))}
-						<ChevronRight />
-					</View>
-				</Pressable>
-			) : (
+			{/* Row 2: 사진 관리 (사진 미달 시 넛지 카드) */}
+			{profileImages.length < REQUIRED_PHOTO_COUNT && (
 				<Pressable
 					style={styles.nudgeTile}
 					onPress={() => router.push('/profile/photo-management?referrer=mypage')}
@@ -489,12 +464,6 @@ const styles = StyleSheet.create({
 		fontSize: 11,
 		color: '#FFFFFF',
 		opacity: 0.6,
-		fontFamily: 'Pretendard-Regular',
-	},
-	gemHint: {
-		fontSize: 11,
-		color: '#FFFFFF',
-		opacity: 0.7,
 		fontFamily: 'Pretendard-Regular',
 	},
 	univLogo: {

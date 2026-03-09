@@ -36,7 +36,6 @@ function useUniversityHook() {
 		queryFn: () => getTopUniversities(country),
 	});
 
-
 	const { data: searchResults, isLoading: isSearching } = useQuery({
 		queryKey: ['universities', 'search', debouncedSearchText, country],
 		queryFn: () => searchUniversities(debouncedSearchText, country),
@@ -93,7 +92,7 @@ function useUniversityHook() {
 	};
 
 	const onBackPress = (fallback: () => void) => {
-		if (isFocused) {
+		if (trigger) {
 			setTrigger(false);
 			setIsFocused(false);
 			setSearchText('');

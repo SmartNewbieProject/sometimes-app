@@ -260,15 +260,19 @@ function KakaoLoginComponent() {
 	const { setAuthMethod } = useSignupProgress();
 
 	// 카카오 인증 중 앱이 백그라운드로 갔다가 복귀하면 로딩 상태를 즉시 해제
+	// Android: KakaoTalk 앱 로그인 시 background→active는 정상 성공 흐름이므로 취소 처리하지 않음
+	// iOS: 웹 OAuth 창에서 이탈(취소) 시 SDK가 영구 대기 상태에 빠질 수 있어 취소 처리 필요
 	useEffect(() => {
 		const subscription = AppState.addEventListener('change', (nextState) => {
 			const prevState = appStateRef.current;
 			appStateRef.current = nextState;
 
 			if (prevState === 'background' && nextState === 'active' && isKakaoLoginPendingRef.current) {
-				isCancelledRef.current = true;
-				isKakaoLoginPendingRef.current = false;
-				setIsLoading(false);
+				if (Platform.OS === 'ios') {
+					isCancelledRef.current = true;
+					isKakaoLoginPendingRef.current = false;
+					setIsLoading(false);
+				}
 			}
 		});
 		return () => subscription.remove();
@@ -343,7 +347,11 @@ function KakaoLoginComponent() {
 			// eslint-disable-next-line prefer-const
 			let result!: KakaoLogin.KakaoLoginToken;
 			try {
-				result = await KakaoLogin.login();
+				// KakaoTalk 앱이 설치된 경우 앱으로 로그인, 없으면 웹(카카오계정)으로 폴백
+				const isTalkAvailable = Platform.OS === 'ios'
+					? await KakaoLogin.isKakaoTalkLoginAvailable()
+					: true;
+				result = await KakaoLogin.login({ useKakaoAccountLogin: !isTalkAvailable });
 			} catch (sdkError: unknown) {
 				if (isUserCancellation(sdkError)) {
 					const timeSpentSeconds = authStartTimeRef.current

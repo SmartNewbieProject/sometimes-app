@@ -21,8 +21,8 @@ import { FeedbackLetterContent } from './feedback-letter-content';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SHEET_HEIGHT = Platform.OS === 'web'
-	? Math.min(700, SCREEN_HEIGHT * 0.88)
-	: SCREEN_HEIGHT * 0.88;
+	? Math.min(600, SCREEN_HEIGHT * 0.75)
+	: SCREEN_HEIGHT * 0.75;
 const ANIMATION_DURATION = 300;
 
 // visible prop 제거 — 마운트 = 열림, onClose() 호출 시 부모가 언마운트
@@ -68,7 +68,7 @@ function WebFeedbackDrawer({ onClose, onSuccess, onError }: FeedbackDrawerProps)
 			<View
 				style={[
 					styles.sheet,
-					{ paddingBottom: insets.bottom + 16 },
+					{ paddingBottom: Math.max(0, insets.bottom - 42) },
 					{
 						transform: isOpen ? 'translateY(0%)' : 'translateY(100%)',
 						transition: `transform ${ANIMATION_DURATION}ms cubic-bezier(0.33, 1, 0.68, 1)`,
@@ -153,7 +153,7 @@ function NativeFeedbackDrawer({ onClose, onSuccess, onError }: FeedbackDrawerPro
 			</TouchableWithoutFeedback>
 
 			<Animated.View
-				style={[styles.sheet, sheetAnimStyle, { paddingBottom: insets.bottom + 16 }]}
+				style={[styles.sheet, sheetAnimStyle, { paddingBottom: Math.max(0, insets.bottom - 42) }]}
 			>
 				<View style={styles.handleContainer}>
 					<View style={styles.handle} />

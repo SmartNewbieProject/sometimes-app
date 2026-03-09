@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
 		borderColor: colors.state.error,
 	},
 	textInput: {
-		flex: 1,
 		fontSize: 15,
 		fontFamily: 'Pretendard',
 		color: colors.black,

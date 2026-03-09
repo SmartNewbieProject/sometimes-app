@@ -61,6 +61,7 @@ export interface BottomSheetPickerProps {
 	pinnedOptions?: BottomSheetPickerOption[];
 	onSearchChange?: (query: string) => void;
 	listFooterComponent?: React.ReactNode;
+	sheetHeightRatio?: number;
 }
 
 function WebBottomSheetPicker({
@@ -351,12 +352,14 @@ function NativeBottomSheetPicker({
 	pinnedOptions,
 	onSearchChange,
 	listFooterComponent,
+	sheetHeightRatio = 0.7,
 }: BottomSheetPickerProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const translateY = useSharedValue(SHEET_HEIGHT);
+	const sheetHeight = SCREEN_HEIGHT * sheetHeightRatio;
+	const translateY = useSharedValue(sheetHeight);
 	const backdropOpacity = useSharedValue(0);
 	const searchInputRef = useRef<TextInput>(null);
 
@@ -395,11 +398,11 @@ function NativeBottomSheetPicker({
 		isClosingRef.current = false;
 		cancelAnimation(translateY);
 		cancelAnimation(backdropOpacity);
-		translateY.value = SHEET_HEIGHT;
+		translateY.value = sheetHeight;
 		backdropOpacity.value = 0;
 		setIsModalVisible(false);
 		setSearchQuery('');
-	}, [translateY, backdropOpacity]);
+	}, [translateY, backdropOpacity, sheetHeight]);
 
 	// runOnJS에 전달할 stable한 함수 — 인라인 클로저 대신 ref를 통해 callback 접근
 	const onAnimationComplete = useCallback(() => {
@@ -428,7 +431,7 @@ function NativeBottomSheetPicker({
 				}
 			}, ANIMATION_DURATION + 100);
 
-			translateY.value = withTiming(SHEET_HEIGHT, {
+			translateY.value = withTiming(sheetHeight, {
 				duration: ANIMATION_DURATION - 50,
 				easing: Easing.in(Easing.cubic),
 			});
@@ -442,14 +445,14 @@ function NativeBottomSheetPicker({
 				},
 			);
 		},
-		[translateY, backdropOpacity, forceCleanup, onAnimationComplete],
+		[translateY, backdropOpacity, forceCleanup, onAnimationComplete, sheetHeight],
 	);
 
 	// visible prop 변경 감지: 열기 + 닫기(cleanup) 모두 처리
 	useEffect(() => {
 		if (visible) {
 			isClosingRef.current = false;
-			translateY.value = SHEET_HEIGHT;
+			translateY.value = sheetHeight;
 			backdropOpacity.value = 0;
 			setIsModalVisible(true);
 			// Modal이 실제로 마운트된 후 애니메이션 시작
@@ -499,7 +502,7 @@ function NativeBottomSheetPicker({
 
 	const sheetStyle = useAnimatedStyle(() => ({
 		transform: [{ translateY: translateY.value }],
-		height: Math.max(300, SHEET_HEIGHT - keyboard.height.value),
+		height: Math.max(300, sheetHeight - keyboard.height.value),
 	}));
 
 	const renderItem = useCallback(

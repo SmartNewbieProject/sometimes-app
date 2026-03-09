@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { semanticColors } from '../../constants/semantic-colors';
-import { Image as ExpoImage, useImage } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';
-import Loading from '@/src/features/loading';
 import { Text } from '../text';
 
 export const ImageResource: React.FC<ImageResourceProps> = ({
@@ -12,29 +11,18 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 	width = 100,
 	height = 100,
 	style,
-	loadingTitle,
 	contentFit = 'cover',
 	borderRadius = 0,
 }) => {
 	const { t } = useTranslation();
 	const isMounted = useRef(true);
 	const [hasError, setHasError] = useState(false);
-	const finalLoadingTitle = loadingTitle ?? t('common.image_loading');
 
 	useEffect(() => {
 		return () => {
 			isMounted.current = false;
 		};
 	}, []);
-
-	const image = useImage(resource, {
-		onError: (error) => {
-			if (isMounted.current) {
-				console.error('[ImageResource] Error loading image:', error);
-				setHasError(true);
-			}
-		},
-	});
 
 	const styles = StyleSheet.create({
 		container: {
@@ -74,16 +62,14 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 
 	return (
 		<View style={[styles.container, style]}>
-			<Loading.Lottie title={finalLoadingTitle} loading={!image}>
-				<ExpoImage
-					source={image}
-					style={styles.image}
-					contentFit={contentFit}
-					onLoadStart={handleLoadStart}
-					onError={handleError}
-					transition={300}
-				/>
-			</Loading.Lottie>
+			<ExpoImage
+				source={resource}
+				style={styles.image}
+				contentFit={contentFit}
+				onLoadStart={handleLoadStart}
+				onError={handleError}
+				transition={300}
+			/>
 		</View>
 	);
 };

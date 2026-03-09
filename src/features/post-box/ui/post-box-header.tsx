@@ -16,9 +16,14 @@ function PostBoxHeaders() {
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            router.replace('/home');
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/home');
+            }
           }}
           style={styles.arrowContainer}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <View style={styles.backArrow} />
         </Pressable>

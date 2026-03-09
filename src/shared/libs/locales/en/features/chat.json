@@ -11,7 +11,11 @@
 	"ui": {
 		"input": {
 			"placeholder": "Type a message",
-			"placeholder_ended": "Chat has ended"
+			"placeholder_ended": "Chat has ended",
+			"placeholder_withdrawn": "This user has left the app"
+		},
+		"chat_room_card": {
+			"partner_withdrawn": "This user has left the app"
 		},
 		"tips_modal": {
 			"header_title": "Conversation Topic Suggestions"

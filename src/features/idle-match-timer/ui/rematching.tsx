@@ -4,7 +4,7 @@ import { ImageResources } from "@/src/shared/libs";
 import { ImageResource, PurpleGradient, Text } from "@/src/shared/ui";
 import CheckIcon from "@assets/icons/check-unchecked.svg";
 import { useEffect, useRef, useState } from "react";
-import { Animated as EssetionAnimated, StyleSheet, View } from "react-native";
+import { Animated as RNAnimated, StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
   runOnJS,
@@ -28,11 +28,11 @@ export const RematchLoading = () => {
 
   const animations = useRef(
     processStep.map(() => ({
-      opacity: new EssetionAnimated.Value(0),
-      scale: new EssetionAnimated.Value(1),
+      opacity: new RNAnimated.Value(0),
+      scale: new RNAnimated.Value(1),
     }))
   ).current;
-  const barAnimations = useRef(new EssetionAnimated.Value(0)).current;
+  const barAnimations = useRef(new RNAnimated.Value(0)).current;
 
   const progressAnimations = useSharedValue(0);
 
@@ -85,35 +85,39 @@ export const RematchLoading = () => {
   }, []);
 
   useEffect(() => {
-    EssetionAnimated.timing(barAnimations, {
+    RNAnimated.timing(barAnimations, {
       toValue: 1,
       duration: 3500,
       useNativeDriver: true,
     }).start();
 
     processStep.forEach((_, index) => {
-      setTimeout(() => {
-        EssetionAnimated.timing(animations[index].opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-        EssetionAnimated.sequence([
-          EssetionAnimated.spring(animations[index].scale, {
-            toValue: 1.2,
-            friction: 4,
-            useNativeDriver: true,
-          }),
-          EssetionAnimated.spring(animations[index].scale, {
+      RNAnimated.sequence([
+        RNAnimated.delay(index * 1000),
+        RNAnimated.parallel([
+          RNAnimated.timing(animations[index].opacity, {
             toValue: 1,
-            friction: 4,
+            duration: 300,
             useNativeDriver: true,
           }),
-        ]).start();
+          RNAnimated.sequence([
+            RNAnimated.spring(animations[index].scale, {
+              toValue: 1.2,
+              friction: 4,
+              useNativeDriver: true,
+            }),
+            RNAnimated.spring(animations[index].scale, {
+              toValue: 1,
+              friction: 4,
+              useNativeDriver: true,
+            }),
+          ]),
+        ]),
+      ]).start(() => {
         setStepCheck((prev) =>
           prev.map((item, idx) => (index === idx ? true : item))
         );
-      }, index * 1000);
+      });
     });
   }, []);
 
@@ -148,19 +152,19 @@ export const RematchLoading = () => {
         {processStep.map((step, index) => (
           <View key={step} style={styles.step}>
             {stepCheck[index] ? (
-              <EssetionAnimated.View
+              <RNAnimated.View
                 style={[styles.checkIconWrapper, animatedIconStyle[index]]}
               >
                 <CheckIcon width={10} height={10} />
-              </EssetionAnimated.View>
+              </RNAnimated.View>
             ) : (
               <View style={styles.unChecked} />
             )}
-            <EssetionAnimated.View style={animatedStyle[index]}>
+            <RNAnimated.View style={animatedStyle[index]}>
               <Text size="sm" textColor="purple">
                 {step}
               </Text>
-            </EssetionAnimated.View>
+            </RNAnimated.View>
           </View>
         ))}
         <View
@@ -172,7 +176,7 @@ export const RematchLoading = () => {
             zIndex: 0,
           }}
         >
-          <EssetionAnimated.View
+          <RNAnimated.View
             style={[
               styles.stepVerticalBar,
               animatedBarStyle,

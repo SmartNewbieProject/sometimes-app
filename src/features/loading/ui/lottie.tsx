@@ -1,5 +1,5 @@
-import { View, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
+import { StyleSheet, View } from 'react-native';
 
 type Props = {
 	title?: string;
@@ -8,21 +8,24 @@ type Props = {
 };
 
 const Lottie: React.FC<Props> = ({ title, loading, children, ...props }) => {
-	if (loading) {
-		return (
-			<View style={styles.container}>
-				<Text variant="primary" size="sm" textColor="pale-purple">
-					{title}
-				</Text>
-				<View style={styles.hidden}>{children}</View>
-			</View>
-		);
-	}
-
-	return children;
+	return (
+		<View style={styles.wrapper}>
+			{loading && (
+				<View style={styles.container}>
+					<Text variant="primary" size="sm" textColor="pale-purple">
+						{title}
+					</Text>
+				</View>
+			)}
+			<View style={loading ? styles.hidden : styles.visible}>{children}</View>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
+	wrapper: {
+		width: '100%',
+	},
 	container: {
 		width: '100%',
 		flexDirection: 'column',
@@ -31,6 +34,9 @@ const styles = StyleSheet.create({
 	},
 	hidden: {
 		display: 'none',
+	},
+	visible: {
+		width: '100%',
 	},
 });
 

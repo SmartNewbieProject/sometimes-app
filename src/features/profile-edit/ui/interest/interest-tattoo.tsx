@@ -1,10 +1,11 @@
 import Interest from '@/src/features/interest';
-import type { Preferences, PreferenceOption } from '@/src/features/interest/api';
+import type { PreferenceOption, Preferences } from '@/src/features/interest/api';
 import colors from '@/src/shared/constants/colors';
+import { usePreferenceTooltips } from '@/src/shared/hooks/use-preference-tooltips';
 import { PreferenceSlider } from '@/src/shared/ui';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useMemo } from 'react';
 
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
@@ -26,6 +27,8 @@ function InterestTattoo() {
 
 	const preferences: Preferences =
 		preferencesArray?.find((item) => item.typeCode === Keys.TATTOO) ?? preferencesArray[0];
+
+	const tooltips = usePreferenceTooltips('apps.interest.tattoo', preferences.options.length);
 
 	const mapOption = useMemo(() => {
 		return (option: PreferenceOption) => ({
@@ -49,6 +52,8 @@ function InterestTattoo() {
 				showMiddle={true}
 				middleLabelLeft={-10}
 				mapOption={mapOption}
+				showTooltip={true}
+				tooltips={tooltips}
 			/>
 		</View>
 	);

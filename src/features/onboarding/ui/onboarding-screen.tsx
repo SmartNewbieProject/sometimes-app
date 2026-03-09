@@ -1,6 +1,7 @@
 import colors from '@/src/shared/constants/colors';
 import {
 	checkNotificationPermissionStatus,
+	requestNotificationPermission,
 	registerForPushNotificationsAsync,
 } from '@/src/shared/libs/notifications';
 import { router, useNavigation } from 'expo-router';
@@ -97,30 +98,32 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 		}
 	};
 
+	const goToSlide = useCallback((targetIndex: number) => {
+		if (isTransitioning || containerWidth === 0) return;
+		setIsTransitioning(true);
+		translateX.value = withTiming(-targetIndex * containerWidth, {
+			duration: 300,
+			easing: Easing.out(Easing.cubic),
+		});
+		setCurrentIndex(targetIndex);
+		setTimeout(() => {
+			setIsTransitioning(false);
+		}, 320);
+	}, [isTransitioning, containerWidth, translateX]);
+
 	const goToNextSlide = useCallback(() => {
 		if (isTransitioning) return;
-
 		if (currentIndex === totalSlides - 1) {
 			handleComplete();
 			return;
 		}
+		goToSlide(currentIndex + 1);
+	}, [currentIndex, isTransitioning, totalSlides, goToSlide]);
 
-		if (containerWidth === 0) return;
-
-		setIsTransitioning(true);
-		const nextIndex = currentIndex + 1;
-
-		translateX.value = withTiming(-nextIndex * containerWidth, {
-			duration: 300,
-			easing: Easing.out(Easing.cubic),
-		});
-
-		setCurrentIndex(nextIndex);
-
-		setTimeout(() => {
-			setIsTransitioning(false);
-		}, 320);
-	}, [currentIndex, isTransitioning, translateX, containerWidth, totalSlides]);
+	const goToPreviousSlide = useCallback(() => {
+		if (currentIndex === 0) return;
+		goToSlide(currentIndex - 1);
+	}, [currentIndex, goToSlide]);
 
 	const handleComplete = async () => {
 		console.log('[Onboarding] handleComplete called, source:', source);
@@ -132,12 +135,16 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 		}
 
 		// 신규 가입 플로우: 알림 권한 요청 후 홈 이동
-		// - undetermined: OS 팝업 표시 (사용자가 방금 본 notification 슬라이드가 맥락 제공)
-		// - granted: Samsung 선제 팝업 등으로 이미 허용됨, 토큰만 등록
-		// - denied: 무시하고 홈으로 이동 (홈에서 fallback 모달 대신 수락률 낮아 스킵)
+		// - undetermined: OS 다이얼로그 await (사용자 응답 대기) → 응답 후 홈 이동
+		// - granted: 즉시 반환 (다이얼로그 없음)
+		// - denied: 무시하고 홈으로 이동
+		// 토큰 등록(네트워크)은 홈 이동 후 백그라운드 처리 — 블로킹 방지
 		if (Platform.OS !== 'web') {
 			const status = await checkNotificationPermissionStatus();
 			if (status !== 'denied') {
+				if (status !== 'granted') {
+					await requestNotificationPermission();
+				}
 				registerForPushNotificationsAsync().catch(() => {});
 			}
 		}
@@ -189,6 +196,7 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 				currentIndex={currentIndex}
 				totalSlides={totalSlides}
 				onNext={goToNextSlide}
+				onPrevious={goToPreviousSlide}
 				isTransitioning={isTransitioning}
 				source={source}
 			/>

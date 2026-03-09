@@ -1,5 +1,6 @@
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
 import type { ArticleListItem } from '@/src/features/article/types';
+import { SOMETIME_STORY_CODE } from '@/src/features/community/hooks';
 import colors from '@/src/shared/constants/colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import dayUtils from '@/src/shared/libs/day';
@@ -12,9 +13,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 interface SometimeArticleCardProps {
 	article: ArticleListItem;
 	embedded?: boolean;
+	returnPath?: string;
 }
 
-export const SometimeArticleCard = ({ article, embedded }: SometimeArticleCardProps) => {
+export const SometimeArticleCard = ({
+	article,
+	embedded,
+	returnPath,
+}: SometimeArticleCardProps) => {
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { sometimeStoryEvents } = useMixpanel();
@@ -24,13 +30,16 @@ export const SometimeArticleCard = ({ article, embedded }: SometimeArticleCardPr
 			// 커뮤니티에서 접근한 경우 트래킹
 			sometimeStoryEvents.trackCommunityArticleClicked(article.id, article.slug, article.title);
 			// 뒤로가기 시 커뮤니티로 이동
-			router.push(`/article/${article.slug}?returnPath=/community`);
+			const nextReturnPath = returnPath ?? `/community?category=${SOMETIME_STORY_CODE}`;
+			router.push(`/article/${article.slug}?returnPath=${encodeURIComponent(nextReturnPath)}`);
 		} else {
 			router.push(`/article/${article.slug}`);
 		}
 	};
 
-	const categoryLabel = t(`features.community.ui.article_list_screen.category_labels.${article.category}`);
+	const categoryLabel = t(
+		`features.community.ui.article_list_screen.category_labels.${article.category}`,
+	);
 	const dateFormat = t('features.community.ui.article_list_screen.date_format');
 	const formattedDate = article.publishedAt
 		? dayUtils.create(article.publishedAt).format(dateFormat)

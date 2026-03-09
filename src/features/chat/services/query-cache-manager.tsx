@@ -541,6 +541,7 @@ class QueryCacheManager {
 		paymentConfirm?: boolean;
 		refundedGems?: number;
 		totalGems?: number;
+		isPartnerWithdrawn?: boolean;
 	}) {
 		this.queryClient?.setQueryData<ChatRoomDetail>(
 			['chat-detail', payload.chatRoomId],
@@ -553,6 +554,7 @@ class QueryCacheManager {
 					roomActivation: payload.roomActivation ?? oldData.roomActivation,
 					canRefund: payload.canRefund ?? oldData.canRefund,
 					paymentConfirm: payload.paymentConfirm ?? oldData.paymentConfirm,
+					isPartnerWithdrawn: payload.isPartnerWithdrawn ?? oldData.isPartnerWithdrawn,
 				};
 			},
 		);
@@ -572,6 +574,7 @@ class QueryCacheManager {
 								roomActivation: payload.roomActivation ?? room.roomActivation,
 								canRefund: payload.canRefund ?? room.canRefund,
 								paymentConfirm: payload.paymentConfirm ?? room.paymentConfirm,
+								isPartnerWithdrawn: payload.isPartnerWithdrawn ?? room.isPartnerWithdrawn,
 							}
 						: room,
 				),

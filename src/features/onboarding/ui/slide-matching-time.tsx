@@ -5,8 +5,6 @@ import { useCountdownTimer } from '../hooks/use-countdown-timer';
 import type { SlideComponent } from '../types';
 
 const { width } = Dimensions.get('window');
-const MAX_IMAGE_SIZE = 280;
-const imageSize = Math.min(width * 0.6, MAX_IMAGE_SIZE);
 
 export const SlideMatchingTime: SlideComponent = () => {
 	const { t } = useTranslation();
@@ -14,18 +12,23 @@ export const SlideMatchingTime: SlideComponent = () => {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.content}>
+			{/* flex:1 — 텍스트 헤더 영역 */}
+			<View style={styles.headerArea}>
 				<Text style={styles.headline}>{t('features.onboarding.slides.matchingTime.headline')}</Text>
 				<Text style={styles.subtext}>{t('features.onboarding.slides.matchingTime.subtext')}</Text>
+			</View>
 
-				<View style={styles.illustrationArea}>
-					<Image
-						source={require('@/assets/images/onboarding/matching_calendar.png')}
-						style={styles.image}
-						resizeMode="contain"
-					/>
-				</View>
+			{/* flex:2 — 일러스트 영역 */}
+			<View style={styles.illustrationArea}>
+				<Image
+					source={require('@/assets/images/onboarding/matching_calendar.png')}
+					style={styles.image}
+					resizeMode="contain"
+				/>
+			</View>
 
+			{/* flex:1 — 카운트다운 영역 */}
+			<View style={styles.countdownArea}>
 				<View style={styles.countdownBox}>
 					<Text style={styles.countdownLabel}>
 						{t('features.onboarding.slides.matchingTime.countdownLabel')}
@@ -48,18 +51,20 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.white,
 		paddingHorizontal: 24,
-		paddingTop: 80,
+		paddingTop: 16,
 	},
-	content: {
-		width: '100%',
+	headerArea: {
+		flex: 1,
 		alignItems: 'center',
+		justifyContent: 'center',
+		maxHeight: 140,
 	},
 	headline: {
 		fontSize: 26,
 		fontFamily: 'Pretendard-Bold',
 		color: colors.black,
 		textAlign: 'center',
-		marginBottom: 12,
+		marginBottom: 10,
 		lineHeight: 36,
 	},
 	subtext: {
@@ -67,27 +72,30 @@ const styles = StyleSheet.create({
 		fontFamily: 'Pretendard-Regular',
 		color: '#8E94A0',
 		textAlign: 'center',
-		marginBottom: 40,
 		lineHeight: 24,
 	},
 	illustrationArea: {
-		width: imageSize,
-		height: imageSize,
-		justifyContent: 'center',
+		flex: 2,
 		alignItems: 'center',
-		marginBottom: 20,
+		justifyContent: 'center',
+		maxHeight: Math.min(width * 0.7, 280),
 	},
 	image: {
 		width: '100%',
 		height: '100%',
 	},
+	countdownArea: {
+		flex: 1,
+		justifyContent: 'center',
+		maxHeight: 110,
+		paddingBottom: 8,
+	},
 	countdownBox: {
 		width: '100%',
 		backgroundColor: '#F3F0FF',
 		borderRadius: 16,
-		paddingVertical: 20,
+		paddingVertical: 18,
 		alignItems: 'center',
-		marginTop: 20,
 	},
 	countdownLabel: {
 		fontSize: 14,

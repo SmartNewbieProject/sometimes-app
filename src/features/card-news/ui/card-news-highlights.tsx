@@ -317,6 +317,8 @@ export function CardNewsHighlights({ onPressItem }: Props) {
 										style={StyleSheet.absoluteFillObject}
 										contentFit="cover"
 										recyclingKey={`card-${item.id}`}
+										cachePolicy="memory-disk"
+										priority="high"
 									/>
 									<LinearGradient
 										colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.9)']}

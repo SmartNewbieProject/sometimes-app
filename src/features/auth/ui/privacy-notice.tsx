@@ -23,7 +23,7 @@ export const PrivacyNotice = () => {
   if (isJP) {
     return (
       <View style={styles.container}>
-        <Text size="12" weight="normal" style={styles.noticeText}>
+        <Text weight="normal" style={styles.noticeText}>
           {t("features.auth.ui.privacy_notice.notice_prefix")}
         </Text>
         <View style={styles.linksRow}>
@@ -35,7 +35,7 @@ export const PrivacyNotice = () => {
             <Text style={styles.link}>{t("jp_legal.privacy_collection")}</Text>
           </TouchableOpacity>
         </View>
-        <Text size="12" weight="normal" style={styles.noticeText}>
+        <Text weight="normal" style={styles.noticeText}>
           {t("features.auth.ui.privacy_notice.notice_suffix")}
         </Text>
 
@@ -54,7 +54,7 @@ export const PrivacyNotice = () => {
 
   return (
     <View style={styles.container}>
-      <Text size="12" weight="normal" style={styles.noticeText}>
+      <Text weight="normal" style={styles.noticeText}>
         {t("features.auth.ui.privacy_notice.notice_prefix")}
       </Text>
       <View style={styles.linksRow}>
@@ -77,7 +77,7 @@ export const PrivacyNotice = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomRow}>
-        <Text size="12" weight="normal" style={styles.noticeText}>
+        <Text weight="normal" style={styles.noticeText}>
           {t("features.auth.ui.privacy_notice.notice_suffix")}{" "}
         </Text>
         <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   noticeText: {
+    fontSize: 7,
     color: colors.text.mutedAccessible,
     textAlign: 'center',
   },
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   separator: {
-    fontSize: 12,
+    fontSize: 7,
     color: colors.text.mutedAccessible,
     marginHorizontal: 4,
   },
   link: {
     textDecorationLine: "underline",
-    fontSize: 12,
+    fontSize: 7,
     color: colors.text.mutedAccessible,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: "600",

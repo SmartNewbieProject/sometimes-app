@@ -4,7 +4,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui/text';
 import { Image } from 'expo-image';
 import { useEffect, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 import Loading from '@/src/features/loading';
 import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
@@ -33,6 +33,8 @@ function InviteCode() {
 	}
 	return (
 		<DefaultLayout style={styles.layout}>
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+			<View style={styles.fill}>
 			<View style={styles.titleContainer}>
 				<Image source={require('@assets/images/invite-code-key.png')} style={styles.image} />
 				<Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
@@ -57,6 +59,8 @@ function InviteCode() {
 					onClickPrevious={onBackPress}
 				/>
 			</View>
+			</View>
+			</TouchableWithoutFeedback>
 		</DefaultLayout>
 	);
 }
@@ -67,6 +71,9 @@ const styles = StyleSheet.create({
 	layout: {
 		flex: 1,
 		position: 'relative',
+	},
+	fill: {
+		flex: 1,
 	},
 	titleContainer: {
 		paddingHorizontal: 30,

@@ -5,11 +5,11 @@
 import React, { useCallback } from "react";
 import {
   View,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { Text } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
@@ -62,6 +62,8 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
               source={{ uri: item.backgroundImage.url }}
               style={styles.thumbnailImage}
               contentFit="cover"
+              cachePolicy="memory-disk"
+              recyclingKey={`thumb-${item.id}`}
             />
           ) : (
             <View style={styles.thumbnailPlaceholder}>
@@ -149,10 +151,11 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
   }
 
   return (
-    <FlatList
+    <FlashList
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
+      {...({ estimatedItemSize: 100 } as object)}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
       ListHeaderComponent={renderHeader}

@@ -1,15 +1,17 @@
-import { useCallback, type RefObject, useEffect, useRef } from 'react';
+import { FlashList } from '@shopify/flash-list';
+import { type RefObject, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { semanticColors } from '../constants/semantic-colors';
 import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, View } from 'react-native';
-import type { InfiniteScrollViewProps } from './types';
+import { semanticColors } from '../constants/semantic-colors';
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
+import type { InfiniteScrollViewProps } from './types';
 
 interface CustomInfiniteScrollViewProps<T> extends InfiniteScrollViewProps<T> {
 	flatListRef?: RefObject<FlatList<T>>;
 	getItemKey?: (item: T, index: number) => string;
 	autoFillMaxPages?: number;
 	observerEnabled?: boolean;
+	estimatedItemSize?: number;
 }
 
 export function CustomInfiniteScrollView<T>({
@@ -29,6 +31,7 @@ export function CustomInfiniteScrollView<T>({
 	getItemKey,
 	autoFillMaxPages = 0,
 	observerEnabled = false,
+	estimatedItemSize,
 	...restProps
 }: CustomInfiniteScrollViewProps<T>) {
 	const { scrollProps, getLastItemProps } = useInfiniteScroll<T>(onLoadMore, {
@@ -91,6 +94,24 @@ export function CustomInfiniteScrollView<T>({
 	const keyExtractor =
 		restProps.keyExtractor ??
 		((item: T, index: number) => (getItemKey && getItemKey(item, index)) ?? `item-${index}`);
+
+	if (Platform.OS !== 'web') {
+		return (
+			<FlashList
+				data={data}
+				renderItem={renderItemInternal}
+				keyExtractor={keyExtractor}
+				estimatedItemSize={estimatedItemSize ?? 120}
+				ListFooterComponent={ListFooterComponent}
+				ListEmptyComponent={listEmpty}
+				onRefresh={onRefresh}
+				refreshing={refreshing}
+				showsVerticalScrollIndicator={false}
+				{...scrollProps}
+				{...restProps}
+			/>
+		);
+	}
 
 	return (
 		<FlatList

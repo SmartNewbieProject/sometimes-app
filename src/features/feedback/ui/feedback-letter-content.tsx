@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
 	scrollContent: {
 		paddingHorizontal: 20,
 		paddingTop: 8,
-		paddingBottom: 16,
+		paddingBottom: 0,
 		gap: 16,
 	},
 	header: {

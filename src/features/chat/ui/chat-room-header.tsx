@@ -26,7 +26,7 @@ function ChatRoomHeader() {
 
 	const handleProfilePress = () => {
 		if (!partner) return;
-		const isExpired = !(partner.roomActivation || partner.hasLeft);
+		const isExpired = !(partner.roomActivation || partner.hasLeft) || !!partner.isPartnerWithdrawn;
 		if (isExpired) return;
 		router.push({
 			pathname: '/partner/view/[id]',

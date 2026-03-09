@@ -1,6 +1,5 @@
-import { Text } from '@/src/shared/ui/text';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 interface LogoProps {
 	title?: string;
@@ -8,12 +7,17 @@ interface LogoProps {
 	logoSize?: number;
 }
 
-export function Logo({ title, showLogo, logoSize }: LogoProps) {
+export function Logo({ title, showLogo = true, logoSize = 128 }: LogoProps) {
+	if (!showLogo) {
+		return null;
+	}
 	return (
 		<View style={styles.container}>
-			<Text size="20" weight="bold" textColor="black">
-				{title || 'SOMETIME'}
-			</Text>
+			<Image
+				source={require('@assets/images/sometimes.png')}
+				style={{ width: logoSize, height: 18 }}
+				resizeMode="contain"
+			/>
 		</View>
 	);
 }

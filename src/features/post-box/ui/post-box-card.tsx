@@ -105,11 +105,7 @@ function PostBoxCard({
 		) : status === 'OPEN' && isMutualLike ? (
 			<LikedMeOpenButton matchId={matchId} likeId={likeId} />
 		) : type === 'liked-me' ? (
-			isLetterCard ? (
-				<LetterPendingButton connectionId={connectionId} isGlobalMatch={isGlobalMatch} />
-			) : (
-				<LikedMePendingButton connectionId={connectionId} isGlobalMatch={isGlobalMatch} />
-			)
+			<LikedMePendingButton connectionId={connectionId} isGlobalMatch={isGlobalMatch} />
 		) : (
 			<></>
 		);

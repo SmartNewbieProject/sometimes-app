@@ -60,6 +60,7 @@ export interface ChatServerToClientEvents {
 		uploadStatus: 'uploading' | 'completed' | 'failed';
 		mediaUrl?: string;
 	}) => void;
+	partnerWithdrawn: (payload: { chatRoomId: string }) => void;
 }
 
 export interface ChatClientToServerEvents {

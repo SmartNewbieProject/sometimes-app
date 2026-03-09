@@ -32,8 +32,10 @@ function WebChatInput() {
 	const [isTipsModalVisible, setTipsModalVisible] = useState(false);
 	const { mutate: fetchTips, data: tipsData, isPending: isTipsLoading } = useChatTips();
 
+	const isChatDisabled = roomDetail?.hasLeft || roomDetail?.isPartnerWithdrawn;
+
 	const handleTipsButton = () => {
-		if (roomDetail?.hasLeft) return;
+		if (isChatDisabled) return;
 
 		showModal({
 			showLogo: true,
@@ -268,10 +270,10 @@ function WebChatInput() {
 				<button
 					onClick={handleTipsButton}
 					type="button"
-					disabled={roomDetail?.hasLeft}
+					disabled={isChatDisabled}
 					style={{
 						...webStyles.tipsButton,
-						opacity: roomDetail?.hasLeft ? 0.5 : 1,
+						opacity: isChatDisabled ? 0.5 : 1,
 					}}
 					aria-label={t('features.chat.ui.tips_modal.header_title')}
 				>
@@ -284,11 +286,13 @@ function WebChatInput() {
 						value={chat}
 						onChange={handleChange}
 						rows={1}
-						readOnly={roomDetail?.hasLeft}
+						readOnly={isChatDisabled}
 						placeholder={
-							roomDetail?.hasLeft
-								? t('features.chat.ui.input.placeholder_ended')
-								: t('features.chat.ui.input.placeholder')
+							roomDetail?.isPartnerWithdrawn
+								? t('features.chat.ui.input.placeholder_withdrawn')
+								: isChatDisabled
+									? t('features.chat.ui.input.placeholder_ended')
+									: t('features.chat.ui.input.placeholder')
 						}
 						style={webStyles.textarea}
 					/>

@@ -104,7 +104,7 @@
 			"waiting_desc": "{{date}} 公開",
 			"partner_suffix": "パートナー",
 			"not_found_no_match_pool_title": "マッチング相手が不足",
-			"not_found_no_match_pool_desc": "次回{{date}}に再マッチングされます",
+			"not_found_no_match_pool_desc": "21:00に公開されます",
 			"not_found_no_match_pool_cta": "条件を広げる",
 			"not_found_filtered_out_title": "条件が厳しめです",
 			"not_found_filtered_out_desc": "理想の範囲を広げるとマッチング率がアップ",

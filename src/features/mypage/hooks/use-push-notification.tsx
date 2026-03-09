@@ -6,7 +6,7 @@ import {
 	enablePushNotification,
 	disablePushNotification,
 	checkNotificationPermissionStatus,
-	getNotificationPermissionStatus,
+	requestNotificationPermission,
 } from '@/src/shared/libs/notifications';
 import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
@@ -22,6 +22,17 @@ export const usePushNotification = () => {
 		try {
 			setIsLoading(true);
 			const response = await getPushNotificationStatus();
+
+			// iOS: OS 알림 권한이 denied이면 서버에 활성 토큰이 있어도 OFF로 표시
+			// (설정 앱에서 앱으로 복귀 시 서버 상태와 OS 권한 동기화)
+			if (Platform.OS !== 'web' && response.isEnabled) {
+				const permissionStatus = await checkNotificationPermissionStatus();
+				if (permissionStatus === 'denied') {
+					setIsEnabled(false);
+					return;
+				}
+			}
+
 			setIsEnabled(response.isEnabled);
 		} catch (error) {
 			console.error(t('features.mypage.notification.status_check_failed'), error);
@@ -54,23 +65,21 @@ export const usePushNotification = () => {
 
 		try {
 			if (Platform.OS !== 'web') {
-				const existingPermission = await checkNotificationPermissionStatus();
+				// getPermissionsAsync(캐시) 대신 requestPermissionsAsync(실시간)로 실제 OS 상태 확인
+				// iOS에서 캐시된 denied 값이 반환되어 잘못된 "설정 이동" Alert이 뜨는 문제 방지
+				const permission = await requestNotificationPermission();
 
-				if (existingPermission === 'denied') {
-					// 이전에 거부한 경우 — iOS는 재요청 불가, 설정 앱으로 안내
+				if (permission === 'denied') {
+					// iOS: 재요청 불가, 설정 앱으로 안내
 					setIsEnabled(previousValue);
 					openAppSettings();
 					return;
 				}
 
-				if (existingPermission !== 'granted') {
-					// undetermined — 시스템 다이얼로그 표시
-					const permission = await getNotificationPermissionStatus();
-					if (permission !== 'granted') {
-						// 방금 거부한 경우 — 설정 안내 없이 조용히 롤백
-						setIsEnabled(previousValue);
-						return;
-					}
+				if (permission !== 'granted') {
+					// undetermined에서 사용자가 거부한 경우 — 조용히 롤백
+					setIsEnabled(previousValue);
+					return;
 				}
 			}
 

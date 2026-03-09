@@ -15,6 +15,7 @@ import featuresLikeLetter from './features/like-letter.json';
 import featuresLoading from './features/loading.json';
 import featuresOnboarding from './features/onboarding.json';
 import featuresPostBox from './features/post-box.json';
+import featuresProfile from './features/profile.json';
 import featuresProfileViewer from './features/profile-viewer.json';
 import featuresVersionUpdate from './features/version-update.json';
 import global from './global.json';
@@ -46,6 +47,7 @@ const features = {
 	'contact-block': featuresContactBlock,
 	'like-letter': featuresLikeLetter,
 	'post-box': featuresPostBox,
+	profile: featuresProfile,
 	'profile-viewer': featuresProfileViewer,
 	'global-matching': featuresGlobalMatching,
 	'version-update': featuresVersionUpdate,

@@ -11,9 +11,10 @@ import {
 	Show,
 	Text,
 } from '@/src/shared/ui';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useCallback, useEffect } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { memo, useCallback, useEffect, useMemo } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useTranslation } from 'react-i18next';
@@ -24,21 +25,21 @@ import { UserProfile } from '../user-profile';
 import Interaction from './interaction-nav';
 export interface ArticleItemProps {
 	data: ArticleType;
-	onPress: () => void;
-	onLike: () => void;
+	onPress: (id: string) => void;
+	onLike: (article: ArticleType) => void;
 	refresh: () => void | Promise<void>;
 	onDelete: (id: string) => void;
 	isPreviewOpen?: boolean;
-	onTogglePreview?: () => void;
+	onTogglePreview?: (id: string) => void;
 }
 
-export function Article({
+export const Article = memo(function Article({
 	data,
 	onPress,
 	onLike,
 	onDelete,
 	isPreviewOpen = false,
-	onTogglePreview = () => {},
+	onTogglePreview = (_id: string) => {},
 }: ArticleItemProps) {
 	const { my } = useAuth();
 	const { t } = useTranslation();
@@ -60,13 +61,20 @@ export function Article({
 		return my.id === author.id;
 	})();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const firstImage = useMemo(
+		() =>
+			data.images?.length
+				? [...data.images].sort((a, b) => a.displayOrder - b.displayOrder)[0]
+				: null,
+		[data.images],
+	);
+
 	const handleLike = useCallback(
 		(e: { stopPropagation: () => void }) => {
 			e.stopPropagation();
-			onLike();
+			onLike(data);
 		},
-		[onLike],
+		[onLike, data],
 	);
 
 	const handleBlockUser = () => {
@@ -138,7 +146,7 @@ export function Article({
 
 	const handleArticlePress = () => {
 		if (!isDropdownOpen) {
-			onPress();
+			onPress(data.id);
 		}
 	};
 
@@ -195,11 +203,11 @@ export function Article({
 						>
 							<View style={styles.imageWrapper}>
 								<Image
-									source={{
-										uri: data.images.sort((a, b) => a.displayOrder - b.displayOrder)[0].imageUrl,
-									}}
+									source={{ uri: firstImage?.imageUrl }}
 									style={styles.articleImage}
-									resizeMode="cover"
+									contentFit="cover"
+									cachePolicy="memory-disk"
+									recyclingKey={`article-img-${data.id}`}
 								/>
 								{data.images.length > 1 && (
 									<View style={styles.imageCountBadge}>
@@ -232,7 +240,7 @@ export function Article({
 						<Interaction.Comment
 							count={data.commentCount}
 							iconSize={18}
-							onPress={onTogglePreview}
+							onPress={() => onTogglePreview?.(data.id)}
 						/>
 					</View>
 				</View>
@@ -273,7 +281,7 @@ export function Article({
 			{!isPreviewOpen && <View style={styles.separator} />}
 		</View>
 	);
-}
+});
 
 const styles = StyleSheet.create({
 	container: {

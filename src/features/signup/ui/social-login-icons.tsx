@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		gap: 15,
-		marginBottom: 24,
+		marginBottom: 12,
 	},
 	iconButton: {
 		width: 43,

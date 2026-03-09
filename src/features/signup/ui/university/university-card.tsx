@@ -30,7 +30,7 @@ function UniversityCard({
 		setIsPressed(false);
 		Animated.spring(scale, {
 			toValue: 1,
-			friction: 3,
+			friction: 8,
 			useNativeDriver: true,
 		}).start();
 	};

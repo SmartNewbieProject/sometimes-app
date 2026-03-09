@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
 		}),
 	},
 	modalContainer: {
+		width: '100%',
 		backgroundColor: semanticColors.surface.background,
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,

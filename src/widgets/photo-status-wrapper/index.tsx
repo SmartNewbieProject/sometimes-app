@@ -5,6 +5,7 @@ import { Badge } from '@/src/shared/ui/badge';
 import { Text } from '@/src/shared/ui/text';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 
 interface PhotoStatusWrapperProps {
   reviewStatus?: string;
@@ -31,6 +32,7 @@ export function PhotoStatusWrapper({
 }: PhotoStatusWrapperProps) {
   const { t } = useTranslation();
   const { showModal } = useModal();
+  const { emitToast } = useToast();
   const normalizedStatus = reviewStatus?.toUpperCase();
   const isRejected = normalizedStatus === 'REJECTED';
   const isPending = normalizedStatus === 'PENDING';
@@ -83,6 +85,14 @@ export function PhotoStatusWrapper({
             {t('features.mypage.image-modal.rejected')}
           </Badge>
         </View>
+      )}
+
+      {/* PENDING 오버레이 (투명) - 터치 가로채기 + 토스트 안내 */}
+      {isPending && (
+        <Pressable
+          style={styles.pendingOverlay}
+          onPress={() => emitToast(t('widgets.photo-status-wrapper.pending_modify_blocked'))}
+        />
       )}
 
       {/* 거절 오버레이 (전체) - 클릭 시 변경 요청 */}
@@ -220,6 +230,11 @@ const styles = StyleSheet.create({
   contactText: {
     textAlign: 'center',
     opacity: 0.9,
+  },
+  pendingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 20,
+    zIndex: 20,
   },
   reuploadButton: {
     backgroundColor: semanticColors.surface.background,

@@ -93,6 +93,10 @@ export function usePhotoManagement() {
 	};
 
 	const handleChangePhoto = async (photo: ProfileImage, imageUri: string) => {
+		if (photo.reviewStatus?.toUpperCase() === 'PENDING') {
+			emitToast(t('widgets.photo-status-wrapper.pending_modify_blocked'));
+			return;
+		}
 		setIsLoading(true);
 		try {
 			const file = await platform({
@@ -115,7 +119,7 @@ export function usePhotoManagement() {
 			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			emitToast(error?.response?.data?.error || '사진 교체에 실패했습니다');
+			emitToast(error?.error || '사진 교체에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}
@@ -137,7 +141,7 @@ export function usePhotoManagement() {
 			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			emitToast(error?.response?.data?.error || '사진 추가에 실패했습니다');
+			emitToast(error?.error || '사진 추가에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}
@@ -197,7 +201,7 @@ export function usePhotoManagement() {
 			if (handleProfileImageError(error, showModal, emitToast, t)) {
 				return;
 			}
-			emitToast(error?.response?.data?.error || '사진 재업로드에 실패했습니다');
+			emitToast(error?.error || '사진 재업로드에 실패했습니다');
 		} finally {
 			setIsLoading(false);
 		}

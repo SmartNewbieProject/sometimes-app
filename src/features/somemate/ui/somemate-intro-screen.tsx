@@ -87,20 +87,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 80,
   },
   characterContainer: {
     alignItems: "center",
-    marginTop: 40,
-    marginBottom: 32,
+    marginTop: 20,
+    marginBottom: 16,
   },
   characterImage: {
-    width: 200,
-    height: 200,
+    width: 160,
+    height: 160,
   },
   categoryContainer: {
     paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 20,
   },
   categoryTitle: {
     fontSize: 16,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     maxWidth: 470,
     alignSelf: "center",
     paddingHorizontal: 16,
-    marginTop: 60,
+    marginTop: 24,
     marginBottom: 20,
   },
   buttonContent: {
