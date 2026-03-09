@@ -35,12 +35,16 @@ function StreamingCursor() {
 		return () => animation.stop();
 	}, [opacity]);
 
-	return (
-		<Animated.View style={[styles.streamingCursor, { opacity }]} />
-	);
+	return <Animated.View style={[styles.streamingCursor, { opacity }]} />;
 }
 
-function SupportChatMessage({ content, senderType, createdAt, phase, isStreaming }: SupportChatMessageProps) {
+function SupportChatMessage({
+	content,
+	senderType,
+	createdAt,
+	phase,
+	isStreaming,
+}: SupportChatMessageProps) {
 	const { t } = useTranslation();
 	const isUser = senderType === 'user';
 	const isBot = senderType === 'bot';

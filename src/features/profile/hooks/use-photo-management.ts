@@ -189,11 +189,11 @@ export function usePhotoManagement() {
 
 			// 재심사 요청 안내 모달 표시
 			showModal({
-				title: 'hooks.재심사_요청_완료',
+				title: t('features.profile.hooks.재심사_요청_완료'),
 				children:
 					'사진이 재업로드되었습니다.\n관리자 심사가 완료될 때까지 기다려 주세요.\n보통 24시간 이내에 심사가 완료됩니다.',
 				primaryButton: {
-					text: 'hooks.확인',
+					text: t('features.profile.hooks.확인'),
 					onClick: () => {},
 				},
 			});

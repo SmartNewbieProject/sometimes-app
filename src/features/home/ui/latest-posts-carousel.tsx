@@ -47,7 +47,7 @@ export function LatestPostsCarousel() {
 				</Text>
 				<TouchableOpacity
 					activeOpacity={0.7}
-					onPress={() => router.push('/community')}
+					onPress={() => router.push('/community?category=general')}
 					style={styles.viewAllButton}
 				>
 					<Text style={styles.viewAll}>

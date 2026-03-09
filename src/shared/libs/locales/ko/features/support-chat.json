@@ -6,7 +6,8 @@
 		"description": "궁금한 점이나 불편한 사항이 있으시면\n언제든지 문의해주세요"
 	},
 	"input": {
-		"placeholder": "메시지를 입력하세요..."
+		"placeholder": "메시지를 입력하세요...",
+		"connecting": "연결 중..."
 	},
 	"message": {
 		"bot_label": "AI 상담사",
@@ -39,7 +40,7 @@
 		"button": "종료",
 		"confirm": {
 			"title": "상담을 종료할까요?",
-			"description": "종료 후에는 새로운 상담을 시작할 수 있어요"
+			"description": "종료하시면 현재 문의가 마무리돼요.\n필요하시면 언제든 새 문의를 남길 수 있어요."
 		},
 		"reason": {
 			"placeholder": "종료 사유를 입력해주세요 (선택)"

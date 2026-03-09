@@ -2,14 +2,19 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Animated, Modal, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { chatEventBus } from '../services/chat-event-bus';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
+const BANNER_HEIGHT = 40;
+
 function ConnectionStatusBanner() {
 	const { t } = useTranslation();
+	const insets = useSafeAreaInsets();
+	const bannerTotalHeight = BANNER_HEIGHT + insets.top;
 	const [status, setStatus] = useState<ConnectionStatus>('connected');
-	const [slideAnim] = useState(new Animated.Value(-60));
+	const [slideAnim] = useState(new Animated.Value(-bannerTotalHeight));
 	const [reconnectAttempt, setReconnectAttempt] = useState(0);
 	const [countdown, setCountdown] = useState(0);
 	const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -93,7 +98,7 @@ function ConnectionStatusBanner() {
 		if (status === 'connected') {
 			// 연결되면 배너를 위로 슬라이드
 			Animated.timing(slideAnim, {
-				toValue: -60,
+				toValue: -bannerTotalHeight,
 				duration: 300,
 				useNativeDriver: true,
 			}).start();
@@ -106,7 +111,7 @@ function ConnectionStatusBanner() {
 			}).start();
 		}
 		// reconnecting 상태일 때는 배너를 숨기고 모달을 띄움
-	}, [status, slideAnim]);
+	}, [status, slideAnim, bannerTotalHeight]);
 
 	const getBannerConfig = () => {
 		if (status === 'disconnected') {
@@ -168,6 +173,8 @@ function ConnectionStatusBanner() {
 					style={[
 						styles.container,
 						{
+							height: bannerTotalHeight,
+							paddingTop: insets.top,
 							backgroundColor: config.backgroundColor,
 							transform: [{ translateY: slideAnim }],
 						},
@@ -189,7 +196,6 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		right: 0,
-		height: 40,
 		zIndex: 1000,
 		shadowColor: '#000',
 		shadowOffset: {

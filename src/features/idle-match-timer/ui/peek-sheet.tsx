@@ -145,6 +145,7 @@ function PeekSheetWeb({
 					opacity,
 				},
 			]}
+			pointerEvents={isVisible ? 'auto' : 'none'}
 		>
 			<PeekSheetContent secondary={secondary} />
 		</Animated.View>
@@ -236,11 +237,13 @@ if (Platform.OS !== 'web') {
 		}));
 
 		return (
-			<GestureDetector gesture={panGesture}>
-				<Reanimated.default.View style={[containerStyle, animatedStyle]}>
-					<PeekSheetContent secondary={secondary} />
-				</Reanimated.default.View>
-			</GestureDetector>
+			<View pointerEvents={isVisible ? 'auto' : 'none'} style={containerStyle}>
+				<GestureDetector gesture={panGesture}>
+					<Reanimated.default.View style={animatedStyle}>
+						<PeekSheetContent secondary={secondary} />
+					</Reanimated.default.View>
+				</GestureDetector>
+			</View>
 		);
 	};
 }

@@ -10,9 +10,15 @@ interface SupportChatInputProps {
 	onSend: (message: string) => void;
 	onTyping?: (isTyping: boolean) => void;
 	disabled?: boolean;
+	isConnecting?: boolean;
 }
 
-function SupportChatInput({ onSend, onTyping, disabled = false }: SupportChatInputProps) {
+function SupportChatInput({
+	onSend,
+	onTyping,
+	disabled = false,
+	isConnecting = false,
+}: SupportChatInputProps) {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
 	const [message, setMessage] = useState('');
@@ -58,7 +64,11 @@ function SupportChatInput({ onSend, onTyping, disabled = false }: SupportChatInp
 					editable={!disabled}
 					onChangeText={handleChangeText}
 					style={styles.textInput}
-					placeholder={t('features.support-chat.input.placeholder')}
+					placeholder={
+						isConnecting
+							? t('features.support-chat.input.connecting')
+							: t('features.support-chat.input.placeholder')
+					}
 					placeholderTextColor={semanticColors.text.disabled}
 					numberOfLines={3}
 				/>

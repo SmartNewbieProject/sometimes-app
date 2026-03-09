@@ -631,8 +631,8 @@ class SocketConnectionManager {
 	}
 
 	private createSocketConnection(socketUrl: string, token: string) {
-		// WebSocket 우선 (ALB sticky session 없는 다중 인스턴스 환경에서 polling 분산 문제 방지)
-		const transports = ['websocket', 'polling']; // WebSocket persistent connection → ALB 라우팅 불필요
+		// Polling 우선 → WebSocket 업그레이드 (서버 transport 순서와 일치, ALB 다중 인스턴스 호환)
+		const transports = ['polling', 'websocket'];
 
 		const options = {
 			transports,

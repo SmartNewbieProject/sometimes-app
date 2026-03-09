@@ -160,17 +160,14 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 
 			newSocket.on('connect_error', (err) => {
 				console.error('[SupportChat] Connection error:', err.message);
-				setError(`Connection error: ${err.message}`);
+				setError('연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
 				setIsConnected(false);
 			});
 
 			newSocket.on('new_message', (message: NewMessageEvent) => {
 				console.log('[SupportChat] New message:', message.senderType);
 				// 스트리밍으로 이미 처리된 봇 메시지는 중복 추가하지 않음
-				if (
-					message.senderType === 'bot' &&
-					streamingDoneMessageIdRef.current === message.id
-				) {
+				if (message.senderType === 'bot' && streamingDoneMessageIdRef.current === message.id) {
 					streamingDoneMessageIdRef.current = null;
 					return;
 				}
@@ -258,7 +255,9 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 
 	const sendMessage = useCallback(
 		(content: string) => {
-			if (!socketRef.current || !session?.sessionId || !content.trim()) {
+			if (!content.trim()) return;
+			if (!socketRef.current?.connected || !session?.sessionId) {
+				setError('연결이 불안정합니다. 잠시 후 다시 시도해주세요.');
 				return;
 			}
 

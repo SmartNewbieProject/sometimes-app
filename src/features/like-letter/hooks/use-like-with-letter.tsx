@@ -42,18 +42,11 @@ const useLikeWithLetterMutation = () =>
 				timestamp: new Date().toISOString(),
 			});
 		},
-		onSuccess: async (_, { letter }) => {
-			await Promise.all([
-				queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] }),
-				queryClient.invalidateQueries({ queryKey: ['gem', 'current'] }),
-				queryClient.invalidateQueries({ queryKey: ['liked', 'of-me'] }),
-				queryClient.invalidateQueries({ queryKey: ['liked', 'to-me'] }),
-			]);
-			await Promise.all([
-				queryClient.refetchQueries({ queryKey: ['latest-matching-v2'] }),
-				queryClient.refetchQueries({ queryKey: ['liked', 'of-me'] }),
-				queryClient.refetchQueries({ queryKey: ['liked', 'to-me'] }),
-			]);
+		onSuccess: (_, { letter }) => {
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
+			queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
+			queryClient.invalidateQueries({ queryKey: ['liked', 'of-me'] });
+			queryClient.invalidateQueries({ queryKey: ['liked', 'to-me'] });
 
 			mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_SUCCESS, {
 				action_type: letter ? 'like_with_letter_success' : 'like_success',

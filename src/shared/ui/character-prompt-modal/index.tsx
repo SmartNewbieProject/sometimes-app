@@ -142,14 +142,14 @@ export function CharacterPromptModal({
                 <Button
                   onPress={handleSecondary}
                   variant="secondary"
-                  styles={{ flex: 1 }}
+                  styles={{ flex: 1, paddingHorizontal: 8 }}
                 >
                   {secondaryButtonText}
                 </Button>
                 <Button
                   onPress={handlePrimary}
                   variant="primary"
-                  styles={{ flex: 1 }}
+                  styles={{ flex: 1, paddingHorizontal: 8 }}
                 >
                   {primaryButtonText}
                 </Button>
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   speechBubbleContainer: {
     zIndex: 3,
-    marginRight: 60,
+    marginRight: 30,
   },
   speechBubble: {
     backgroundColor: semanticColors.surface.secondary,

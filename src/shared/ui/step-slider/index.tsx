@@ -348,6 +348,7 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: semanticColors.surface.tertiary,
     borderRadius: 9999,
+    overflow: "hidden",
   },
   activeTrack: {
     position: "absolute",
@@ -368,6 +369,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     alignItems: "center",
     justifyContent: "center",
+    transform: [{ translateX: -5 }], // dot 중앙 정렬 (width/2)
   },
   thumbContainer: {
     position: "absolute",

@@ -155,15 +155,25 @@ function ChatScreen() {
 		],
 	}));
 
+	const containerAnimatedStyle = useAnimatedStyle(() => {
+		const basePadding = insets.bottom + 4;
+		const reduction = Math.min(keyboard.height.value, basePadding);
+		return {
+			paddingBottom: basePadding - reduction,
+		};
+	});
+
 	return (
-		<View
-			style={{
-				flex: 1,
-				backgroundColor: semanticColors.surface.background,
-				paddingTop: insets.top,
-				width: '100%',
-				paddingBottom: insets.bottom + 4,
-			}}
+		<Animated.View
+			style={[
+				{
+					flex: 1,
+					backgroundColor: semanticColors.surface.background,
+					paddingTop: insets.top,
+					width: '100%',
+				},
+				containerAnimatedStyle,
+			]}
 		>
 			<ChatRoomHeader />
 			<ConnectionStatusBanner />
@@ -203,7 +213,7 @@ function ChatScreen() {
 				)}
 				{isPhotoClicked && <GalleryList isPhotoClicked={isPhotoClicked} />}
 			</Animated.View>
-		</View>
+		</Animated.View>
 	);
 }
 

@@ -274,12 +274,8 @@ function SupportChatScreen() {
 			<SupportChatInput
 				onSend={handleSend}
 				onTyping={handleTyping}
-				disabled={
-					!isConnected ||
-					status === 'resolved' ||
-					status === 'user_closed' ||
-					status === 'admin_resolved'
-				}
+				isConnecting={!isConnected && !error}
+				disabled={status === 'resolved' || status === 'user_closed' || status === 'admin_resolved'}
 			/>
 		</KeyboardAvoidingView>
 	);

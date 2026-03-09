@@ -136,19 +136,21 @@ export function BottomNavigation() {
 	);
 
 	const handleNavClick = useCallback(
-		async (path: Href) => {
+		(path: Href) => {
 			if (isActive(path)) return;
 
 			if (typeof path === 'string' && path.startsWith('/community')) {
 				prefetchCardNews(queryClient);
 			}
 
-			const shouldShowPrompt = await incrementNavClickCount();
-			if (shouldShowPrompt) {
-				await showPromptForNavClick();
-			}
-
+			// 탭 전환 즉시 실행 — 앱 설치 유도는 비동기 후처리
 			router.push(path);
+
+			incrementNavClickCount().then((shouldShowPrompt) => {
+				if (shouldShowPrompt) {
+					showPromptForNavClick();
+				}
+			});
 		},
 		[incrementNavClickCount, isActive, queryClient, showPromptForNavClick],
 	);

@@ -93,17 +93,16 @@ function AgeCard({ option, isSelected, onSelect, size }: AgeCardProps) {
         >
           {option.label}
         </Text>
-
-        <View
-          style={[
-            styles.badge,
-            isSelected ? styles.badgePrimary : styles.badgeGray,
-          ]}
-        >
-          <Text size="xs" textColor="white" weight="medium">
-            {t("features.interest.ui.age-selector.select")}
-          </Text>
-        </View>
+      </View>
+      <View
+        style={[
+          styles.badge,
+          isSelected ? styles.badgePrimary : styles.badgeGray,
+        ]}
+      >
+        <Text size="xs" textColor="white" weight="medium">
+          {t("features.interest.ui.age-selector.select")}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -245,7 +244,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 6,
     borderBottomLeftRadius: 10,
-    borderTopRightRadius: 20,
   },
   badgePrimary: {
     backgroundColor: semanticColors.brand.primary,

@@ -171,7 +171,7 @@ export default function PhotoSlider({
       >
         <View style={styles.back} />
         <Text style={styles.count}>
-          {focusIndex} / {images.length}
+          {isSingle ? 1 : focusIndex} / {realImages.length}
         </Text>
         <Pressable onPress={onClose} style={styles.close}>
           <XIcon width={20} height={20} stroke="#fff" />

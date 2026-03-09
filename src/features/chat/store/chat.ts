@@ -44,7 +44,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 		}
 
 		const newSocket = io(url, {
-			transports: ['websocket', 'polling'],
+			transports: ['polling', 'websocket'],
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
 			rejectUnauthorized: true,

@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
 	headerExpanded: {
 		borderBottomLeftRadius: 0,
 		borderBottomRightRadius: 0,
+		borderBottomWidth: 0,
 	},
 	headerContent: {
 		flexDirection: 'row',
@@ -126,7 +127,8 @@ const styles = StyleSheet.create({
 		borderColor: 'rgba(115, 114, 117, 0.4)',
 		borderBottomLeftRadius: 10,
 		borderBottomRightRadius: 10,
-		paddingVertical: 8,
+		paddingTop: 4,
+		paddingBottom: 8,
 	},
 	promptItem: {
 		backgroundColor: '#FBF9FF',

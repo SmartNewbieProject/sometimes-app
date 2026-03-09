@@ -6,7 +6,8 @@
 		"description": "ご質問やお困りのことがございましたら\nお気軽にお問い合わせください"
 	},
 	"input": {
-		"placeholder": "メッセージを入力してください..."
+		"placeholder": "メッセージを入力してください...",
+		"connecting": "接続中..."
 	},
 	"message": {
 		"bot_label": "AI相談員",
@@ -39,7 +40,7 @@
 		"button": "終了",
 		"confirm": {
 			"title": "相談を終了しますか？",
-			"description": "終了後は新しい相談を開始できます"
+			"description": "終了すると現在のお問い合わせが完了します。\n必要な際はいつでも新しいお問い合わせができます。"
 		},
 		"reason": {
 			"placeholder": "終了理由を入力してください（任意）"

@@ -37,7 +37,7 @@ export function MbtiSelector({
   const mbti = `${first}${second}${third}${fourth}`;
 
   useEffect(() => {
-    if (mbti.length <= 3) return;
+    if (mbti.length > 0 && mbti.length < 4) return;
     onChange(mbti);
     setValue(mbti);
   }, [mbti, _value]);
@@ -59,7 +59,7 @@ export function MbtiSelector({
               ...(selectedValue === leftValue ? [styles.circleButtonSelected] : []),
             ]}
             onPress={() => {
-              onSelect(leftValue);
+              onSelect(selectedValue === leftValue ? "" : leftValue);
               onBlur();
             }}
           >
@@ -86,7 +86,7 @@ export function MbtiSelector({
               ...(selectedValue === rightValue ? [styles.circleButtonSelected] : []),
             ]}
             onPress={() => {
-              onSelect(rightValue);
+              onSelect(selectedValue === rightValue ? "" : rightValue);
               onBlur();
             }}
           >
