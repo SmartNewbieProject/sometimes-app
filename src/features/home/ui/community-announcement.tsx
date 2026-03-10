@@ -1,11 +1,11 @@
-import { SOMETIME_STORY_CODE } from '@/src/features/community/hooks';
 import { Text } from '@/src/shared/ui';
 import PurpleRightArrow from '@assets/icons/purple-arrow.svg';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../../auth';
-import { ArticleCategory } from '@/src/features/article/types';
+
+const LOVE_CONCERNS_CODE = 'love-concerns';
 
 export const CommunityAnnouncement = () => {
 	const { profileDetails } = useAuth();
@@ -15,9 +15,7 @@ export const CommunityAnnouncement = () => {
 		<TouchableOpacity
 			style={styles.container}
 			onPress={() =>
-				router.navigate(
-					`/community?category=${SOMETIME_STORY_CODE}&articleCategory=${ArticleCategory.STORY}`,
-				)
+				router.navigate(`/community?category=${LOVE_CONCERNS_CODE}`)
 			}
 		>
 			<View style={styles.textContainer}>
