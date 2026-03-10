@@ -1,17 +1,18 @@
 import type { Preferences } from '@/src/features/interest/api';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Loading from '@/src/features/loading';
-import Tooltip from '@/src/shared/ui/tooltip';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePreferenceTooltips } from '@/src/shared/hooks';
-import { PreferenceOption } from '@/src/types/user';
-import { Selector } from '@/src/widgets/selector';
-import { useTranslation } from 'react-i18next';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import Tooltip from '@/src/shared/ui/tooltip';
+import { PreferenceOption } from '@/src/types/user';
+import { ChipSelector } from '@/src/widgets/chip-selector';
+import { Selector } from '@/src/widgets/selector';
 import Interest from '@features/interest';
 import Layout from '@features/layout';
-import { PalePurpleGradient, StepSlider, Text } from '@shared/ui';
+import { PalePurpleGradient, Text } from '@shared/ui';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
 
 const { ui, hooks, services, queries } = Interest;
@@ -49,10 +50,9 @@ export default function SmokingSelectionScreen() {
 			updateForm('smoking', preferences.options[currentIndex]);
 		}
 	}, [optionsLoading, preferences.options, currentIndex, smoking]);
-	const onChangeSmoking = (value: number) => {
-		if (preferences?.options && preferences.options.length > value) {
-			updateForm('smoking', preferences.options[value]);
-		}
+	const onChangeSmoking = (id: string) => {
+		const opt = preferences?.options.find((o) => o.id === id);
+		if (opt) updateForm('smoking', opt);
 	};
 
 	const handleNextButton = () => {
@@ -84,21 +84,16 @@ export default function SmokingSelectionScreen() {
 				<View style={styles.bar} />
 				<View style={styles.wrapper}>
 					<Loading.Lottie title={t('apps.interest.smoke.loading')} loading={optionsLoading}>
-						<StepSlider
-							min={0}
-							max={(preferences?.options.length ?? 1) - 1}
-							step={1}
-							showMiddle={true}
-							defaultValue={1}
-							value={currentIndex}
-							middleLabelLeft={-15}
-							onChange={onChangeSmoking}
+						<ChipSelector
 							options={
 								preferences?.options?.map((option) => ({
 									label: option.displayName,
 									value: option.id,
 								})) ?? []
 							}
+							value={smoking?.id}
+							onChange={onChangeSmoking}
+							align="center"
 						/>
 					</Loading.Lottie>
 				</View>

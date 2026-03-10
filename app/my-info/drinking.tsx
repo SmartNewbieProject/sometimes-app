@@ -1,14 +1,15 @@
 import { useAuth } from '@/src/features/auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Loading from '@/src/features/loading';
 import MyInfo from '@/src/features/my-info';
 import type { Preferences } from '@/src/features/my-info/api';
-import Tooltip from '@/src/shared/ui/tooltip';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePreferenceTooltips } from '@/src/shared/hooks';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import Tooltip from '@/src/shared/ui/tooltip';
+import { ChipSelector } from '@/src/widgets/chip-selector';
 import Interest from '@features/interest';
 import Layout from '@features/layout';
-import { PalePurpleGradient, StepSlider, Text } from '@shared/ui';
+import { PalePurpleGradient, Text } from '@shared/ui';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,17 +50,19 @@ export default function DrinkingSelectionScreen() {
 
 	const currentIndex = index !== -1 ? index : 2;
 
-	const tooltips = usePreferenceTooltips('apps.my-info.drinking', filteredPreferences?.options.length ?? 0);
+	const tooltips = usePreferenceTooltips(
+		'apps.my-info.drinking',
+		filteredPreferences?.options.length ?? 0,
+	);
 	useEffect(() => {
 		if (optionsLoading) return;
 		if (!drinking && filteredPreferences.options[currentIndex]) {
 			updateForm('drinking', filteredPreferences.options[currentIndex]);
 		}
 	}, [optionsLoading, filteredPreferences.options, currentIndex, drinking]);
-	const onChangeDrinking = (value: number) => {
-		if (filteredPreferences?.options && filteredPreferences.options.length > value) {
-			updateForm('drinking', filteredPreferences.options[value]);
-		}
+	const onChangeDrinking = (id: string) => {
+		const opt = filteredPreferences?.options.find((o) => o.id === id);
+		if (opt) updateForm('drinking', opt);
 	};
 
 	const handleNextButton = () => {
@@ -95,15 +98,7 @@ export default function DrinkingSelectionScreen() {
 				<View style={styles.bar} />
 				<View style={styles.wrapper}>
 					<Loading.Lottie title={t('apps.my-info.drinking.loading')} loading={optionsLoading}>
-						<StepSlider
-							min={0}
-							max={(filteredPreferences?.options.length ?? 1) - 1}
-							step={1}
-							showMiddle={false}
-							defaultValue={2}
-							value={currentIndex}
-							onChange={onChangeDrinking}
-							lastLabelLeft={-50}
+						<ChipSelector
 							options={
 								filteredPreferences?.options.map((option) => ({
 									label:
@@ -113,6 +108,9 @@ export default function DrinkingSelectionScreen() {
 									value: option.id,
 								})) ?? []
 							}
+							value={drinking?.id}
+							onChange={onChangeDrinking}
+							align="center"
 						/>
 					</Loading.Lottie>
 				</View>

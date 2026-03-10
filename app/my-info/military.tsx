@@ -1,16 +1,17 @@
 import { useAuth } from '@/src/features/auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Layout from '@/src/features/layout';
 import Loading from '@/src/features/loading';
 import MyInfo from '@/src/features/my-info';
 import type { Preferences } from '@/src/features/my-info/api';
 import { savePreferences } from '@/src/features/my-info/services';
 import { queryClient } from '@/src/shared/config/query';
-import { useModal } from '@/src/shared/hooks/use-modal';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePreferenceTooltips } from '@/src/shared/hooks';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { ImageResources, tryCatch } from '@/src/shared/libs';
-import { PalePurpleGradient, StepSlider, Text } from '@/src/shared/ui';
+import { PalePurpleGradient, Text } from '@/src/shared/ui';
 import Tooltip from '@/src/shared/ui/tooltip';
+import { ChipSelector } from '@/src/widgets/chip-selector';
 
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -161,10 +162,9 @@ export default function MilitarySelectionScreen() {
 			},
 		);
 	};
-	const onChangeOption = (value: number) => {
-		if (preferences?.options && preferences.options.length > value) {
-			updateForm('militaryStatus', preferences.options[value]);
-		}
+	const onChangeOption = (id: string) => {
+		const opt = preferences?.options.find((o) => o.id === id);
+		if (opt) updateForm('militaryStatus', opt);
 	};
 
 	return (
@@ -185,20 +185,16 @@ export default function MilitarySelectionScreen() {
 
 				<View style={styles.wrapper}>
 					<Loading.Lottie title={t('apps.my-info.military.loading')} loading={optionsLoading}>
-						<StepSlider
-							min={0}
-							max={(preferences?.options.length ?? 1) - 1}
-							step={1}
-							defaultValue={1}
-							value={currentIndex}
-							onChange={onChangeOption}
-							middleLabelLeft={-15}
+						<ChipSelector
 							options={
 								preferences?.options?.map((option) => ({
 									label: option.displayName,
 									value: option.id,
 								})) ?? []
 							}
+							value={militaryStatus?.id}
+							onChange={onChangeOption}
+							align="center"
 						/>
 					</Loading.Lottie>
 				</View>

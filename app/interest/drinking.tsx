@@ -1,17 +1,18 @@
 import { useAuth } from '@/src/features/auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type { Preferences } from '@/src/features/interest/api';
 import Loading from '@/src/features/loading';
-import Tooltip from '@/src/shared/ui/tooltip';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePreferenceTooltips } from '@/src/shared/hooks';
-import { Selector } from '@/src/widgets/selector';
-import { useTranslation } from 'react-i18next';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import Tooltip from '@/src/shared/ui/tooltip';
+import { ChipSelector } from '@/src/widgets/chip-selector';
+import { Selector } from '@/src/widgets/selector';
 import Interest from '@features/interest';
 import Layout from '@features/layout';
-import { PalePurpleGradient, StepSlider, Text } from '@shared/ui';
+import { PalePurpleGradient, Text } from '@shared/ui';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
 
 const { hooks, services, queries } = Interest;
@@ -49,10 +50,9 @@ export default function DrinkingSelectionScreen() {
 			updateForm('drinking', preferences.options[currentIndex]);
 		}
 	}, [optionsLoading, preferences.options, currentIndex, drinking]);
-	const onChangeDrinking = (value: number) => {
-		if (preferences?.options && preferences.options.length > value) {
-			updateForm('drinking', preferences.options[value]);
-		}
+	const onChangeDrinking = (id: string) => {
+		const opt = preferences?.options.find((o) => o.id === id);
+		if (opt) updateForm('drinking', opt);
 	};
 
 	const handleNextButton = () => {
@@ -88,21 +88,16 @@ export default function DrinkingSelectionScreen() {
 				<View style={styles.bar} />
 				<View style={styles.wrapper}>
 					<Loading.Lottie title={t('apps.interest.drink.loading')} loading={optionsLoading}>
-						<StepSlider
-							min={0}
-							max={(preferences?.options.length ?? 1) - 1}
-							step={1}
-							showMiddle={false}
-							defaultValue={2}
-							value={currentIndex}
-							onChange={onChangeDrinking}
-							lastLabelLeft={-70}
+						<ChipSelector
 							options={
 								preferences?.options?.map((option) => ({
 									label: option.displayName,
 									value: option.id,
 								})) ?? []
 							}
+							value={drinking?.id}
+							onChange={onChangeDrinking}
+							align="center"
 						/>
 					</Loading.Lottie>
 				</View>

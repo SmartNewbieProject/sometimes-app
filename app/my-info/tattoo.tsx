@@ -1,17 +1,18 @@
 import { useAuth } from '@/src/features/auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Loading from '@/src/features/loading';
 import MyInfo from '@/src/features/my-info';
 import type { Preferences } from '@/src/features/my-info/api';
 import { Properties, savePreferences } from '@/src/features/my-info/services';
 import { queryClient } from '@/src/shared/config/query';
-import { useModal } from '@/src/shared/hooks/use-modal';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePreferenceTooltips } from '@/src/shared/hooks';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
-import Tooltip from '@/src/shared/ui/tooltip';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import Tooltip from '@/src/shared/ui/tooltip';
+import { ChipSelector } from '@/src/widgets/chip-selector';
 import Layout from '@features/layout';
-import { PalePurpleGradient, StepSlider, Text } from '@shared/ui';
+import { PalePurpleGradient, Text } from '@shared/ui';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,10 +54,9 @@ export default function TattooSelectionScreen() {
 			updateForm('tattoo', preferences.options[currentIndex]);
 		}
 	}, [optionsLoading, preferences.options, currentIndex, tattoo]);
-	const onChangeTattoo = (value: number) => {
-		if (preferences?.options && preferences.options.length > value) {
-			updateForm('tattoo', preferences.options[value]);
-		}
+	const onChangeTattoo = (id: string) => {
+		const opt = preferences?.options.find((o) => o.id === id);
+		if (opt) updateForm('tattoo', opt);
 	};
 	const onFinish = async () => {
 		setFormSubmitLoading(true);
@@ -150,21 +150,16 @@ export default function TattooSelectionScreen() {
 				<View style={styles.bar} />
 				<View style={styles.wrapper}>
 					<Loading.Lottie title={t('apps.my-info.tattoo.loading')} loading={optionsLoading}>
-						<StepSlider
-							min={0}
-							max={(preferences?.options.length ?? 1) - 1}
-							step={1}
-							showMiddle={true}
-							defaultValue={0}
-							value={currentIndex}
-							middleLabelLeft={-10}
-							onChange={onChangeTattoo}
+						<ChipSelector
 							options={
 								preferences?.options?.map((option) => ({
 									label: option.displayName,
 									value: option.id,
 								})) ?? []
 							}
+							value={tattoo?.id}
+							onChange={onChangeTattoo}
+							align="center"
 						/>
 					</Loading.Lottie>
 				</View>
