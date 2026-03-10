@@ -3,16 +3,9 @@ import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { type ReportResponse, submitReport } from '../services/report';
-
-interface ApiErrorResponse {
-	statusCode?: number;
-	message?: string;
-	error?: string;
-}
 
 interface SubmitReportVariables {
 	userId: string;
@@ -29,7 +22,7 @@ export function useReport() {
 
 	const { mutate, isPending, isError, error } = useMutation<
 		ReportResponse,
-		AxiosError<ApiErrorResponse>,
+		any,
 		SubmitReportVariables,
 		unknown
 	>({
@@ -65,11 +58,10 @@ export function useReport() {
 				queryClient.invalidateQueries({ queryKey: ['liked', 'to-me'] }),
 			]);
 		},
-		onError: (error) => {
+		onError: (error: any) => {
 			console.error('신고 제출 중 오류 발생:', error);
 			const errorMessage =
-				error.response?.data?.message ||
-				t('features.ban-report.hooks.use_report.default_error_message');
+				error?.message || t('features.ban-report.hooks.use_report.default_error_message');
 			showModal({
 				title: t('features.ban-report.hooks.use_report.modal_title_error'),
 				children: errorMessage,

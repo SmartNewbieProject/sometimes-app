@@ -3,8 +3,10 @@ import { useEffect, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import { likeLetterApi } from '../api';
 
+const INITIAL_POLL_INTERVAL_MS = 500; // 처음 5회는 빠르게 폴링
 const POLL_INTERVAL_MS = 2000;
-const MAX_POLLS = 60; // 최대 2분 (2초 × 60)
+const FAST_POLL_COUNT = 5;
+const MAX_POLLS = 60; // 최대 2분
 
 export const useLetterPrompts = (connectionId: string) => {
 	const pollCountRef = useRef(0);
@@ -22,7 +24,8 @@ export const useLetterPrompts = (connectionId: string) => {
 			// completed / failed 일 때만 폴링 중단, 그 외(pending·null·에러)는 계속
 			if (status === 'completed' || status === 'failed') return false;
 			pollCountRef.current += 1;
-			return POLL_INTERVAL_MS;
+			// 처음 몇 회는 빠르게 폴링 (캐시 시드 감지 + 빠른 응답 대응)
+			return pollCountRef.current <= FAST_POLL_COUNT ? INITIAL_POLL_INTERVAL_MS : POLL_INTERVAL_MS;
 		},
 	});
 

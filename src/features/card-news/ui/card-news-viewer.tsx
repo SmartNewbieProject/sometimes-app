@@ -25,7 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCardNewsDetail, useCardNewsReward } from '../queries';
 import type { CardSection } from '../types';
 
-const URL_REGEX = /(https?:\/\/[^\s<\]]+)/g;
+const URL_REGEX = /(https?:\/\/[^\s<\]]+)/;
 
 const handleOpenUrl = (url: string) => {
 	Linking.openURL(url).catch(() => {});
@@ -36,7 +36,6 @@ const renderTextWithLinks = (text: string, baseStyle: object) => {
 
 	return parts.map((part, idx) => {
 		if (URL_REGEX.test(part)) {
-			URL_REGEX.lastIndex = 0;
 			return (
 				<Text key={idx} style={[baseStyle, styles.linkText]} onPress={() => handleOpenUrl(part)}>
 					{part}
@@ -112,7 +111,6 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
 	const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const offsetX = event.nativeEvent.contentOffset.x;
 		const index = Math.round(offsetX / SCREEN_WIDTH);
-		console.log('[CardNewsViewer] handleScroll - offsetX:', offsetX, 'index:', index);
 		setCurrentIndex(index);
 	}, []);
 
@@ -197,7 +195,7 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
 					</View>
 				</ScrollView>
 			</View>
-			),
+		),
 		[isHorizontalPaging],
 	);
 
@@ -260,7 +258,9 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
 							style={styles.horizontalScroll}
 							contentContainerStyle={styles.horizontalScrollContent}
 						>
-							{sections.sort((a, b) => a.order - b.order).map((section) => renderCard(section))}
+							{[...sections]
+								.sort((a, b) => a.order - b.order)
+								.map((section) => renderCard(section))}
 						</ScrollView>
 					</View>
 

@@ -31,18 +31,12 @@ const useLikeMutation = (trackEvent: ReturnType<typeof useMixpanel>['trackEvent'
 				like_type: LIKE_TYPES.FREE,
 			});
 		},
-		onSuccess: async (data, connectionId) => {
-			// 쿼리 무효화를 확실히 처리하기 위해 await 사용
-			await queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
-
-			// 추가로 쿼리를 강제로 다시 가져오기
-			await queryClient.refetchQueries({ queryKey: ['latest-matching'] });
-			await queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
-			await queryClient.refetchQueries({ queryKey: ['liked', 'of-me'] });
-			await queryClient.refetchQueries({ queryKey: ['liked', 'to-me'] });
-
-			// 좋아요 전송 성공 (LIKE_SENT는 onMutate에서 이미 tracking됨)
-			// Matching_Success는 서버에서 상호 좋아요 확인 후 tracking
+		onSuccess: (data, connectionId) => {
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
+			queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
+			queryClient.invalidateQueries({ queryKey: ['liked', 'of-me'] });
+			queryClient.invalidateQueries({ queryKey: ['liked', 'to-me'] });
 		},
 		onError: async (error: any, connectionId) => {
 			// 실패 원인 분석 및 트래킹

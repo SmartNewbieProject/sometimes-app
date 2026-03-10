@@ -43,6 +43,7 @@ const useLikeWithLetterMutation = () =>
 			});
 		},
 		onSuccess: (_, { letter }) => {
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
 			queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 			queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
 			queryClient.invalidateQueries({ queryKey: ['liked', 'of-me'] });

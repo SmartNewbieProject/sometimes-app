@@ -12,13 +12,16 @@ export const ImageSlide = ({ items, autoPlayInterval = 5000, width, height }: Im
 	const flatListRef = useRef<FlatList>(null);
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+	const currentIndexRef = useRef(currentIndex);
+	currentIndexRef.current = currentIndex;
+
 	useEffect(() => {
+		if (items.length <= 1) return;
+
 		intervalRef.current = setInterval(() => {
-			if (items.length > 0) {
-				const nextIndex = (currentIndex + 1) % items.length;
-				setCurrentIndex(nextIndex);
-				flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-			}
+			const nextIndex = (currentIndexRef.current + 1) % items.length;
+			setCurrentIndex(nextIndex);
+			flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
 		}, autoPlayInterval);
 
 		return () => {
@@ -26,7 +29,7 @@ export const ImageSlide = ({ items, autoPlayInterval = 5000, width, height }: Im
 				clearInterval(intervalRef.current);
 			}
 		};
-	}, [currentIndex, items.length, autoPlayInterval]);
+	}, [items.length, autoPlayInterval]);
 
 	const handleScroll = (event: any) => {
 		const imageWidth = Math.min(screenWidth, 393);

@@ -77,7 +77,7 @@ function ChatScreen() {
 		return () => subscription.unsubscribe();
 	}, [id, chatRoomDetail, chatEvents, matchingEfficiencyEvents]);
 
-	const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+	const chatList = useMemo(() => data?.pages.flatMap((page) => page.messages) ?? [], [data]);
 
 	// 인앱 리뷰: 채팅 10회 이상 대화 시 리뷰 요청
 	const { myMessageCount, partnerMessageCount } = useMemo(() => {

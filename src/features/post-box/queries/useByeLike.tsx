@@ -1,5 +1,6 @@
 import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useToast } from "@/src/shared/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { deleteByeLike } from "../api";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,7 @@ import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 function useByeLike() {
   const { showErrorModal } = useModal();
   const { t } = useTranslation();
+  const emitToast = useToast((s) => s.emitToast);
   const mutation = useMutation({
     mutationFn: (connectionId: string) => deleteByeLike(connectionId),
     onSuccess: async (_data, connectionId) => {
@@ -16,6 +18,7 @@ function useByeLike() {
         target_profile_id: connectionId,
         timestamp: new Date().toISOString(),
       });
+      emitToast(t("features.post-box.queries.use_bye_like.success_toast"));
       await queryClient.invalidateQueries({ queryKey: ["liked", "of-me"] });
       await queryClient.invalidateQueries({ queryKey: ["liked", "to-me"] });
     },

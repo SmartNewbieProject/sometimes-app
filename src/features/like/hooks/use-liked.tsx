@@ -1,52 +1,53 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
 import useILikedQuery from '../queries/use-i-liked-query';
 import useLikedMeQuery from '../queries/use-liked-me-query';
 
 function useLiked() {
 	const { data: iLiked, isLoading: isILoading } = useILikedQuery();
 	const { data: likedMe, isLoading: isMeLoading } = useLikedMeQuery();
-	const isLikedPartner = (connectionId: string) => {
-		if (isILoading || !iLiked || !Array.isArray(iLiked)) {
-			return false;
-		}
-		return !!iLiked.find((matching) => matching.connectionId === connectionId);
-	};
 
-	const showCollapse = () => {
-		if (isILoading || isMeLoading) {
-			return false;
-		}
+	const iLikedMap = useMemo(() => {
+		if (!iLiked || !Array.isArray(iLiked)) return new Map();
+		return new Map(iLiked.map((m) => [m.connectionId, m]));
+	}, [iLiked]);
 
-		if (likedMe && likedMe?.length > 0) {
-			return { data: likedMe, type: 'likedMe' };
-		}
+	const isLikedPartner = useCallback(
+		(connectionId: string) => {
+			if (isILoading) return false;
+			return iLikedMap.has(connectionId);
+		},
+		[isILoading, iLikedMap],
+	);
+
+	const showCollapse = useCallback(() => {
+		if (isILoading || isMeLoading) return false;
+		if (likedMe && likedMe.length > 0) return { data: likedMe, type: 'likedMe' };
 		return false;
-	};
+	}, [isILoading, isMeLoading, likedMe]);
 
-	const isStatus = (connectionId: string) => {
-		if (isILoading || !iLiked || !Array.isArray(iLiked)) {
-			return false;
-		}
+	const isStatus = useCallback(
+		(connectionId: string) => {
+			if (isILoading) return false;
+			return iLikedMap.get(connectionId)?.status;
+		},
+		[isILoading, iLikedMap],
+	);
 
-		return iLiked.find((matching) => matching.connectionId === connectionId)?.status;
-	};
+	const isLiked = useCallback(
+		(connectionId: string) => {
+			if (isILoading) return false;
+			return iLikedMap.get(connectionId);
+		},
+		[isILoading, iLikedMap],
+	);
 
-	const isLiked = (connectionId: string) => {
-		if (isILoading || !iLiked || !Array.isArray(iLiked)) {
-			return false;
-		}
-
-		return iLiked.find((matching) => matching.connectionId === connectionId);
-	};
-
-	const isExpired = (connectionId: string) => {
-		if (isILoading || !iLiked || !Array.isArray(iLiked)) {
-			return false;
-		}
-
-		return !!iLiked.find((matching) => matching.connectionId === connectionId)?.isExpired;
-	};
+	const isExpired = useCallback(
+		(connectionId: string) => {
+			if (isILoading) return false;
+			return !!iLikedMap.get(connectionId)?.isExpired;
+		},
+		[isILoading, iLikedMap],
+	);
 
 	return {
 		isLikedPartner,

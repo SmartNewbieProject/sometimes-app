@@ -32,7 +32,8 @@ export const useRevealViewer = () => {
 
 			// If match created, invalidate matching queries
 			if (data.matchId) {
-				queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+				queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
+				queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 			}
 		},
 		onError: (error: unknown) => {

@@ -1,8 +1,8 @@
 import type { Preferences, PreferenceOption } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
-import { StepSlider } from "@/src/shared/ui";
+import { ChipSelector } from "@/src/widgets/chip-selector";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 
 interface TooltipData {
@@ -16,16 +16,10 @@ interface PreferenceSliderProps {
   onChange: (option: PreferenceOption) => void;
   isLoading?: boolean;
   loadingTitle?: string;
-  showMiddle?: boolean;
-  showAllLabels?: boolean;
-  lastLabelLeft?: number;
-  firstLabelLeft?: number;
-  middleLabelLeft?: number;
   tooltips?: TooltipData[];
   showTooltip?: boolean;
   autoSetInitialValue?: boolean;
   defaultIndex?: number;
-  mapOption?: (option: PreferenceOption) => { label: string; value: string };
 }
 
 export function PreferenceSlider({
@@ -34,24 +28,19 @@ export function PreferenceSlider({
   onChange,
   isLoading = false,
   loadingTitle,
-  showMiddle = true,
-  showAllLabels = false,
-  lastLabelLeft,
-  firstLabelLeft,
-  middleLabelLeft,
   tooltips,
   showTooltip = false,
   autoSetInitialValue = true,
   defaultIndex = 0,
-  mapOption,
 }: PreferenceSliderProps) {
-  const defaultMapOption = (option: PreferenceOption) => ({
-    label: option.displayName,
-    value: option.id,
-  });
-
-  const options =
-    preferences?.options?.map(mapOption || defaultMapOption) ?? [];
+  const options = useMemo(
+    () =>
+      preferences?.options?.map((option) => ({
+        label: option.displayName,
+        value: option.id,
+      })) ?? [],
+    [preferences?.options],
+  );
 
   const index = preferences?.options.findIndex(
     (item) => item.id === value?.id
@@ -65,29 +54,23 @@ export function PreferenceSlider({
     }
   }, [isLoading, preferences.options, currentIndex, value, onChange, autoSetInitialValue]);
 
-  const handleChange = (sliderValue: number) => {
-    if (preferences?.options && preferences.options.length > sliderValue) {
-      onChange(preferences.options[sliderValue]);
-    }
-  };
+  const handleChange = useCallback(
+    (id: string) => {
+      const opt = preferences?.options.find((o) => o.id === id);
+      if (opt) onChange(opt);
+    },
+    [preferences?.options, onChange],
+  );
 
   return (
     <>
       <View style={styles.wrapper}>
         <Loading.Lottie title={loadingTitle} loading={isLoading}>
-          <StepSlider
-            min={0}
-            max={(preferences?.options.length ?? 1) - 1}
-            step={1}
-            showMiddle={showMiddle}
-            showAllLabels={showAllLabels}
-            defaultValue={currentIndex}
-            value={currentIndex}
-            onChange={handleChange}
-            lastLabelLeft={lastLabelLeft}
-            firstLabelLeft={firstLabelLeft}
-            middleLabelLeft={middleLabelLeft}
+          <ChipSelector
             options={options}
+            value={value?.id}
+            onChange={handleChange}
+            align="center"
           />
         </Loading.Lottie>
       </View>
@@ -105,10 +88,9 @@ export function PreferenceSlider({
 
 const styles = StyleSheet.create({
   wrapper: {
-    flex: 1,
     width: "100%",
     alignItems: "center",
-    paddingTop: 32,
+    paddingTop: 16,
   },
   tooltipContainer: {
     marginTop: 24,

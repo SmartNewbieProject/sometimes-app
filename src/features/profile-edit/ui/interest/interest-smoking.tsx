@@ -1,72 +1,34 @@
 import Interest from '@/src/features/interest';
-import type { Preferences } from '@/src/features/interest/api';
-import colors from '@/src/shared/constants/colors';
+import { PreferenceField } from '@/src/features/profile-edit/ui/shared/preference-field';
 import { usePreferenceTooltips } from '@/src/shared/hooks/use-preference-tooltips';
-import { PreferenceSlider } from '@/src/shared/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
 
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
+const DEFAULT_PREF = { typeCode: '', typeName: '', options: [] };
+
 function InterestSmoking() {
 	const { smoking, updateForm } = useInterestForm();
 	const { t } = useTranslation();
-
-	const {
-		data: preferencesArray = [
-			{
-				typeCode: '',
-				typeName: '',
-				options: [],
-			},
-		],
-		isLoading: optionsLoading,
-	} = usePreferenceOptionsQuery();
-
-	const preferences: Preferences =
-		preferencesArray?.find((item) => item.typeCode === Keys.SMOKING) ?? preferencesArray[0];
-
+	const { data: preferencesArray = [DEFAULT_PREF], isLoading } = usePreferenceOptionsQuery();
+	const preferences = preferencesArray?.find((item) => item.typeCode === Keys.SMOKING) ?? preferencesArray[0];
 	const tooltips = usePreferenceTooltips('apps.interest.smoke', preferences.options.length);
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>{t('features.profile-edit.ui.interest.smoking.title')}</Text>
-			<PreferenceSlider
-				preferences={preferences}
-				value={smoking}
-				onChange={(option) => updateForm('smoking', option)}
-				isLoading={optionsLoading}
-				loadingTitle={t('features.profile-edit.ui.interest.smoking.loading')}
-				showMiddle={true}
-				middleLabelLeft={-5}
-				showTooltip={true}
-				tooltips={tooltips}
-			/>
-		</View>
+		<PreferenceField
+			variant="interest"
+			title={t('features.profile-edit.ui.interest.smoking.title')}
+			preferences={preferences}
+			value={smoking}
+			onChange={(opt) => updateForm('smoking', opt)}
+			isLoading={isLoading}
+			loadingTitle={t('features.profile-edit.ui.interest.smoking.loading')}
+			tooltips={tooltips}
+		/>
 	);
 }
-
-const styles = StyleSheet.create({
-	wrapper: {
-		flex: 1,
-		width: '100%',
-		alignItems: 'center',
-		paddingTop: 32,
-	},
-	title: {
-		color: colors.black,
-		fontSize: 18,
-		fontFamily: 'Pretendard-SemiBold',
-		fontWeight: 600,
-		lineHeight: 22,
-	},
-	container: {
-		paddingHorizontal: 28,
-		marginBottom: 24,
-	},
-});
 
 export default InterestSmoking;

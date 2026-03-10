@@ -110,7 +110,18 @@ export const GlobalChatProvider = ({
 		}
 
 		if (!accessToken) {
-			log('No accessToken after loading, skipping socket connection');
+			log('No accessToken after loading, clearing reconnect timers');
+			// 로그아웃 시 pending된 재연결 타임아웃을 즉시 클리어하여 이전 토큰으로 연결 시도 방지
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (backgroundTimeoutRef.current) {
+				clearTimeout(backgroundTimeoutRef.current);
+				backgroundTimeoutRef.current = null;
+			}
+			reconnectAttempts.current = 0;
+			hasConnectedOnce.current = false;
 			return;
 		}
 

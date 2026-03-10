@@ -123,6 +123,8 @@ const baseStyles = StyleSheet.create({
 const variantStyles = StyleSheet.create({
 	primary: {
 		backgroundColor: semanticColors.brand.primary,
+		borderWidth: 1,
+		borderColor: semanticColors.brand.primary,
 	},
 	secondary: {
 		backgroundColor: semanticColors.surface.surface,

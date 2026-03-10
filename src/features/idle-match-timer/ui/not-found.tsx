@@ -59,10 +59,10 @@ export const NotFound = ({ failureCode, failureReason }: NotFoundProps) => {
 			<ImageResource
 				style={styles.image}
 				resource={ImageResources.BROKEN_SANDTIMER}
-				width={246}
-				height={246}
+				width={160}
+				height={160}
 			/>
-			<Text textColor="black" size="20" weight={'bold'}>
+			<Text textColor="black" size="18" weight={'bold'}>
 				{t('features.idle-match-timer.ui.not-found.faild_title')}
 			</Text>
 
@@ -129,11 +129,11 @@ const toastStyles = StyleSheet.create({
 		width: '100%',
 		backgroundColor: semanticColors.brand.deep,
 		borderRadius: 12,
-		paddingVertical: 12,
-		paddingHorizontal: 16,
+		paddingVertical: 10,
+		paddingHorizontal: 14,
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 10,
+		gap: 8,
 	},
 	containerFiltered: {
 		backgroundColor: '#5C3D8F',
@@ -171,15 +171,15 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 	},
 	image: {
-		marginTop: 27,
+		marginTop: 16,
 	},
 	contentContainer: {
-		marginTop: 24,
-		marginBottom: 24,
+		marginTop: 16,
+		marginBottom: 16,
 		width: '100%',
 		paddingHorizontal: 26,
 		alignItems: 'center',
-		gap: 12,
+		gap: 10,
 	},
 	chipButton: {
 		paddingHorizontal: 7,

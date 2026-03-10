@@ -25,10 +25,10 @@ function NotFoundCard({
       </View>
 
       <View style={styles.textContainer}>
-        <Text size="13" weight={"semibold"} textColor={"black"}>
+        <Text size="12" weight={"semibold"} textColor={"black"}>
           {title}
         </Text>
-        <Text size="12" weight={"medium"} textColor={"dark"}>
+        <Text size="11" weight={"medium"} textColor={"dark"}>
           {description}
         </Text>
       </View>
@@ -40,9 +40,10 @@ function NotFoundCard({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: semanticColors.surface.background,
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
     width: "100%",
     alignItems: "center",
     borderRadius: 10,

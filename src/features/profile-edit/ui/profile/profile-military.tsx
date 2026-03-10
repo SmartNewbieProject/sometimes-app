@@ -1,57 +1,40 @@
-import MyInfo from "@/src/features/my-info";
-import type { Preferences } from "@/src/features/my-info/api";
-import { usePreferenceTooltips } from "@/src/shared/hooks/use-preference-tooltips";
-import { PreferenceSlider, FormSection } from "@/src/shared/ui";
-import React from "react";
+import MyInfo from '@/src/features/my-info';
+import { PreferenceField } from '@/src/features/profile-edit/ui/shared/preference-field';
+import { usePreferenceTooltips } from '@/src/shared/hooks/use-preference-tooltips';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from "react-native";
 
 const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
+const DEFAULT_PREF = { typeCode: '', typeName: '', options: [] };
+
 function ProfileMilitary() {
-  const { updateForm, militaryStatus } = useMyInfoForm();
-  const { t } = useTranslation();
+	const { updateForm, militaryStatus } = useMyInfoForm();
+	const { t } = useTranslation();
+	const { data: preferencesArray = [DEFAULT_PREF], isLoading } = usePreferenceOptionsQuery();
+	const preferences =
+		preferencesArray?.find(
+			(item) =>
+				item.typeCode === PreferenceKeys.MILITARY_STATUS ||
+				item.typeCode === 'MILITARY_STATUS_MALE' ||
+				item.typeCode === 'MILITARY_STATUS_FEMALE',
+		) ?? preferencesArray[0];
+	const tooltips = usePreferenceTooltips('apps.interest.military', preferences.options.length);
 
-  const {
-    data: preferencesArray = [{ typeCode: "", typeName: "", options: [] }],
-    isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery();
-
-  const preferences: Preferences =
-    preferencesArray?.find(
-      (item) => item.typeCode === PreferenceKeys.MILITARY_STATUS ||
-                item.typeCode === "MILITARY_STATUS_MALE" ||
-                item.typeCode === "MILITARY_STATUS_FEMALE"
-    ) ?? preferencesArray[0];
-
-  const tooltips = usePreferenceTooltips('apps.interest.military', preferences.options.length);
-
-  return (
-    <FormSection
-      title={t("features.profile-edit.ui.profile.military.title")}
-      showDivider={false}
-      containerStyle={styles.container}
-    >
-      <PreferenceSlider
-        preferences={preferences}
-        value={militaryStatus}
-        onChange={(option) => updateForm("militaryStatus", option)}
-        isLoading={optionsLoading}
-        loadingTitle={t("features.profile-edit.ui.profile.military.loading")}
-        middleLabelLeft={-10}
-        showTooltip={true}
-        tooltips={tooltips}
-      />
-    </FormSection>
-  );
+	return (
+		<PreferenceField
+			variant="profile"
+			title={t('features.profile-edit.ui.profile.military.title')}
+			preferences={preferences}
+			value={militaryStatus}
+			onChange={(opt) => updateForm('militaryStatus', opt)}
+			isLoading={isLoading}
+			loadingTitle={t('features.profile-edit.ui.profile.military.loading')}
+			tooltips={tooltips}
+		/>
+	);
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24,
-  },
-});
 
 export default ProfileMilitary;

@@ -147,23 +147,27 @@ export function useAuth() {
 
 	const logoutOnly = async () => {
 		setLoggingOut();
+
+		// 토큰을 가장 먼저 삭제 — 소켓 재연결/API 호출이 이전 유저 토큰을 사용하지 못하도록
+		const currentRefreshToken = refreshToken;
+		await setToken(null);
+		await setRefreshToken(null);
+
+		// 앱 상태 초기화 (쿼리 캐시, 소켓, 스토어 등)
 		resetAppState();
 		Sentry.setUser(null);
 		deleteFcmTokenAsync(); // OTA Silent Push 차단 (에러 무시)
 
-		// 토큰을 먼저 삭제 — 캐시 클리어 후 재실행되는 쿼리가 이전 유저 토큰으로 요청하지 못하도록
-		await setToken(null);
-		await setRefreshToken(null);
 		await setApprovalStatus(null);
 		await clearOnboardingCompletedFlag();
 		await storage.removeItem('user-country');
 
-		if (!refreshToken) {
+		if (!currentRefreshToken) {
 			router.push('/auth/login');
 			return;
 		}
 
-		await logoutApi(refreshToken).catch(console.error);
+		await logoutApi(currentRefreshToken).catch(console.error);
 	};
 	const clearTokensOnly = async () => {
 		await setToken(null);
@@ -199,11 +203,13 @@ export function useAuth() {
 		);
 
 		const unsubscribeLogout = eventBus.on('auth:logout', async () => {
+			// 토큰 먼저 삭제 → 소켓/API 재요청 시 이전 유저 토큰 사용 차단
+			await setToken(null);
+			await setRefreshToken(null);
+
 			resetAppState();
 			Sentry.setUser(null);
 			deleteFcmTokenAsync(); // OTA Silent Push 차단 (에러 무시)
-			await setToken(null);
-			await setRefreshToken(null);
 			await setApprovalStatus(null);
 			await clearOnboardingCompletedFlag();
 			await storage.removeItem('user-country');

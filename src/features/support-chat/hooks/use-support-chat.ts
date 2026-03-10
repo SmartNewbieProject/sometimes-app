@@ -78,7 +78,9 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 
 		try {
 			const existingSessions = await getMySessions();
-			const activeSession = existingSessions.sessions?.find((s) => s.status !== 'resolved');
+			const activeSession = existingSessions.sessions?.find(
+				(s) => !['resolved', 'user_closed', 'admin_resolved'].includes(s.status),
+			);
 
 			if (activeSession) {
 				const messagesResponse = await getSessionMessages(activeSession.sessionId);

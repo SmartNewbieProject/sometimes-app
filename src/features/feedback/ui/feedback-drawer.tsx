@@ -153,7 +153,7 @@ function NativeFeedbackDrawer({ onClose, onSuccess, onError }: FeedbackDrawerPro
 			</TouchableWithoutFeedback>
 
 			<Animated.View
-				style={[styles.sheet, sheetAnimStyle, { paddingBottom: Math.max(0, insets.bottom - 42) }]}
+				style={[styles.sheet, sheetAnimStyle, { paddingBottom: insets.bottom }]}
 			>
 				<View style={styles.handleContainer}>
 					<View style={styles.handle} />

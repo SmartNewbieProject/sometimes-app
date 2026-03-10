@@ -39,7 +39,6 @@ export const Container = ({ children, gradientMode, category }: ContainerProps) 
 					styles.imageBackground,
 					{
 						height: match?.type === 'not-found' ? undefined : rematchingLoading ? 400 : width,
-					minHeight: match?.type === 'not-found' ? 600 : undefined,
 					},
 				]}
 			>
@@ -66,7 +65,6 @@ export const Container = ({ children, gradientMode, category }: ContainerProps) 
 				styles.imageBackground,
 				{
 					height: match?.type === 'not-found' ? undefined : rematchingLoading ? 400 : width,
-					minHeight: match?.type === 'not-found' ? 600 : undefined,
 				},
 			]}
 		>

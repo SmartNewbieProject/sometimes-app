@@ -1,7 +1,8 @@
+import type { PreferenceOption } from '@/src/features/interest/api';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface TooltipData {
+export interface TooltipData {
 	title: string;
 	description: string[];
 }
@@ -28,4 +29,22 @@ export function usePreferenceTooltips(prefix: string, optionCount: number): Tool
 			};
 		});
 	}, [t, prefix, optionCount]);
+}
+
+export function buildKeyBasedTooltips(
+	options: PreferenceOption[],
+	prefixMap: Record<string, string>,
+	t: (key: string, options?: Record<string, unknown>) => string,
+): TooltipData[] {
+	return options.map((opt) => {
+		const prefix = prefixMap[opt.key ?? ''];
+		if (!prefix) return { title: opt.displayName, description: [] };
+		const descriptions: string[] = [];
+		for (let i = 1; i <= 5; i++) {
+			const desc = t(`${prefix}_desc_${i}`, { defaultValue: '' });
+			if (!desc) break;
+			descriptions.push(desc);
+		}
+		return { title: opt.displayName, description: descriptions };
+	});
 }

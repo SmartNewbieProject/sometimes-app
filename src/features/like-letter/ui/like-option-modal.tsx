@@ -75,6 +75,19 @@ export function LikeOptionModal({
 		onSelect('simple');
 	};
 
+	const seedLetterQuestionsCache = (result: {
+		letterQuestionId?: string;
+		questions?: string[];
+	}) => {
+		if (result?.questions?.length) {
+			queryClient.setQueryData(['letter-questions', connectionId], {
+				status: 'completed',
+				letterQuestionId: result.letterQuestionId ?? '',
+				questions: result.questions,
+			});
+		}
+	};
+
 	const handleLetterLike = () => {
 		trackOptionSelected('letter_like');
 
@@ -84,6 +97,9 @@ export function LikeOptionModal({
 			: basePath;
 
 		if (canLetter) {
+			// 질문 생성을 백그라운드에서 시작 — 응답 시 캐시 시드로 폴링 단축
+			likeLetterApi.getLetterPermission(connectionId).then(seedLetterQuestionsCache);
+
 			onClose();
 			router.push({
 				pathname: '/like-letter/write',
@@ -114,8 +130,9 @@ export function LikeOptionModal({
 
 		const gemBefore = currentGem;
 
-		// 질문 생성 요청을 백그라운드에서 실행 — 응답을 기다리지 않고 바로 진입
-		likeLetterApi.getLetterPermission(connectionId).then(() => {
+		// 질문 생성 요청을 백그라운드에서 실행 — 응답 시 캐시 시드로 폴링 단축
+		likeLetterApi.getLetterPermission(connectionId).then((result) => {
+			seedLetterQuestionsCache(result);
 			queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PERMISSION_PURCHASED, {
 				connection_id: connectionId,

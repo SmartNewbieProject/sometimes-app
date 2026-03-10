@@ -24,9 +24,11 @@ const Lottie: React.FC<Props> = ({ title, loading, children, ...props }) => {
 
 const styles = StyleSheet.create({
 	wrapper: {
+		flex: 1,
 		width: '100%',
 	},
 	container: {
+		flex: 1,
 		width: '100%',
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -36,6 +38,7 @@ const styles = StyleSheet.create({
 		display: 'none',
 	},
 	visible: {
+		flex: 1,
 		width: '100%',
 	},
 });
