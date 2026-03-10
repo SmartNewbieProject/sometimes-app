@@ -44,7 +44,10 @@
 		"tap_to_change": "탭하여 사진 변경",
 		"photo_uploaded": "사진이 등록되었어요",
 		"change": "변경",
-		"select": "선택"
+		"select": "선택",
+		"pending_title": "학생증을 검토하고 있어요",
+		"pending_desc": "보통 24시간 이내에 검토가 완료됩니다.\n결과는 푸시 알림으로 안내드릴게요.",
+		"go_back": "돌아가기"
 	},
 	"pending": {
 		"title": "심사 중이에요",

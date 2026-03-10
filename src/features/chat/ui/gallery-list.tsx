@@ -9,7 +9,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
 	SlideOutDown,
 	useAnimatedStyle,
@@ -71,7 +71,13 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
 				Alert.alert(
 					t('features.chat.ui.gallery.permission_required_title'),
 					t('features.chat.ui.gallery.permission_required_message'),
-					[{ text: t('features.chat.ui.gallery.confirm') }],
+					[
+						{ text: t('features.chat.ui.camera.close') },
+						{
+							text: t('features.chat.ui.camera.open_settings'),
+							onPress: () => Linking.openSettings(),
+						},
+					],
 				);
 			}
 		} catch (error) {

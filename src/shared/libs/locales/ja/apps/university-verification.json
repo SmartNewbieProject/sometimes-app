@@ -44,7 +44,10 @@
 		"tap_to_change": "タップして写真を変更",
 		"photo_uploaded": "写真が登録されました",
 		"change": "変更",
-		"select": "選択"
+		"select": "選択",
+		"pending_title": "学生証を確認しています",
+		"pending_desc": "通常24時間以内に審査が完了します。\n結果はプッシュ通知でお知らせします。",
+		"go_back": "戻る"
 	},
 	"pending": {
 		"title": "審査中です",
