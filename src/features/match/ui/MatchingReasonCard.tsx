@@ -477,6 +477,9 @@ const styles = StyleSheet.create({
 		lineHeight: 30,
 		color: '#3A2A1A',
 		fontFamily: 'Gaegu_400Regular',
+		...Platform.select({
+			android: { includeFontPadding: false },
+		}),
 	},
 	pageNumRow: {
 		backgroundColor: '#FFF4E0',
