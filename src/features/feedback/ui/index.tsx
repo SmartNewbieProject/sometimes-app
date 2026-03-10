@@ -70,13 +70,12 @@ export const WallaFeedbackBanner = () => {
 				<Text size="18" style={styles.arrow}>›</Text>
 			</TouchableOpacity>
 
-			{drawerMounted && (
-				<Portal name="feedback-drawer">
-					<FeedbackDrawer
-						visible={true}
-						onClose={closeDrawer}
-						onSuccess={handleSuccess}
-						onError={handleError}
+				{drawerMounted && (
+					<Portal name="feedback-drawer">
+						<FeedbackDrawer
+							onClose={closeDrawer}
+							onSuccess={handleSuccess}
+							onError={handleError}
 					/>
 				</Portal>
 			)}

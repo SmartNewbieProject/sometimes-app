@@ -22,7 +22,7 @@ import {
 import { participateEvent } from '@/src/features/event/api';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
-import { usePathname, useRouter } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { useCurrentGem, useGemProducts, useGemMissions } from '../../hooks';
 import { useAppleInApp } from '../../hooks/use-apple-in-app';
 import { usePortoneStore } from '../../hooks/use-portone-store';
@@ -33,10 +33,15 @@ import { devLogWithTag } from '@/src/shared/utils';
 import { useTranslation } from 'react-i18next';
 import { getAppleProductIds } from '../../constants/apple-product-ids';
 
-function AppleGemStore() {
+type AppleGemStoreProps = {
+	returnTo?: string;
+};
+
+function AppleGemStore({ returnTo }: AppleGemStoreProps) {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const pathname = usePathname();
+	const { returnTo: routeReturnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
 	const { data: gem } = useCurrentGem();
 	const { data: serverGemProducts, isLoading: isLoadingServer } = useGemProducts();
 	const [purchasing, setPurchasing] = useState(false);
@@ -52,6 +57,20 @@ function AppleGemStore() {
 	const [fetchState, setFetchState] = useState<'idle' | 'primary' | 'fallback' | 'done'>('idle');
 	const fetchStateRef = useRef(fetchState);
 	fetchStateRef.current = fetchState;
+	const resolvedReturnTo = (() => {
+		const rawReturnTo =
+			returnTo ?? (Array.isArray(routeReturnTo) ? routeReturnTo[0] : routeReturnTo);
+		if (!rawReturnTo) {
+			return pathname;
+		}
+
+		try {
+			const decoded = decodeURIComponent(rawReturnTo);
+			return decoded.startsWith('/') ? decoded : pathname;
+		} catch {
+			return rawReturnTo.startsWith('/') ? rawReturnTo : pathname;
+		}
+	})();
 
 	const handlePurchaseSuccess = useCallback(
 		async (purchase: Purchase) => {
@@ -83,7 +102,7 @@ function AppleGemStore() {
 						}
 						const { clearEventType } = usePortoneStore.getState();
 						clearEventType();
-						router.replace(pathname as any);
+						router.replace(resolvedReturnTo as any);
 					}
 				} else {
 					console.error('서버 검증 실패');
@@ -108,6 +127,7 @@ function AppleGemStore() {
 			appleInAppMutation,
 			eventType,
 			pathname,
+			resolvedReturnTo,
 			paymentEvents,
 			conversionEvents,
 			showErrorModal,

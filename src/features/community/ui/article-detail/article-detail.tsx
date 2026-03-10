@@ -20,14 +20,7 @@ import { useLocalSearchParams } from 'expo-router';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Image,
-	Keyboard,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	View,
-} from 'react-native';
+import { Image, Keyboard, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Article, Comment, CommentForm } from '../../types';
 import { InputForm } from '../comment/input-form';
@@ -368,6 +361,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 			<ScrollView
 				contentContainerStyle={detailStyles.scrollContent}
 				keyboardShouldPersistTaps="handled"
+				directionalLockEnabled
 				style={detailStyles.scrollView}
 			>
 				<View style={detailStyles.articleCard}>
@@ -384,7 +378,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
 					{article.images && article.images.length > 0 && (
 						<View style={detailStyles.imagesContainer}>
-							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							<ScrollView horizontal directionalLockEnabled showsHorizontalScrollIndicator={false}>
 								<View style={detailStyles.imagesRow}>
 									{article.images
 										.sort((a, b) => a.displayOrder - b.displayOrder)

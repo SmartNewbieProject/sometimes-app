@@ -106,6 +106,7 @@ export const CategoryList = () => {
 			<ScrollView
 				horizontal
 				ref={scrollRef}
+				directionalLockEnabled
 				showsHorizontalScrollIndicator={false}
 				scrollEventThrottle={16}
 				contentContainerStyle={styles.scrollContent}

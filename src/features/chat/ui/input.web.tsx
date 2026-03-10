@@ -30,6 +30,7 @@ function WebChatInput() {
 	const { showModal, showErrorModal } = useModal();
 	const { showPhotoPicker } = usePhotoPicker();
 	const [isTipsModalVisible, setTipsModalVisible] = useState(false);
+	const [isImageUploading, setIsImageUploading] = useState(false);
 	const { mutate: fetchTips, data: tipsData, isPending: isTipsLoading } = useChatTips();
 
 	const isChatDisabled = roomDetail?.hasLeft || roomDetail?.isPartnerWithdrawn;
@@ -120,9 +121,34 @@ function WebChatInput() {
 
 	useKeyboardResizeEffect();
 
+	const emitImageUpload = (file: File | string, previewUri: string) => {
+		if (!roomDetail?.partnerId || !user?.id) {
+			showErrorModal(t('features.chat.ui.gallery.permission_required_message'), 'error');
+			return;
+		}
+
+		chatEventBus.emit({
+			type: 'IMAGE_UPLOAD_REQUESTED',
+			payload: {
+				to: roomDetail.partnerId,
+				chatRoomId: id,
+				senderId: user.id,
+				file,
+				uri: previewUri,
+				tempId: generateTempId(),
+			},
+		});
+	};
+
 	const pickImage = async () => {
+		if (isImageUploading) {
+			return null;
+		}
+
+		setIsImageUploading(true);
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 		if (status !== 'granted') {
+			setIsImageUploading(false);
 			Alert.alert(
 				t('features.chat.ui.gallery.permission_required_title'),
 				t('features.chat.ui.gallery.permission_required_message'),
@@ -138,41 +164,58 @@ function WebChatInput() {
 			);
 			return null;
 		}
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			allowsMultipleSelection: false,
-			selectionLimit: 1,
-		});
 
-		devLogWithTag('Chat Input', 'Image picker result:', { canceled: result.canceled });
+		try {
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ['images'],
+				allowsMultipleSelection: false,
+				selectionLimit: 1,
+			});
 
-		if (!result.canceled) {
-			const pickedUri = result.assets[0].uri;
+			devLogWithTag('Chat Input', 'Image picker result:', { canceled: result.canceled });
+
+			if (result.canceled || !result.assets?.[0]) {
+				return null;
+			}
+
+			const asset = result.assets[0] as ImagePicker.ImagePickerAsset & { file?: File };
+			const pickedUri = asset.uri;
 			if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
 				showErrorModal(t('widgets.form.image_selector.invalid_image_format'), 'announcement');
 				return null;
 			}
 
-			if (roomDetail?.partnerId && user?.id) {
-				chatEventBus.emit({
-					type: 'IMAGE_UPLOAD_REQUESTED',
-					payload: {
-						to: roomDetail.partnerId,
-						chatRoomId: id,
-						senderId: user.id,
-						file: pickedUri,
-						tempId: generateTempId(),
-					},
-				});
+			if (Platform.OS === 'web' && asset.file instanceof File) {
+				emitImageUpload(asset.file, pickedUri);
+				return null;
 			}
-		}
 
-		return null;
+			if (pickedUri?.startsWith('data:')) {
+				emitImageUpload(pickedUri, pickedUri);
+				return null;
+			}
+
+			if (!pickedUri) {
+				showErrorModal(t('features.chat.ui.gallery.permission_required_message'), 'error');
+				return null;
+			}
+
+			emitImageUpload(pickedUri, pickedUri);
+			return null;
+		} finally {
+			setIsImageUploading(false);
+		}
 	};
 
 	const takePhoto = async () => {
+		if (isImageUploading) {
+			return null;
+		}
+
+		setIsImageUploading(true);
 		let { status } = await ImagePicker.requestCameraPermissionsAsync();
 		if (status !== 'granted') {
+			setIsImageUploading(false);
 			Alert.alert(
 				t('features.chat.ui.camera.permission_required_title'),
 				t('features.chat.ui.camera.permission_required_message'),
@@ -188,36 +231,38 @@ function WebChatInput() {
 			);
 			return null;
 		}
-		const result = await ImagePicker.launchCameraAsync({
-			mediaTypes: ['images'],
-			allowsMultipleSelection: false,
-			selectionLimit: 1,
-		});
-		status = (await MediaLibrary.requestPermissionsAsync()).status;
-		if (status === 'granted' && result.assets?.[0].uri) {
-			MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
-		}
 
-		if (!result.canceled) {
+		try {
+			const result = await ImagePicker.launchCameraAsync({
+				mediaTypes: ['images'],
+				allowsMultipleSelection: false,
+				selectionLimit: 1,
+			});
+			status = (await MediaLibrary.requestPermissionsAsync()).status;
+			if (status === 'granted' && result.assets?.[0].uri) {
+				MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
+			}
+
+			if (result.canceled || !result.assets?.[0]) {
+				return null;
+			}
+
 			const pickedUri = result.assets[0].uri;
 			if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
 				showErrorModal(t('widgets.form.image_selector.invalid_image_format'), 'announcement');
 				return null;
 			}
-			if (roomDetail?.partnerId && user?.id) {
-				chatEventBus.emit({
-					type: 'IMAGE_UPLOAD_REQUESTED',
-					payload: {
-						to: roomDetail.partnerId,
-						chatRoomId: id,
-						senderId: user.id,
-						file: pickedUri,
-						tempId: generateTempId(),
-					},
-				});
+
+			if (!pickedUri) {
+				showErrorModal(t('features.chat.ui.camera.permission_required_message'), 'error');
+				return null;
 			}
+
+			emitImageUpload(pickedUri, pickedUri);
+			return null;
+		} finally {
+			setIsImageUploading(false);
 		}
-		return null;
 	};
 
 	const handlePress = () => {

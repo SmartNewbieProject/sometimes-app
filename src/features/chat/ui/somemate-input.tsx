@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SomemateInputProps {
 	onSend?: (message: string) => void;
@@ -13,6 +14,7 @@ interface SomemateInputProps {
 export function SomemateInput({ onSend }: SomemateInputProps) {
 	const [chat, setChat] = useState('');
 	const { t } = useTranslation();
+	const insets = useSafeAreaInsets();
 
 	const keyboard = useAnimatedKeyboard();
 
@@ -34,7 +36,7 @@ export function SomemateInput({ onSend }: SomemateInputProps) {
 	}, [chat, onSend]);
 
 	return (
-		<Animated.View style={[styles.container, animatedKeyboardStyles]}>
+		<Animated.View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 12) }, animatedKeyboardStyles]}>
 			<View style={styles.inputContainer}>
 				<TextInput
 					multiline={true}

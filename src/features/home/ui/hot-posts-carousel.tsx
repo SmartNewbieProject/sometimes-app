@@ -78,6 +78,7 @@ export function HotPostsCarousel() {
 					data={hots}
 					keyExtractor={keyExtractor}
 					horizontal
+					directionalLockEnabled
 					showsHorizontalScrollIndicator={false}
 					snapToInterval={SNAP_INTERVAL}
 					snapToAlignment="start"

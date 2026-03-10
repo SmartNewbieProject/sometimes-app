@@ -94,7 +94,7 @@ export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
 };
 
 export const PartnerIdealType = ({ partner }: PartnerInfoBlockProps) => {
-	const { i18n } = useTranslation();
+	const { i18n, t } = useTranslation();
 	const lang = i18n.language ?? 'ko';
 
 	if (!partner.idealTypeResult) {

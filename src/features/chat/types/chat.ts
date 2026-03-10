@@ -35,6 +35,7 @@ export interface UploadImageOptions {
 	chatRoomId: string;
 	senderId: string;
 	file: RNFileLike | { uri: string };
+	uri?: string;
 }
 
 export interface Partner {

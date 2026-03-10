@@ -11,12 +11,14 @@ import { env } from '@/src/shared/libs/env';
 import { isJapanese } from '@/src/shared/libs/local';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { Button, Show, SlideToAbout, Text } from '@/src/shared/ui';
+import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
 import { devLogWithTag } from '@/src/shared/utils';
 import KakaoLogo from '@assets/icons/kakao-logo.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as KakaoLogin from '@react-native-kakao/user';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
@@ -29,9 +31,19 @@ import {
 } from 'react-native';
 import { useAuth } from '../../auth';
 import { PrivacyNotice } from '../../auth/ui/privacy-notice';
-import { checkPhoneNumberBlacklist } from '../apis';
+import {
+	checkPhoneNumberBlacklist,
+	getMatchingStatsCluster,
+	getMatchingStatsTotal,
+	getTopUniversities,
+	searchUniversities,
+} from '../apis';
+import { FALLBACK_TOTAL_COUPLES } from '../constants/mock-region-stats';
+import { useLoginHookState } from '../hooks/use-login-hook-state';
 import useSignupProgress from '../hooks/use-signup-progress';
+import { getRegionsByRegionCode } from '../lib';
 import AppleLoginButton from './apple-login-button';
+import { ClusterCircleRow, CoupleCounter, HookCtaCard, ResultBadge } from './login-hook';
 import { RollingHookMessage } from './rolling-hook-message';
 import { SignupFastBadge } from './signup-fast-badge';
 import { SocialLoginIcons } from './social-login-icons';
@@ -51,16 +63,172 @@ export default function LoginForm() {
 
 /** 상단 콘텐츠 (ScrollView 안에 렌더링) — KR/JP 공통 구조 */
 export function LoginFormContent() {
-	const router = useRouter();
 	const country = isJapanese() ? 'jp' : 'kr';
+
+	if (country === 'jp') {
+		return (
+			<View style={loginFormStyles.container}>
+				<View style={loginFormStyles.universityLogos}>
+					<UniversityLogos country="jp" />
+				</View>
+			</View>
+		);
+	}
+
+	return <KrLoginFormContent />;
+}
+
+function KrLoginFormContent() {
+	const { phase, selectedUniv, sheetVisible, openSheet, closeSheet, selectUniversity, reset } =
+		useLoginHookState();
+	const hasTrackedCtaView = useRef(false);
+	const hasTrackedResult = useRef(false);
+	const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	// 전체 매칭 통계 (idle 상태)
+	const { data: totalStats } = useQuery({
+		queryKey: ['matching', 'stats', 'total', 'kr'],
+		queryFn: () => getMatchingStatsTotal('kr'),
+		staleTime: 60 * 60 * 1000,
+	});
+
+	// 클러스터 매칭 통계 (대학 선택 후)
+	const { data: clusterStats } = useQuery({
+		queryKey: ['matching', 'stats', 'cluster', selectedUniv?.region],
+		queryFn: () => getMatchingStatsCluster(selectedUniv?.region ?? ''),
+		enabled: phase === 'result' && !!selectedUniv?.region,
+		staleTime: 24 * 60 * 60 * 1000,
+	});
+
+	// CTA 노출 트래킹 (idle 상태에서 1회)
+	useEffect(() => {
+		if (phase === 'idle' && !hasTrackedCtaView.current) {
+			hasTrackedCtaView.current = true;
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LOGIN_HOOK_CTA_VIEWED, {
+				total_couples: totalStats?.totalCouples ?? FALLBACK_TOTAL_COUPLES,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+		}
+	}, [phase, totalStats]);
+
+	// 결과 화면 트래킹 (result 전환 + clusterStats 로드 완료 시)
+	useEffect(() => {
+		if (phase === 'result' && clusterStats && !hasTrackedResult.current) {
+			hasTrackedResult.current = true;
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LOGIN_HOOK_RESULT_VIEWED, {
+				university_id: selectedUniv?.id,
+				university_name: selectedUniv?.name,
+				region: selectedUniv?.region,
+				cluster_name: clusterStats.clusterName,
+				cluster_match_count: clusterStats.matchCount,
+				cluster_weekly_new: clusterStats.weeklyNew,
+				cluster_universities_count: clusterStats.universities?.length ?? 0,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+		}
+		if (phase === 'idle') {
+			hasTrackedResult.current = false;
+		}
+	}, [phase, clusterStats, selectedUniv]);
+
+	// 대학 검색 (시트용)
+	const [searchText, setSearchText] = useState('');
+	const { data: universities, isLoading } = useQuery({
+		queryKey: ['universities', 'login-hook', searchText, 'kr'],
+		queryFn: () => (searchText ? searchUniversities(searchText, 'kr') : getTopUniversities('kr')),
+		enabled: sheetVisible,
+	});
+
+	const handleSearchChange = useCallback(
+		(text: string) => {
+			setSearchText(text);
+			if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+			if (text.length >= 2) {
+				searchDebounceRef.current = setTimeout(() => {
+					mixpanelAdapter.track(MIXPANEL_EVENTS.LOGIN_HOOK_UNIVERSITY_SEARCHED, {
+						search_query: text,
+						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+					});
+				}, 1000);
+			}
+		},
+		[],
+	);
+
+	const totalCouples = totalStats?.totalCouples ?? FALLBACK_TOTAL_COUPLES;
+	const clusterUniversities = (clusterStats?.universities ?? []).map((u) => ({
+		id: u.id,
+		name: u.name,
+		code: u.code,
+		matchCount: u.matchCount,
+	}));
+
+	const options = (universities ?? []).map((u) => ({
+		label: u.name,
+		value: u.id,
+		subtitle: getRegionsByRegionCode(u.region),
+	}));
+
 	return (
 		<View style={loginFormStyles.container}>
 			<View style={loginFormStyles.universityLogos}>
-				<UniversityLogos country={country} />
+				{phase === 'idle' ? (
+					<UniversityLogos country="kr" />
+				) : (
+					<ClusterCircleRow
+						universities={clusterUniversities}
+						myUnivCode={selectedUniv?.code ?? ''}
+					/>
+				)}
 			</View>
-			<View style={loginFormStyles.slideToAboutWrapper}>
-				<SlideToAbout onAction={() => router.push('/onboarding?source=login')} />
+
+			<CoupleCounter
+				count={phase === 'idle' ? totalCouples : (clusterStats?.matchCount ?? 0)}
+				label={
+					phase === 'idle'
+						? '지금까지 매칭된 커플 수'
+						: `${clusterStats?.clusterName ?? ''} 지역 매칭된 커플 수`
+				}
+			/>
+
+			<View style={loginFormStyles.hookCtaWrapper}>
+				{phase === 'idle' ? (
+					<HookCtaCard onPress={openSheet} />
+				) : selectedUniv ? (
+					<ResultBadge
+						univ={selectedUniv}
+						regionStats={{
+							region: clusterStats?.clusterName ?? '',
+							matchCount: clusterStats?.matchCount ?? 0,
+							weeklyNew: clusterStats?.weeklyNew ?? 0,
+							clusterUniversities,
+						}}
+						onReset={reset}
+					/>
+				) : null}
 			</View>
+
+			<BottomSheetPicker
+				visible={sheetVisible}
+				onClose={closeSheet}
+				title="내 대학 찾기"
+				searchable
+				searchPlaceholder="대학교 이름을 검색해주세요"
+				options={options}
+				onSearchChange={handleSearchChange}
+				loading={isLoading}
+				onSelect={(id) => {
+					const raw = (universities ?? []).find((u) => u.id === id);
+					if (raw) {
+						selectUniversity({
+							id: raw.id,
+							name: raw.name,
+							code: raw.code,
+							region: raw.region,
+						});
+					}
+				}}
+			/>
 		</View>
 	);
 }
@@ -197,6 +365,10 @@ const loginFormStyles = StyleSheet.create({
 	slideToAboutWrapper: {
 		width: 330,
 		marginBottom: 12,
+	},
+	hookCtaWrapper: {
+		paddingHorizontal: 24,
+		marginBottom: 16,
 	},
 	buttonsContainer: {
 		width: '100%',
@@ -351,9 +523,8 @@ function KakaoLoginComponent() {
 			let result!: KakaoLogin.KakaoLoginToken;
 			try {
 				// KakaoTalk 앱이 설치된 경우 앱으로 로그인, 없으면 웹(카카오계정)으로 폴백
-				const isTalkAvailable = Platform.OS === 'ios'
-					? await KakaoLogin.isKakaoTalkLoginAvailable()
-					: true;
+				const isTalkAvailable =
+					Platform.OS === 'ios' ? await KakaoLogin.isKakaoTalkLoginAvailable() : true;
 				isWebOAuthRef.current = !isTalkAvailable;
 				result = await KakaoLogin.login({ useKakaoAccountLogin: !isTalkAvailable });
 			} catch (sdkError: unknown) {

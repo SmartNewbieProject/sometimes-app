@@ -34,9 +34,8 @@ export const usePreferenceSelfQuery = () => {
   return useQuery({
     queryKey: ["preference-self"],
     queryFn: apis.getPreferencesSelf,
-    staleTime: 0,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     enabled: isAuthorized,
   });
 };

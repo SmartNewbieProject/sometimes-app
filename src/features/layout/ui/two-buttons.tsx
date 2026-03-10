@@ -2,7 +2,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button } from '@shared/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
-import { Platform, type StyleProp, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { type StyleProp, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
@@ -34,7 +34,7 @@ export const TwoButtons = ({
 				style={StyleSheet.absoluteFill}
 				pointerEvents="none"
 			/>
-			<View style={[styles.container, { paddingBottom: Platform.OS === 'android' ? 16 : insets.bottom + 16 }, style]}>
+			<View style={[styles.container, { paddingBottom: insets.bottom + 16 }, style]}>
 				{!hidePrevious && (
 					<Button
 						variant="secondary"

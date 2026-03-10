@@ -17,6 +17,7 @@ interface PreferenceSliderProps {
   isLoading?: boolean;
   loadingTitle?: string;
   showMiddle?: boolean;
+  showAllLabels?: boolean;
   lastLabelLeft?: number;
   firstLabelLeft?: number;
   middleLabelLeft?: number;
@@ -34,6 +35,7 @@ export function PreferenceSlider({
   isLoading = false,
   loadingTitle,
   showMiddle = true,
+  showAllLabels = false,
   lastLabelLeft,
   firstLabelLeft,
   middleLabelLeft,
@@ -78,6 +80,7 @@ export function PreferenceSlider({
             max={(preferences?.options.length ?? 1) - 1}
             step={1}
             showMiddle={showMiddle}
+            showAllLabels={showAllLabels}
             defaultValue={currentIndex}
             value={currentIndex}
             onChange={handleChange}

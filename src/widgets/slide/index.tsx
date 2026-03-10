@@ -24,6 +24,7 @@ interface SlideProps {
 	indicatorPosition?: 'top' | 'bottom';
 	onSlideChange?: (index: number) => void;
 	animationDuration?: number;
+	onGestureStateChange?: (isDragging: boolean) => void;
 }
 
 function Slider({
@@ -34,6 +35,7 @@ function Slider({
 	indicatorPosition = 'bottom',
 	onSlideChange,
 	animationDuration = 500,
+	onGestureStateChange,
 	indicatorStyle,
 	contentContainerStyle,
 	activeIndicatorStyle,
@@ -143,6 +145,7 @@ function Slider({
 		onPanResponderTerminationRequest: () => false,
 		onPanResponderGrant: () => {
 			isDraggingRef.current = true;
+			onGestureStateChange?.(true);
 			// 진행 중인 autoPlay 애니메이션 즉시 중단
 			bannerAnim.stopAnimation();
 			pendingRef.current = true;
@@ -154,6 +157,7 @@ function Slider({
 		},
 		onPanResponderRelease: (_e, gestureState) => {
 			isDraggingRef.current = false;
+			onGestureStateChange?.(false);
 			if (containerWidth === 0) return;
 			const dx = gestureState.dx;
 			const vx = gestureState.vx;
@@ -173,6 +177,7 @@ function Slider({
 		},
 		onPanResponderTerminate: () => {
 			isDraggingRef.current = false;
+			onGestureStateChange?.(false);
 			snapBack();
 		},
 	});

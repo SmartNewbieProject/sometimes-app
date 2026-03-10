@@ -89,12 +89,8 @@ export const ToggleTab = ({
       width.value = withTiming(105, { duration: 300 });
     }
 
-    timeoutRef.current = setTimeout(() => {
-      if (isMounted) {
-        onTabClick();
-      }
-    }, 400);
-  }, [activeTab, onTabClick, isMounted, left, width]);
+    onTabClick();
+  }, [activeTab, onTabClick, left, width]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={handleTabChange}>

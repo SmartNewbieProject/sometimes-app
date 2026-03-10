@@ -7,11 +7,11 @@ import { Image, StyleSheet, View } from 'react-native';
 export const CompletedCard = () => {
 	const { t } = useTranslation();
 
-	return (
-		<View style={styles.container}>
-			<Text size="32" style={styles.emoji}>
-				🎉
-			</Text>
+		return (
+			<View style={styles.container}>
+				<Text style={styles.emoji}>
+					🎉
+				</Text>
 			<View style={styles.textContainer}>
 				<Text size="md" weight="bold" textColor="purple" style={styles.title}>
 					{t('features.moment.my_moment.challenge_card.completed_title')}
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
 		gap: 16,
 	},
 	emoji: {
+		fontSize: 32,
 		lineHeight: 40,
 	},
 	textContainer: {

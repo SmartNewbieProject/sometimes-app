@@ -93,12 +93,42 @@ export const useAppInstallPrompt = (): UseAppInstallPromptReturn => {
 		[showModal, hideModal, trackPromptShown, trackPromptInstallClicked, trackPromptDismissed],
 	);
 
+	const isPromptInCooldown = useCallback(async (storageKey: string) => {
+		try {
+			const lastShownStr = await storage.getItem(storageKey);
+			if (!lastShownStr) {
+				return false;
+			}
+
+			const lastShown = Number.parseInt(lastShownStr, 10);
+			return Number.isFinite(lastShown) && Date.now() - lastShown < PROMPT_COOLDOWN_MS;
+		} catch {
+			return true;
+		}
+	}, []);
+
+	const markPromptShownAt = useCallback(async (storageKey: string) => {
+		try {
+			await storage.setItem(storageKey, String(Date.now()));
+		} catch {
+			// ignore storage errors
+		}
+	}, []);
+
 	const incrementNavClickCount = useCallback(async (): Promise<boolean> => {
 		if (!isWeb) return false;
 
 		try {
+			if (await isPromptInCooldown(STORAGE_KEYS.NAV_LAST_SHOWN)) {
+				return false;
+			}
+
 			const alreadyShown = await storage.getItem(STORAGE_KEYS.NAV_PROMPT_SHOWN);
-			if (alreadyShown === 'true') return false;
+			if (alreadyShown === 'true') {
+				await markPromptShownAt(STORAGE_KEYS.NAV_LAST_SHOWN);
+				await storage.removeItem(STORAGE_KEYS.NAV_PROMPT_SHOWN);
+				return false;
+			}
 
 			const currentCountStr = await storage.getItem(STORAGE_KEYS.NAV_CLICK_COUNT);
 			const currentCount = currentCountStr ? Number.parseInt(currentCountStr, 10) : 0;
@@ -114,36 +144,40 @@ export const useAppInstallPrompt = (): UseAppInstallPromptReturn => {
 		} catch {
 			return false;
 		}
-	}, []);
+	}, [isPromptInCooldown, markPromptShownAt]);
 
 	const showPromptForNavClick = useCallback(async () => {
 		if (!isWeb) return;
 
 		try {
-			const alreadyShown = await storage.getItem(STORAGE_KEYS.NAV_PROMPT_SHOWN);
-			if (alreadyShown === 'true') return;
+			if (await isPromptInCooldown(STORAGE_KEYS.NAV_LAST_SHOWN)) {
+				return;
+			}
 
-			await storage.setItem(STORAGE_KEYS.NAV_PROMPT_SHOWN, 'true');
+			const alreadyShown = await storage.getItem(STORAGE_KEYS.NAV_PROMPT_SHOWN);
+			if (alreadyShown === 'true') {
+				await storage.removeItem(STORAGE_KEYS.NAV_PROMPT_SHOWN);
+			}
+
+			await markPromptShownAt(STORAGE_KEYS.NAV_LAST_SHOWN);
+			await storage.removeItem(STORAGE_KEYS.NAV_CLICK_COUNT);
 			showPrompt('nav_click');
 		} catch {
 			// ignore
 		}
-	}, [showPrompt]);
+	}, [isPromptInCooldown, markPromptShownAt, showPrompt]);
 
 	const showPromptWithCooldown = useCallback(
 		async (variant: 'matching' | 'community', storageKey: string) => {
 			if (!isWeb) return;
-			try {
-				const lastShownStr = await storage.getItem(storageKey);
-				if (lastShownStr && Date.now() - Number.parseInt(lastShownStr, 10) < PROMPT_COOLDOWN_MS)
-					return;
-				await storage.setItem(storageKey, String(Date.now()));
-			} catch {
+			if (await isPromptInCooldown(storageKey)) {
 				return;
 			}
+
+			await markPromptShownAt(storageKey);
 			showPrompt(variant);
 		},
-		[showPrompt],
+		[isPromptInCooldown, markPromptShownAt, showPrompt],
 	);
 
 	const showPromptForMatching = useCallback(

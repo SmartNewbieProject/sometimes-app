@@ -34,11 +34,87 @@
 	"idcard": {
 		"page_title": "대학 인증",
 		"main_title": "재학 인증을 진행해 주세요",
-		"main_subtitle": "학생증 또는 재학증명서 이미지 1장만 업로드해주세요.",
+		"main_subtitle": "학생증 또는 재학증명서\n이미지 1장만 업로드해주세요.",
 		"file_format": "(JPG, JPEG, PNG, 10MB 이하)",
 		"submit_button": "제출하기",
 		"upload_success_title": "제출 완료",
 		"upload_success_message": "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.",
-		"upload_error": "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-	}
+		"upload_error": "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+		"upload_photo": "사진 인증하기",
+		"tap_to_change": "탭하여 사진 변경",
+		"photo_uploaded": "사진이 등록되었어요",
+		"change": "변경",
+		"select": "선택"
+	},
+	"pending": {
+		"title": "심사 중이에요",
+		"subtitle": "24시간 이내에 결과를 알려드릴게요"
+	},
+	"cta": {
+		"title": "대학 인증하고 신뢰 배지 받기",
+		"subtitle": "인증된 프로필은 좋아요를 2.3배 더 받아요",
+		"progress_label": "프로필 완성도",
+		"social_proof": "이번 달 {{count}}명이 인증했어요"
+	},
+	"landing": {
+		"header_title": "대학 인증",
+		"hero_title": "인증된 프로필,\n더 많은 관심을 받아요",
+		"hero_subtitle": "대학 인증을 완료하면 상대에게\n신뢰 배지가 표시됩니다",
+		"benefit_likes": "좋아요 수신율",
+		"benefit_likes_value": "2.3x",
+		"benefit_trust": "매칭 신뢰도",
+		"benefit_trust_value": "89%",
+		"benefit_gems": "즉시 지급",
+		"badge_preview_label": "인증 후 내 프로필에 표시됩니다",
+		"verified_badge": "인증됨",
+		"social_proof": "이번 달 {{count}}명이 인증 완료",
+		"cta_button": "지금 인증 시작하기"
+	},
+	"method": {
+		"header_title": "인증 방법 선택",
+		"heading": "어떤 방법으로 인증할까요?",
+		"heading_sub": "편한 방법을 선택해 주세요",
+		"idcard_title": "학생증 · 재학증명서",
+		"idcard_desc": "학생증이나 재학증명서 사진을 제출하면\n24시간 이내에 검토 완료",
+		"idcard_chip_photo": "사진 1장이면 끝",
+		"idcard_chip_time": "24시간 이내",
+		"recommended": "추천",
+		"email_title": "학교 이메일 인증",
+		"email_desc": "학교 메일(@university.ac.kr)로\n인증번호를 받아 즉시 인증",
+		"email_chip_need": "이메일 필요",
+		"email_chip_time": "즉시 완료",
+		"compare_title": "방법별 비교",
+		"compare_time": "소요 시간",
+		"compare_time_idcard": "~24시간",
+		"compare_time_email": "즉시",
+		"compare_need": "필요한 것",
+		"compare_need_idcard": "사진 1장",
+		"compare_need_email": "학교 메일",
+		"compare_no_email": "학교 메일 없어도",
+		"compare_possible": "가능",
+		"compare_impossible": "불가",
+		"dm_help": "두 방법 모두 어려우신가요?",
+		"dm_link": "DM으로 문의하기"
+	},
+	"steps": {
+		"step1": "학생증 촬영",
+		"step2": "검토 중",
+		"step3": "인증 완료"
+	},
+	"photo_guide": {
+		"title": "촬영 가이드",
+		"ok": "이름 · 학교가\n선명하게 보이는 사진",
+		"ng_blur": "흐릿하거나\n잘린 사진",
+		"ng_private": "주민번호는\n가려주세요"
+	},
+	"security": {
+		"title": "개인정보 보호 약속",
+		"desc": "학생증은 인증 목적으로만 사용되며,\n인증 완료 후 안전하게 삭제됩니다."
+	},
+	"reward_banner": {
+		"title": "인증 완료 시 구슬 5개 즉시 지급!",
+		"subtitle": "보통 24시간 이내 검토 완료"
+	},
+	"process_info": "제출 후 24시간 이내 검토가 완료되며,\n결과는 푸시 알림으로 안내드립니다.",
+	"badge_preview_label": "내 프로필에 이렇게 표시돼요"
 }

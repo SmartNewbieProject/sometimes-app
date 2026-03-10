@@ -72,7 +72,7 @@ const NavIcons: Record<
 type NavigationItem = {
 	name: string;
 	label: string;
-	path: Href;
+	path: string;
 	icon: (typeof NavIcons)[NavItem];
 };
 
@@ -126,7 +126,7 @@ export function BottomNavigation() {
 	const canAccessMoment = momentEnabled?.enabled ?? false;
 
 	const isActive = useCallback(
-		(path: Href) => {
+		(path: string) => {
 			if (pathname.includes('/chat/somemate')) {
 				return path === '/moment';
 			}
@@ -136,15 +136,15 @@ export function BottomNavigation() {
 	);
 
 	const handleNavClick = useCallback(
-		(path: Href) => {
+		(path: string) => {
 			if (isActive(path)) return;
 
-			if (typeof path === 'string' && path.startsWith('/community')) {
+			if (path.startsWith('/community')) {
 				prefetchCardNews(queryClient);
 			}
 
 			// 탭 전환 즉시 실행 — replace로 스택 누적 방지
-			router.replace(path);
+			router.replace(path as Href);
 
 			incrementNavClickCount().then((shouldShowPrompt) => {
 				if (shouldShowPrompt) {
@@ -154,7 +154,7 @@ export function BottomNavigation() {
 		},
 		[incrementNavClickCount, isActive, queryClient, showPromptForNavClick],
 	);
-	return (
+		return (
 		<View style={[styles.container, { paddingBottom: bottomPadding }]}>
 			<View style={styles.navContainer}>
 				{navigationItems
@@ -162,6 +162,7 @@ export function BottomNavigation() {
 					.map((item) => (
 						<TouchableOpacity
 							key={item.name}
+							testID={`tab-${item.name === 'my' ? 'mypage' : item.name}`}
 							style={styles.navItem}
 							onPress={() => handleNavClick(item.path)}
 						>
@@ -197,11 +198,6 @@ const styles = StyleSheet.create({
 		borderTopColor: semanticColors.border.card,
 		borderTopWidth: 1,
 		width: '100%',
-		...Platform.select({
-			web: {
-				paddingBottom: 'env(safe-area-inset-bottom)',
-			},
-		}),
 	},
 	navContainer: {
 		flexDirection: 'row',

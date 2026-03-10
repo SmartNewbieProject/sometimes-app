@@ -40,6 +40,7 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 	const barWidth = useRef(Animated.multiply(progress, trackWidthAnim)).current;
 
 	const messageRef = useRef<MihoMessage | null>(null);
+	const hasAnimated = useRef(false);
 	const message = useMemo(() => {
 		if (!visible) {
 			messageRef.current = null;
@@ -79,7 +80,8 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 	}, [onClose, translateY, chipOpacity]);
 
 	useEffect(() => {
-		if (visible && message) {
+		if (visible && message && !hasAnimated.current) {
+			hasAnimated.current = true;
 			onMessageShown?.(message);
 
 			translateY.setValue(50);
@@ -109,6 +111,10 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 			}).start();
 
 			timerRef.current = setTimeout(dismiss, AUTO_DISMISS_MS);
+		}
+
+		if (!visible) {
+			hasAnimated.current = false;
 		}
 
 		return () => {

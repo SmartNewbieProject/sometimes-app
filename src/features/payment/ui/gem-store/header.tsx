@@ -3,7 +3,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text, Header as SharedHeader } from '@shared/ui';
 import { ImageResource } from "@ui/image-resource";
 import { ImageResources } from "@shared/libs";
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from "react-i18next";
 import colors from "@/src/shared/constants/colors";
 
@@ -13,9 +13,26 @@ type HeaderProps = {
 
 export const Header = ({ gemCount }: HeaderProps) => {
   const { t } = useTranslation();
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
+
+  const handleBack = () => {
+    const rawReturnTo = Array.isArray(returnTo) ? returnTo[0] : returnTo;
+    if (!rawReturnTo) {
+      router.back();
+      return;
+    }
+
+    try {
+      const decoded = decodeURIComponent(rawReturnTo);
+      router.replace((decoded.startsWith('/') ? decoded : '/home') as any);
+    } catch {
+      router.replace((rawReturnTo.startsWith('/') ? rawReturnTo : '/home') as any);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <SharedHeader.LeftButton visible={true} onPress={() => router.back()} />
+      <SharedHeader.LeftButton visible={true} onPress={handleBack} />
       <Text size="20" weight="bold" textColor="black">{t("features.payment.ui.gem_store.header_title")}</Text>
       <View style={styles.gemContainer}>
         <ImageResource resource={ImageResources.GEM} width={28} height={28} />
@@ -45,4 +62,3 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 });
-

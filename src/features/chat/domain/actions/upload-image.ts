@@ -16,6 +16,7 @@ interface UploadImageOptions {
 	chatRoomId: string;
 	senderId: string;
 	file: RNFileLike | { uri: string };
+	uri?: string;
 }
 
 interface UploadImageResult {
@@ -27,7 +28,7 @@ export const uploadImageAction = async (
 	socket: Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null,
 	options: UploadImageOptions,
 ): Promise<UploadImageResult> => {
-	const { to, chatRoomId, senderId, file } = options;
+	const { to, chatRoomId, senderId, file, uri } = options;
 	const tempId = generateTempId();
 	const now = dayUtils.create().format();
 
@@ -46,11 +47,14 @@ export const uploadImageAction = async (
 		uploadStatus: 'uploading',
 		optimistic: true,
 		mediaUrl:
-			typeof file === 'object' && 'uri' in file
+			uri ||
+			(typeof file === 'object' && 'uri' in file
 				? file.uri
 				: typeof file === 'string'
-					? `data:image/jpeg;base64,${file}`
-					: '',
+					? file.startsWith('data:')
+						? file
+						: `data:image/jpeg;base64,${file}`
+					: ''),
 	};
 
 	const promise = (async () => {
@@ -67,8 +71,15 @@ export const uploadImageAction = async (
 				base64 = base64Result || '';
 				mimeType = 'image/jpeg'; // 기본값
 			} else if (typeof file === 'string') {
-				base64 = file;
-				mimeType = 'image/jpeg';
+				if (file.startsWith('data:')) {
+					const [metadata, payload = ''] = file.split(',');
+					base64 = payload;
+					const matchedMimeType = metadata.match(/^data:(.*?);base64$/)?.[1];
+					mimeType = matchedMimeType || 'image/jpeg';
+				} else {
+					base64 = file;
+					mimeType = 'image/jpeg';
+				}
 			} else {
 				const result = await fileToBase64Payload(file as RNFileLike);
 				base64 = result.base64;

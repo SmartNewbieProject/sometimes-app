@@ -1,6 +1,7 @@
 import Interest from "@/src/features/interest";
 import type { Preferences } from "@/src/features/interest/api";
 import colors from "@/src/shared/constants/colors";
+import { usePreferenceTooltips } from "@/src/shared/hooks/use-preference-tooltips";
 import { PreferenceSlider } from "@/src/shared/ui";
 import React from "react";
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,8 @@ function InterestMilitary() {
       (item) => item.typeCode === PreferenceKeys.MILITARY_PREFERENCE
     ) ?? preferencesArray[0];
 
+  const tooltips = usePreferenceTooltips('apps.interest.military', preferences.options.length);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t("features.profile-edit.ui.interest.military.title")}</Text>
@@ -34,6 +37,8 @@ function InterestMilitary() {
         isLoading={optionsLoading}
         loadingTitle={t("features.profile-edit.ui.interest.military.loading")}
         middleLabelLeft={-15}
+        showTooltip={true}
+        tooltips={tooltips}
       />
     </View>
   );

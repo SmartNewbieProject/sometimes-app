@@ -55,11 +55,14 @@ class OptimisticDataManager {
 					uploadStatus: 'uploading',
 					optimistic: true,
 					mediaUrl:
-						typeof payload.file === 'object' && 'uri' in payload.file
+						payload.uri ||
+						(typeof payload.file === 'object' && 'uri' in payload.file
 							? payload.file.uri
 							: typeof payload.file === 'string'
-								? `data:image/jpeg;base64,${payload.file}`
-								: '',
+								? payload.file.startsWith('data:')
+									? payload.file
+									: `data:image/jpeg;base64,${payload.file}`
+								: ''),
 				};
 
 				chatEventBus.emit({

@@ -189,7 +189,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 			<Animated.View
 				style={[
 					styles.container,
-					{ width: width, paddingBottom: Platform.OS === 'ios' ? insets.bottom : 12 },
+					{ width: width, paddingBottom: Math.max(insets.bottom, 12) },
 				]}
 			>
 				<Pressable onPress={handlePhotoButton} style={styles.photoButton} disabled={isChatDisabled}>
@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		flex: 1,
 		minHeight: 47,
+		maxHeight: 120,
 		marginLeft: 12,
 		marginRight: 4,
 		position: 'relative',
@@ -260,7 +261,6 @@ const styles = StyleSheet.create({
 		borderRadius: 24,
 		backgroundColor: semanticColors.surface.surface,
 		paddingHorizontal: 8,
-		marginBottom: 20,
 	},
 	container: {
 		minHeight: 70,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 16,
 		backgroundColor: semanticColors.surface.background,
-		marginBottom: 20,
+		alignSelf: 'flex-end',
 	},
 	send: {
 		width: 32,
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 20,
 		backgroundColor: '#FFF9E6',
-		marginBottom: 20,
+		alignSelf: 'flex-end',
 	},
 	modalText: {
 		fontSize: 15,

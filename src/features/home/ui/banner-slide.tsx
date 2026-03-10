@@ -1,70 +1,65 @@
-import Slider from "@/src/widgets/slide";
-import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { StyleSheet } from "react-native";
-import Loading from "../../loading";
-import {
-  useBannersQuery,
-  useTotalMatchCountQuery,
-  useTotalUserCountQuery,
-} from "../queries";
-import FirstPurchaseEvent from "./first-purchase-event-banner";
-import TotalMatchCounter from "./total-match-counter";
-import InvitePromotionBanner from "./banner/invite-promotion-banner";
-import ServerBanner from "./banner/server-banner";
+import Slider from '@/src/widgets/slide';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet } from 'react-native';
+import Loading from '../../loading';
+import { useBannersQuery, useTotalMatchCountQuery, useTotalUserCountQuery } from '../queries';
+import InvitePromotionBanner from './banner/invite-promotion-banner';
+import ServerBanner from './banner/server-banner';
+import FirstPurchaseEvent from './first-purchase-event-banner';
+import TotalMatchCounter from './total-match-counter';
 
-function BannerSlide() {
-  const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
-    useTotalMatchCountQuery();
-  const { data: totalUserCount = 0 } = useTotalUserCountQuery();
-  const { data: serverBanners = [] } = useBannersQuery("home");
-  const { t } = useTranslation();
+interface BannerSlideProps {
+	onGestureStateChange?: (isDragging: boolean) => void;
+}
 
-  const sortedServerBanners = useMemo(
-    () => [...serverBanners].sort((a, b) => a.order - b.order),
-    [serverBanners]
-  );
+function BannerSlide({ onGestureStateChange }: BannerSlideProps) {
+	const {
+		data: { count: totalMatchCount } = { count: 0 },
+		isLoading,
+	} = useTotalMatchCountQuery();
+	const { data: totalUserCount = 0 } = useTotalUserCountQuery();
+	const { data: serverBanners = [] } = useBannersQuery('home');
+	const { t } = useTranslation();
 
-  const allBanners = useMemo(
-    () => [
-      ...sortedServerBanners.map((banner) => (
-        <ServerBanner key={banner.id} banner={banner} />
-      )),
-      <FirstPurchaseEvent key="purchase" />,
-      <InvitePromotionBanner key="invite" />,
-      <TotalMatchCounter
-        key="counter"
-        count={totalMatchCount + totalUserCount + 1000}
-      />,
-    ],
-    [sortedServerBanners, totalMatchCount, totalUserCount]
-  );
+	const sortedServerBanners = useMemo(
+		() => [...serverBanners].sort((a, b) => a.order - b.order),
+		[serverBanners],
+	);
 
-  return (
-    <Loading.Lottie
-      title={t("features.home.ui.banner_slide.loading_title")}
-      loading={isLoading}
-    >
-      <Slider
-        autoPlay
-        autoPlayInterval={5000}
-        style={styles.slider}
-        indicatorContainerStyle={styles.indicatorContainer}
-      >
-        {allBanners}
-      </Slider>
-    </Loading.Lottie>
-  );
+	const allBanners = useMemo(
+		() => [
+			...sortedServerBanners.map((banner) => <ServerBanner key={banner.id} banner={banner} />),
+			<FirstPurchaseEvent key="purchase" />,
+			<InvitePromotionBanner key="invite" />,
+			<TotalMatchCounter key="counter" count={totalMatchCount + totalUserCount + 1000} />,
+		],
+		[sortedServerBanners, totalMatchCount, totalUserCount],
+	);
+
+	return (
+		<Loading.Lottie title={t('features.home.ui.banner_slide.loading_title')} loading={isLoading}>
+			<Slider
+				autoPlay
+				autoPlayInterval={5000}
+				style={styles.slider}
+				indicatorContainerStyle={styles.indicatorContainer}
+				onGestureStateChange={onGestureStateChange}
+			>
+				{allBanners}
+			</Slider>
+		</Loading.Lottie>
+	);
 }
 
 const styles = StyleSheet.create({
-  slider: {
-    width: "100%",
-    minHeight: 92,
-  },
-  indicatorContainer: {
-    bottom: -20,
-  },
+	slider: {
+		width: '100%',
+		minHeight: 92,
+	},
+	indicatorContainer: {
+		bottom: -20,
+	},
 });
 
 export default BannerSlide;

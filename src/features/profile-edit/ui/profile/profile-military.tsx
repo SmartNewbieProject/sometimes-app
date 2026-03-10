@@ -1,5 +1,6 @@
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
+import { usePreferenceTooltips } from "@/src/shared/hooks/use-preference-tooltips";
 import { PreferenceSlider, FormSection } from "@/src/shared/ui";
 import React from "react";
 import { useTranslation } from 'react-i18next';
@@ -25,6 +26,8 @@ function ProfileMilitary() {
                 item.typeCode === "MILITARY_STATUS_FEMALE"
     ) ?? preferencesArray[0];
 
+  const tooltips = usePreferenceTooltips('apps.interest.military', preferences.options.length);
+
   return (
     <FormSection
       title={t("features.profile-edit.ui.profile.military.title")}
@@ -38,6 +41,8 @@ function ProfileMilitary() {
         isLoading={optionsLoading}
         loadingTitle={t("features.profile-edit.ui.profile.military.loading")}
         middleLabelLeft={-10}
+        showTooltip={true}
+        tooltips={tooltips}
       />
     </FormSection>
   );

@@ -128,6 +128,36 @@ export const getClusterByRegion = (regionCode: string): Promise<ClusterResponse>
 	return axiosClient.get(`/universities/clusters?regionCode=${encodeURIComponent(regionCode)}`);
 };
 
+// ── Matching Stats APIs ──
+
+export interface MatchingStatsTotal {
+	totalCouples: number;
+	updatedAt: string;
+}
+
+export const getMatchingStatsTotal = (country = 'kr'): Promise<MatchingStatsTotal> => {
+	return axiosClient.get(`/matching/stats/total?country=${country}`);
+};
+
+export interface MatchingStatsClusterUniversity {
+	id: string;
+	name: string;
+	code: string;
+	matchCount: number;
+}
+
+export interface MatchingStatsCluster {
+	clusterName: string;
+	regionCodes: string[];
+	matchCount: number;
+	weeklyNew: number;
+	universities: MatchingStatsClusterUniversity[];
+}
+
+export const getMatchingStatsCluster = (regionCode: string): Promise<MatchingStatsCluster> => {
+	return axiosClient.get(`/matching/stats/cluster?regionCode=${encodeURIComponent(regionCode)}`);
+};
+
 const createFileObject = (imageUri: string, fileName: string) =>
 	platform({
 		web: async () => {

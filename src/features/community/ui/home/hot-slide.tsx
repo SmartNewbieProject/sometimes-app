@@ -39,6 +39,7 @@ export default function HotSlide({ pageSize = 5 }: Props) {
 			</View>
 			<ScrollView
 				horizontal
+				directionalLockEnabled
 				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.scrollContent}
 			>

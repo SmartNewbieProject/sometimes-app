@@ -39,13 +39,13 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
 
-    color: semanticColors.text.disabled,
+    color: semanticColors.text.muted,
   },
   description: {
     fontSize: 14,
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
-    color: semanticColors.text.disabled,
+    color: semanticColors.text.muted,
   },
   descriptionContainer: {
     flexDirection: "row",
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     paddingTop: 0.5,
     width: 3.5,
     height: 3.5,
-    backgroundColor: semanticColors.text.disabled,
+    backgroundColor: semanticColors.text.muted,
     borderRadius: "50%",
   },
 });

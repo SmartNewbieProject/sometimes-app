@@ -27,7 +27,11 @@ function formatRelativeTime(dateString: string): string {
 	return `${Math.floor(days / 7)}주 전`;
 }
 
-export function LatestPostsCarousel() {
+interface LatestPostsCarouselProps {
+	onGestureStateChange?: (isDragging: boolean) => void;
+}
+
+export function LatestPostsCarousel({ onGestureStateChange }: LatestPostsCarouselProps) {
 	const { t } = useTranslation();
 	const { articles, isLoading, isError } = useHomeLatestArticles(10);
 
@@ -42,17 +46,13 @@ export function LatestPostsCarousel() {
 	return (
 		<View style={styles.section}>
 			<View style={styles.header}>
-				<Text style={styles.headerTitle}>
-					{t('features.home.ui.latest_posts_carousel.title')}
-				</Text>
+				<Text style={styles.headerTitle}>{t('features.home.ui.latest_posts_carousel.title')}</Text>
 				<TouchableOpacity
 					activeOpacity={0.7}
 					onPress={() => router.push('/community?category=general')}
 					style={styles.viewAllButton}
 				>
-					<Text style={styles.viewAll}>
-						{t('features.home.ui.latest_posts_carousel.view_all')}
-					</Text>
+					<Text style={styles.viewAll}>{t('features.home.ui.latest_posts_carousel.view_all')}</Text>
 				</TouchableOpacity>
 			</View>
 
@@ -61,12 +61,16 @@ export function LatestPostsCarousel() {
 					data={articles}
 					keyExtractor={(item) => item.id}
 					horizontal
+					directionalLockEnabled
 					showsHorizontalScrollIndicator={false}
 					snapToInterval={SNAP_INTERVAL}
 					snapToAlignment="start"
 					decelerationRate="fast"
 					contentContainerStyle={styles.listContent}
 					renderItem={({ item }) => <LatestPostCard item={item} />}
+					onScrollBeginDrag={() => onGestureStateChange?.(true)}
+					onScrollEndDrag={() => onGestureStateChange?.(false)}
+					onMomentumScrollEnd={() => onGestureStateChange?.(false)}
 				/>
 			</View>
 		</View>

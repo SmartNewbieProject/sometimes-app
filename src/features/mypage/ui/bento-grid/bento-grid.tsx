@@ -10,8 +10,9 @@ import {
 	getProfileId,
 	getUniversityVerificationStatus,
 } from '@/src/features/university-verification/apis';
+import { PendingReviewCard, TrustCtaCard } from '@/src/features/university-verification/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { ImageResources } from '@/src/shared/libs';
+import { ImageResources, storage } from '@/src/shared/libs';
 import { isJapanese } from '@/src/shared/libs/local';
 import { UniversityName, getUnivLogo } from '@/src/shared/libs/univ';
 import { Text } from '@/src/shared/ui';
@@ -133,6 +134,7 @@ export const BentoGrid = () => {
 
 	// University verification
 	const [isUniversityVerified, setIsUniversityVerified] = useState(false);
+	const [isPendingVerification, setIsPendingVerification] = useState(false);
 	const [isLoadingVerification, setIsLoadingVerification] = useState(true);
 
 	useEffect(() => {
@@ -143,12 +145,20 @@ export const BentoGrid = () => {
 				if (verificationStatus.verifiedAt) {
 					const verifiedYear = new Date(verificationStatus.verifiedAt).getFullYear();
 					const currentYear = new Date().getFullYear();
-					setIsUniversityVerified(verifiedYear === currentYear);
+					const verified = verifiedYear === currentYear;
+					setIsUniversityVerified(verified);
+					if (verified) {
+						await storage.removeItem('university-verification-pending');
+					}
 				} else {
 					setIsUniversityVerified(false);
+					const pending = await storage.getItem('university-verification-pending');
+					setIsPendingVerification(pending === 'true');
 				}
 			} catch (_error) {
 				setIsUniversityVerified(false);
+				const pending = await storage.getItem('university-verification-pending');
+				setIsPendingVerification(pending === 'true');
 			} finally {
 				setIsLoadingVerification(false);
 			}
@@ -218,7 +228,7 @@ export const BentoGrid = () => {
 								return isUniversityVerified && logoUrl ? (
 									<Image source={{ uri: logoUrl }} style={styles.univLogo} />
 								) : (
-									<Pressable onPress={() => router.push('/university-verification')}>
+									<Pressable onPress={() => router.push('/university-verification/landing')}>
 										<IconWrapper style={{ marginLeft: 6 }} size={16}>
 											<NotSecuredIcon />
 										</IconWrapper>
@@ -235,6 +245,11 @@ export const BentoGrid = () => {
 
 			{/* JP Identity Verification */}
 			{isJapanese() && <IdentityStatusCard />}
+
+			{/* Trust CTA / Pending Review - 미인증 사용자 전용 */}
+			{!isUniversityVerified &&
+				!isLoadingVerification &&
+				(isPendingVerification ? <PendingReviewCard /> : <TrustCtaCard />)}
 
 			{/* Row 1: 내 성향 + 이상형 설정 (2열) */}
 			<View style={styles.row}>

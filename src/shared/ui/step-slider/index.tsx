@@ -35,6 +35,7 @@ interface StepSliderProps {
   options?: Option[];
   value?: number;
   showMiddle?: boolean;
+  showAllLabels?: boolean;
   lastLabelLeft?: number;
   firstLabelLeft?: number;
   middleLabelLeft?: number;
@@ -55,13 +56,12 @@ export function StepSlider({
   value: controlledValue,
   onChange,
   showMiddle = true,
+  showAllLabels = false,
   style,
   touchAreaHeight = 48,
 }: StepSliderProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const [draggingValue, setDraggingValue] = useState<number | null>(
-    defaultValue
-  );
+  const [draggingValue, setDraggingValue] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   // [5] sliderX를 비동기 measure 대신 ref로 관리, handleDragStart 시점에 동기 계산
@@ -219,6 +219,7 @@ export function StepSlider({
             const left = (index / totalSteps) * sliderWidth;
             const middleIndex = Math.floor(options.length / 2);
             const shouldShowLabel =
+              showAllLabels ||
               index === 0 ||
               index === totalSteps ||
               (showMiddle && options.length % 2 === 1 && index === middleIndex);

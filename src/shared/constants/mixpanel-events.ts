@@ -302,6 +302,15 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	IDEAL_TYPE_RETAKE_BLOCKED: 'IdealType_Retake_Blocked',
 	IDEAL_TYPE_RESULT_CTA_CLICKED: 'IdealType_Result_CTA_Clicked',
 
+	// ===== 로그인 훅 (대학 커플 수 조회) 이벤트 =====
+	LOGIN_HOOK_CTA_VIEWED: 'LoginHook_CTA_Viewed',
+	LOGIN_HOOK_CTA_TAPPED: 'LoginHook_CTA_Tapped',
+	LOGIN_HOOK_SHEET_OPENED: 'LoginHook_Sheet_Opened',
+	LOGIN_HOOK_UNIVERSITY_SEARCHED: 'LoginHook_University_Searched',
+	LOGIN_HOOK_UNIVERSITY_SELECTED: 'LoginHook_University_Selected',
+	LOGIN_HOOK_RESULT_VIEWED: 'LoginHook_Result_Viewed',
+	LOGIN_HOOK_RESET: 'LoginHook_Reset',
+
 	// ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
 
 	// 매칭 파이프라인 (백엔드 NestJS)
@@ -814,6 +823,23 @@ export interface IdealTypeRetakeProperties extends IdealTypeTestBaseProperties {
 	remaining_days?: number;
 }
 
+// ===== 로그인 훅 이벤트 속성 =====
+export interface LoginHookEventProperties extends BaseEventProperties {
+	phase?: 'idle' | 'result';
+	university_id?: string;
+	university_name?: string;
+	university_code?: string;
+	region?: string;
+	search_query?: string;
+	search_results_count?: number;
+	total_couples?: number;
+	cluster_match_count?: number;
+	cluster_weekly_new?: number;
+	cluster_name?: string;
+	cluster_universities_count?: number;
+	time_to_select_seconds?: number;
+}
+
 // ===== 서버 전용 이벤트 속성 (백엔드 NestJS) =====
 
 // 매칭 실행 완료 이벤트 속성
@@ -1229,6 +1255,15 @@ export interface KpiEventTypePropertiesMap {
 	IdealType_Retake_Clicked: IdealTypeResultProperties;
 	IdealType_Retake_Blocked: IdealTypeRetakeProperties;
 	IdealType_Result_CTA_Clicked: IdealTypeResultProperties;
+
+	// 로그인 훅 관련
+	LoginHook_CTA_Viewed: LoginHookEventProperties;
+	LoginHook_CTA_Tapped: LoginHookEventProperties;
+	LoginHook_Sheet_Opened: LoginHookEventProperties;
+	LoginHook_University_Searched: LoginHookEventProperties;
+	LoginHook_University_Selected: LoginHookEventProperties;
+	LoginHook_Result_Viewed: LoginHookEventProperties;
+	LoginHook_Reset: LoginHookEventProperties;
 
 	// 서버 전용 이벤트 (백엔드 NestJS)
 	Matching_Execution_Completed: MatchingExecutionCompletedEventProperties;

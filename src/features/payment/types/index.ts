@@ -42,6 +42,7 @@ export interface CustomData {
   productCount: number;
   gemCount?: number;
   returnPath?: string;
+  returnTo?: string;
 }
 
 export type Currency =

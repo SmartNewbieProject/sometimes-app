@@ -34,11 +34,87 @@
 	"idcard": {
 		"page_title": "大学認証",
 		"main_title": "在学認証を行ってください",
-		"main_subtitle": "学生証または在学証明書の画像を1枚だけアップロードしてください。",
+		"main_subtitle": "学生証または在学証明書の\n画像を1枚だけアップロードしてください。",
 		"file_format": "(JPG、JPEG、PNG、10MB以下)",
 		"submit_button": "提出する",
 		"upload_success_title": "提出完了",
 		"upload_success_message": "ファイルが正常に提出されました。\n管理者の確認後に承認されます。",
-		"upload_error": "アップロード中にエラーが発生しました。しばらくしてから再度お試しください。"
-	}
+		"upload_error": "アップロード中にエラーが発生しました。しばらくしてから再度お試しください。",
+		"upload_photo": "写真で認証する",
+		"tap_to_change": "タップして写真を変更",
+		"photo_uploaded": "写真が登録されました",
+		"change": "変更",
+		"select": "選択"
+	},
+	"pending": {
+		"title": "審査中です",
+		"subtitle": "24時間以内に結果をお知らせします"
+	},
+	"cta": {
+		"title": "大学認証で信頼バッジをゲット",
+		"subtitle": "認証済みプロフィールはいいね2.3倍",
+		"progress_label": "プロフィール完成度",
+		"social_proof": "今月{{count}}人が認証しました"
+	},
+	"landing": {
+		"header_title": "大学認証",
+		"hero_title": "認証済みプロフィールで\nもっと注目される",
+		"hero_subtitle": "大学認証を完了すると\n信頼バッジが表示されます",
+		"benefit_likes": "いいね受信率",
+		"benefit_likes_value": "2.3x",
+		"benefit_trust": "マッチング信頼度",
+		"benefit_trust_value": "89%",
+		"benefit_gems": "即時付与",
+		"badge_preview_label": "認証後プロフィールに表示されます",
+		"verified_badge": "認証済み",
+		"social_proof": "今月{{count}}人が認証完了",
+		"cta_button": "今すぐ認証を始める"
+	},
+	"method": {
+		"header_title": "認証方法を選択",
+		"heading": "どの方法で認証しますか？",
+		"heading_sub": "お好きな方法を選んでください",
+		"idcard_title": "学生証・在学証明書",
+		"idcard_desc": "学生証や在学証明書の写真を提出すると\n24時間以内に審査完了",
+		"idcard_chip_photo": "写真1枚でOK",
+		"idcard_chip_time": "24時間以内",
+		"recommended": "おすすめ",
+		"email_title": "学校メール認証",
+		"email_desc": "学校メール(@university.ac.jp)で\n認証コードを受け取り即時認証",
+		"email_chip_need": "メール必要",
+		"email_chip_time": "即時完了",
+		"compare_title": "方法別比較",
+		"compare_time": "所要時間",
+		"compare_time_idcard": "〜24時間",
+		"compare_time_email": "即時",
+		"compare_need": "必要なもの",
+		"compare_need_idcard": "写真1枚",
+		"compare_need_email": "学校メール",
+		"compare_no_email": "学校メールなしでも",
+		"compare_possible": "可能",
+		"compare_impossible": "不可",
+		"dm_help": "どちらも難しい場合は？",
+		"dm_link": "DMでお問い合わせ"
+	},
+	"steps": {
+		"step1": "学生証撮影",
+		"step2": "審査中",
+		"step3": "認証完了"
+	},
+	"photo_guide": {
+		"title": "撮影ガイド",
+		"ok": "名前・学校が\nはっきり見える写真",
+		"ng_blur": "ぼやけた\n切れた写真",
+		"ng_private": "個人番号は\n隠してください"
+	},
+	"security": {
+		"title": "個人情報保護のお約束",
+		"desc": "学生証は認証目的のみに使用され、\n認証完了後安全に削除されます。"
+	},
+	"reward_banner": {
+		"title": "認証完了で宝石5個を即時付与！",
+		"subtitle": "通常24時間以内に審査完了"
+	},
+	"process_info": "提出後24時間以内に審査が完了し、\n結果はプッシュ通知でお知らせします。",
+	"badge_preview_label": "プロフィールにこう表示されます"
 }

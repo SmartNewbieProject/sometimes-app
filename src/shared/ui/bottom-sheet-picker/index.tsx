@@ -145,10 +145,10 @@ function WebBottomSheetPicker({
 							pressed && styles.suggestionItemPressed,
 						]}
 						onPress={() => handleSelect(item.value)}
-					>
-						<Text style={[styles.suggestionName, isSelected && styles.suggestionNameSelected]}>
-							{item.label}
-						</Text>
+						>
+							<Text style={isSelected ? [styles.suggestionName, styles.suggestionNameSelected] : styles.suggestionName}>
+								{item.label}
+							</Text>
 						{item.subtitle ? <Text style={styles.suggestionUniv}>{item.subtitle}</Text> : null}
 					</Pressable>
 				);
@@ -517,10 +517,10 @@ function NativeBottomSheetPicker({
 							pressed && styles.suggestionItemPressed,
 						]}
 						onPress={() => handleSelect(item.value)}
-					>
-						<Text style={[styles.suggestionName, isSelected && styles.suggestionNameSelected]}>
-							{item.label}
-						</Text>
+						>
+							<Text style={isSelected ? [styles.suggestionName, styles.suggestionNameSelected] : styles.suggestionName}>
+								{item.label}
+							</Text>
 						{item.subtitle ? <Text style={styles.suggestionUniv}>{item.subtitle}</Text> : null}
 					</Pressable>
 				);
