@@ -41,6 +41,8 @@ export const NOTIFICATION_TYPES = [
 	'comment_like',
 	'chat_message',
 	'chat_room_created',
+	'profile_image_approved',
+	'profile_image_rejected',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -54,6 +56,7 @@ export interface NotificationData {
 	title?: string;
 	body?: string;
 	data?: unknown;
+	reason?: string;
 }
 
 /**
@@ -449,6 +452,10 @@ export function handleNotificationTap(data: NotificationData, router: Router): v
 				} else {
 					navigateWithDelay('/chat');
 				}
+				break;
+			case 'profile_image_approved':
+			case 'profile_image_rejected':
+				navigateWithDelay('/home');
 				break;
 			case 'general':
 				navigateWithDelay('/home');

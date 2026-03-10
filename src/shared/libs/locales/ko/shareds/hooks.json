@@ -91,6 +91,15 @@
 	"common": {
 		"confirm": "확인"
 	},
+	"photo_review_modal": {
+		"rejected_title": "사진이 반려되었어요",
+		"rejected_body": "사진 가이드라인에 맞지 않는 사진이 있어요.\n새로운 사진으로 다시 올려주세요.",
+		"rejection_reason": "반려 사유",
+		"reupload_button": "사진 다시 올리기",
+		"approved_title": "사진이 승인되었어요!",
+		"approved_body": "프로필 사진이 승인되어 매칭이 시작돼요.\n좋은 인연을 만나보세요!",
+		"confirm_button": "확인"
+	},
 	"server_maintenance": {
 		"temporary_title": "일시적인 오류가 발생했어요",
 		"temporary_body": "서버가 잠시 불안정해요.\n잠시 후 다시 시도해주세요.",

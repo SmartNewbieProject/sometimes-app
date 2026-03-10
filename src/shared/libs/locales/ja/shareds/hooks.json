@@ -91,6 +91,15 @@
 	"common": {
 		"confirm": "確認"
 	},
+	"photo_review_modal": {
+		"rejected_title": "写真が却下されました",
+		"rejected_body": "ガイドラインに合わない写真があります。\n新しい写真をアップロードしてください。",
+		"rejection_reason": "却下理由",
+		"reupload_button": "写真を再アップロード",
+		"approved_title": "写真が承認されました！",
+		"approved_body": "プロフィール写真が承認され、マッチングが始まります。\n素敵な出会いを見つけましょう！",
+		"confirm_button": "確認"
+	},
 	"server_maintenance": {
 		"temporary_title": "一時的なエラーが発生しました",
 		"temporary_body": "サーバーが一時的に不安定です。\nしばらくしてからもう一度お試しください。",

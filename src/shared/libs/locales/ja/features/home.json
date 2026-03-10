@@ -109,7 +109,8 @@
 			"reviewing_description": "通常、数時間以内に結果をお知らせします",
 			"reviewing_approved": "承認されたらマッチングが始まります！",
 			"rejected_title": "一部の写真が却下されました",
-			"rejected_description": "審査を通過できなかった写真を差し替えてください"
+			"rejected_description": "審査を通過できなかった写真を差し替えてください",
+			"reviewing_toast": "写真を審査中です。完了したらお知らせします！"
 		},
 		"instagram_verification_card": {
 			"title": "Instagramアカウント認証",

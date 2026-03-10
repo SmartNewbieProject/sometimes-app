@@ -39,7 +39,7 @@ function ChatRoomHeader() {
 			title: '구슬 환불',
 			children: (
 				<Text style={{ color: semanticColors.text.primary, fontSize: 15, lineHeight: 22 }}>
-					구슬 11개를 돌려받으시겠어요?{'\n'}환불 시 채팅방에서 자동으로 나가게 됩니다.
+					구슬 5개를 돌려받으시겠어요?{'\n'}환불 시 채팅방에서 자동으로 나가게 됩니다.
 				</Text>
 			),
 			primaryButton: {

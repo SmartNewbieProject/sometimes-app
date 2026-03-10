@@ -667,13 +667,14 @@ class SocketConnectionManager {
 	}
 
 	private createSocketConnection(socketUrl: string, token: string) {
-		// 네이티브는 websocket only로 연결해 ALB sticky cookie에 의존하는 polling handshake를 피한다.
+		// 네이티브: websocket 우선, polling fallback 허용
+		// websocket-only는 모바일 네트워크(LTE↔WiFi 전환, 셀 핸드오프)에서 재연결 실패율이 높음
 		const isNative = Platform.OS === 'ios' || Platform.OS === 'android';
-		const transports = isNative ? ['websocket'] : ['polling', 'websocket'];
+		const transports = isNative ? ['websocket', 'polling'] : ['polling', 'websocket'];
 
 		const options = {
 			transports,
-			upgrade: !isNative, // 웹만 polling → websocket 업그레이드 사용
+			upgrade: true, // polling으로 fallback 시 websocket으로 업그레이드 시도
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
 			rejectUnauthorized: true,
@@ -681,12 +682,12 @@ class SocketConnectionManager {
 
 			// 재연결 설정 (ALB timeout 3600초 대응)
 			reconnection: true,
-			reconnectionAttempts: 20, // 5 → 20 (더 많은 재시도)
-			reconnectionDelay: 1000, // 첫 재연결 1초 후
-			reconnectionDelayMax: 5000, // 최대 5초 간격
-			randomizationFactor: 0.5, // jitter 추가 (thundering herd 방지)
+			reconnectionAttempts: 20,
+			reconnectionDelay: 1000,
+			reconnectionDelayMax: 5000,
+			randomizationFactor: 0.5,
 
-			timeout: 25000, // 연결 타임아웃 25초 (모바일 네트워크 지연 대응)
+			timeout: 25000,
 			forceNew: !!this.socket,
 		};
 
@@ -840,14 +841,12 @@ class SocketConnectionManager {
 				url: this.currentUrl,
 				platform: Platform.OS,
 				description: errorWithContext.description,
-				context: errorWithContext.context,
 				...this.getSocketIoDebug(),
 			});
 			devLogWithTag('Socket', 'Connection failed:', error.message);
-			chatEventBus.emit({
-				type: 'SOCKET_DISCONNECTED',
-				payload: { reason: `connect_error: ${error.message}` },
-			});
+
+			// connect_error는 Socket.IO 내장 재연결이 자동 처리함
+			// SOCKET_DISCONNECTED를 emit하면 GlobalChatProvider와 이중 재연결이 발생하므로 로깅만 수행
 		});
 
 		this.socket?.on('error', (error: { message?: string }) => {

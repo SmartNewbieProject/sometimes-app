@@ -1,4 +1,13 @@
 {
+	"photo_review_modal": {
+		"rejected_title": "Photo Rejected",
+		"rejected_body": "Some photos don't meet our guidelines.\nPlease upload new photos.",
+		"rejection_reason": "Rejection Reason",
+		"reupload_button": "Re-upload Photos",
+		"approved_title": "Photo Approved!",
+		"approved_body": "Your profile photo has been approved and matching will begin.\nFind your perfect match!",
+		"confirm_button": "OK"
+	},
 	"server_maintenance": {
 		"temporary_title": "A temporary error occurred",
 		"temporary_body": "The server is temporarily unstable.\nPlease try again in a moment.",

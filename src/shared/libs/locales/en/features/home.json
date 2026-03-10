@@ -104,7 +104,8 @@
 			"description_1": "For matching, ",
 			"description_highlight": "at least 1 photo",
 			"description_2": " is required.",
-			"description_3": "Adding 3 photos increases your match probability!"
+			"description_3": "Adding 3 photos increases your match probability!",
+			"reviewing_toast": "Photo is under review. We'll notify you when it's done!"
 		},
 		"instagram_verification_card": {
 			"title": "Verify Instagram Account",

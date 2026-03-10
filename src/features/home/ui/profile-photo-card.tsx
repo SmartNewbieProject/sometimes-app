@@ -1,4 +1,5 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { AnimatedArrow, Text } from '@/src/shared/ui';
 import type { ProfileImage } from '@/src/types/user';
 import { Image } from 'expo-image';
@@ -86,8 +87,13 @@ interface ProfilePhotoCardProps {
 
 export default function ProfilePhotoCard({ status = 'none', images = [] }: ProfilePhotoCardProps) {
 	const { t } = useTranslation();
+	const { emitToast } = useToast();
 
 	const handlePress = () => {
+		if (status === 'reviewing') {
+			emitToast(t('features.home.ui.profile_photo_card.reviewing_toast'));
+			return;
+		}
 		router.navigate('/profile/photo-management?referrer=home');
 	};
 

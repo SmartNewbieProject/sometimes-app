@@ -110,7 +110,8 @@
 			"reviewing_description": "보통 몇 시간 내로 결과를 알려드려요",
 			"reviewing_approved": "승인되면 매칭이 시작돼요!",
 			"rejected_title": "일부 사진이 거절되었어요",
-			"rejected_description": "심사를 통과하지 못한 사진을 교체해주세요"
+			"rejected_description": "심사를 통과하지 못한 사진을 교체해주세요",
+			"reviewing_toast": "사진 심사 중이에요. 완료되면 알려드릴게요!"
 		},
 		"instagram_verification_card": {
 			"title": "인스타그램 아이디 인증하기",
