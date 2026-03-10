@@ -12,7 +12,6 @@ import { PalePurpleGradient } from '@/src/shared/ui';
 import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
 import { Header } from '@/src/shared/ui/header';
 import { Ionicons } from '@expo/vector-icons';
-import type { AxiosError } from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -110,23 +109,34 @@ export default function RegisterUniversityPage() {
 		deptInputRef.current?.blur();
 	};
 
+	const proceedToStep2 = (univ: { id: string; name?: string }) => {
+		const univName = univ.name ?? universityName.trim();
+		setRegisteredUnivId(univ.id);
+		setRegisteredUnivName(univName);
+		updateForm({ universityId: univ.id });
+		updateRegions([selectedRegion]);
+		updateUnivTitle(univName);
+		setCurrentStep(2);
+	};
+
 	const handleCreateUniversity = async () => {
 		try {
 			const result = await createUniversityMutation.mutateAsync({
 				name: universityName.trim(),
 				region: selectedRegion,
 			});
-			setRegisteredUnivId(result.id);
-			setRegisteredUnivName(result.name);
-			updateForm({ universityId: result.id });
-			updateRegions([selectedRegion]);
-			updateUnivTitle(result.name);
-			setCurrentStep(2);
-		} catch (error) {
-			const axiosError = error as AxiosError;
-			if (axiosError?.response?.status === 409) {
+			proceedToStep2(result);
+		} catch (error: any) {
+			const status = error?.status;
+			if (status === 409) {
 				emitToast(t('apps.auth.sign_up.register_university.error_duplicate_university'));
-			} else if (axiosError?.response?.status === 429) {
+				const existing = error?.data as { id?: string; name?: string } | undefined;
+				if (existing?.id) {
+					proceedToStep2({ id: existing.id, name: existing.name });
+				} else {
+					router.back();
+				}
+			} else if (status === 429) {
 				emitToast(t('apps.auth.sign_up.register_university.error_rate_limit'));
 			} else {
 				emitToast(t('apps.auth.sign_up.register_university.error_generic'));
@@ -142,12 +152,12 @@ export default function RegisterUniversityPage() {
 			});
 			updateForm({ departmentName: departmentName.trim() });
 			router.replace(`/auth/signup/university-cluster?universityId=${registeredUnivId}`);
-		} catch (error) {
-			const axiosError = error as AxiosError;
-			if (axiosError?.response?.status === 409) {
+		} catch (error: any) {
+			const status = error?.status;
+			if (status === 409) {
 				updateForm({ departmentName: departmentName.trim() });
 				router.replace(`/auth/signup/university-cluster?universityId=${registeredUnivId}`);
-			} else if (axiosError?.response?.status === 429) {
+			} else if (status === 429) {
 				emitToast(t('apps.auth.sign_up.register_university.error_rate_limit'));
 			} else {
 				emitToast(t('apps.auth.sign_up.register_university.error_generic'));

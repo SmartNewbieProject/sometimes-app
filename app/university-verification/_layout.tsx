@@ -36,6 +36,24 @@ export default function UniversityVerificationLayout() {
               },
             }}
           />
+          <Stack.Screen
+            name="landing"
+            options={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "transparent",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="method"
+            options={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "transparent",
+              },
+            }}
+          />
         </Stack>
       </View>
     </OverlayProvider>

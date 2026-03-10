@@ -47,6 +47,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	InteractionManager,
 	type NativeScrollEvent,
 	type NativeSyntheticEvent,
 	Platform,
@@ -105,7 +106,7 @@ const HomeScreen = () => {
 
 	const hasCharacteristics = preferencesSelf && preferencesSelf.length > 0;
 	const hasPreferences = isPreferenceFill;
-const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApproved;
+	const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApproved;
 
 	// const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
 	// const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
@@ -149,6 +150,7 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 	// 플로팅 카드 스크롤 기반 표시/숨김
 	const [isFloatingVisible, setIsFloatingVisible] = useState(true);
 	const lastScrollY = useRef(0);
+	const [isHorizontalGestureActive, setIsHorizontalGestureActive] = useState(false);
 
 	const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const currentScrollY = event.nativeEvent.contentOffset.y;
@@ -217,15 +219,20 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 				hasTrackedHomeView.current = true;
 			}
 
-			// 서버에 heartbeat 전송 (lastLoginAt 업데이트)
-			sendHeartbeat();
-
-			queryClient.invalidateQueries({ queryKey: ['notification'], refetchType: 'active' });
-			queryClient.invalidateQueries({ queryKey: ['check-preference-fill'], refetchType: 'active' });
-			queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'], refetchType: 'active' });
-			queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
+			// 화면 전환 애니메이션 완료 후 무거운 작업 실행 (탭 전환 지연 방지)
+			const task = InteractionManager.runAfterInteractions(() => {
+				sendHeartbeat();
+				queryClient.invalidateQueries({ queryKey: ['notification'], refetchType: 'active' });
+				queryClient.invalidateQueries({
+					queryKey: ['check-preference-fill'],
+					refetchType: 'active',
+				});
+				queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'], refetchType: 'active' });
+				queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
+			});
 
 			return () => {
+				task.cancel();
 				// 홈 화면을 떠날 때 로딩 오버레이 재활성화
 				enableGlobalLoading();
 			};
@@ -260,11 +267,11 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 		return <HomeInfoSection />;
 	};
 
-	return (
-		<View style={styles.container}>
-			{/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
-			<WelcomeRewardModal visible={shouldShowReward} onClose={markRewardAsReceived} />
-			<View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+		return (
+			<View style={styles.container}>
+				{/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
+				<WelcomeRewardModal visible={shouldShowReward} onClose={markRewardAsReceived} />
+				<View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
 				<Header
 					centered={true}
 					logoSize={128}
@@ -285,9 +292,10 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 				contentContainerStyle={styles.scrollViewContent}
 				onScroll={handleScroll}
 				scrollEventThrottle={16}
+				scrollEnabled={!isHorizontalGestureActive}
 			>
 				<View style={{ paddingBottom: 4, marginTop: 2 }}>
-					<BannerSlide />
+					<BannerSlide onGestureStateChange={setIsHorizontalGestureActive} />
 				</View>
 				<View>
 					{collapse ? (
@@ -304,15 +312,15 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 					</View>
 				</Show>
 
-	{renderMatchingSection()}
+				{renderMatchingSection()}
 				<View>
 					<HistoryCollapse />
 				</View>
 				<View>
 					<CommunityAnnouncement />
-					<ReviewSlide />
+					<ReviewSlide onGestureStateChange={setIsHorizontalGestureActive} />
 				</View>
-				<LatestPostsCarousel />
+				<LatestPostsCarousel onGestureStateChange={setIsHorizontalGestureActive} />
 				<Feedback.WallaFeedbackBanner />
 
 				<View style={{ marginTop: 'auto' }}>
@@ -348,8 +356,7 @@ const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApprove
 					isVisible={isFloatingVisible}
 				/>
 			)}
-
-			{__DEV__ && <DevScenarioFab bottomOffset={shouldShowFloatingCard ? 160 : 100} />}
+				{__DEV__ && <DevScenarioFab bottomOffset={shouldShowFloatingCard ? 160 : 100} />}
 			<View onLayout={(e) => setBottomNavHeight(e.nativeEvent.layout.height)}>
 				<BottomNavigation />
 			</View>
@@ -374,7 +381,6 @@ const styles = StyleSheet.create({
 		paddingBottom: 20,
 	},
 	profilePhotoSection: {},
-
 });
 
 export default HomeScreen;

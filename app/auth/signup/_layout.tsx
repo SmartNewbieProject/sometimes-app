@@ -11,7 +11,7 @@ import { Stack, usePathname } from 'expo-router';
 import * as React from 'react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { useSignupProgress, SignupSteps } = Signup;
@@ -61,6 +61,9 @@ export default function SignupLayout() {
 		<DefaultLayout style={styles.layout}>
 			<OverlayProvider>
 				<PalePurpleGradient />
+				{Platform.OS === 'android' && (
+					<View style={[styles.androidBottomCover, { height: insets.bottom }]} />
+				)}
 				{renderProgress && showHeader && (
 					<>
 						<View
@@ -143,5 +146,13 @@ const styles = StyleSheet.create({
 		paddingBottom: 30,
 		alignItems: 'center',
 		backgroundColor: colors.surface.background,
+	},
+	androidBottomCover: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		right: 0,
+		backgroundColor: colors.white,
+		zIndex: 0,
 	},
 });

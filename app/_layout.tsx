@@ -34,11 +34,13 @@ import { VersionUpdateChecker } from '@/src/features/version-update';
 import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
 import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
 import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
+import { PhotoReviewModalListener } from '@/src/shared/components/photo-review-modal-listener';
 import { ServerMaintenanceListener } from '@/src/shared/components/server-maintenance-listener';
 import { SessionTracker } from '@/src/shared/components/session-tracker';
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useAtt } from '@/src/shared/hooks';
 import { useStorage } from '@/src/shared/hooks/use-storage';
+import { eventBus } from '@/src/shared/libs/event-bus';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { AnalyticsProvider, ModalProvider, PortalProvider } from '@/src/shared/providers';
@@ -400,6 +402,14 @@ export default Sentry.wrap(function RootLayout() {
 
 		notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
 			console.log('알림 수신:', notification);
+
+			const data = notification.request.content.data;
+			if (data?.type === 'profile_image_approved' || data?.type === 'profile_image_rejected') {
+				eventBus.emit('photo-review:result', {
+					reviewStatus: data.type === 'profile_image_approved' ? 'approved' : 'rejected',
+					rejectionReason: data.reason,
+				});
+			}
 		});
 
 		responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
@@ -457,6 +467,7 @@ export default Sentry.wrap(function RootLayout() {
 													<AppBadgeSync />
 													<LoginRequiredModalListener />
 													<ServerMaintenanceListener />
+													<PhotoReviewModalListener />
 													<GlobalLoadingOverlay />
 												</>
 											</RouteTracker>
@@ -472,13 +483,13 @@ export default Sentry.wrap(function RootLayout() {
 	);
 });
 
+const webFullHeight = { height: '100dvh' } as unknown as ViewStyle;
+
 const styles = StyleSheet.create<{ rootView: ViewStyle; container: ViewStyle }>({
 	rootView: {
 		flex: 1,
 		...Platform.select({
-			web: {
-				minHeight: '100dvh',
-			},
+			web: webFullHeight,
 		}),
 	},
 	container: {
@@ -487,8 +498,9 @@ const styles = StyleSheet.create<{ rootView: ViewStyle; container: ViewStyle }>(
 			web: {
 				maxWidth: 468,
 				width: '100%',
-				minHeight: '100dvh',
+				...webFullHeight,
 				alignSelf: 'center',
+				overflow: 'hidden',
 			},
 		}),
 	},

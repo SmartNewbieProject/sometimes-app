@@ -21,13 +21,8 @@ NC='\033[0m'
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# External drive build directory (to save main drive space)
+# External drive build directory (artifacts storage only)
 EXTERNAL_BUILD_DIR="/Volumes/eungu/build/sometimes"
-if [ -d "/Volumes/eungu" ]; then
-    mkdir -p "$EXTERNAL_BUILD_DIR"
-    export TMPDIR="$EXTERNAL_BUILD_DIR/tmp"
-    mkdir -p "$TMPDIR"
-fi
 
 # Log file
 LOG_DIR="$PROJECT_ROOT/builds/logs"
@@ -170,7 +165,13 @@ build_android() {
 # ============================================================
 
 organize_artifacts() {
-    local build_dir="$PROJECT_ROOT/builds"
+    # Use external drive if available, otherwise project builds dir
+    local build_dir
+    if [ -d "/Volumes/eungu" ]; then
+        build_dir="$EXTERNAL_BUILD_DIR"
+    else
+        build_dir="$PROJECT_ROOT/builds"
+    fi
     local target_dir="$build_dir/production_$TIMESTAMP"
 
     mkdir -p "$target_dir"

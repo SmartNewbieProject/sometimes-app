@@ -1,16 +1,31 @@
-import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import {
-	View,
-	TouchableOpacity,
-	StyleSheet,
-	Dimensions,
-	StatusBar,
-	Platform,
+	CARD_NEWS_ENTRY_SOURCES,
+	CARD_NEWS_EXIT_METHODS,
+	CARD_NEWS_NAVIGATION_METHODS,
+	useCardNewsAnalytics,
+} from '@/src/features/card-news';
+import { useCardNewsDetail, useCardNewsReward } from '@/src/features/card-news/queries';
+import type { CardSection } from '@/src/features/card-news/types';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useToast } from '@/src/shared/hooks/use-toast';
+import { Text } from '@/src/shared/ui';
+import { Image } from 'expo-image';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
 	ActivityIndicator,
-	Pressable,
+	Dimensions,
 	Linking,
+	Platform,
+	Pressable,
 	ScrollView,
+	StatusBar,
+	StyleSheet,
+	TouchableOpacity,
+	View,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -18,22 +33,7 @@ import Animated, {
 	runOnJS,
 	Easing,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Text } from '@/src/shared/ui';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useCardNewsDetail, useCardNewsReward } from '@/src/features/card-news/queries';
-import {
-	useCardNewsAnalytics,
-	CARD_NEWS_NAVIGATION_METHODS,
-	CARD_NEWS_EXIT_METHODS,
-	CARD_NEWS_ENTRY_SOURCES,
-} from '@/src/features/card-news';
-import { useToast } from '@/src/shared/hooks/use-toast';
-import type { CardSection } from '@/src/features/card-news/types';
-import { useTranslation } from 'react-i18next';
 
 const URL_REGEX = /(https?:\/\/[^\s<\]]+)/g;
 const ANIMATION_DURATION = 300;
@@ -100,6 +100,7 @@ export default function CardNewsDetailScreen() {
 	const insets = useSafeAreaInsets();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [hasClaimedReward, setHasClaimedReward] = useState(false);
+	const [isHorizontalPaging, setIsHorizontalPaging] = useState(false);
 	const { emitToast } = useToast();
 	const analytics = useCardNewsAnalytics();
 	const { t } = useTranslation();
@@ -217,6 +218,10 @@ export default function CardNewsDetailScreen() {
 		return Gesture.Pan()
 			.activeOffsetX([-10, 10])
 			.failOffsetY([-20, 20])
+			.onStart(() => {
+				'worklet';
+				runOnJS(setIsHorizontalPaging)(true);
+			})
 			.onUpdate((event) => {
 				'worklet';
 				const baseX = -currentIndexShared.value * CONTAINER_WIDTH;
@@ -241,6 +246,10 @@ export default function CardNewsDetailScreen() {
 
 				nextIndex = Math.max(0, Math.min(nextIndex, totalCards - 1));
 				runOnJS(goToIndex)(nextIndex, true, CARD_NEWS_NAVIGATION_METHODS.SWIPE);
+			})
+			.onFinalize(() => {
+				'worklet';
+				runOnJS(setIsHorizontalPaging)(false);
 			});
 	}, [totalCards, translateX, currentIndexShared, goToIndex]);
 
@@ -255,7 +264,9 @@ export default function CardNewsDetailScreen() {
 					style={styles.cardScrollView}
 					contentContainerStyle={styles.cardScrollContent}
 					showsVerticalScrollIndicator={false}
+					directionalLockEnabled
 					nestedScrollEnabled
+					scrollEnabled={!isHorizontalPaging}
 				>
 					<View style={styles.cardPadding}>
 						{section.imageUrl && (
@@ -276,7 +287,7 @@ export default function CardNewsDetailScreen() {
 				</ScrollView>
 			</View>
 		),
-		[],
+		[isHorizontalPaging],
 	);
 
 	if (!id) {

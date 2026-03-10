@@ -1,5 +1,5 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { MatchingReasonPlaceholder, PartnerBasicInfo, PartnerMBTI, PartnerIdealType } from '@/src/features/match/ui';
+import { PartnerBasicInfo, PartnerIdealType, PartnerMBTI } from '@/src/features/match/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
 import { OppositeGenderPreview } from '@/src/widgets/opposite-gender-preview';
@@ -12,7 +12,23 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, Text as RNText, ScrollView, StyleSheet, View } from 'react-native';
+
+const WATERMARK_DEMO = '예시) 홍길동 · 010-1234-5678';
+
+function WatermarkOverlay() {
+	return (
+		<View pointerEvents="none" style={styles.watermarkContainer}>
+			{Array.from({ length: 4 }, (_, rowIndex) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: static rows
+				<View key={rowIndex} style={[styles.watermarkRow, { top: rowIndex * 140 + 40 }]}>
+					<RNText style={styles.watermarkText}>{WATERMARK_DEMO}</RNText>
+					<RNText style={styles.watermarkText}>{WATERMARK_DEMO}</RNText>
+				</View>
+			))}
+		</View>
+	);
+}
 
 export default function MyProfilePreviewScreen() {
 	const { t, i18n } = useTranslation();
@@ -55,18 +71,28 @@ export default function MyProfilePreviewScreen() {
 
 			<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 				{validProfileImages.length > 0 && mainImageUrl && (
-					<ProfileMainImage
-						imageUrl={mainImageUrl}
-						age={profileDetails.age}
-						universityDetails={profileDetails.universityDetails}
-						showLastLogin={false}
-						country={country}
-						onPress={() => {
-							setSelectedIndex(0);
-							setZoomVisible(true);
-						}}
-					/>
+					<View style={styles.mainImageWrapper}>
+						<ProfileMainImage
+							imageUrl={mainImageUrl}
+							age={profileDetails.age}
+							universityDetails={profileDetails.universityDetails}
+							showLastLogin={false}
+							country={country}
+							onPress={() => {
+								setSelectedIndex(0);
+								setZoomVisible(true);
+							}}
+						/>
+						<WatermarkOverlay />
+					</View>
 				)}
+
+				<View style={styles.protectionBanner}>
+					<Feather name="shield" size={16} color="#7A4AE2" style={{ marginTop: 2 }} />
+					<Text size="sm" weight="medium" style={styles.protectionBannerText}>
+						{'당신의 프로필 사진에는 상대방의 이름, 번호가\n워터마크로 표시되어 도용 및 악용 사례를 방지하고,\n추후 신원 추적이 가능합니다.\n썸타임은 안전한 연애를 위해 최선을 다하겠습니다.'}
+					</Text>
+				</View>
 
 				<PartnerBasicInfo partner={profileDetails} />
 
@@ -84,6 +110,7 @@ export default function MyProfilePreviewScreen() {
 								style={styles.additionalImage}
 								contentFit="cover"
 							/>
+							<WatermarkOverlay />
 						</Pressable>
 					</View>
 				)}
@@ -92,7 +119,9 @@ export default function MyProfilePreviewScreen() {
 
 				<PartnerIdealType partner={profileDetails} />
 
-				<MatchingReasonPlaceholder />
+				<View style={styles.matchReasonBanner}>
+					<Text style={styles.matchReasonBannerText}>💌 매칭 사유가 상대방에게 보여져요!</Text>
+				</View>
 
 				{validProfileImages.length > 2 && (
 					<View style={styles.additionalImageContainer}>
@@ -108,6 +137,7 @@ export default function MyProfilePreviewScreen() {
 								style={styles.additionalImage}
 								contentFit="cover"
 							/>
+							<WatermarkOverlay />
 						</Pressable>
 					</View>
 				)}
@@ -128,6 +158,7 @@ export default function MyProfilePreviewScreen() {
 										style={styles.additionalImage}
 										contentFit="cover"
 									/>
+									<WatermarkOverlay />
 								</Pressable>
 							</View>
 						))}
@@ -214,5 +245,63 @@ const styles = StyleSheet.create({
 	},
 	nudgeGuideCtaText: {
 		color: semanticColors.text.inverse,
+	},
+	matchReasonBanner: {
+		marginHorizontal: 16,
+		marginBottom: 16,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		backgroundColor: '#F3EEFF',
+		borderRadius: 12,
+		borderWidth: 1,
+		borderColor: '#D4B8FF',
+		alignItems: 'center',
+	},
+	matchReasonBannerText: {
+		fontSize: 14,
+		fontWeight: '600',
+		color: semanticColors.brand.primary,
+	},
+	mainImageWrapper: {
+		width: '100%',
+		aspectRatio: 1,
+		overflow: 'hidden',
+	},
+	protectionBanner: {
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		gap: 6,
+		marginHorizontal: 16,
+		marginTop: 12,
+		marginBottom: 4,
+		paddingVertical: 10,
+		paddingHorizontal: 14,
+		backgroundColor: '#F3EEFF',
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: '#D4B8FF',
+	},
+	protectionBannerText: {
+		color: semanticColors.brand.primary,
+		flex: 1,
+	},
+	watermarkContainer: {
+		...StyleSheet.absoluteFillObject,
+		zIndex: 30,
+		opacity: 0.18,
+	},
+	watermarkRow: {
+		position: 'absolute',
+		left: -30,
+		right: -30,
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		transform: [{ rotate: '-30deg' }],
+	},
+	watermarkText: {
+		fontSize: 15,
+		fontWeight: '700',
+		color: '#ffffff',
+		letterSpacing: 0.3,
 	},
 });

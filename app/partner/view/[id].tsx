@@ -42,10 +42,12 @@ export default function PartnerDetailScreen() {
 	const { id: matchId, redirectTo } = useLocalSearchParams<{ id: string; redirectTo?: string }>();
 
 	const handleBack = () => {
-		if (router.canGoBack()) {
+		if (redirectTo) {
+			router.replace(decodeURIComponent(redirectTo) as Href);
+		} else if (router.canGoBack()) {
 			router.back();
 		} else {
-			router.replace((redirectTo ? decodeURIComponent(redirectTo) : '/matching-history') as Href);
+			router.replace('/matching-history' as Href);
 		}
 	};
 	const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
@@ -56,6 +58,7 @@ const [isZoomVisible, setZoomVisible] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [showMihoIntro, setShowMihoIntro] = useState(false);
 	const hasTrackedView = useRef(false);
+	const hasShownMihoIntro = useRef(false);
 
 	// 내 승인된 사진 개수 계산
 	const myApprovedPhotosCount =
@@ -95,8 +98,9 @@ const [isZoomVisible, setZoomVisible] = useState(false);
 			});
 		}
 
-		// 최초 방문에만 미호 인트로 모달 표시
-		if (partner.isFirstView !== false) {
+		// 최초 방문에만 미호 인트로 모달 표시 (partner 참조 변경 시 재표시 방지)
+		if (!hasShownMihoIntro.current && partner.isFirstView !== false) {
+			hasShownMihoIntro.current = true;
 			setShowMihoIntro(true);
 		}
 	}, [partner]);

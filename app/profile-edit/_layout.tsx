@@ -1,4 +1,3 @@
-import { Stack, usePathname, useRouter , Slot, withLayoutContext } from "expo-router";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { StyleSheet, View } from "react-native";
 
@@ -8,25 +7,28 @@ import {
   type Tab,
   ToggleTab,
 } from "@/src/features/profile-edit/ui";
-import { useMemo, useState, useEffect, useCallback } from "react";
+import ProfileContent from "@/src/features/profile-edit/ui/profile/profile-content";
+import InterestContent from "@/src/features/profile-edit/ui/interest/interest-content";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Slot, usePathname } from "expo-router";
 
 export default function ProfileEditLayout() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const pathname = usePathname();
 
-  const [activeTab, setActiveTab] = useState<string>("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "interest">(
+    pathname.includes("interest") ? "interest" : "profile"
+  );
 
-  // pathname 변경에 따라 activeTab 동기화
+  // 외부 네비게이션으로 진입 시 탭 동기화
   useEffect(() => {
-    if (pathname.includes("/profile-edit/")) {
-      const pathTab = pathname.split("/")[2];
-      if (pathTab === "profile" || pathTab === "interest") {
-        setActiveTab(pathTab);
-      }
+    if (pathname.includes("interest")) {
+      setActiveTab("interest");
+    } else if (pathname.includes("profile")) {
+      setActiveTab("profile");
     }
   }, [pathname]);
 
@@ -36,12 +38,8 @@ export default function ProfileEditLayout() {
   ], [t]);
 
   const handleTabClick = useCallback(() => {
-    setActiveTab(prev => {
-      const next = prev === "profile" ? "interest" : "profile";
-      router.navigate(`/profile-edit/${next}`);
-      return next;
-    });
-  }, [router]);
+    setActiveTab(prev => prev === "profile" ? "interest" : "profile");
+  }, []);
 
   return (
     <Layout.Default
@@ -56,9 +54,16 @@ export default function ProfileEditLayout() {
             onTabClick={handleTabClick}
           />
         </View>
-        <View style={styles.contentContainer}>
-          <Slot />
+        <View style={[styles.contentContainer, activeTab !== "profile" && styles.hidden]}>
+          <ProfileContent />
         </View>
+        <View style={[styles.contentContainer, activeTab !== "interest" && styles.hidden]}>
+          <InterestContent />
+        </View>
+      </View>
+      {/* Slot은 Expo Router 라우트 매칭에 필요하지만 실제 콘텐츠는 위에서 렌더링 */}
+      <View style={styles.hidden}>
+        <Slot />
       </View>
     </Layout.Default>
   );
@@ -80,5 +85,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+  },
+  hidden: {
+    display: "none",
   },
 });

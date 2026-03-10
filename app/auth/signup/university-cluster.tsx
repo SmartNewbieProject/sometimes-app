@@ -5,13 +5,12 @@ import type { UniversityCard as UniversityCardType } from '@/src/features/signup
 import UniversityCard from '@/src/features/signup/ui/university/university-card';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import PinIcon from '@assets/icons/pin.svg';
-import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ActivityIndicator, BackHandler, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function UniversityCluster() {
@@ -32,6 +31,13 @@ function UniversityCluster() {
 		() => [...universities].sort((a, b) => a.name.localeCompare(b.name, 'ko')),
 		[universities],
 	);
+	const gridRows = useMemo(() => {
+		const rows: (typeof sortedData[number] | null)[][] = [];
+		for (let i = 0; i < sortedData.length; i += 2) {
+			rows.push([sortedData[i], sortedData[i + 1] ?? null]);
+		}
+		return rows;
+	}, [sortedData]);
 
 	const onBackPress = () => {
 		router.navigate('/auth/signup/university');
@@ -80,7 +86,7 @@ function UniversityCluster() {
 					<ActivityIndicator size="small" color={semanticColors.brand.primary} />
 				</View>
 			) : cluster ? (
-				<>
+				<View style={{ flex: 1, alignSelf: 'stretch' }}>
 					<View style={styles.clusterContainer}>
 						<PinIcon />
 						<View style={{ gap: 6 }}>
@@ -96,27 +102,49 @@ function UniversityCluster() {
 							</Text>
 						</View>
 					</View>
-						<FlashList
-							data={sortedData}
-							estimatedItemSize={40}
-							renderItem={({ item }) => (
-								<UniversityCard
-									onClick={() => {}}
-									isSelected={false}
-									compact
-									item={{
-										...item,
-										area: item.region,
-										foundation: item.foundation as UniversityCardType['foundation'],
-										en: null,
-										universityType: item.foundation as UniversityCardType['universityType'],
-									} as UniversityCardType}
-								/>
-							)}
-							contentContainerStyle={{ paddingBottom: 160 }}
-							style={styles.univContainer}
-						/>
-				</>
+					<ScrollView
+						style={{ flex: 1, marginTop: 24 }}
+						contentContainerStyle={{ paddingBottom: 160, paddingHorizontal: 16 }}
+						showsVerticalScrollIndicator={false}
+					>
+						{gridRows.map((row, i) => (
+							<View key={row[0]?.id ?? i} style={styles.gridRow}>
+								<View style={styles.gridCell}>
+									{row[0] && (
+										<UniversityCard
+											onClick={() => {}}
+											isSelected={false}
+											compact
+											item={{
+												...row[0],
+												area: row[0].region,
+												foundation: row[0].foundation as UniversityCardType['foundation'],
+												en: null,
+												universityType: row[0].foundation as UniversityCardType['universityType'],
+											} as UniversityCardType}
+										/>
+									)}
+								</View>
+								<View style={styles.gridCell}>
+									{row[1] && (
+										<UniversityCard
+											onClick={() => {}}
+											isSelected={false}
+											compact
+											item={{
+												...row[1],
+												area: row[1].region,
+												foundation: row[1].foundation as UniversityCardType['foundation'],
+												en: null,
+												universityType: row[1].foundation as UniversityCardType['universityType'],
+											} as UniversityCardType}
+										/>
+									)}
+								</View>
+							</View>
+						))}
+					</ScrollView>
+				</View>
 			) : (
 				<View style={styles.pendingContainer}>
 					<View style={styles.pendingCard}>
@@ -151,17 +179,16 @@ function UniversityCluster() {
 
 const styles = StyleSheet.create({
 	container: {
-		alignItems: 'center',
 		backgroundColor: semanticColors.surface.secondary,
 	},
 	lottieContainer: {
-		width: '100%',
+		alignSelf: 'center',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	lottie: {
-		width: 200,
-		height: 200,
+		width: 138,
+		height: 138,
 	},
 	title: {
 		fontSize: 32,
@@ -224,17 +251,19 @@ const styles = StyleSheet.create({
 	},
 	bottomContainer: {
 		position: 'absolute',
-		bottom: 0,
+		bottom: Platform.OS === 'ios' ? -24 : 0,
 		left: 0,
 		right: 0,
 		paddingTop: 16,
 		backgroundColor: 'transparent',
 	},
-	univContainer: {
+	gridRow: {
+		flexDirection: 'row',
+		gap: 8,
+		marginBottom: 8,
+	},
+	gridCell: {
 		flex: 1,
-		width: '100%',
-		paddingHorizontal: 16,
-		marginTop: 24,
 	},
 });
 

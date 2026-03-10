@@ -99,6 +99,23 @@ npm run check       # Biome lint
 
 ---
 
+## qmd — Dynamic Route Files
+
+Expo Router 동적 라우트 파일명(`[id].tsx`)의 `[]`는 glob 문자 클래스로 해석되므로 반드시 이스케이프:
+
+```bash
+# WRONG — [id] 가 glob 패턴으로 해석되어 파일 못 찾음
+qmd get "sometimes-app/app/partner/view/[id].tsx"
+
+# CORRECT — 브래킷 이스케이프
+qmd get "sometimes-app/app/partner/view/\[id\].tsx"
+
+# 또는 디렉토리 목록으로 확인 후 조회
+qmd ls sometimes-app/app/partner/view
+```
+
+---
+
 ## Routing — IMPORTANT
 
 ### app/ directory file rules

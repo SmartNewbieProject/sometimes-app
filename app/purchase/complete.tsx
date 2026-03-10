@@ -8,6 +8,39 @@ import { useTranslation } from "react-i18next";
 
 const { apis } = Payment;
 
+const resolveReturnPath = (rawPath?: string) => {
+  if (!rawPath) {
+    return "/home";
+  }
+
+  try {
+    const decodedPath = decodeURIComponent(rawPath);
+    return decodedPath.startsWith("/") ? decodedPath : "/home";
+  } catch {
+    return rawPath.startsWith("/") ? rawPath : "/home";
+  }
+};
+
+const parseCustomData = (customData?: string | string[]) => {
+  if (!customData) {
+    return null;
+  }
+
+  const rawValue = Array.isArray(customData) ? customData[0] : customData;
+
+  try {
+    return JSON.parse(rawValue) as {
+      productCount?: number;
+      gemCount?: number;
+      returnPath?: string;
+      returnTo?: string;
+    };
+  } catch (error) {
+    console.error("Failed to parse payment custom data:", error);
+    return null;
+  }
+};
+
 export default function PaymentComplete() {
   const { t } = useTranslation();
   const { txId, paymentId, custom_data: customData } = useGlobalSearchParams();
@@ -15,8 +48,10 @@ export default function PaymentComplete() {
 
   useEffect(() => {
     const processPaymentComplete = async () => {
-      const paymentInfo = customData ? JSON.parse(customData as string) : null;
-      const returnPath: string = paymentInfo?.returnPath ?? '/home';
+      const paymentInfo = parseCustomData(customData);
+      const returnPath = resolveReturnPath(
+        paymentInfo?.returnTo ?? paymentInfo?.returnPath,
+      );
 
       try {
         console.log({ paymentInfo });

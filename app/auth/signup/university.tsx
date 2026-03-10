@@ -20,26 +20,29 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { PalePurpleGradient, Show } from '@/src/shared/ui';
 import SearchIcon from '@assets/icons/search.svg';
 import Loading from '@features/loading';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	BackHandler,
+	FlatList,
 	Keyboard,
+	Platform,
 	Pressable,
 	Text as RNText,
-	ScrollView,
 	StyleSheet,
 	TextInput,
+	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 function UniversityPage() {
 	const router = useRouter();
+	const navigation = useNavigation();
 	const { onboardingEvents } = useMixpanel();
 	const hasTrackedView = useRef(false);
+	const textInputRef = useRef<TextInput>(null);
 	const {
 		searchText,
 		filteredUniv,
@@ -71,10 +74,7 @@ function UniversityPage() {
 		overflow: 'hidden' as const,
 	}));
 
-	const bottomButtonsAnimatedStyle = useAnimatedStyle(() => ({
-		opacity: withTiming(isKeyboardVisible ? 0 : 1, { duration: 200 }),
-		transform: [{ translateY: withTiming(isKeyboardVisible ? 50 : 0, { duration: 200 }) }],
-	}));
+	const showButtons = trigger && !!selectedUniv;
 
 	useEffect(() => {
 		if (!hasTrackedView.current) {
@@ -108,149 +108,185 @@ function UniversityPage() {
 					text: '취소',
 					onClick: hideModal,
 				},
-				});
+			});
 		});
 	}, [hideModal, onBackPress, router, showModal]);
 
-		const handleNext = () => {
-			onNext(() => {
-				// 대학 인증 완료 이벤트 추적
-				onboardingEvents.trackUniversityVerificationCompleted('search_selection');
-				router.push(`/auth/signup/university-cluster?universityId=${selectedUniv}`);
-				return true;
-			});
-		};
+	const handleNext = () => {
+		onNext(() => {
+			// 대학 인증 완료 이벤트 추적
+			onboardingEvents.trackUniversityVerificationCompleted('search_selection');
+			router.push(`/auth/signup/university-cluster?universityId=${selectedUniv}`);
+			return true;
+		});
+	};
+
+	const dismissKeyboard = useCallback(() => {
+		textInputRef.current?.blur();
+		Keyboard.dismiss();
+	}, []);
 
 	useEffect(() => {
 		const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 		return () => subscription.remove();
 	}, [handleBackPress]);
 
+	// iOS 스와이프 뒤로가기 차단: 검색 모드일 때 네비게이션 대신 검색 종료
+	useEffect(() => {
+		return navigation.addListener('beforeRemove', (e: { preventDefault: () => void }) => {
+			if (trigger) {
+				e.preventDefault();
+				handleBackPress();
+			}
+		});
+	}, [navigation, trigger, handleBackPress]);
+
+	const renderUniversityItem = useCallback(
+		({ item }: { item: (typeof filteredUniv)[number] }) => (
+			<UniversityCard
+				item={item}
+				isSelected={selectedUniv === item.id}
+				onClick={() => {
+					Keyboard.dismiss();
+					handleClickUniv(item.id)();
+				}}
+			/>
+		),
+		[selectedUniv, handleClickUniv],
+	);
+
+	const listFooter = useCallback(
+		() => (
+			<Pressable
+				style={styles.noUnivLink}
+				onPress={() => {
+					router.push(
+						`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
+					);
+				}}
+			>
+				<RNText style={styles.noUnivText}>
+					{t('apps.auth.sign_up.university.no_university_link')}
+				</RNText>
+			</Pressable>
+		),
+		[searchText, router, t],
+	);
 
 	return (
-		<DefaultLayout style={styles.layout}>
-			{!showHeader && <PalePurpleGradient />}
-			<View style={[styles.container, { paddingTop: trigger ? 12 : 60 }]}>
-				<Animated.View style={[animatedContainerStyle, { width: '100%', zIndex: 10 }]}>
-					{!trigger && <GraduateBanner />}
-					{trigger && (
-						<MiniLogoStrip
-							logos={[
-								...(country === 'jp' ? japanUniversityLogos.row1 : koreaUniversityLogos.row1),
-								...(country === 'jp' ? japanUniversityLogos.row2 : koreaUniversityLogos.row2),
-							]}
-							logoSize={28}
-						/>
-					)}
-					<View style={[styles.searchWrapper, isFocused && styles.searchWrapperFocused]}>
-						<SearchIcon
-							width={16}
-							height={16}
-							style={{ marginRight: 8 }}
-							color={isFocused ? semanticColors.brand.primary : '#9B94AB'}
-						/>
-						<TextInput
-							testID="university-search-input"
-							value={searchText}
-							onBlur={handleBlur}
-							onChangeText={handleChange}
-							placeholder={t('apps.auth.sign_up.search_university_placeholder')}
-							placeholderTextColor="#9B94AB"
-							style={styles.input}
-							onFocus={handleFocus}
-						/>
-					</View>
-				</Animated.View>
-				{!trigger && (
-				<Animated.View style={[styles.titleContainer, animatedTitleStyle]} pointerEvents="none">
-					<RNText style={styles.welcome}>{t('apps.auth.sign_up.university.welcome')}</RNText>
-					<RNText style={styles.title}>{t('apps.auth.sign_up.university.title')}</RNText>
-				</Animated.View>
-			)}
-				{!trigger && <UniversityLogos logoSize={64} country={country} />}
-				<Show when={trigger}>
-					<Animated.View style={[styles.listAndBottomContainer, animatedListStyle]}>
-						{isSearching ? (
-							<SearchingState keyword={searchText} />
-						) : isLoading ? (
-							<Loading.Lottie title={t('apps.auth.sign_up.university.loading')} loading={true} />
-						) : (
-							<>
-								<Animated.View style={searchTipAnimatedStyle}>
-									<SearchTip
-										title={t('apps.auth.sign_up.university.search_tip_title')}
-										description={t('apps.auth.sign_up.university.search_tip_desc')}
-									/>
-								</Animated.View>
-								<ScrollView
-									style={styles.scrollView}
-									showsVerticalScrollIndicator={false}
-									contentContainerStyle={[
-										styles.scrollContent,
-										isKeyboardVisible && styles.scrollContentKeyboardVisible,
+		<View style={{ flex: 1 }}>
+			<DefaultLayout style={styles.layout}>
+				{!showHeader && <PalePurpleGradient />}
+				<TouchableWithoutFeedback onPress={dismissKeyboard}>
+					<View style={[styles.container, { paddingTop: trigger ? 12 : 60 }]}>
+						<Animated.View style={[animatedContainerStyle, { width: '100%', zIndex: 10 }]}>
+							{!trigger && <GraduateBanner />}
+							{trigger && (
+								<MiniLogoStrip
+									logos={[
+										...(country === 'jp' ? japanUniversityLogos.row1 : koreaUniversityLogos.row1),
+										...(country === 'jp' ? japanUniversityLogos.row2 : koreaUniversityLogos.row2),
 									]}
-									keyboardDismissMode="on-drag"
-									keyboardShouldPersistTaps="always"
-								>
-									{filteredUniv?.length === 0 && searchText.length > 0 ? (
-										<UniversityEmptyState
-											keyword={searchText}
-											onRegisterPress={() => {
-												router.push(
-													`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
-												);
-											}}
+									logoSize={28}
+								/>
+							)}
+							<Pressable
+								style={[styles.searchWrapper, isFocused && styles.searchWrapperFocused]}
+								onPress={() => textInputRef.current?.focus()}
+							>
+								<SearchIcon
+									width={16}
+									height={16}
+									style={{ marginRight: 8 }}
+									color={isFocused ? semanticColors.brand.primary : '#9B94AB'}
+								/>
+								<TextInput
+									ref={textInputRef}
+									testID="university-search-input"
+									value={searchText}
+									onBlur={handleBlur}
+									onChangeText={handleChange}
+									placeholder={t('apps.auth.sign_up.search_university_placeholder')}
+									placeholderTextColor="#9B94AB"
+									style={styles.input}
+									onFocus={handleFocus}
+								/>
+							</Pressable>
+						</Animated.View>
+						{!trigger && (
+							<Animated.View style={[styles.titleContainer, animatedTitleStyle]} pointerEvents="none">
+								<RNText style={styles.welcome}>{t('apps.auth.sign_up.university.welcome')}</RNText>
+								<RNText style={styles.title}>{t('apps.auth.sign_up.university.title')}</RNText>
+							</Animated.View>
+						)}
+						{!trigger && <UniversityLogos logoSize={64} country={country} />}
+						<Show when={trigger}>
+							<Animated.View style={[styles.listAndBottomContainer, animatedListStyle]}>
+								{isSearching ? (
+									<Pressable onPress={dismissKeyboard} style={styles.dismissArea}>
+										<SearchingState keyword={searchText} />
+									</Pressable>
+								) : isLoading ? (
+									<Pressable onPress={dismissKeyboard} style={styles.dismissArea}>
+										<Loading.Lottie
+											title={t('apps.auth.sign_up.university.loading')}
+											loading={true}
 										/>
-									) : (
-										<>
-											{filteredUniv?.map((item) => (
-												<UniversityCard
-													key={item.id}
-													item={item}
-													isSelected={selectedUniv === item.id}
-													onClick={() => {
-														Keyboard.dismiss();
-														handleClickUniv(item.id)();
+									</Pressable>
+								) : (
+									<>
+										<Animated.View style={searchTipAnimatedStyle}>
+											<SearchTip
+												title={t('apps.auth.sign_up.university.search_tip_title')}
+												description={t('apps.auth.sign_up.university.search_tip_desc')}
+											/>
+										</Animated.View>
+										{filteredUniv?.length === 0 && searchText.length > 0 ? (
+											<Pressable onPress={dismissKeyboard} style={styles.scrollPressable}>
+												<UniversityEmptyState
+													keyword={searchText}
+													onRegisterPress={() => {
+														router.push(
+															`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
+														);
 													}}
 												/>
-											))}
-											<Pressable
-												style={styles.noUnivLink}
-												onPress={() => {
-													router.push(
-														`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
-													);
-												}}
-											>
-												<RNText style={styles.noUnivText}>
-													{t('apps.auth.sign_up.university.no_university_link')}
-												</RNText>
 											</Pressable>
-										</>
-									)}
-								</ScrollView>
-							</>
-						)}
-
-						<LinearGradient
-							colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0.92)']}
-							style={styles.fadeGradient}
-							pointerEvents="none"
-						/>
-						<Animated.View
-							pointerEvents={isKeyboardVisible ? 'none' : 'auto'}
-							style={[styles.bottomContainer, bottomButtonsAnimatedStyle]}
-						>
-							<TwoButtons
-								disabledNext={!selectedUniv}
-								onClickNext={handleNext}
-								onClickPrevious={handleBackPress}
-							/>
-						</Animated.View>
-					</Animated.View>
-				</Show>
-			</View>
-		</DefaultLayout>
+										) : (
+											<FlatList
+												data={filteredUniv}
+												keyExtractor={(item) => item.id}
+												renderItem={renderUniversityItem}
+												initialNumToRender={15}
+												maxToRenderPerBatch={10}
+												windowSize={5}
+												showsVerticalScrollIndicator={false}
+												contentContainerStyle={[
+													styles.scrollContent,
+													isKeyboardVisible && styles.scrollContentKeyboardVisible,
+												]}
+												keyboardDismissMode="on-drag"
+												keyboardShouldPersistTaps="handled"
+												ListFooterComponent={listFooter}
+											/>
+										)}
+									</>
+								)}
+							</Animated.View>
+						</Show>
+					</View>
+				</TouchableWithoutFeedback>
+			</DefaultLayout>
+			{showButtons && (
+				<View style={styles.bottomContainer}>
+					<TwoButtons
+						disabledNext={!selectedUniv}
+						onClickNext={handleNext}
+						onClickPrevious={handleBackPress}
+					/>
+				</View>
+			)}
+		</View>
 	);
 }
 
@@ -307,12 +343,8 @@ const styles = StyleSheet.create({
 		width: '100%',
 		marginTop: 24,
 	},
-	scrollView: {
-		flex: 1,
-		width: '100%',
-	},
 	scrollContent: {
-		paddingBottom: 120,
+		paddingBottom: 80,
 	},
 	scrollContentKeyboardVisible: {
 		paddingBottom: 24,
@@ -322,15 +354,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		right: 0,
-		paddingTop: 16,
-		backgroundColor: 'transparent',
-	},
-	fadeGradient: {
-		position: 'absolute',
-		bottom: 0,
-		left: -16,
-		right: -16,
-		height: 120,
 	},
 	welcome: {
 		fontSize: 18,
@@ -338,6 +361,12 @@ const styles = StyleSheet.create({
 		fontFamily: 'Pretendard-SemiBold',
 		marginBottom: 8,
 		textAlign: 'center',
+	},
+	scrollPressable: {
+		flexGrow: 1,
+	},
+	dismissArea: {
+		flex: 1,
 	},
 	noUnivLink: {
 		alignItems: 'center',

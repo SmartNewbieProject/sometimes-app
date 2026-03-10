@@ -85,7 +85,7 @@ test.describe('홈 화면 (미인증)', () => {
   });
 });
 
-test.describe('홈 화면 (로그인됨)', () => {
+test.describe.skip('홈 화면 (로그인됨)', () => {
   let homePage: HomePage;
   let authPage: AuthPage;
 

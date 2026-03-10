@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-const REQUIRED_TAP_COUNT = 5;
+const REQUIRED_TAP_COUNT = 3;
 const TAP_RESET_MS = 2000;
 
 function Setting() {
@@ -13,10 +13,6 @@ function Setting() {
 	const tapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const handleVersionPress = () => {
-		if (!__DEV__) {
-			return;
-		}
-
 		if (tapTimeoutRef.current) {
 			clearTimeout(tapTimeoutRef.current);
 		}

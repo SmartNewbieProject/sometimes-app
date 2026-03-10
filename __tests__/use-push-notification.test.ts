@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { usePushNotification } from '@/src/features/mypage/hooks/use-push-notification';
 import * as notifications from '@/src/shared/libs/notifications';
 import { useModal } from '@/src/shared/hooks/use-modal';
@@ -10,6 +10,16 @@ const mockAlert = jest.fn();
 // Mock dependencies
 jest.mock('@/src/shared/libs/notifications');
 jest.mock('@/src/shared/hooks/use-modal');
+jest.mock('react-i18next', () => ({
+  initReactI18next: {
+    type: '3rdParty',
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: { language: 'ko' },
+  }),
+}));
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
   __esModule: true,
   default: {
@@ -27,10 +37,14 @@ describe('usePushNotification Hook', () => {
   const mockNotifications = notifications as jest.Mocked<typeof notifications>;
   const mockUseModal = useModal as jest.MockedFunction<typeof useModal>;
   const mockShowModal = jest.fn();
+  let addEventListenerSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockAlert.mockClear();
+    addEventListenerSpy = jest
+      .spyOn(AppState, 'addEventListener')
+      .mockReturnValue({ remove: jest.fn() } as any);
     mockUseModal.mockReturnValue({
       showModal: mockShowModal,
       showErrorModal: jest.fn(),
@@ -45,6 +59,10 @@ describe('usePushNotification Hook', () => {
       get: jest.fn(() => 'ios'),
       configurable: true,
     });
+  });
+
+  afterEach(() => {
+    addEventListenerSpy.mockRestore();
   });
 
   describe('초기 상태', () => {
@@ -66,6 +84,7 @@ describe('usePushNotification Hook', () => {
         tokenCount: 2,
         activeTokenCount: 1,
       });
+      mockNotifications.checkNotificationPermissionStatus.mockResolvedValue('granted' as any);
 
       const { result } = renderHook(() => usePushNotification());
 
@@ -80,12 +99,19 @@ describe('usePushNotification Hook', () => {
 
   describe('토글 활성화', () => {
     it('모바일에서 권한이 있으면 푸시 알림을 활성화한다', async () => {
-      mockNotifications.getPushNotificationStatus.mockResolvedValue({
-        isEnabled: false,
-        tokenCount: 0,
-        activeTokenCount: 0,
-      });
-      mockNotifications.getNotificationPermissionStatus.mockResolvedValue('granted' as any);
+      mockNotifications.getPushNotificationStatus
+        .mockResolvedValueOnce({
+          isEnabled: false,
+          tokenCount: 0,
+          activeTokenCount: 0,
+        })
+        .mockResolvedValueOnce({
+          isEnabled: true,
+          tokenCount: 1,
+          activeTokenCount: 1,
+        });
+      mockNotifications.requestNotificationPermission.mockResolvedValue('granted' as any);
+      mockNotifications.checkNotificationPermissionStatus.mockResolvedValue('granted' as any);
       mockNotifications.enablePushNotification.mockResolvedValue();
 
       const { result } = renderHook(() => usePushNotification());
@@ -98,6 +124,9 @@ describe('usePushNotification Hook', () => {
         await result.current.toggle();
       });
 
+      await waitFor(() => {
+        expect(result.current.isEnabled).toBe(true);
+      });
       expect(mockNotifications.enablePushNotification).toHaveBeenCalled();
     });
 
@@ -107,7 +136,7 @@ describe('usePushNotification Hook', () => {
         tokenCount: 0,
         activeTokenCount: 0,
       });
-      mockNotifications.getNotificationPermissionStatus.mockResolvedValue('denied' as any);
+      mockNotifications.requestNotificationPermission.mockResolvedValue('denied' as any);
 
       const { result } = renderHook(() => usePushNotification());
 
@@ -120,8 +149,8 @@ describe('usePushNotification Hook', () => {
       });
 
       expect(mockAlert).toHaveBeenCalledWith(
-        '알림 권한 필요',
-        '푸시 알림을 받으려면 설정에서 알림을 허용해주세요.',
+        'features.mypage.notification.permission_required_title',
+        'features.mypage.notification.permission_required_message',
         expect.any(Array)
       );
       expect(mockNotifications.enablePushNotification).not.toHaveBeenCalled();
@@ -138,9 +167,7 @@ describe('usePushNotification Hook', () => {
         tokenCount: 0,
         activeTokenCount: 0,
       });
-      mockNotifications.enablePushNotification.mockRejectedValue(
-        new Error('등록된 푸시 토큰이 없습니다. 모바일 앱에서 먼저 알림을 허용해주세요.')
-      );
+      mockNotifications.enablePushNotification.mockRejectedValue(new Error('NO_PUSH_TOKEN_REGISTERED'));
 
       const { result } = renderHook(() => usePushNotification());
 
@@ -153,9 +180,16 @@ describe('usePushNotification Hook', () => {
       });
 
       expect(mockShowModal).toHaveBeenCalledWith({
-        title: '푸시 알림 등록 필요',
-        children: '푸시 알림은 모바일 기기에서만 등록할 수 있습니다.\n모바일 앱에서 먼저 알림을 허용해주세요.',
-        primaryButton: { text: '확인', onClick: expect.any(Function) },
+        title: 'features.mypage.notification.activation_failed_title',
+        children: expect.objectContaining({
+          props: expect.objectContaining({
+            children: 'common.푸시_토큰_획득_실패',
+          }),
+        }),
+        primaryButton: {
+          text: 'features.mypage.notification.confirm',
+          onClick: expect.any(Function),
+        },
       });
     });
 
@@ -165,7 +199,7 @@ describe('usePushNotification Hook', () => {
         tokenCount: 0,
         activeTokenCount: 0,
       });
-      mockNotifications.getNotificationPermissionStatus.mockResolvedValue('granted' as any);
+      mockNotifications.requestNotificationPermission.mockResolvedValue('granted' as any);
       mockNotifications.enablePushNotification.mockRejectedValue(new Error('네트워크 오류'));
 
       const { result } = renderHook(() => usePushNotification());
@@ -179,9 +213,16 @@ describe('usePushNotification Hook', () => {
       });
 
       expect(mockShowModal).toHaveBeenCalledWith({
-        title: '알림 활성화 실패',
-        children: '네트워크 오류',
-        primaryButton: { text: '확인', onClick: expect.any(Function) },
+        title: 'features.mypage.notification.activation_failed_title',
+        children: expect.objectContaining({
+          props: expect.objectContaining({
+            children: '네트워크 오류',
+          }),
+        }),
+        primaryButton: {
+          text: 'features.mypage.notification.confirm',
+          onClick: expect.any(Function),
+        },
       });
     });
   });
@@ -189,16 +230,12 @@ describe('usePushNotification Hook', () => {
   describe('토글 비활성화', () => {
     it('푸시 알림을 비활성화한다', async () => {
       mockNotifications.getPushNotificationStatus
-        .mockResolvedValueOnce({
+        .mockResolvedValue({
           isEnabled: true,
           tokenCount: 1,
           activeTokenCount: 1,
-        })
-        .mockResolvedValueOnce({
-          isEnabled: false,
-          tokenCount: 1,
-          activeTokenCount: 0,
         });
+      mockNotifications.checkNotificationPermissionStatus.mockResolvedValue('granted' as any);
       mockNotifications.disablePushNotification.mockResolvedValue();
 
       const { result } = renderHook(() => usePushNotification());
@@ -214,6 +251,7 @@ describe('usePushNotification Hook', () => {
       });
 
       expect(mockNotifications.disablePushNotification).toHaveBeenCalled();
+      expect(result.current.isEnabled).toBe(false);
     });
 
     it('비활성화 실패 시 에러 모달을 표시한다', async () => {
@@ -222,6 +260,7 @@ describe('usePushNotification Hook', () => {
         tokenCount: 1,
         activeTokenCount: 1,
       });
+      mockNotifications.checkNotificationPermissionStatus.mockResolvedValue('granted' as any);
       mockNotifications.disablePushNotification.mockRejectedValue(new Error('서버 오류'));
 
       const { result } = renderHook(() => usePushNotification());
@@ -235,9 +274,12 @@ describe('usePushNotification Hook', () => {
       });
 
       expect(mockShowModal).toHaveBeenCalledWith({
-        title: '알림 비활성화 실패',
-        children: '푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.',
-        primaryButton: { text: '확인', onClick: expect.any(Function) },
+        title: 'features.mypage.notification.deactivation_failed_title',
+        children: 'features.mypage.notification.deactivation_failed_message',
+        primaryButton: {
+          text: 'features.mypage.notification.confirm',
+          onClick: expect.any(Function),
+        },
       });
     });
   });
@@ -255,6 +297,7 @@ describe('usePushNotification Hook', () => {
           tokenCount: 1,
           activeTokenCount: 1,
         });
+      mockNotifications.checkNotificationPermissionStatus.mockResolvedValue('granted' as any);
 
       const { result } = renderHook(() => usePushNotification());
 
@@ -273,4 +316,3 @@ describe('usePushNotification Hook', () => {
     });
   });
 });
-

@@ -88,6 +88,12 @@
         "serviceAccountKeyPath": "./infra/app-review-collector/secrets/play-store-service-account.json",
         "track": "production"
       }
+    },
+    "internal": {
+      "android": {
+        "serviceAccountKeyPath": "./infra/app-review-collector/secrets/play-store-service-account.json",
+        "track": "internal"
+      }
     }
   }
 }

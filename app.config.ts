@@ -4,7 +4,7 @@ import { ConfigContext } from 'expo/config';
 export default ({ config }: ConfigContext): any => {
 	// 환경 변수 로드 (우선순위: 프로세스 환경 변수 > .env 파일)
 	const apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
-	const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL || apiUrl.replace('/api', '');
+	const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL || apiUrl.replace(/\/api(\/.*)?$/, '');
 	const channelKey = process.env.EXPO_PUBLIC_CHANNEL_KEY || '';
 	const imp = process.env.EXPO_PUBLIC_IMP || '';
 	const kakaoLoginApiKey = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY || '';
@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.2.1',
-			runtimeVersion: '4.2.1',
+			version: '4.2.4',
+			runtimeVersion: '4.2.4',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): any => {
 			ios: {
 				supportsTablet: true,
 				bundleIdentifier: 'com.some-in-univ',
-				buildNumber: '346',
+				buildNumber: '348',
 				entitlements: {
 					'com.apple.developer.applesignin': ['Default'],
 				},

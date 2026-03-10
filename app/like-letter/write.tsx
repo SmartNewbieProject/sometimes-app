@@ -1,37 +1,36 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useLikeWithLetter } from '@/src/features/like-letter/hooks/use-like-with-letter';
+import { LetterInput } from '@/src/features/like-letter/ui/letter-input';
+import { LetterPreviewCard } from '@/src/features/like-letter/ui/letter-preview-card';
+import { LetterPrompts } from '@/src/features/like-letter/ui/letter-prompts';
+import { validateLetter } from '@/src/features/like-letter/utils/letter-validator';
+import colors from '@/src/shared/constants/colors';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { ImageResources } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { ImageResource, Text } from '@/src/shared/ui';
+import Match from '@features/match';
+import { useFeatureCost } from '@features/payment/hooks';
+import { Image } from 'expo-image';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Keyboard,
-	KeyboardAvoidingView,
 	Platform,
 	Pressable,
 	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
-import colors from '@/src/shared/constants/colors';
-import { ImageResources } from '@/src/shared/libs';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
-import { ImageResource, Text } from '@/src/shared/ui';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { LetterInput } from '@/src/features/like-letter/ui/letter-input';
-import { LetterPrompts } from '@/src/features/like-letter/ui/letter-prompts';
-import { LetterPreviewCard } from '@/src/features/like-letter/ui/letter-preview-card';
-import { useLikeWithLetter } from '@/src/features/like-letter/hooks/use-like-with-letter';
-import { useFeatureCost } from '@features/payment/hooks';
-import { validateLetter } from '@/src/features/like-letter/utils/letter-validator';
-import { useTranslation } from 'react-i18next';
-import Match from '@features/match';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type WriteParams = {
 	connectionId: string;
@@ -307,11 +306,7 @@ export default function LikeLetterWriteScreen() {
 	const canSend = isValid && letter.trim().length > 0 && !isSending;
 
 	return (
-		<KeyboardAvoidingView
-			style={styles.container}
-			behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-			keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-		>
+		<View style={styles.container}>
 			<Animated.View style={[styles.headerBackground, animatedHeaderStyle]}>
 				<Image
 					source={require('@assets/images/like-letter/bg-line.png')}
@@ -343,40 +338,43 @@ export default function LikeLetterWriteScreen() {
 			<ScrollView
 				style={styles.scrollView}
 				contentContainerStyle={styles.scrollContent}
-				keyboardShouldPersistTaps="handled"
+				keyboardShouldPersistTaps="always"
+				keyboardDismissMode="on-drag"
 				showsVerticalScrollIndicator={false}
 			>
-				<Animated.View style={[styles.introCard, animatedIntroStyle]}>
-					<Pressable style={styles.viewProfileButton} onPress={handleViewProfile}>
-						<Text size="12" weight="medium" style={styles.viewProfileText}>
-							{t('features.like-letter.ui.write_screen.view_profile')}
+				<Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+					<Animated.View style={[styles.introCard, animatedIntroStyle]}>
+						<Pressable style={styles.viewProfileButton} onPress={handleViewProfile}>
+							<Text size="12" weight="medium" style={styles.viewProfileText}>
+								{t('features.like-letter.ui.write_screen.view_profile')}
+							</Text>
+						</Pressable>
+						<Text style={styles.introText}>
+							<Text weight="bold" size="18" style={styles.highlightText}>
+								{partnerNickname}
+							</Text>
+							<Text weight="medium" size="18" textColor="black">
+								님에게 보내는 편지
+							</Text>
 						</Text>
-					</Pressable>
-					<Text style={styles.introText}>
-						<Text weight="bold" size="18" style={styles.highlightText}>
-							{partnerNickname}
+						<Text size="12" textColor="disabled" style={styles.subIntroText}>
+							프로필에서 한 가지를 언급하면 더 자연스러워요!
 						</Text>
-						<Text weight="medium" size="18" textColor="black">
-							님에게 보내는 편지
-						</Text>
-					</Text>
-					<Text size="12" textColor="disabled" style={styles.subIntroText}>
-						프로필에서 한 가지를 언급하면 더 자연스러워요!
-					</Text>
-				</Animated.View>
+					</Animated.View>
 
-				<View style={styles.promptsSection}>
-					<LetterPrompts connectionId={connectionId} onSelect={handlePromptSelect} />
-				</View>
+					<View style={styles.promptsSection}>
+						<LetterPrompts connectionId={connectionId} onSelect={handlePromptSelect} />
+					</View>
 
-				<View style={styles.inputSection}>
-					<LetterInput
-						value={letter}
-						onChangeText={handleLetterChange}
-						onValidationChange={handleValidationChange}
-						placeholder={t('features.like-letter.ui.write_screen.placeholder')}
-					/>
-				</View>
+					<View style={styles.inputSection}>
+						<LetterInput
+							value={letter}
+							onChangeText={handleLetterChange}
+							onValidationChange={handleValidationChange}
+							placeholder={t('features.like-letter.ui.write_screen.placeholder')}
+						/>
+					</View>
+				</Pressable>
 			</ScrollView>
 
 			{!isKeyboardVisible && (
@@ -422,7 +420,7 @@ export default function LikeLetterWriteScreen() {
 					</Pressable>
 				</View>
 			)}
-		</KeyboardAvoidingView>
+		</View>
 	);
 }
 
@@ -486,7 +484,8 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		paddingHorizontal: 20,
-		paddingBottom: 20,
+		paddingBottom: 6,
+		flexGrow: 1,
 	},
 	introCard: {
 		backgroundColor: '#FBF9FF',

@@ -48,6 +48,7 @@
     "next-version": "./scripts/sometimes-next-version"
   },
   "dependencies": {
+    "@expo-google-fonts/gaegu": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@hookform/resolvers": "^5.0.1",
     "@legendapp/list": "^2.0.0-beta.3",
@@ -177,7 +178,7 @@
     "jest-expo": "~54.0.16",
     "patch-package": "^8.0.1",
     "playwright": "^1.57.0",
-    "react-test-renderer": "19.0.0",
+    "react-test-renderer": "^19.1.0",
     "sharp": "^0.34.5",
     "ts-jest": "^29.3.2",
     "tsx": "^4.21.0",

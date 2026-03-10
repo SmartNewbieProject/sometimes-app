@@ -12,7 +12,8 @@ import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
 import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { Show, Text } from "@shared/ui";
-import { createRef, useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { createRef, useEffect, useMemo, useState } from "react";
 import { Alert, BackHandler, Platform, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +23,7 @@ const { createUniqueId } = services;
 
 export default function GemStoreScreen() {
   const { t } = useTranslation();
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const { data: gem } = useCurrentGem();
   const { data: gemProducts, isLoading, error } = useGemProducts();
   const [productCount, setProductCount] = useState<number>();
@@ -37,6 +39,19 @@ export default function GemStoreScreen() {
   const { handlePaymentComplete } = usePortone();
   const { missions } = useGemMissions();
   const router = useRouter();
+  const resolvedReturnTo = useMemo(() => {
+    const rawReturnTo = Array.isArray(returnTo) ? returnTo[0] : returnTo;
+    if (!rawReturnTo) {
+      return "/purchase/gem-store";
+    }
+
+    try {
+      const decoded = decodeURIComponent(rawReturnTo);
+      return decoded.startsWith("/") ? decoded : "/purchase/gem-store";
+    } catch {
+      return rawReturnTo.startsWith("/") ? rawReturnTo : "/purchase/gem-store";
+    }
+  }, [returnTo]);
 
   useEffect(() => {
     if (isLoading) {
@@ -138,7 +153,7 @@ export default function GemStoreScreen() {
         orderName={t("apps.purchase.gem_store.gem")}
         totalAmount={totalPrice ?? 0}
         productName={t("apps.purchase.gem_store.gem")}
-        customData={{ returnPath: '/purchase/gem-store' }}
+        customData={{ returnPath: resolvedReturnTo, returnTo: resolvedReturnTo }}
         onError={onError}
         onComplete={(result: unknown) =>
           onCompletePayment(result as PaymentResponse)
@@ -154,7 +169,7 @@ export default function GemStoreScreen() {
   if (Platform.OS === "ios") {
     const AppleGemStore =
       require("@/src/features/payment/ui/apple-gem-store/apple-gem-store").default;
-    return <AppleGemStore />;
+    return <AppleGemStore returnTo={resolvedReturnTo} />;
   }
 
   return (

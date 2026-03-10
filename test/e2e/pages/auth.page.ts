@@ -43,7 +43,7 @@ export class AuthPage extends BasePage {
    */
   async openEmailLoginModal() {
     // 로그인 페이지의 태그라인 텍스트를 찾아서 long press
-    const tagline = this.page.getByText(/썸타는 순간/i);
+    const tagline = this.page.getByText(/대학생을 위한 진짜 설렘의 시작/i);
 
     // Long press (2초 이상 누르기)
     await tagline.hover();

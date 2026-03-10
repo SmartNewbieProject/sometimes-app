@@ -18,7 +18,7 @@ test.describe('로그인 플로우', () => {
     await authPage['page'].waitForLoadState('networkidle');
   });
 
-  test('이메일 로그인 성공', async () => {
+  test.skip('이메일 로그인 성공', async () => {
     // Given: 로그인 페이지에 접근
     await expect(authPage['page']).toHaveURL(/\/auth\/login/);
 

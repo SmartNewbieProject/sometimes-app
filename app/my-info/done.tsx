@@ -1,4 +1,5 @@
 import SmallTitle from '@/assets/icons/small-title.svg';
+import { useCheckPreferenceFillQuery } from '@/src/features/home/queries';
 import { useInterestForm } from '@/src/features/interest/hooks';
 import Layout from '@/src/features/layout';
 import { useMyInfoReferrer } from '@/src/features/my-info/hooks';
@@ -21,6 +22,7 @@ export default function MyInfoDoneScreen() {
 	const queryClient = useQueryClient();
 	const { updateForm, clear, tattoo, ...form } = useInterestForm();
 	const { referrer, clear: clearReferrer } = useMyInfoReferrer();
+	const { data: preferenceFill } = useCheckPreferenceFillQuery();
 	const insets = useSafeAreaInsets();
 	useEffect(() => {
 		queryClient.invalidateQueries({
@@ -83,11 +85,12 @@ export default function MyInfoDoneScreen() {
 							});
 
 							const isFromHome = referrer === 'home';
+							const isPreferenceFilled = preferenceFill?.filled;
 
 							clear();
 							clearReferrer();
 
-							if (isFromHome) {
+							if (isFromHome || isPreferenceFilled) {
 								router.push('/home');
 								return;
 							}

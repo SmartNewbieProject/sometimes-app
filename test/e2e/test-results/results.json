@@ -14,29 +14,6 @@
       "actualWorkers": 6
     },
     "preserveOutput": "always",
-    "reporter": [
-      [
-        "html",
-        {
-          "outputFolder": "./test-results/html"
-        }
-      ],
-      [
-        "json",
-        {
-          "outputFile": "./test-results/results.json"
-        }
-      ],
-      [
-        "list",
-        null
-      ]
-    ],
-    "reportSlowTests": {
-      "max": 5,
-      "threshold": 300000
-    },
-    "quiet": false,
     "projects": [
       {
         "outputDir": "/Users/user/projects/sometimes-app/test-results",
@@ -87,11 +64,35 @@
         "timeout": 60000
       }
     ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "./test-results/html"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
     "shard": null,
     "tags": [],
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
-    "version": "1.57.0",
+    "version": "1.58.0",
     "workers": 6,
     "webServer": null
   },
@@ -125,12 +126,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3514,
+                      "duration": 7573,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.860Z",
+                      "startTime": "2026-03-09T00:21:46.930Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -145,82 +146,55 @@
             },
             {
               "title": "이메일 로그인 성공",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
                   "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
                   "projectId": "chromium",
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "failed",
-                      "duration": 13673,
-                      "error": {
-                        "message": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n",
-                        "stack": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n\n    at AuthPage.openEmailLoginModal (/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts:49:19)\n    at /Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts:26:20",
-                        "location": {
-                          "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
-                          "column": 19,
-                          "line": 49
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39m../pages/auth.page.ts:49\n\n  47 |\n  48 |     // Long press (2초 이상 누르기)\n> 49 |     await tagline.hover();\n     |                   ^\n  50 |     await this.page.mouse.down();\n  51 |     await this.page.waitForTimeout(2500); // 2.5초 대기\n  52 |     await this.page.mouse.up();"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
-                            "column": 19,
-                            "line": 49
-                          },
-                          "message": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n\n\n   at ../pages/auth.page.ts:49\n\n  47 |\n  48 |     // Long press (2초 이상 누르기)\n> 49 |     await tagline.hover();\n     |                   ^\n  50 |     await this.page.mouse.down();\n  51 |     await this.page.waitForTimeout(2500); // 2.5초 대기\n  52 |     await this.page.mouse.up();\n    at AuthPage.openEmailLoginModal (/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts:49:19)\n    at /Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts:26:20"
-                        }
-                      ],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.860Z",
-                      "annotations": [],
-                      "attachments": [
+                      "startTime": "2026-03-09T00:21:45.072Z",
+                      "annotations": [
                         {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/trace.zip"
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 21,
+                            "column": 8
+                          }
                         }
                       ],
-                      "errorLocation": {
-                        "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
-                        "column": 19,
-                        "line": 49
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "skipped"
                 }
               ],
               "id": "c60d589c25b5f9baa21a-4adb1779a7b77fd1dbca",
               "file": "auth/signup.spec.ts",
               "line": 21,
-              "column": 7
+              "column": 8
             },
             {
               "title": "전화번호 인증 단계",
@@ -252,7 +226,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.553Z",
+                      "startTime": "2026-03-09T00:21:45.074Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -304,7 +278,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "startTime": "2026-03-09T00:21:45.074Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -356,7 +330,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "startTime": "2026-03-09T00:21:45.076Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -408,7 +382,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "startTime": "2026-03-09T00:21:45.076Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -460,7 +434,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "startTime": "2026-03-09T00:21:45.076Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -512,7 +486,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "startTime": "2026-03-09T00:21:45.076Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -533,6 +507,1983 @@
               "file": "auth/signup.spec.ts",
               "line": 106,
               "column": 8
+            },
+            {
+              "title": "로그인 페이지 로드 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 7631,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:46.898Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-2c96df02f124926fe107",
+              "file": "auth/signup.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "이메일 로그인 성공",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 21,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-2501c5cacff6bc379d07",
+              "file": "auth/signup.spec.ts",
+              "line": 21,
+              "column": 8
+            },
+            {
+              "title": "전화번호 인증 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 35,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 35,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-ce7c4ed16509bc7f6ed7",
+              "file": "auth/signup.spec.ts",
+              "line": 35,
+              "column": 8
+            },
+            {
+              "title": "기본 정보 입력 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 56,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 56,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-19cf0d26843a0ddfffca",
+              "file": "auth/signup.spec.ts",
+              "line": 56,
+              "column": 8
+            },
+            {
+              "title": "닉네임 입력 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 73,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 73,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-bc6f670f43b2c69ec42b",
+              "file": "auth/signup.spec.ts",
+              "line": 73,
+              "column": 8
+            },
+            {
+              "title": "약관 동의 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 86,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 86,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-e60cb29004687d0a8d1a",
+              "file": "auth/signup.spec.ts",
+              "line": 86,
+              "column": 8
+            },
+            {
+              "title": "잘못된 전화번호 형식 에러",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 97,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 97,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-53a2af3b858c18525f9e",
+              "file": "auth/signup.spec.ts",
+              "line": 97,
+              "column": 8
+            },
+            {
+              "title": "잘못된 인증번호 에러",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 106,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.405Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 106,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-223aa1c893c77b5e1998",
+              "file": "auth/signup.spec.ts",
+              "line": 106,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat/chat.spec.ts",
+      "file": "chat/chat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "채팅 기능",
+          "file": "chat/chat.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "채팅 페이지 접근 시 인증 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 10326,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:47.138Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-5e10865071f92e821d14",
+              "file": "chat/chat.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "채팅 목록 로드",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 23,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.076Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 23,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-df32f35dce5c8ebf8bc7",
+              "file": "chat/chat.spec.ts",
+              "line": 23,
+              "column": 8
+            },
+            {
+              "title": "채팅방 열기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 28,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 28,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-21ffa961d1db0a5a6e33",
+              "file": "chat/chat.spec.ts",
+              "line": 28,
+              "column": 8
+            },
+            {
+              "title": "메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 34,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 34,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-6af87f29091f689426d4",
+              "file": "chat/chat.spec.ts",
+              "line": 34,
+              "column": 8
+            },
+            {
+              "title": "긴 메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 43,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 43,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-b60e3d3d9932cc768d6d",
+              "file": "chat/chat.spec.ts",
+              "line": 43,
+              "column": 8
+            },
+            {
+              "title": "이모지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 52,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 52,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-e717844a60fa8757204b",
+              "file": "chat/chat.spec.ts",
+              "line": 52,
+              "column": 8
+            },
+            {
+              "title": "연속 메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 60,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 60,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-07f19f0edf7494260aa9",
+              "file": "chat/chat.spec.ts",
+              "line": 60,
+              "column": 8
+            },
+            {
+              "title": "채팅 페이지 접근 시 인증 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 9392,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:51.002Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-ad2b86f676d8d8d23990",
+              "file": "chat/chat.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "채팅 목록 로드",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 23,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 23,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-eba5b66bb6a6dc7e7a4a",
+              "file": "chat/chat.spec.ts",
+              "line": 23,
+              "column": 8
+            },
+            {
+              "title": "채팅방 열기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 28,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 28,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-8781ad13e6d990314ccb",
+              "file": "chat/chat.spec.ts",
+              "line": 28,
+              "column": 8
+            },
+            {
+              "title": "메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 34,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 34,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-0faf2a6ddfbdfafbccb3",
+              "file": "chat/chat.spec.ts",
+              "line": 34,
+              "column": 8
+            },
+            {
+              "title": "긴 메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 43,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 43,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-e2b8943c2ea3639246c2",
+              "file": "chat/chat.spec.ts",
+              "line": 43,
+              "column": 8
+            },
+            {
+              "title": "이모지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 52,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 52,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-d8b6267ec222f0974e8f",
+              "file": "chat/chat.spec.ts",
+              "line": 52,
+              "column": 8
+            },
+            {
+              "title": "연속 메시지 전송",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                        "line": 60,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:48.969Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/chat/chat.spec.ts",
+                            "line": 60,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d7bac472243beb3e1a5a-f1263d5643ada9e95af0",
+              "file": "chat/chat.spec.ts",
+              "line": 60,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "example.spec.ts",
+      "file": "example.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Playwright 설치 확인",
+          "file": "example.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "기본 테스트 - example.com",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 907,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:47.029Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a30a6eba6312f6b87ea5-839dc8013918ea3ae92d",
+              "file": "example.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "기본 테스트 - Google",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1386,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:47.057Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a30a6eba6312f6b87ea5-bc6b4a4afe4e4a7007ca",
+              "file": "example.spec.ts",
+              "line": 10,
+              "column": 7
+            },
+            {
+              "title": "기본 테스트 - example.com",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1175,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:51.842Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a30a6eba6312f6b87ea5-634a168e065d355769fa",
+              "file": "example.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "기본 테스트 - Google",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1341,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:54.217Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a30a6eba6312f6b87ea5-bd2c063b65c9cba0ba7e",
+              "file": "example.spec.ts",
+              "line": 10,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "home/home.spec.ts",
+      "file": "home/home.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "홈 화면 (미인증)",
+          "file": "home/home.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "루트 페이지 로드 및 리다이렉트 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 7521,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:46.889Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-1260fe410304525a2c1d",
+              "file": "home/home.spec.ts",
+              "line": 12,
+              "column": 7
+            },
+            {
+              "title": "하단 탭 네비게이션",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 20,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 20,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-ce539bbdff483aec3c3b",
+              "file": "home/home.spec.ts",
+              "line": 20,
+              "column": 8
+            },
+            {
+              "title": "좋아요 버튼 동작",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 54,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 54,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-d6e014bdf82923685d77",
+              "file": "home/home.spec.ts",
+              "line": 54,
+              "column": 8
+            },
+            {
+              "title": "패스 버튼 동작",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 65,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 65,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-e65a4ad9cf819268fc56",
+              "file": "home/home.spec.ts",
+              "line": 65,
+              "column": 8
+            },
+            {
+              "title": "프로필 카드 클릭",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 76,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 76,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-8009d955f90cfb3780eb",
+              "file": "home/home.spec.ts",
+              "line": 76,
+              "column": 8
+            },
+            {
+              "title": "루트 페이지 로드 및 리다이렉트 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 3146,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:22:20.840Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-2ece011db9d5e28957ab",
+              "file": "home/home.spec.ts",
+              "line": 12,
+              "column": 7
+            },
+            {
+              "title": "하단 탭 네비게이션",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 20,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.051Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 20,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-77688e996608e58d9778",
+              "file": "home/home.spec.ts",
+              "line": 20,
+              "column": 8
+            },
+            {
+              "title": "좋아요 버튼 동작",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 54,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.051Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 54,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-52ee97d9183174a546cc",
+              "file": "home/home.spec.ts",
+              "line": 54,
+              "column": 8
+            },
+            {
+              "title": "패스 버튼 동작",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 65,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.051Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 65,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-ba734e963b16963f4aa3",
+              "file": "home/home.spec.ts",
+              "line": 65,
+              "column": 8
+            },
+            {
+              "title": "프로필 카드 클릭",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 76,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.051Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 76,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-04a32af226eed7a0371c",
+              "file": "home/home.spec.ts",
+              "line": 76,
+              "column": 8
+            }
+          ]
+        },
+        {
+          "title": "홈 화면 (로그인됨)",
+          "file": "home/home.spec.ts",
+          "line": 88,
+          "column": 15,
+          "specs": [
+            {
+              "title": "로그인 후 홈 화면 로드 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 88,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 88,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-af39a18e13ecc5ce08dc",
+              "file": "home/home.spec.ts",
+              "line": 104,
+              "column": 7
+            },
+            {
+              "title": "로그인 상태 유지 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 88,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:45.077Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 88,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-1a4e7af2b8327c7c0c9d",
+              "file": "home/home.spec.ts",
+              "line": 112,
+              "column": 7
+            },
+            {
+              "title": "로그인 후 홈 화면 로드 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 88,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.052Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 88,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-37d2323e05581412053c",
+              "file": "home/home.spec.ts",
+              "line": 104,
+              "column": 7
+            },
+            {
+              "title": "로그인 상태 유지 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                        "line": 88,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-09T00:21:55.052Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/home/home.spec.ts",
+                            "line": 88,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a9efd0c7e3d35a97a8d-9797c8bcd1fb3348eac6",
+              "file": "home/home.spec.ts",
+              "line": 112,
+              "column": 7
             }
           ]
         }
@@ -541,11 +2492,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-06T13:08:41.538Z",
-    "duration": 14387.848,
-    "expected": 1,
-    "skipped": 6,
-    "unexpected": 1,
+    "startTime": "2026-03-09T00:21:45.029Z",
+    "duration": 39487.060000000005,
+    "expected": 10,
+    "skipped": 38,
+    "unexpected": 0,
     "flaky": 0
   }
 }
