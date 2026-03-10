@@ -38,7 +38,8 @@ export const Container = ({ children, gradientMode, category }: ContainerProps) 
 				style={[
 					styles.imageBackground,
 					{
-						height: match?.type === 'not-found' ? 600 : rematchingLoading ? 400 : width,
+						height: match?.type === 'not-found' ? undefined : rematchingLoading ? 400 : width,
+					minHeight: match?.type === 'not-found' ? 600 : undefined,
 					},
 				]}
 			>
@@ -64,7 +65,8 @@ export const Container = ({ children, gradientMode, category }: ContainerProps) 
 			style={[
 				styles.imageBackground,
 				{
-					height: match?.type === 'not-found' ? 600 : rematchingLoading ? 400 : width,
+					height: match?.type === 'not-found' ? undefined : rematchingLoading ? 400 : width,
+					minHeight: match?.type === 'not-found' ? 600 : undefined,
 				},
 			]}
 		>
