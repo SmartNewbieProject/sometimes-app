@@ -1,0 +1,7 @@
+appId: ${MAESTRO_APP_ID}
+name: Sometimes Smoke Suite (Dev Client)
+---
+- runFlow: ../../common/connect-dev-server.yaml
+- runFlow: login-screen.yaml
+- runFlow: home-screen.yaml
+- runFlow: navigation.yaml

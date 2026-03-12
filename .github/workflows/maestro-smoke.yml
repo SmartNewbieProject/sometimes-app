@@ -1,0 +1,75 @@
+name: Maestro Smoke
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/maestro-smoke.yml'
+      - '.maestro/**'
+      - 'app/**'
+      - 'src/**'
+      - 'package.json'
+      - 'app.config.ts'
+      - 'plugins/**'
+
+jobs:
+  android-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --no-install --non-interactive
+
+      - name: Run Android smoke on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_7
+          script: |
+            export MAESTRO_APP_ID=com.smartnewb.sometimes
+            export PATH="$HOME/.maestro/bin:$PATH"
+
+            pushd android
+            ./gradlew assembleDebug installDebug -PreactNativeArchitectures=x86_64
+            popd
+
+            nohup npx expo start --dev-client --port 8081 >/tmp/metro.log 2>&1 &
+            npx wait-on tcp:127.0.0.1:8081
+
+            adb reverse tcp:8081 tcp:8081
+            adb shell monkey -p com.smartnewb.sometimes -c android.intent.category.LAUNCHER 1
+
+            maestro test .maestro/flows/smoke/smoke-dev-client.yaml
+
+      - name: Upload Metro log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metro-log
+          path: /tmp/metro.log
+          if-no-files-found: ignore

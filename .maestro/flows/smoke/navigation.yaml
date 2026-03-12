@@ -1,0 +1,17 @@
+﻿appId: ${MAESTRO_APP_ID}
+name: Home Navigation Smoke
+---
+- runFlow: ../../common/login-as-dev.yaml
+- tapOn:
+    id: home-notification-button
+- assertVisible:
+    id: notification-screen
+    timeout: 10000
+- back
+- assertVisible:
+    id: home-screen
+- tapOn:
+    id: home-gem-store-button
+- assertVisible:
+    id: gem-store-screen
+    timeout: 10000

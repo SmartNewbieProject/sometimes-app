@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sometimes App Performance Tracker</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-strong: #ffffff;
+      --text: #152033;
+      --muted: #5f6d83;
+      --line: #d7dfeb;
+      --brand: #0f766e;
+      --brand-soft: #dff7f2;
+      --warn: #c56a00;
+      --warn-soft: #fff1dc;
+      --danger: #bf3d3d;
+      --danger-soft: #ffe2e2;
+      --info: #2459d6;
+      --info-soft: #e4ecff;
+      --shadow: 0 18px 40px rgba(21, 32, 51, 0.08);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(36, 89, 214, 0.10), transparent 26%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 24%),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #10233c 0%, #173866 46%, #0f766e 100%);
+      border-radius: 28px;
+      padding: 36px;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -8% -50% auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      filter: blur(6px);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .hero-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .stats,
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(215, 223, 235, 0.9);
+      backdrop-filter: blur(14px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card,
+    .section,
+    .panel-inner {
+      padding: 22px;
+    }
+
+    .stat-card h2 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-card .value {
+      display: block;
+      margin-top: 8px;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-card .hint {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .legend .tag,
+    .pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag-high,
+    .impact-high {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .tag-medium,
+    .impact-medium {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .tag-low,
+    .impact-low {
+      background: var(--info-soft);
+      color: var(--info);
+    }
+
+    .status-planned {
+      background: #e8eef8;
+      color: #40526f;
+    }
+
+    .status-measuring {
+      background: var(--info-soft);
+      color: var(--info);
+    }
+
+    .status-in-progress {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .status-done {
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .matrix-card {
+      min-height: 150px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .matrix-card h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .matrix-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .flow-step {
+      flex: 1 1 140px;
+      min-width: 140px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .flow-step p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .toolbar input,
+    .toolbar select,
+    .tracker-card textarea,
+    .tracker-card input,
+    .tracker-card select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .toolbar .field {
+      flex: 1 1 180px;
+      min-width: 180px;
+    }
+
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tracker-card {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 10px 28px rgba(21, 32, 51, 0.06);
+    }
+
+    .tracker-top,
+    .tracker-meta,
+    .tracker-actions,
+    .progress-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tracker-top {
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .tracker-top h4 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .tracker-id {
+      color: var(--muted);
+      font-size: 12px;
+      font-family: Consolas, monospace;
+    }
+
+    .tracker-meta {
+      margin-bottom: 12px;
+    }
+
+    .tracker-card p {
+      margin: 0 0 10px;
+      line-height: 1.6;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .evidence-list,
+    .checklist {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .evidence-item,
+    .check-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f8fbff;
+      border: 1px solid #e3ebf7;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .evidence-item code {
+      font-family: Consolas, monospace;
+      color: #1a4db3;
+      font-size: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 3px;
+      accent-color: var(--brand);
+    }
+
+    .progress {
+      height: 10px;
+      width: 100%;
+      background: #e9eff7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #0f766e, #2459d6);
+      border-radius: 999px;
+      transition: width 180ms ease;
+    }
+
+    .two-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: #fbfdff;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1100px) {
+      .stats,
+      .grid-2,
+      .grid-3,
+      .tracker-grid,
+      .matrix,
+      .two-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <h1>Sometimes App 성능 개선 트래커</h1>
+      <p>실제 코드에서 확인한 성능 개선 후보를 우선순위, 측정 지표, 해결 체크리스트와 함께 한 화면에 정리했습니다. 각 카드의 상태, 담당자, 메모, 체크박스는 브라우저에 자동 저장되어 해결 추적용으로 바로 사용할 수 있습니다.</p>
+      <div class="hero-meta">
+        <div class="hero-chip">범위: 초기 진입, 홈, 커뮤니티, 채팅, 이미지, i18n</div>
+        <div class="hero-chip">기준일: 2026-03-09</div>
+        <div class="hero-chip">저장 방식: localStorage</div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="grid-2">
+      <div class="panel section">
+        <div class="section-title">
+          <h3>우선순위 맵</h3>
+          <span>효과가 크고 범용 영향이 있는 작업부터 배치</span>
+        </div>
+        <div class="matrix" id="matrix"></div>
+      </div>
+      <div class="panel section">
+        <div class="section-title">
+          <h3>추적 플로우</h3>
+          <span>각 항목 공통 운영 방식</span>
+        </div>
+        <div class="flow">
+          <div class="flow-step">
+            <strong>1. 계측</strong>
+            <p>TTI, JS FPS, 화면 전환 시간, 네트워크 호출 수를 먼저 수집합니다.</p>
+          </div>
+          <div class="flow-step">
+            <strong>2. 가설</strong>
+            <p>렌더링, 네트워크, 번들, 이미지 중 병목 축을 하나로 좁힙니다.</p>
+          </div>
+          <div class="flow-step">
+            <strong>3. 수정</strong>
+            <p>작게 나눠 적용하고, 홈과 채팅처럼 민감한 화면은 단계적으로 배포합니다.</p>
+          </div>
+          <div class="flow-step">
+            <strong>4. 검증</strong>
+            <p>변경 전후 숫자를 비교해 개선 폭이 없으면 되돌리거나 다른 가설로 전환합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <div class="section-title">
+        <h3>필터</h3>
+        <span>상태와 영역별로 카드만 골라 보기</span>
+      </div>
+      <div class="toolbar">
+        <div class="field">
+          <label class="label" for="search">검색</label>
+          <input id="search" type="text" placeholder="예: 홈, i18n, chat">
+        </div>
+        <div class="field">
+          <label class="label" for="statusFilter">상태</label>
+          <select id="statusFilter">
+            <option value="all">전체</option>
+            <option value="planned">Planned</option>
+            <option value="measuring">Measuring</option>
+            <option value="in-progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="areaFilter">영역</label>
+          <select id="areaFilter">
+            <option value="all">전체</option>
+          </select>
+        </div>
+      </div>
+      <div class="tracker-grid" id="tracker"></div>
+      <div class="footer-note">
+        팁: 성능 작업은 "느린 느낌"보다 숫자로 관리하는 게 훨씬 잘 굴러갑니다. 각 카드의 측정 지표를 먼저 채우고, 체크리스트 완료율과 상태를 같이 업데이트하면 회고와 재현이 쉬워집니다.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const baseItems = [
+      {
+        id: "P1",
+        title: "앱 초기 부트 경량화",
+        area: "App Shell",
+        impact: "high",
+        effort: "medium",
+        status: "planned",
+        metric: "Cold start TTI, splash 유지 시간, 앱 실행 후 첫 화면 인터랙션 가능 시점",
+        summary: "루트 레이아웃에서 폰트, SDK, ATT, 알림, 분석, 채팅 provider가 거의 동시에 올라와 초기 진입 비용이 큽니다.",
+        why: "초기 화면 전환 전 필요한 작업과 나중에 지연시켜도 되는 작업이 섞여 있어 첫 렌더 경로가 무거워집니다.",
+        evidence: [
+          "app/_layout.tsx:153-222 Kakao/Mixpanel SDK 초기화가 첫 마운트에 실행됩니다.",
+          "app/_layout.tsx:224-248 폰트 로드와 splash 제어가 초기 렌더 readiness를 결정합니다.",
+          "app/_layout.tsx:418-445 RouteTracker, AnalyticsProvider, GlobalChatProvider 등 글로벌 계층이 함께 올라옵니다."
+        ],
+        plan: [
+          "초기 필수 작업과 지연 가능 작업을 분리한다.",
+          "Mixpanel, Facebook, 채팅 초기화는 첫 화면 표시 이후 idle 구간으로 늦춘다.",
+          "폰트는 기본 세트만 먼저 로드하고 지역별 보조 폰트는 필요 시 지연 로드한다.",
+          "부트 타임 계측 로그를 추가해 전후 비교 기준을 만든다."
+        ]
+      },
+      {
+        id: "P2",
+        title: "홈 화면 과도한 렌더와 재조회 줄이기",
+        area: "Home",
+        impact: "high",
+        effort: "medium",
+        status: "planned",
+        metric: "Home focus 시 네트워크 요청 수, 스크롤 중 JS FPS, 홈 첫 렌더 시간",
+        summary: "홈 화면이 단일 ScrollView 안에 배너, 좋아요, 카드, 리뷰, 피드백, 하단 네비를 모두 붙이고 포커스 시 여러 쿼리를 재무효화합니다.",
+        why: "스크롤 이벤트 상태 변경과 포커스 재조회가 겹치면 홈 진입과 복귀 시 체감 끊김이 커질 수 있습니다.",
+        evidence: [
+          "app/home/index.tsx:151-164 onScroll 16ms 주기로 floating visibility 상태를 갱신합니다.",
+          "app/home/index.tsx:208-223 focus 때 notification, preference, matching, profile 쿼리를 모두 invalidate 합니다.",
+          "app/home/index.tsx:253-333 많은 위젯이 한 ScrollView 트리에 한 번에 렌더됩니다."
+        ],
+        plan: [
+          "홈 섹션별로 메모이제이션 또는 viewport 기반 지연 렌더링을 적용한다.",
+          "invalidateQueries를 실제 변경 가능성이 높은 키만 남기고 나머지는 staleTime 조정으로 대체한다.",
+          "스크롤 기반 floating 토글은 임계값 debounce 또는 Reanimated 쪽으로 옮긴다.",
+          "홈 핵심 above-the-fold와 하단 섹션을 분리해 초기 렌더 비용을 낮춘다."
+        ]
+      },
+      {
+        id: "P3",
+        title: "커뮤니티 리스트 프리패치와 스켈레톤 랜덤성 정리",
+        area: "Community",
+        impact: "high",
+        effort: "medium",
+        status: "planned",
+        metric: "커뮤니티 첫 진입 데이터 용량, 페이지당 추가 요청 수, 스크롤 중 dropped frame",
+        summary: "커뮤니티 리스트가 첫 로딩 직후 2페이지를 강제로 더 가져오고, 스켈레톤 variant도 매번 랜덤으로 바뀝니다.",
+        why: "사용자가 아직 스크롤하지 않았는데 네트워크와 렌더링 비용을 더 써서 초기 체감을 악화시킬 가능성이 큽니다.",
+        evidence: [
+          "src/features/community/ui/infinite-article-list.tsx:216-229 첫 로딩 뒤 pagesCount < 2 이면 추가 loadMore를 실행합니다.",
+          "src/features/community/ui/infinite-article-list.tsx:194-199 skeleton variant를 Math.random 으로 결정합니다.",
+          "src/features/community/ui/infinite-article-list.tsx:255-277 viewable item 변경마다 다음 페이지 보장을 시도합니다."
+        ],
+        plan: [
+          "2페이지 선로딩은 네트워크 품질이 좋을 때나 웹 전용 옵션으로 제한한다.",
+          "스켈레톤 variant는 deterministic seed 또는 고정 패턴으로 바꾼다.",
+          "loadMore 조건을 단순화해 중복 호출 가능성을 낮춘다.",
+          "커뮤니티 상세 진입률을 보고 선로딩이 실제 가치가 있는지 검증한다."
+        ]
+      },
+      {
+        id: "P4",
+        title: "전역 채팅 연결 범위 축소",
+        area: "Chat",
+        impact: "medium",
+        effort: "high",
+        status: "planned",
+        metric: "채팅 미사용 세션의 메모리 사용량, background/foreground 전환 시 JS work, socket reconnect 횟수",
+        summary: "GlobalChatProvider가 앱 전역에서 네트워크, AppState, 소켓 이벤트, query invalidation을 모두 관리합니다.",
+        why: "채팅 화면에 들어가지 않아도 관련 리스너와 상태 갱신 비용을 항상 부담하게 됩니다.",
+        evidence: [
+          "src/features/chat/providers/global-chat-provider.tsx:82-97 앱 전체 생명주기 동안 chat modules를 초기화합니다.",
+          "src/features/chat/providers/global-chat-provider.tsx:126-162 NetInfo 리스너가 전역으로 붙습니다.",
+          "src/features/chat/providers/global-chat-provider.tsx:309-329 reconnect 후 chat query invalidate가 실행됩니다."
+        ],
+        plan: [
+          "채팅 탭 진입 시점이나 로그인 이후 일정 조건에서만 채팅 모듈을 활성화한다.",
+          "읽지 않은 채팅 수와 실시간 방 동기화를 분리해 최소 연결 모드와 전체 연결 모드를 나눈다.",
+          "백그라운드 복귀 로직을 profile/home 공통 경로와 분리해 채팅 전용 경로만 유지한다.",
+          "연결 여부에 따른 사용자 체감 저하가 없는지 실험 플래그로 검증한다."
+        ]
+      },
+      {
+        id: "P5",
+        title: "이미지 공용 컴포넌트 비용 절감",
+        area: "Images",
+        impact: "medium",
+        effort: "low",
+        status: "planned",
+        metric: "이미지 카드 mount 수, 이미지 로딩 중 JS work, 저사양 기기 스크롤 FPS",
+        summary: "ImageResource가 매 렌더마다 StyleSheet를 새로 만들고, 작은 이미지에도 Lottie 기반 로딩 래퍼를 사용합니다.",
+        why: "아이콘이나 작은 썸네일까지 같은 무거운 경로를 타면 누적 렌더 비용이 올라갑니다.",
+        evidence: [
+          "src/shared/ui/image-resource/image-resource.native.tsx:39-50 render 중 StyleSheet.create를 호출합니다.",
+          "src/shared/ui/image-resource/image-resource.native.tsx:75-86 모든 이미지에 Loading.Lottie를 감쌉니다.",
+          "app/home/index.tsx:178-184 홈 헤더의 gem 버튼도 ImageResource를 사용합니다."
+        ],
+        plan: [
+          "정적 스타일은 컴포넌트 밖으로 이동하고, 크기 변화는 배열 style 조합으로 처리한다.",
+          "아이콘/소형 이미지는 lightweight placeholder 분기로 보낸다.",
+          "반복 사용되는 resource는 캐시 정책을 명시하고 transition 시간을 화면별로 나눈다.",
+          "로딩 애니메이션이 실제 필요한 큰 이미지에만 남긴다."
+        ]
+      },
+      {
+        id: "P6",
+        title: "i18n 번들 초기 로드 축소",
+        area: "Bundle",
+        impact: "medium",
+        effort: "medium",
+        status: "planned",
+        metric: "JS bundle size, 앱 시작 시 locale JSON parse 시간, web first load",
+        summary: "i18n 초기화에서 ko, ja, en 전체 리소스를 한 번에 import 해 초기 번들에 포함시킵니다.",
+        why: "대규모 locale JSON이 초기 번들에 묶이면 앱 시작과 웹 첫 로드에 모두 불리합니다.",
+        evidence: [
+          "src/shared/libs/i18n.ts:3-5 ko, ja, en 전체 번들을 정적 import 합니다.",
+          "src/shared/libs/i18n.ts:8-12 resources 객체에 전체 언어를 동시에 등록합니다."
+        ],
+        plan: [
+          "현재 디바이스 언어만 우선 로드하고 나머지는 dynamic import 또는 backend loader로 전환한다.",
+          "locale namespace를 화면 단위로 분리할 수 있는지 검토한다.",
+          "웹에서는 route-based split과 함께 번들 분석을 추가한다.",
+          "실제 파싱 시간과 메모리 사용량을 계측한다."
+        ]
+      },
+      {
+        id: "P7",
+        title: "경로 추적과 분석 스크립트의 부트 영향 분리",
+        area: "Analytics",
+        impact: "medium",
+        effort: "low",
+        status: "planned",
+        metric: "route change 시 storage write 수, web main-thread blocking time",
+        summary: "RouteTracker는 경로가 바뀔 때마다 storage read/write를 하고, AnalyticsProvider는 웹 분석과 Facebook SDK 초기화를 전역에서 시작합니다.",
+        why: "핵심 UX와 무관한 추적 코드가 초기 경로 변경이나 웹 진입 직후의 메인 스레드를 차지할 수 있습니다.",
+        evidence: [
+          "src/shared/config/route-tracker.tsx:13-25 pathname 변경마다 storage get/set 두 번을 수행합니다.",
+          "src/shared/providers/analytics-provider.tsx:18-56 Google Analytics script 삽입과 Facebook SDK 초기화가 provider mount에서 시작됩니다."
+        ],
+        plan: [
+          "이전 경로 저장은 메모리 우선, 영속화는 샘플링 또는 배치 처리로 바꾼다.",
+          "Facebook SDK는 ATT 승인 이후 또는 실제 기능 진입 시점으로 늦춘다.",
+          "웹 분석 스크립트는 consent와 idle 조건을 모두 만족할 때만 적재한다.",
+          "route tracking이 정말 영속 저장이 필요한지 요구사항을 다시 확인한다."
+        ]
+      }
+    ];
+
+    const statusLabels = {
+      planned: "Planned",
+      measuring: "Measuring",
+      "in-progress": "In Progress",
+      done: "Done"
+    };
+
+    const impactLabels = {
+      high: "High Impact",
+      medium: "Medium Impact",
+      low: "Low Impact"
+    };
+
+    const matrixBuckets = [
+      {
+        key: "quickWins",
+        title: "빠른 개선",
+        color: "tag-low",
+        filter: (item) => item.impact !== "low" && item.effort === "low"
+      },
+      {
+        key: "bigBets",
+        title: "큰 효과",
+        color: "tag-high",
+        filter: (item) => item.impact === "high" && item.effort !== "low"
+      },
+      {
+        key: "infra",
+        title: "기반 정리",
+        color: "tag-medium",
+        filter: (item) => item.area === "Bundle" || item.area === "Analytics" || item.area === "App Shell"
+      },
+      {
+        key: "watchList",
+        title: "계속 관찰",
+        color: "tag-low",
+        filter: (item) => item.area === "Chat" || item.area === "Images"
+      }
+    ];
+
+    const storageKey = "sometimes-performance-tracker-v1";
+    const persisted = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    function hydrateItem(item) {
+      const saved = persisted[item.id] || {};
+      const checks = item.plan.map((_, index) => Boolean(saved.checks && saved.checks[index]));
+      return {
+        ...item,
+        owner: saved.owner || "",
+        notes: saved.notes || "",
+        status: saved.status || item.status,
+        checks
+      };
+    }
+
+    let items = baseItems.map(hydrateItem);
+
+    const statsEl = document.getElementById("stats");
+    const matrixEl = document.getElementById("matrix");
+    const trackerEl = document.getElementById("tracker");
+    const searchEl = document.getElementById("search");
+    const statusFilterEl = document.getElementById("statusFilter");
+    const areaFilterEl = document.getElementById("areaFilter");
+
+    function saveState() {
+      const payload = {};
+      for (const item of items) {
+        payload[item.id] = {
+          owner: item.owner,
+          notes: item.notes,
+          status: item.status,
+          checks: item.checks
+        };
+      }
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+    }
+
+    function countByStatus(status) {
+      return items.filter((item) => item.status === status).length;
+    }
+
+    function renderStats() {
+      const completedChecks = items.reduce((sum, item) => sum + item.checks.filter(Boolean).length, 0);
+      const totalChecks = items.reduce((sum, item) => sum + item.checks.length, 0);
+      const completion = totalChecks ? Math.round((completedChecks / totalChecks) * 100) : 0;
+
+      const cards = [
+        { label: "총 개선 항목", value: items.length, hint: "실제 코드 근거 기반", className: "status-planned" },
+        { label: "High Impact", value: items.filter((item) => item.impact === "high").length, hint: "먼저 잡을 후보", className: "impact-high" },
+        { label: "진행 중", value: countByStatus("in-progress"), hint: "현재 손대는 작업", className: "status-in-progress" },
+        { label: "체크리스트 완료율", value: completion + "%", hint: completedChecks + "/" + totalChecks + " 완료", className: "status-done" }
+      ];
+
+      statsEl.innerHTML = cards.map((card) => `
+        <article class="panel stat-card">
+          <h2>${card.label}</h2>
+          <span class="value">${card.value}</span>
+          <div class="hint"><span class="pill ${card.className}">${card.hint}</span></div>
+        </article>
+      `).join("");
+    }
+
+    function renderMatrix() {
+      matrixEl.innerHTML = matrixBuckets.map((bucket) => {
+        const bucketItems = items.filter(bucket.filter);
+        const list = bucketItems.length
+          ? "<ul>" + bucketItems.map((item) => `<li>${item.id} · ${item.title}</li>`).join("") + "</ul>"
+          : '<div class="empty">현재 분류된 항목이 없습니다.</div>';
+        return `
+          <article class="matrix-card">
+            <h4><span class="pill ${bucket.color}">${bucket.title}</span></h4>
+            ${list}
+          </article>
+        `;
+      }).join("");
+    }
+
+    function buildAreaOptions() {
+      const areas = [...new Set(items.map((item) => item.area))];
+      areaFilterEl.innerHTML = '<option value="all">전체</option>' + areas.map((area) =>
+        `<option value="${area}">${area}</option>`
+      ).join("");
+    }
+
+    function filteredItems() {
+      const search = searchEl.value.trim().toLowerCase();
+      const status = statusFilterEl.value;
+      const area = areaFilterEl.value;
+
+      return items.filter((item) => {
+        const matchesSearch = !search || [
+          item.id,
+          item.title,
+          item.area,
+          item.summary,
+          item.why,
+          item.metric
+        ].join(" ").toLowerCase().includes(search);
+        const matchesStatus = status === "all" || item.status === status;
+        const matchesArea = area === "all" || item.area === area;
+        return matchesSearch && matchesStatus && matchesArea;
+      });
+    }
+
+    function renderTracker() {
+      const list = filteredItems();
+
+      if (!list.length) {
+        trackerEl.innerHTML = '<div class="empty">필터에 맞는 성능 항목이 없습니다.</div>';
+        return;
+      }
+
+      trackerEl.innerHTML = list.map((item) => {
+        const completed = item.checks.filter(Boolean).length;
+        const progress = Math.round((completed / item.checks.length) * 100);
+
+        return `
+          <article class="tracker-card">
+            <div class="tracker-top">
+              <div>
+                <div class="tracker-id">${item.id}</div>
+                <h4>${item.title}</h4>
+              </div>
+              <div class="tracker-meta">
+                <span class="pill impact-${item.impact}">${impactLabels[item.impact]}</span>
+                <span class="pill status-${item.status}">${statusLabels[item.status]}</span>
+                <span class="pill status-planned">${item.area}</span>
+              </div>
+            </div>
+
+            <p>${item.summary}</p>
+            <p><strong>왜 느릴 수 있나:</strong> ${item.why}</p>
+            <p><strong>먼저 볼 지표:</strong> ${item.metric}</p>
+
+            <span class="label">코드 근거</span>
+            <ul class="evidence-list">
+              ${item.evidence.map((line) => `<li class="evidence-item"><code>${line}</code></li>`).join("")}
+            </ul>
+
+            <span class="label">해결 체크리스트</span>
+            <ul class="checklist">
+              ${item.plan.map((step, index) => `
+                <li class="check-item">
+                  <input type="checkbox" data-item="${item.id}" data-check="${index}" ${item.checks[index] ? "checked" : ""}>
+                  <span>${step}</span>
+                </li>
+              `).join("")}
+            </ul>
+
+            <div class="progress-row" style="margin-top: 12px;">
+              <span class="pill status-measuring">진척 ${completed}/${item.checks.length}</span>
+              <div class="progress"><span style="width:${progress}%"></span></div>
+            </div>
+
+            <div class="two-fields">
+              <div>
+                <label class="label" for="status-${item.id}">상태</label>
+                <select id="status-${item.id}" data-status="${item.id}">
+                  ${Object.entries(statusLabels).map(([value, label]) => `
+                    <option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>
+                  `).join("")}
+                </select>
+              </div>
+              <div>
+                <label class="label" for="owner-${item.id}">담당자</label>
+                <input id="owner-${item.id}" type="text" value="${escapeHtml(item.owner)}" placeholder="예: mobile-team" data-owner="${item.id}">
+              </div>
+            </div>
+
+            <label class="label" for="notes-${item.id}">메모</label>
+            <textarea id="notes-${item.id}" placeholder="측정 결과, 실험 링크, 회고를 적어두세요." data-notes="${item.id}">${escapeHtml(item.notes)}</textarea>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function rerender() {
+      renderStats();
+      renderMatrix();
+      renderTracker();
+      bindTrackerEvents();
+    }
+
+    function bindTrackerEvents() {
+      trackerEl.querySelectorAll("[data-check]").forEach((checkbox) => {
+        checkbox.addEventListener("change", (event) => {
+          const { item: itemId, check } = event.target.dataset;
+          const target = items.find((entry) => entry.id === itemId);
+          if (!target) return;
+          target.checks[Number(check)] = event.target.checked;
+          saveState();
+          rerender();
+        });
+      });
+
+      trackerEl.querySelectorAll("[data-status]").forEach((select) => {
+        select.addEventListener("change", (event) => {
+          const itemId = event.target.dataset.status;
+          const target = items.find((entry) => entry.id === itemId);
+          if (!target) return;
+          target.status = event.target.value;
+          saveState();
+          rerender();
+        });
+      });
+
+      trackerEl.querySelectorAll("[data-owner]").forEach((input) => {
+        input.addEventListener("input", (event) => {
+          const itemId = event.target.dataset.owner;
+          const target = items.find((entry) => entry.id === itemId);
+          if (!target) return;
+          target.owner = event.target.value;
+          saveState();
+        });
+      });
+
+      trackerEl.querySelectorAll("[data-notes]").forEach((textarea) => {
+        textarea.addEventListener("input", (event) => {
+          const itemId = event.target.dataset.notes;
+          const target = items.find((entry) => entry.id === itemId);
+          if (!target) return;
+          target.notes = event.target.value;
+          saveState();
+        });
+      });
+    }
+
+    [searchEl, statusFilterEl, areaFilterEl].forEach((el) => {
+      el.addEventListener("input", rerender);
+      el.addEventListener("change", rerender);
+    });
+
+    buildAreaOptions();
+    rerender();
+  </script>
+</body>
+</html>

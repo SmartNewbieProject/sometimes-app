@@ -1,0 +1,5 @@
+﻿- launchApp:
+    clearState: true
+- assertVisible:
+    id: login-screen
+    timeout: 15000

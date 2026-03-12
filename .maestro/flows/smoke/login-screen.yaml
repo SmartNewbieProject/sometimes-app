@@ -1,0 +1,10 @@
+﻿appId: ${MAESTRO_APP_ID}
+name: Login Screen Smoke
+---
+- runFlow: ../../common/launch.yaml
+- assertVisible:
+    id: login-screen
+- assertVisible:
+    id: kakao-login-button
+- assertVisible:
+    id: dev-login-button

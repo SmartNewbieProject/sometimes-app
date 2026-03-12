@@ -1,4 +1,4 @@
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+﻿import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { resetAuthState } from '@/src/shared/libs/axios';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -44,16 +44,22 @@ export default function LoginScreen() {
 	}, [clear]);
 
 	return (
-		<View style={styles.container}>
+		<View testID="login-screen" style={styles.container}>
 			<LinearGradient colors={['#FFFFFF', '#F5F1FF']} style={styles.gradientContainer}>
 				<View style={styles.innerContainer}>
 					<ScrollView
+						testID="login-scroll-view"
 						style={styles.scrollView}
 						contentContainerStyle={styles.scrollContent}
 						showsVerticalScrollIndicator={false}
 						bounces={false}
 					>
-						<View style={[styles.contentWrapper, { paddingTop: insets.top + (Platform.OS === 'android' ? 48 : 0) }]}>
+						<View
+							style={[
+								styles.contentWrapper,
+								{ paddingTop: insets.top + (Platform.OS === 'android' ? 48 : 0) },
+							]}
+						>
 							<View style={styles.logoSection}>
 								<Signup.Logo />
 							</View>

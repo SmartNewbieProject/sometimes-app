@@ -1,4 +1,4 @@
-import { isAdult } from '@/src/features/pass/utils';
+﻿import { isAdult } from '@/src/features/pass/utils';
 import {
 	AUTH_METHODS,
 	LOGIN_ABANDONED_STEPS,
@@ -891,6 +891,8 @@ function KakaoLoginComponent() {
 				</View>
 			)}
 			<Pressable
+				testID="kakao-login-button"
+				accessibilityLabel={t('features.signup.ui.login_form.kakao_login')}
 				onPress={handleKakaoLogin}
 				disabled={isLoading}
 				style={[kakaoStyles.button, { opacity: isLoading ? 0.6 : 1 }]}
@@ -997,6 +999,8 @@ function DevLoginButton() {
 
 	return (
 		<Pressable
+			testID="dev-login-button"
+			accessibilityLabel="DEV login"
 			onPress={handleDevLogin}
 			disabled={isLoading}
 			style={[devLoginStyles.button, { opacity: isLoading ? 0.6 : 1 }]}

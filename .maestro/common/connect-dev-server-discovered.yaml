@@ -1,0 +1,7 @@
+appId: ${MAESTRO_APP_ID}
+---
+- tapOn: "http://10.0.2.2:8082"
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 180000

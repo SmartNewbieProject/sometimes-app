@@ -1,0 +1,9 @@
+﻿- runFlow: launch.yaml
+- assertVisible:
+    id: dev-login-button
+    timeout: 10000
+- tapOn:
+    id: dev-login-button
+- assertVisible:
+    id: home-screen
+    timeout: 20000

@@ -1,0 +1,14 @@
+﻿appId: ${MAESTRO_APP_ID}
+name: Home Screen Smoke
+---
+- runFlow: ../../common/login-as-dev.yaml
+- assertVisible:
+    id: home-screen
+- assertVisible:
+    id: home-notification-button
+- assertVisible:
+    id: home-gem-store-button
+- swipe:
+    direction: DOWN
+- assertVisible:
+    id: home-screen

@@ -1,0 +1,6 @@
+﻿appId: ${MAESTRO_APP_ID}
+name: Sometimes Smoke Suite
+---
+- runFlow: login-screen.yaml
+- runFlow: home-screen.yaml
+- runFlow: navigation.yaml

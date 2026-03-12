@@ -189,6 +189,7 @@ export default ({ config }: ConfigContext): any => {
 			},
 			plugins: [
 				'./plugins/with-ksp-version.js',
+				'./plugins/with-android-notification-meta.js',
 				[
 					'expo-router',
 					{

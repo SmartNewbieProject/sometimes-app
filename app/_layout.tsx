@@ -12,7 +12,17 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, AppState, Platform, StyleSheet, View, type ViewStyle } from 'react-native';
+import {
+	ActivityIndicator,
+	Alert,
+	AppState,
+	InteractionManager,
+	Platform,
+	Text as RNText,
+	StyleSheet,
+	View,
+	type ViewStyle,
+} from 'react-native';
 import 'react-native-reanimated';
 import {
 	NOTIFICATION_TYPES,
@@ -78,6 +88,7 @@ if (Platform.OS !== 'web') {
 
 const MIN_SPLASH_MS = 300;
 const START_AT = Date.now();
+const DEFERRED_TASK_DELAY_MS = 1200;
 
 const PRETENDARD_REGULAR = require('../assets/fonts/Pretendard-Regular.otf');
 const PRETENDARD_MEDIUM = require('../assets/fonts/Pretendard-Medium.otf');
@@ -129,6 +140,41 @@ const JAPANESE_NATIVE_FONTS = {
 
 export default Sentry.wrap(function RootLayout() {
 	const navigationRef = useNavigationContainerRef();
+
+	const scheduleNonCriticalTask = useCallback(
+		(task: () => void, delayMs = DEFERRED_TASK_DELAY_MS) => {
+			if (Platform.OS === 'web') {
+				let idleCallbackId: number | null = null;
+				const timeoutId = window.setTimeout(() => {
+					if ('requestIdleCallback' in window) {
+						idleCallbackId = window.requestIdleCallback(task, { timeout: delayMs });
+						return;
+					}
+
+					task();
+				}, delayMs);
+
+				return () => {
+					window.clearTimeout(timeoutId);
+					if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+						window.cancelIdleCallback(idleCallbackId);
+					}
+				};
+			}
+
+			let interactionHandle: ReturnType<typeof InteractionManager.runAfterInteractions> | null =
+				null;
+			const timeoutId = setTimeout(() => {
+				interactionHandle = InteractionManager.runAfterInteractions(task);
+			}, delayMs);
+
+			return () => {
+				clearTimeout(timeoutId);
+				interactionHandle?.cancel();
+			};
+		},
+		[],
+	);
 
 	useEffect(() => {
 		if (navigationRef && navigationIntegration) {
@@ -211,8 +257,10 @@ export default Sentry.wrap(function RootLayout() {
 			}
 		};
 
-		initializeSDKs();
-	}, []);
+		return scheduleNonCriticalTask(() => {
+			void initializeSDKs();
+		});
+	}, [scheduleNonCriticalTask]);
 
 	const nativeFonts = useMemo<Record<string, number>>(() => {
 		if (Platform.OS === 'web') {
@@ -263,8 +311,14 @@ export default Sentry.wrap(function RootLayout() {
 	}, [isReady, forceReady]);
 
 	useEffect(() => {
-		requestAtt();
-	}, [requestAtt]);
+		if (Platform.OS !== 'ios') {
+			return;
+		}
+
+		return scheduleNonCriticalTask(() => {
+			void requestAtt();
+		}, 1800);
+	}, [requestAtt, scheduleNonCriticalTask]);
 
 	// i18n 언어 변경 감지 시 Mixpanel country Super Property 업데이트
 	useEffect(() => {
@@ -443,7 +497,17 @@ export default Sentry.wrap(function RootLayout() {
 	}, [loaded, coldStartProcessed, isValidNotificationData]);
 
 	if (!isReady) {
-		return null;
+		return (
+			<GestureHandlerRootView style={styles.rootView}>
+				<View style={[styles.container, styles.bootstrapContainer]} testID="app-bootstrap-screen">
+					<ActivityIndicator size="large" color="#8B7BFF" />
+					<RNText style={styles.bootstrapTitle}>앱을 준비하고 있어요</RNText>
+					<RNText style={styles.bootstrapCaption}>
+						fontsLoaded={String(fontsLoaded)} forceReady={String(forceReady)}
+					</RNText>
+				</View>
+			</GestureHandlerRootView>
+		);
 	}
 
 	return (
@@ -503,5 +567,22 @@ const styles = StyleSheet.create<{ rootView: ViewStyle; container: ViewStyle }>(
 				overflow: 'hidden',
 			},
 		}),
+	},
+	bootstrapContainer: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#FFF7FB',
+		paddingHorizontal: 24,
+	},
+	bootstrapTitle: {
+		marginTop: 16,
+		fontSize: 18,
+		fontWeight: '600',
+		color: '#1F172A',
+	},
+	bootstrapCaption: {
+		marginTop: 8,
+		fontSize: 12,
+		color: '#6B7280',
 	},
 });

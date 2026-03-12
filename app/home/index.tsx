@@ -1,4 +1,4 @@
-import {
+﻿import {
 	GlobalMatchingTimer,
 	ModeToggle,
 	useGlobalMatchingEnabled,
@@ -56,6 +56,9 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
+
+const HOME_REFRESH_THROTTLE_MS = 45 * 1000;
+const NON_CRITICAL_HOME_TASK_DELAY_MS = 800;
 
 function getPhotoCardStatus(images: ProfileImage[]): PhotoCardStatus {
 	if (images.length === 0) return 'none';
@@ -140,7 +143,7 @@ const HomeScreen = () => {
 	// secondary 또는 notFoundMatch가 새로 생기면 dismissed 리셋
 	useEffect(() => {
 		if (peekSheetData) setIsPeekSheetDismissed(false);
-	}, [peekSheetData?.id, peekSheetData?.type, peekSheetData?.untilNext]);
+	}, [peekSheetData]);
 
 	// BottomNavigation 실제 높이 측정
 	const [bottomNavHeight, setBottomNavHeight] = useState(82);
@@ -151,6 +154,7 @@ const HomeScreen = () => {
 	const [isFloatingVisible, setIsFloatingVisible] = useState(true);
 	const lastScrollY = useRef(0);
 	const [isHorizontalGestureActive, setIsHorizontalGestureActive] = useState(false);
+	const lastHomeRefreshAtRef = useRef(0);
 
 	const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const currentScrollY = event.nativeEvent.contentOffset.y;
@@ -158,9 +162,9 @@ const HomeScreen = () => {
 
 		if (Math.abs(scrollDelta) > 5) {
 			if (scrollDelta > 0 && currentScrollY > 50) {
-				setIsFloatingVisible(false);
+				setIsFloatingVisible((prev) => (prev ? false : prev));
 			} else if (scrollDelta < 0) {
-				setIsFloatingVisible(true);
+				setIsFloatingVisible((prev) => (prev ? prev : true));
 			}
 		}
 
@@ -197,16 +201,40 @@ const HomeScreen = () => {
 	}, [viewerCount, previewImages.length]);
 
 	useEffect(() => {
-		registerFcmTokenAsync().catch(() => {});
+		let interactionHandle: ReturnType<typeof InteractionManager.runAfterInteractions> | null = null;
+		const timeoutId = setTimeout(() => {
+			interactionHandle = InteractionManager.runAfterInteractions(() => {
+				void registerFcmTokenAsync().catch(() => {});
+			});
+		}, NON_CRITICAL_HOME_TASK_DELAY_MS);
+
+		return () => {
+			clearTimeout(timeoutId);
+			interactionHandle?.cancel();
+		};
 	}, []);
 
 	useEffect(() => {
 		trackEventAction('home_view');
-		if (!loading && value !== 'true') {
-			ensurePushTokenRegistered(showModal);
-			setValue('true');
+
+		if (loading || value === 'true') {
+			return;
 		}
-	}, [loading, value, showModal]);
+
+		let interactionHandle: ReturnType<typeof InteractionManager.runAfterInteractions> | null = null;
+		const timeoutId = setTimeout(() => {
+			interactionHandle = InteractionManager.runAfterInteractions(() => {
+				void ensurePushTokenRegistered(showModal).finally(() => {
+					void setValue('true');
+				});
+			});
+		}, NON_CRITICAL_HOME_TASK_DELAY_MS);
+
+		return () => {
+			clearTimeout(timeoutId);
+			interactionHandle?.cancel();
+		};
+	}, [loading, setValue, showModal, trackEventAction, value]);
 
 	// 화면이 포커스될 때마다 데이터 리프레시, 홈 조회 추적 및 heartbeat 전송
 	useFocusEffect(
@@ -219,21 +247,40 @@ const HomeScreen = () => {
 				hasTrackedHomeView.current = true;
 			}
 
-			// 화면 전환 애니메이션 완료 후 무거운 작업 실행 (탭 전환 지연 방지)
+			// 서버에 heartbeat 전송 (lastLoginAt 업데이트)
+			void sendHeartbeat();
+
+			const now = Date.now();
+			if (now - lastHomeRefreshAtRef.current < HOME_REFRESH_THROTTLE_MS) {
+				return () => {
+					enableGlobalLoading();
+				};
+			}
+
+			lastHomeRefreshAtRef.current = now;
+
+			// 화면 전환 애니메이션 완료 후 무거운 작업 실행
 			const task = InteractionManager.runAfterInteractions(() => {
-				sendHeartbeat();
-				queryClient.invalidateQueries({ queryKey: ['notification'], refetchType: 'active' });
-				queryClient.invalidateQueries({
+				void queryClient.invalidateQueries({
+					queryKey: ['notifications', 'unread-count'],
+					refetchType: 'active',
+				});
+				void queryClient.invalidateQueries({
 					queryKey: ['check-preference-fill'],
 					refetchType: 'active',
 				});
-				queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'], refetchType: 'active' });
-				queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
+				void queryClient.invalidateQueries({
+					queryKey: ['latest-matching-v31'],
+					refetchType: 'active',
+				});
+				void queryClient.invalidateQueries({
+					queryKey: ['my-profile-details'],
+					refetchType: 'active',
+				});
 			});
 
 			return () => {
 				task.cancel();
-				// 홈 화면을 떠날 때 로딩 오버레이 재활성화
 				enableGlobalLoading();
 			};
 		}, [queryClient, trackHomeViewed, disableGlobalLoading, enableGlobalLoading]),
@@ -267,19 +314,23 @@ const HomeScreen = () => {
 		return <HomeInfoSection />;
 	};
 
-		return (
-			<View style={styles.container}>
-				{/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
-				<WelcomeRewardModal visible={shouldShowReward} onClose={markRewardAsReceived} />
-				<View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+	return (
+		<View testID="home-screen" style={styles.container}>
+			{/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
+			<WelcomeRewardModal visible={shouldShowReward} onClose={markRewardAsReceived} />
+			<View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
 				<Header
 					centered={true}
 					logoSize={128}
 					showBackButton={false}
 					rightContent={
 						<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
-							<NotificationIcon size={41} />
-							<TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+							<NotificationIcon size={41} testID="home-notification-button" />
+							<TouchableOpacity
+								testID="home-gem-store-button"
+								activeOpacity={0.8}
+								onPress={onNavigateGemStore}
+							>
 								<ImageResource resource={ImageResources.GEM} width={41} height={41} />
 							</TouchableOpacity>
 						</View>
@@ -288,6 +339,7 @@ const HomeScreen = () => {
 			</View>
 
 			<ScrollView
+				testID="home-scroll-view"
 				style={styles.scrollView}
 				contentContainerStyle={styles.scrollViewContent}
 				onScroll={handleScroll}
@@ -356,7 +408,7 @@ const HomeScreen = () => {
 					isVisible={isFloatingVisible}
 				/>
 			)}
-				{__DEV__ && <DevScenarioFab bottomOffset={shouldShowFloatingCard ? 160 : 100} />}
+			{__DEV__ && <DevScenarioFab bottomOffset={shouldShowFloatingCard ? 160 : 100} />}
 			<View onLayout={(e) => setBottomNavHeight(e.nativeEvent.layout.height)}>
 				<BottomNavigation />
 			</View>

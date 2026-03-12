@@ -1,0 +1,13 @@
+appId: ${MAESTRO_APP_ID}
+---
+- back
+- tapOn:
+    text: "http://localhost:8081"
+- eraseText
+- inputText: "http://localhost:8082"
+- hideKeyboard
+- tapOn: "Connect"
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 120000
